@@ -4,11 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Go Pollos Rhosse</title>
-<link rel="icon" type="image/png" href="favicon.ico">
-
-<meta name="description" content="Go Pollos Rhosse en Trinidad Beni. Pollo a la leña con arroz desde Bs 15. Reserva por WhatsApp.">
-<meta name="author" content="Wilson Cruz">
-<meta name="robots" content="index, follow">
 
 <style>
 body{
@@ -21,12 +16,7 @@ header{
   background:#d50000;
   color:white;
   text-align:center;
-  padding:25px 20px;
-}
-
-.logo{
-  width:90px;
-  margin-bottom:10px;
+  padding:25px;
 }
 
 .estado{
@@ -48,29 +38,26 @@ header{
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
   gap:15px;
 }
 
 .card{
-  background:#fff;
+  background:white;
   padding:15px;
   border-radius:14px;
   box-shadow:0 6px 16px rgba(0,0,0,0.08);
   text-align:center;
-  transition:0.2s;
 }
 
-.card:hover{
-  transform:translateY(-3px);
-}
-
-.card.destacado{
-  border:2px solid #ff9800;
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
 }
 
 .precio{
-  font-size:18px;
   font-weight:bold;
   margin:8px 0;
 }
@@ -78,11 +65,26 @@ header{
 .boton{
   background:#25D366;
   color:white;
-  padding:8px 14px;
+  padding:8px;
   border:none;
   border-radius:8px;
   cursor:pointer;
   font-weight:bold;
+}
+
+.carrito{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:white;
+  box-shadow:0 -3px 10px rgba(0,0,0,0.1);
+  padding:15px;
+}
+
+.total{
+  font-weight:bold;
+  font-size:18px;
 }
 </style>
 </head>
@@ -90,10 +92,8 @@ header{
 <body>
 
 <header>
-  <!-- CAMBIA logo.png por tu archivo real -->
-  <img src="logo.png" class="logo">
-  <h1>Go Pollos Rhosse</h1>
-  <p>Pollo a la leña con arroz</p>
+<h1>Go Pollos Rhosse</h1>
+<p>Pollo a la leña con arroz</p>
 </header>
 
 <div id="estado" class="estado"></div>
@@ -111,104 +111,96 @@ header{
 
 </div>
 
+<div class="carrito">
+<div id="resumen"></div>
+<div class="total" id="total">Total: Bs 0</div>
+<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
+</div>
+
 <script>
 
-// ===== HORARIO =====
-function actualizarEstado() {
-  const ahora = new Date();
-  const dia = ahora.getDay();
-  const hora = ahora.getHours();
-  const minuto = ahora.getMinutes();
-
-  const abrirHora = 16;
-  const abrirMin = 30;
-  const cerrarHora = 22;
-  const cerrarMin = 30;
-
-  const estadoDiv = document.getElementById("estado");
-
-  if (dia === 0) {
-    estadoDiv.innerHTML = "🔵 Mañana abrimos a las 4:30 pm";
-    estadoDiv.style.background = "#1e3a5f";
-    return;
-  }
-
-  const minutosActuales = hora * 60 + minuto;
-  const minutosAbrir = abrirHora * 60 + abrirMin;
-  const minutosCerrar = cerrarHora * 60 + cerrarMin;
-
-  if (minutosActuales >= minutosAbrir && minutosActuales <= minutosCerrar) {
-    estadoDiv.innerHTML = "🟢 Abierto ahora";
-    estadoDiv.style.background = "#1f7a3f";
-  } else {
-    if (minutosActuales < minutosAbrir) {
-      const faltan = minutosAbrir - minutosActuales;
-      const h = Math.floor(faltan / 60);
-      const m = faltan % 60;
-      estadoDiv.innerHTML = `⏳ Faltan ${h}h ${m}m para abrir`;
-    } else {
-      estadoDiv.innerHTML = "🔵 Mañana abrimos a las 4:30 pm";
-    }
-    estadoDiv.style.background = "#1e3a5f";
-  }
-}
-
-actualizarEstado();
-setInterval(actualizarEstado, 60000);
-
-
-// ===== MESA DESDE URL =====
+// ===== MESA =====
 function obtenerMesa(){
   const params = new URLSearchParams(window.location.search);
   return params.get("mesa") || "No especificada";
 }
 
-
-// ===== PRODUCTOS =====
+// ===== PRODUCTOS CON IMÁGENES =====
+// Cambia las imágenes por tus archivos reales
 const productos = [
-  {categoria:"pollos", nombre:"Menú Económico", precio:15, descripcion:"Pieza + arroz", destacado:true},
-  {categoria:"pollos", nombre:"Cuarto Pollo", precio:25, descripcion:"Cuarto + arroz"},
-  {categoria:"pollos", nombre:"Medio Pollo", precio:50, descripcion:"Medio + arroz"},
-  {categoria:"pollos", nombre:"Pollo Entero", precio:100, descripcion:"Entero + arroz"},
+  {categoria:"pollos", nombre:"Menú Económico", precio:15, img:"menu.jpg"},
+  {categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"cuarto.jpg"},
+  {categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"medio.jpg"},
+  {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
 
-  {categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, descripcion:"2 litros"},
-  {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, descripcion:"500ml"},
+  {categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
+  {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
 
-  {categoria:"extras", nombre:"Anticucho", precio:18, descripcion:"3 palitos + papa"},
-  {categoria:"extras", nombre:"Hamburguesa", precio:20, descripcion:"Carne + papas"}
+  {categoria:"extras", nombre:"Anticucho", precio:18, img:"anticucho.jpg"},
+  {categoria:"extras", nombre:"Hamburguesa", precio:20, img:"hamburguesa.jpg"}
 ];
+
+let carrito = [];
 
 function crearProducto(prod){
   const div = document.createElement("div");
-  div.className = "card" + (prod.destacado ? " destacado" : "");
+  div.className="card";
   div.innerHTML = `
+    <img src="${prod.img}">
     <h3>${prod.nombre}</h3>
-    <p>${prod.descripcion}</p>
     <div class="precio">Bs ${prod.precio}</div>
-    <button class="boton" onclick="pedir('${prod.nombre}', ${prod.precio})">
-      Reservar
+    <button class="boton" onclick="agregar('${prod.nombre}', ${prod.precio})">
+      Agregar
     </button>
   `;
   return div;
 }
 
 function cargarProductos(){
-  productos.forEach(p => {
+  productos.forEach(p=>{
     document.getElementById(p.categoria).appendChild(crearProducto(p));
   });
 }
 
-function pedir(nombre, precio){
-  const mesa = obtenerMesa();
-  const mensaje = `Hola, quiero reservar:
-Producto: ${nombre}
-Precio: Bs ${precio}
-Mesa: ${mesa}`;
+function agregar(nombre, precio){
+  carrito.push({nombre, precio});
+  actualizarCarrito();
+}
+
+function actualizarCarrito(){
+  let resumenHTML="";
+  let total=0;
+
+  carrito.forEach((item,i)=>{
+    total += item.precio;
+    resumenHTML += `${item.nombre} - Bs ${item.precio}<br>`;
+  });
+
+  document.getElementById("resumen").innerHTML = resumenHTML || "Sin productos";
+  document.getElementById("total").innerHTML = "Total: Bs " + total;
+}
+
+function enviarPedido(){
+  if(carrito.length === 0){
+    alert("Agrega al menos un producto");
+    return;
+  }
+
+  let mensaje = "Hola, quiero hacer este pedido:\n\n";
+  let total=0;
+
+  carrito.forEach(item=>{
+    mensaje += `${item.nombre} - Bs ${item.precio}\n`;
+    total += item.precio;
+  });
+
+  mensaje += `\nTotal: Bs ${total}`;
+  mensaje += `\nMesa: ${obtenerMesa()}`;
+
   window.open(`https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`, "_blank");
 }
 
 cargarProductos();
-
 </script>
 
 </body>
