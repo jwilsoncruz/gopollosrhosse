@@ -12,24 +12,45 @@ font-family:Arial, sans-serif;
 background:#0b1c2d;
 color:white;
 text-align:center;
-}
-
-.logo{
-margin-top:20px;
+padding-bottom:110px;
 }
 
 .logo img{
 width:120px;
+margin-top:20px;
+}
+
+.info-box{
+margin:10px 20px;
+padding:12px;
+background:#13293d;
+border-radius:12px;
+font-size:15px;
+}
+
+.status{
+margin-top:8px;
+font-weight:bold;
+padding:6px;
+border-radius:8px;
+}
+
+.open{
+background:#1f7a1f;
+}
+
+.closed{
+background:#a31621;
 }
 
 .mesa-banner{
-font-size:28px;
+font-size:30px;
 font-weight:bold;
 background:#c79a2c;
 color:#0b1c2d;
-padding:12px;
+padding:14px;
 margin:15px;
-border-radius:12px;
+border-radius:14px;
 display:none;
 }
 
@@ -38,39 +59,53 @@ margin:10px;
 padding:10px;
 background:#13293d;
 border-radius:10px;
+font-size:18px;
 }
 
 .card{
 background:#13293d;
 margin:20px auto;
-width:90%;
-max-width:350px;
-border-radius:15px;
+width:92%;
+max-width:380px;
+border-radius:18px;
 overflow:hidden;
-box-shadow:0 4px 15px rgba(0,0,0,0.4);
+box-shadow:0 6px 18px rgba(0,0,0,0.4);
 }
 
 .card img{
 width:100%;
-height:200px;
+height:210px;
 object-fit:cover;
 }
 
 .card-content{
-padding:15px;
+padding:18px;
 }
 
 .price{
 color:#ffb703;
 font-weight:bold;
+font-size:18px;
+}
+
+.badge{
+background:#ffb703;
+color:#000;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+display:inline-block;
+margin-bottom:8px;
 }
 
 button{
-padding:8px 15px;
-margin:5px;
+padding:8px 16px;
+margin:6px;
 border:none;
-border-radius:8px;
+border-radius:10px;
 cursor:pointer;
+font-weight:bold;
 }
 
 .add{
@@ -83,7 +118,7 @@ background:#444;
 color:white;
 }
 
-.cart{
+.cart-bar{
 position:fixed;
 bottom:0;
 left:0;
@@ -91,20 +126,36 @@ right:0;
 background:#c79a2c;
 color:#0b1c2d;
 padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 font-weight:bold;
+font-size:16px;
+}
+
+.cart-bar button{
+background:#0b1c2d;
+color:#fff;
+padding:10px 20px;
+border-radius:12px;
 }
 
 .admin-panel{
 display:none;
 margin:10px;
 }
-
 </style>
 </head>
 <body>
 
 <div class="logo">
-<img src="logo.png" alt="Go Pollos Rhosse">
+<img src="logo.png">
+</div>
+
+<div class="info-box">
+📍 Av. Moxos<br>
+🕡 Lunes a sábado – 6:30 pm a 10:30 pm
+<div id="statusBox" class="status"></div>
 </div>
 
 <div id="mesaBanner" class="mesa-banner"></div>
@@ -119,8 +170,42 @@ margin:10px;
 <button onclick="resetStock()">Reset</button>
 </div>
 
-<!-- PRODUCTOS -->
+<!-- MENÚ ECONÓMICO -->
+<div class="card">
+<img src="economico.jpg">
+<div class="card-content">
+<div class="badge">🔥 MÁS PEDIDO</div>
+<h3>Menú Económico</h3>
+<p>Incluye presa pequeña + arroz</p>
+<p class="price">Bs 15</p>
+<button class="add" onclick="addToCart('Menú Económico',15,0.20)">Agregar</button>
+<button class="remove" onclick="removeFromCart('Menú Económico',0.20)">Eliminar</button>
+</div>
+</div>
 
+<!-- CUARTO -->
+<div class="card">
+<img src="cuarto.jpg">
+<div class="card-content">
+<h3>Cuarto</h3>
+<p class="price">Bs 25</p>
+<button class="add" onclick="addToCart('Cuarto',25,0.25)">Agregar</button>
+<button class="remove" onclick="removeFromCart('Cuarto',0.25)">Eliminar</button>
+</div>
+</div>
+
+<!-- MEDIO -->
+<div class="card">
+<img src="medio.jpg">
+<div class="card-content">
+<h3>Medio</h3>
+<p class="price">Bs 50</p>
+<button class="add" onclick="addToCart('Medio',50,0.50)">Agregar</button>
+<button class="remove" onclick="removeFromCart('Medio',0.50)">Eliminar</button>
+</div>
+</div>
+
+<!-- COMPLETO -->
 <div class="card">
 <img src="completo.jpg">
 <div class="card-content">
@@ -131,28 +216,10 @@ margin:10px;
 </div>
 </div>
 
-<div class="card">
-<img src="medio.jpg">
-<div class="card-content">
-<h3>Medio</h3>
-<p class="price">Bs 59</p>
-<button class="add" onclick="addToCart('Medio',59,0.5)">Agregar</button>
-<button class="remove" onclick="removeFromCart('Medio',0.5)">Eliminar</button>
-</div>
-</div>
-
-<div class="card">
-<img src="cuarto.jpg">
-<div class="card-content">
-<h3>Cuarto</h3>
-<p class="price">Bs 35</p>
-<button class="add" onclick="addToCart('Cuarto',35,0.25)">Agregar</button>
-<button class="remove" onclick="removeFromCart('Cuarto',0.25)">Eliminar</button>
-</div>
-</div>
-
-<div class="cart" onclick="sendOrder()">
-Enviar Pedido por WhatsApp
+<!-- BARRA CARRITO -->
+<div class="cart-bar">
+<div id="cartSummary">🛒 0 productos | Total Bs 0</div>
+<button onclick="sendOrder()">Enviar Pedido</button>
 </div>
 
 <script>
@@ -162,6 +229,30 @@ let carrito = {};
 let total = 0;
 let mesa = null;
 
+// HORARIO AUTOMÁTICO
+function checkStatus(){
+let now = new Date();
+let day = now.getDay(); // 0 domingo
+let hour = now.getHours();
+let minutes = now.getMinutes();
+let currentTime = hour + minutes/60;
+
+let openTime = 18.5;  // 6:30 pm
+let closeTime = 22.5; // 10:30 pm
+
+let statusBox = document.getElementById("statusBox");
+
+if(day >=1 && day <=6 && currentTime >= openTime && currentTime <= closeTime){
+statusBox.innerHTML="🟢 Estamos abiertos";
+statusBox.className="status open";
+}else{
+statusBox.innerHTML="🔴 Cerrado por hoy";
+statusBox.className="status closed";
+}
+}
+
+checkStatus();
+
 // DETECTAR MESA
 const params = new URLSearchParams(window.location.search);
 if(params.get("mesa")){
@@ -170,7 +261,7 @@ document.getElementById("mesaBanner").style.display="block";
 document.getElementById("mesaBanner").innerHTML="🍽 MESA " + mesa;
 }
 
-// ADMIN CON CLAVE
+// ADMIN
 document.addEventListener("keydown",function(e){
 if(e.key === "A"){
 let clave = prompt("Clave Admin:");
@@ -185,7 +276,6 @@ if(stock - fraccion < 0){
 alert("No hay suficiente stock");
 return;
 }
-
 if(!carrito[nombre]){
 carrito[nombre]={cantidad:0,precio:precio,fraccion:fraccion};
 }
@@ -209,6 +299,12 @@ update();
 
 function update(){
 document.getElementById("available").innerText = stock.toFixed(2);
+let totalItems = 0;
+for(let item in carrito){
+totalItems += carrito[item].cantidad;
+}
+document.getElementById("cartSummary").innerText =
+"🛒 " + totalItems + " productos | Total Bs " + total;
 }
 
 function adjustStock(val){
@@ -232,20 +328,19 @@ return;
 }
 
 let mensaje="Pedido – Go Pollos Rhosse%0A";
-
 if(mesa){
 mensaje+="Mesa "+mesa+"%0A%0A";
 }
-
 for(let item in carrito){
 mensaje+=item+" x"+carrito[item].cantidad+"%0A";
 }
-
 mensaje+="%0ATotal Bs "+total;
 
 let url="https://wa.me/59168972863?text="+mensaje;
 window.open(url,"_blank");
 }
+
+update();
 
 </script>
 
