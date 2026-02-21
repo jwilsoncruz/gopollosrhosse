@@ -3,146 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Go Pollo´s Rhosse | Pollos a la Leña</title>
+<title>Go Pollos Rhosse | Solo 8 por Noche</title>
 
-<meta name="description" content="Go Pollo´s Rhosse - Pollos a la Leña en Trinidad, Beni. Pedidos por WhatsApp 68972863">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
 <style>
-body{
-    margin:0;
-    font-family: Arial Black, Arial, sans-serif;
-    background: radial-gradient(circle at top, #2b0000 0%, #000 60%);
-    color:#fff;
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+body{background:#000;color:#fff;text-align:center;}
+
+header{padding:40px 20px;background:linear-gradient(135deg,#000,#111);}
+.logo{max-width:250px;margin-bottom:20px;}
+h1{color:#FFD700;font-size:30px;margin-bottom:15px;}
+
+.stock-box{
+background:#ff0000;
+padding:15px;
+margin:20px auto;
+max-width:400px;
+border-radius:10px;
+font-weight:900;
+font-size:18px;
 }
 
-header{
-    background: linear-gradient(180deg,rgba(0,0,0,.7),rgba(0,0,0,.9));
-    text-align:center;
-    padding:40px 15px;
-    box-shadow: inset 0 -10px 30px #ff6a00;
+.progress-container{
+width:80%;
+max-width:500px;
+margin:15px auto;
+background:#333;
+border-radius:50px;
+overflow:hidden;
 }
 
-header img{
-    max-width:190px;
-    filter: drop-shadow(0 0 15px #ff9800);
+.progress-bar{
+height:20px;
+background:#FFD700;
+width:100%;
+transition:0.5s;
 }
 
-header h1{
-    margin:20px 0 10px;
-    font-size:30px;
-    color:#ffb703;
-    text-shadow:0 0 10px #ff6a00;
+.contador{
+font-size:22px;
+margin:20px 0;
+color:#FFD700;
+font-weight:900;
 }
 
-header p{
-    font-size:17px;
-    margin-bottom:15px;
+.btn{
+display:inline-block;
+background:#25D366;
+color:#fff;
+padding:15px 25px;
+border-radius:50px;
+font-weight:700;
+text-decoration:none;
+margin:10px;
 }
 
-.btn-whatsapp{
-    display:inline-block;
-    background:#25D366;
-    color:#fff;
-    padding:16px 30px;
-    border-radius:50px;
-    font-size:20px;
-    text-decoration:none;
-    box-shadow:0 0 20px #25D366;
-}
-
-.countdown{
-    margin-top:15px;
-    font-size:18px;
-    color:#ffb703;
-    text-shadow:0 0 8px #ff6a00;
-}
-
-section{
-    padding:30px 15px;
-    max-width:900px;
-    margin:auto;
-}
-
-h2{
-    text-align:center;
-    color:#ffb703;
-    margin-bottom:20px;
-    text-shadow:0 0 10px #ff6a00;
-}
-
+.menu{padding:30px 20px;}
 .card{
-    background:linear-gradient(180deg,#1a0000,#000);
-    border-radius:18px;
-    padding:22px;
-    margin-bottom:18px;
-    border:2px solid #b71c1c;
-    box-shadow:0 0 15px rgba(255,106,0,.4);
-    text-align:center;
+background:#111;
+margin:15px auto;
+padding:20px;
+border-radius:10px;
+max-width:400px;
+border:2px solid #FFD700;
 }
 
-.menu-item{
-    display:flex;
-    justify-content:space-between;
-    margin-bottom:10px;
+.price{color:#ff3c3c;font-size:22px;font-weight:900;margin:10px 0;}
+.footer{padding:30px;background:#111;margin-top:40px;}
+
+.admin-panel{
+position:fixed;
+bottom:10px;
+left:10px;
+background:#222;
+padding:15px;
+border-radius:10px;
+display:none;
+text-align:left;
 }
 
-.badge{
-    background:#d62828;
-    padding:4px 10px;
-    border-radius:20px;
-    font-size:12px;
+.admin-panel button{
+margin:5px 3px;
+padding:5px 10px;
 }
 
-.qr-box img{
-    width:180px;
-    margin:15px 0;
-    border-radius:12px;
-    background:#fff;
-    padding:10px;
-}
-
-.qr-links a{
-    display:inline-block;
-    margin:5px 8px;
-    color:#fff;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-footer{
-    background:#000;
-    text-align:center;
-    padding:25px;
-    border-top:3px solid #b71c1c;
-}
-
-.fixed-whatsapp{
-    position:fixed;
-    right:20px;
-    bottom:80px;
-    background:#25D366;
-    color:#fff;
-    padding:16px 20px;
-    border-radius:50%;
-    font-size:26px;
-    text-decoration:none;
-}
-
-.social-bar{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    display:flex;
-    justify-content:space-around;
-    background:linear-gradient(135deg,#b71c1c,#ff6a00);
-    padding:12px 0;
-}
-
-.social-bar a{
-    color:#fff;
-    text-decoration:none;
-    font-weight:bold;
+.admin-toggle{
+position:fixed;
+bottom:10px;
+right:10px;
+font-size:12px;
+opacity:0.3;
+cursor:pointer;
 }
 </style>
 </head>
@@ -150,81 +102,135 @@ footer{
 <body>
 
 <header>
-    <img src="logo.png" alt="Go Pollo´s Rhosse">
-    <h1>Go Pollo´s Rhosse</h1>
-    <p>🔥 Pollos a la Leña Reales 🔥<br>Crujiente por fuera, jugoso por dentro</p>
 
-    <a class="btn-whatsapp" href="https://wa.me/59168972863/?text=Hola%20Quiero%20hacer%20un%20pedido"" target="_blank">
-        📲 Pedir por WhatsApp
-    </a>
+<img src="logo.png" class="logo">
 
-    <div class="countdown">
-        ⏰ Promo termina en: <span id="timer"></span>
-    </div>
+<h1>🔥 SOLO 8 POLLOS POR NOCHE 🔥</h1>
+
+<div class="stock-box" id="stockText"></div>
+
+<div class="progress-container">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="contador">
+⏳ Cierra en: <span id="timer"></span>
+</div>
+
+<a id="mainButton" class="btn" target="_blank">
+📲 RESERVAR AHORA
+</a>
+
 </header>
 
-<section>
-<h2>🍗 Nuestro Menú</h2>
-<div class="card">
-    <div class="menu-item"><span>Pollo Entero a la Leña</span><span class="badge">TOP</span></div>
-    <div class="menu-item"><span>Medio Pollo</span></div>
-    <div class="menu-item"><span>Cuarto de Pollo</span></div>
-</div>
+<section class="menu">
+<div class="card"><h3>Pollo Completo</h3><div class="price">100 Bs.</div></div>
+<div class="card"><h3>1/2 Pollo</h3><div class="price">59 Bs.</div></div>
+<div class="card"><h3>1/4 Pollo</h3><div class="price">25 Bs.</div></div>
+<div class="card"><h3>Cuarto Económico</h3><div class="price">15 Bs.</div></div>
 
-<div class="card">
-🔥 Combos<br><br>
-Combo Familiar – Pollo + Papas + Arroz<br>
-Combo Personal – ¼ Pollo + Papas
-</div>
+<p>📍 Av. Moxos 4 – Trinidad</p>
+<p>🕒 Lunes a Sábado | 6:30 pm – 10:30 pm</p>
+<p>🚚 Delivery y recojo</p>
 </section>
 
-<section>
-<h2>📲 Escanea y Síguenos</h2>
-<div class="card qr-box">
-    <strong>Escanea para pedir ahora</strong><br>
+<div class="footer">© 2026 Go Pollos Rhosse</div>
 
-    <!-- QR apunta a WhatsApp -->
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://wa.me/59168972863" alt="QR Go Pollo´s Rhosse">
-
-    <div class="qr-links">
-        <a href="https://wa.me/59168972863" target="_blank">💬 WhatsApp</a>
-        <a href="https://www.facebook.com/GoPollosRhosseTdd" target="_blank">📘 Facebook</a>
-        <a href="https://www.tiktok.com/@go.rhosse.pollos.tdd" target="_blank">🎵 TikTok</a>
-    </div>
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+<b>Panel Admin</b><br><br>
+<button onclick="changeStock(-1)">-1</button>
+<button onclick="changeStock(1)">+1</button>
+<button onclick="resetStock()">Reset 8</button>
 </div>
-</section>
 
-<footer>
-© 2026 Go Pollo´s Rhosse<br>
-Pedidos WhatsApp: <strong>68972863</strong>
-</footer>
-
-<a class="fixed-whatsapp" href="https://wa.me/59168972863" target="_blank">💬</a>
-
-<div class="social-bar">
-    <a href="https://wa.me/59168972863" target="_blank">💬 WhatsApp</a>
-    <a href="https://www.facebook.com/GoPollosRhosseTdd" target="_blank">📘 Facebook</a>
-    <a href="https://www.tiktok.com/@go.rhosse.pollos.tdd" target="_blank">🎵 TikTok</a>
-</div>
+<div class="admin-toggle" onclick="toggleAdmin()">⚙️</div>
 
 <script>
-// ⏰ CONTADOR REGRESIVO (24 HORAS DESDE QUE ABREN LA PÁGINA)
-const end = new Date().getTime() + (24 * 60 * 60 * 1000);
 
-setInterval(() => {
-  const now = new Date().getTime();
-  const distance = end - now;
+let maxStock = 8;
 
-  const h = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
-  const m = Math.floor((distance % (1000*60*60)) / (1000*60));
-  const s = Math.floor((distance % (1000*60)) / 1000);
+// Cargar stock guardado
+let stock = localStorage.getItem("stock");
+if(stock === null){
+    stock = maxStock;
+}else{
+    stock = parseInt(stock);
+}
 
-  document.getElementById("timer").innerHTML =
-    h + "h " + m + "m " + s + "s";
-}, 1000);
+function saveStock(){
+localStorage.setItem("stock", stock);
+}
+
+function updateStock(){
+let percent = (stock/maxStock)*100;
+document.getElementById("progressBar").style.width = percent+"%";
+
+if(stock > 0){
+document.getElementById("stockText").innerHTML =
+"⚠️ Solo quedan " + stock + " pollos disponibles";
+
+document.getElementById("mainButton").href =
+"https://wa.me/59168972863?text=Hola%20quiero%20reservar%20antes%20que%20se%20acaben";
+}else{
+document.getElementById("stockText").innerHTML =
+"❌ AGOTADO POR HOY";
+
+document.getElementById("mainButton").innerHTML =
+"Consultar mañana";
+
+document.getElementById("mainButton").href =
+"https://wa.me/59168972863?text=Hola%20quiero%20consultar%20disponibilidad%20para%20mañana";
+
+document.getElementById("progressBar").style.background="gray";
+}
+}
+
+function changeStock(value){
+stock += value;
+if(stock < 0) stock = 0;
+if(stock > maxStock) stock = maxStock;
+saveStock();
+updateStock();
+}
+
+function resetStock(){
+stock = maxStock;
+saveStock();
+updateStock();
+}
+
+function toggleAdmin(){
+let pass = prompt("Ingrese contraseña:");
+if(pass === "rhosse2026"){
+document.getElementById("adminPanel").style.display="block";
+}else{
+alert("Contraseña incorrecta");
+}
+}
+
+function updateTimer(){
+const now = new Date();
+const closing = new Date();
+closing.setHours(22,30,0);
+
+if(now > closing){
+closing.setDate(closing.getDate()+1);
+}
+
+const diff = closing - now;
+const h = Math.floor(diff/(1000*60*60));
+const m = Math.floor((diff%(1000*60*60))/(1000*60));
+const s = Math.floor((diff%(1000*60))/1000);
+
+document.getElementById("timer").innerHTML =
+h+"h "+m+"m "+s+"s";
+}
+
+updateStock();
+setInterval(updateTimer,1000);
+
 </script>
 
 </body>
 </html>
-
-
