@@ -120,15 +120,15 @@ function actualizarEstado() {
   const hora = ahora.getHours();
   const minuto = ahora.getMinutes();
 
-  const abrirHora = 0;
-  const abrirMin = 22;
+  const abrirHora = 16;
+  const abrirMin = 30;
   const cerrarHora = 22;
   const cerrarMin = 30;
 
   const estadoDiv = document.getElementById("estado");
 
   if (dia === 0) {
-    estadoDiv.innerHTML = "🔵 Mañana abrimos a las 6:30 pm";
+    estadoDiv.innerHTML = "🔵 Mañana abrimos a las 4:30 pm";
     estadoDiv.style.background = "#1e3a5f";
     return;
   }
@@ -147,7 +147,7 @@ function actualizarEstado() {
       const m = faltan % 60;
       estadoDiv.innerHTML = `⏳ Faltan ${h}h ${m}m para abrir`;
     } else {
-      estadoDiv.innerHTML = "🔵 Mañana abrimos a las 6:30 pm";
+      estadoDiv.innerHTML = "🔵 Mañana abrimos a las 4:30 pm";
     }
     estadoDiv.style.background = "#1e3a5f";
   }
