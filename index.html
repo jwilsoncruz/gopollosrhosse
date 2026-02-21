@@ -3,268 +3,211 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Menú Digital</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+<title>8 Pollos a la Leña</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Poppins',sans-serif;
-}
-
 body{
-  background:#f4f6f9;
+margin:0;
+font-family:'Poppins',sans-serif;
+background:#111;
+color:#fff;
+text-align:center;
 }
 
 header{
-  background:#111;
-  color:white;
-  padding:20px;
-  text-align:center;
-  font-size:22px;
-  font-weight:700;
-  letter-spacing:1px;
+background:linear-gradient(135deg,#b30000,#000);
+padding:20px;
+box-shadow:0 4px 20px rgba(0,0,0,.5);
+}
+
+.logo{
+font-size:28px;
+font-weight:700;
+color:#FFD700;
+}
+
+.sub{
+font-size:14px;
+opacity:.8;
 }
 
 .container{
-  padding:20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
+padding:20px;
+max-width:600px;
+margin:auto;
 }
 
 .card{
-  background:white;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 8px 25px rgba(0,0,0,0.08);
-  transition:0.4s;
-  animation:fadeIn 0.8s ease;
-}
-
-.card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 15px 35px rgba(0,0,0,0.15);
+background:#1c1c1c;
+border-radius:20px;
+padding:15px;
+margin-bottom:20px;
+box-shadow:0 8px 25px rgba(0,0,0,.5);
+animation:fadeIn .6s ease-in-out;
 }
 
 .card img{
-  width:100%;
-  height:200px;
-  object-fit:cover;
-}
-
-.card-body{
-  padding:15px;
-}
-
-.card-body h3{
-  font-size:18px;
-  margin-bottom:8px;
+width:100%;
+border-radius:15px;
 }
 
 .price{
-  font-weight:700;
-  margin-bottom:12px;
+font-size:22px;
+color:#FFD700;
+margin:10px 0;
 }
 
-.btn{
-  background:#25D366;
-  color:white;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  width:100%;
-  font-weight:600;
-  transition:0.3s;
+button{
+padding:10px 18px;
+border:none;
+border-radius:30px;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
 }
 
-.btn:hover{
-  background:#1ebe5d;
+.add{
+background:#b30000;
+color:#fff;
 }
 
-.cart-btn{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:#111;
-  color:white;
-  padding:15px 20px;
-  border-radius:50px;
-  cursor:pointer;
-  font-weight:600;
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-.cart-panel{
-  position:fixed;
-  right:-400px;
-  top:0;
-  width:350px;
-  height:100%;
-  background:white;
-  box-shadow:-10px 0 30px rgba(0,0,0,0.2);
-  padding:20px;
-  transition:0.4s;
-  overflow-y:auto;
-  z-index:999;
-}
-
-.cart-panel.active{
-  right:0;
-}
-
-.cart-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-  background:#f4f6f9;
-  padding:10px;
-  border-radius:10px;
+.add:hover{
+background:#ff0000;
 }
 
 .remove{
-  background:red;
-  color:white;
-  border:none;
-  padding:5px 10px;
-  border-radius:6px;
-  cursor:pointer;
+background:#444;
+color:#fff;
+margin-left:5px;
 }
 
-.total{
-  font-weight:700;
-  margin-top:15px;
-  font-size:18px;
+.cart{
+background:#000;
+padding:15px;
+border-radius:20px;
+margin-top:20px;
 }
 
 .whatsapp{
-  margin-top:15px;
-  background:#25D366;
-  width:100%;
-  padding:12px;
-  border:none;
-  color:white;
-  font-weight:600;
-  border-radius:10px;
-  cursor:pointer;
+background:#25D366;
+color:#fff;
+margin-top:10px;
+width:100%;
+}
+
+.counter{
+font-size:18px;
+margin:10px 0;
+}
+
+.timer{
+font-size:16px;
+color:#FFD700;
+margin-bottom:10px;
 }
 
 @keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
+from{opacity:0; transform:translateY(20px);}
+to{opacity:1; transform:translateY(0);}
 }
-
 </style>
 </head>
 <body>
 
-<header>MENÚ DIGITAL</header>
+<header>
+<div class="logo">🔥 POLLOS A LA LEÑA</div>
+<div class="sub">Producción limitada • Solo 8 por noche</div>
+</header>
 
 <div class="container">
 
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d" alt="">
-    <div class="card-body">
-      <h3>Pollo a la Leña</h3>
-      <div class="price">Bs 80</div>
-      <button class="btn" onclick="addToCart('Pollo a la Leña',80)">Agregar</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1550547660-d9450f859349" alt="">
-    <div class="card-body">
-      <h3>Hamburguesa Especial</h3>
-      <div class="price">Bs 35</div>
-      <button class="btn" onclick="addToCart('Hamburguesa Especial',35)">Agregar</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092" alt="">
-    <div class="card-body">
-      <h3>Pizza Familiar</h3>
-      <div class="price">Bs 90</div>
-      <button class="btn" onclick="addToCart('Pizza Familiar',90)">Agregar</button>
-    </div>
-  </div>
-
+<div class="timer">
+⏳ Cierre en: <span id="countdown"></span>
 </div>
 
-<div class="cart-btn" onclick="toggleCart()">🛒 Carrito (<span id="count">0</span>)</div>
+<div class="counter">
+🔥 Disponibles: <span id="available">8</span> / 8
+</div>
 
-<div class="cart-panel" id="cartPanel">
-  <h2>Tu Pedido</h2>
-  <div id="cartItems"></div>
-  <div class="total">Total: Bs <span id="total">0</span></div>
-  <button class="whatsapp" onclick="sendWhatsApp()">Enviar por WhatsApp</button>
+<div class="card">
+<img src="pollo.jpg" alt="Pollo a la leña">
+<h3>Pollo Entero + Papas + Ensalada</h3>
+<div class="price">Bs 90</div>
+<button class="add" onclick="addToCart()">Agregar</button>
+<button class="remove" onclick="removeFromCart()">Eliminar</button>
+</div>
+
+<div class="cart">
+<h3>🛒 Tu Pedido</h3>
+<p>Cantidad: <span id="qty">0</span></p>
+<p>Total: Bs <span id="total">0</span></p>
+<button class="whatsapp" onclick="sendOrder()">Enviar Pedido por WhatsApp</button>
+</div>
+
 </div>
 
 <script>
+let maxStock = 8;
+let available = 8;
+let qty = 0;
+let price = 90;
 
-let cart = [];
-
-function addToCart(name, price){
-  cart.push({name, price});
-  updateCart();
+function addToCart(){
+if(available > 0){
+qty++;
+available--;
+update();
+}
 }
 
-function removeItem(index){
-  cart.splice(index,1);
-  updateCart();
+function removeFromCart(){
+if(qty > 0){
+qty--;
+available++;
+update();
+}
 }
 
-function updateCart(){
-  let cartItems = document.getElementById("cartItems");
-  let total = 0;
-  cartItems.innerHTML = "";
-
-  cart.forEach((item,index)=>{
-    total += item.price;
-    cartItems.innerHTML += `
-      <div class="cart-item">
-        <div>
-          ${item.name}<br>
-          Bs ${item.price}
-        </div>
-        <button class="remove" onclick="removeItem(${index})">X</button>
-      </div>
-    `;
-  });
-
-  document.getElementById("total").innerText = total;
-  document.getElementById("count").innerText = cart.length;
+function update(){
+document.getElementById("qty").innerText = qty;
+document.getElementById("total").innerText = qty * price;
+document.getElementById("available").innerText = available;
 }
 
-function toggleCart(){
-  document.getElementById("cartPanel").classList.toggle("active");
+function sendOrder(){
+if(qty == 0){
+alert("Agrega al menos 1 pollo.");
+return;
+}
+let message = `Hola, quiero reservar ${qty} pollo(s) a la leña. Total Bs ${qty*price}`;
+let phone = "59168972863";
+window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,'_blank');
 }
 
-function sendWhatsApp(){
-  if(cart.length === 0){
-    alert("Tu carrito está vacío");
-    return;
-  }
+function startCountdown(){
+let closingTime = new Date();
+closingTime.setHours(22,0,0);
 
-  let message = "Hola, quiero hacer este pedido:%0A";
-  let total = 0;
+setInterval(()=>{
+let now = new Date();
+let diff = closingTime - now;
 
-  cart.forEach(item=>{
-    message += "- " + item.name + " Bs " + item.price + "%0A";
-    total += item.price;
-  });
-
-  message += "%0ATotal: Bs " + total;
-
-  window.open("https://wa.me/59168972863?text=" + message, "_blank");
+if(diff <= 0){
+document.getElementById("countdown").innerText = "Pedidos Cerrados";
+return;
 }
 
+let hours = Math.floor(diff/1000/60/60);
+let minutes = Math.floor(diff/1000/60)%60;
+let seconds = Math.floor(diff/1000)%60;
+
+document.getElementById("countdown").innerText =
+`${hours}h ${minutes}m ${seconds}s`;
+
+},1000);
+}
+
+startCountdown();
 </script>
 
 </body>
