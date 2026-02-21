@@ -4,212 +4,102 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Go Pollos Rhosse</title>
-<link rel="icon" type="image/png" href="favicon.ico">
+
+<meta name="description" content="Go Pollos Rhosse en Trinidad Beni. Pollo a la leña con arroz desde Bs 15. Reserva por WhatsApp.">
+<meta name="author" content="Wilson Cruz">
+<meta name="robots" content="index, follow">
 
 <style>
 body{
-margin:0;
-font-family:Arial, sans-serif;
-background:#0b1c2d;
-color:white;
-text-align:center;
-padding-bottom:120px;
+  font-family: Arial, sans-serif;
+  margin:0;
+  background:#f5f5f5;
 }
 
-.logo img{
-width:130px;
-margin:20px 0 10px 0;
-}
-
-.info{
-background:#13293d;
-margin:10px 20px;
-padding:12px;
-border-radius:12px;
-font-size:14px;
+header{
+  background:#b22222;
+  color:white;
+  text-align:center;
+  padding:20px;
 }
 
 .estado{
-margin:10px 20px;
-padding:12px;
-border-radius:12px;
-font-weight:bold;
+  padding:10px;
+  text-align:center;
+  color:white;
+  font-weight:bold;
 }
 
-.mesa{
-background:#c49a2c;
-color:#0b1c2d;
-margin:15px 20px;
-padding:15px;
-border-radius:15px;
-font-size:22px;
-font-weight:bold;
+.container{
+  padding:20px;
 }
 
-.stock{
-background:#13293d;
-margin:10px 20px;
-padding:10px;
-border-radius:12px;
+.categoria{
+  margin-top:30px;
+  font-size:22px;
+  color:#b22222;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;
 }
 
 .card{
-background:#13293d;
-margin:20px;
-border-radius:20px;
-overflow:hidden;
-box-shadow:0 0 15px rgba(0,0,0,0.5);
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  text-align:center;
 }
 
-.card img{
-width:100%;
-}
-
-.badge{
-background:#ffb703;
-color:#000;
-padding:5px 12px;
-border-radius:20px;
-font-size:12px;
-display:inline-block;
-margin-top:10px;
-}
-
-.card h3{
-margin:10px 0 5px 0;
-}
-
-.card p{
-font-size:14px;
-opacity:0.8;
+.card.destacado{
+  border:2px solid #ff9800;
 }
 
 .precio{
-font-size:20px;
-font-weight:bold;
-margin:10px 0;
-color:#ffb703;
+  font-size:18px;
+  font-weight:bold;
+  margin:8px 0;
 }
 
-.controles{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:15px;
-margin-bottom:15px;
-}
-
-.btn{
-background:#ffb703;
-border:none;
-padding:8px 15px;
-border-radius:8px;
-font-size:18px;
-cursor:pointer;
-}
-
-.btn:active{
-transform:scale(0.95);
-}
-
-.carrito{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:#c49a2c;
-color:#000;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 20px;
-font-weight:bold;
-}
-
-.enviar{
-background:#0b1c2d;
-color:white;
-border:none;
-padding:10px 18px;
-border-radius:20px;
-cursor:pointer;
+.boton{
+  background:#25D366;
+  color:white;
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<div class="logo">
-<img src="logo.png">
-</div>
-
-<div class="info">
-📍 Av. Moxos <br>
-🕡 Lunes a sábado – 6:30 pm a 10:30 pm
-</div>
+<header>
+  <h1>🍗 Go Pollos Rhosse</h1>
+  <p>Pollo a la leña con arroz</p>
+</header>
 
 <div id="estado" class="estado"></div>
 
-<div class="mesa" id="mesaTexto"></div>
+<div class="container">
 
-<div class="stock">
-🔥 Disponibles: <span id="disponibles">8</span> / 8
-</div>
+<h2 class="categoria">🍗 Pollos</h2>
+<div id="pollos" class="grid"></div>
 
-<div class="card">
-<img src="menu1.png">
-<div class="badge">🔥 MÁS PEDIDO</div>
-<h3>Menú Económico</h3>
-<p>Pieza de pollo a la leña + arroz</p>
-<div class="precio">Bs 15</div>
+<h2 class="categoria">🥤 Bebidas</h2>
+<div id="bebidas" class="grid"></div>
 
-<div class="controles">
-<button class="btn" onclick="cambiarCantidad(-1)">−</button>
-<span id="cantidad">0</span>
-<button class="btn" onclick="cambiarCantidad(1)">+</button>
-</div>
-</div>
+<h2 class="categoria">🍔 Extras</h2>
+<div id="extras" class="grid"></div>
 
-<div class="carrito">
-<div>
-🛒 <span id="totalProductos">0</span> productos | Total Bs <span id="total">0</span>
-</div>
-<button class="enviar" onclick="enviarPedido()">Enviar Pedido</button>
 </div>
 
 <script>
-// ===== DETECTAR MESA =====
-const params = new URLSearchParams(window.location.search);
-const mesa = params.get("mesa") || "1";
-document.getElementById("mesaTexto").innerHTML = "🍽️ MESA " + mesa;
-
-// ===== SISTEMA PEDIDO =====
-let cantidad = 0;
-let precio = 15;
-
-function cambiarCantidad(valor){
-cantidad += valor;
-if(cantidad < 0) cantidad = 0;
-
-document.getElementById("cantidad").innerText = cantidad;
-document.getElementById("totalProductos").innerText = cantidad;
-document.getElementById("total").innerText = cantidad * precio;
-}
-
-// ===== ENVIAR A WHATSAPP =====
-function enviarPedido(){
-if(cantidad === 0){
-alert("Agrega al menos un producto");
-return;
-}
-
-let mensaje = `Hola, pedido desde Mesa ${mesa}%0A`;
-mensaje += `Menú Económico x${cantidad} = Bs ${cantidad * precio}`;
-
-window.open(`https://wa.me/59168972863?text=${mensaje}`, "_blank");
-}
-
-// ===== ESTADO INTELIGENTE =====
+// ===== HORARIO =====
 function actualizarEstado() {
   const ahora = new Date();
   const dia = ahora.getDay();
@@ -252,6 +142,46 @@ function actualizarEstado() {
 actualizarEstado();
 setInterval(actualizarEstado, 60000);
 
+// ===== PRODUCTOS =====
+const productos = [
+  {categoria:"pollos", nombre:"Menú Económico", precio:15, descripcion:"Pieza + arroz", destacado:true},
+  {categoria:"pollos", nombre:"Cuarto Pollo", precio:25, descripcion:"Cuarto + arroz"},
+  {categoria:"pollos", nombre:"Medio Pollo", precio:50, descripcion:"Medio + arroz"},
+  {categoria:"pollos", nombre:"Pollo Entero", precio:100, descripcion:"Entero + arroz"},
+
+  {categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, descripcion:"2 litros"},
+  {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, descripcion:"500ml"},
+
+  {categoria:"extras", nombre:"Anticucho", precio:18, descripcion:"3 palitos + papa"},
+  {categoria:"extras", nombre:"Hamburguesa", precio:20, descripcion:"Carne + papas"}
+];
+
+function crearProducto(prod){
+  const div = document.createElement("div");
+  div.className = "card" + (prod.destacado ? " destacado" : "");
+  div.innerHTML = `
+    <h3>${prod.nombre}</h3>
+    <p>${prod.descripcion}</p>
+    <div class="precio">Bs ${prod.precio}</div>
+    <button class="boton" onclick="pedir('${prod.nombre}', ${prod.precio})">
+      Reservar
+    </button>
+  `;
+  return div;
+}
+
+function cargarProductos(){
+  productos.forEach(p => {
+    document.getElementById(p.categoria).appendChild(crearProducto(p));
+  });
+}
+
+function pedir(nombre, precio){
+  const mensaje = `Hola, quiero reservar:\nProducto: ${nombre}\nPrecio: Bs ${precio}\nMesa:`;
+  window.open(`https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`, "_blank");
+}
+
+cargarProductos();
 </script>
 
 </body>
