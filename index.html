@@ -11,7 +11,7 @@
 --azul:#0d1b2a;
 --azul2:#1b263b;
 --naranja:#ff7b00;
---gris:rgba(255,255,255,0.05);
+--card:rgba(255,255,255,0.05);
 }
 
 body{
@@ -27,8 +27,8 @@ margin:auto;
 padding:20px;
 }
 
-.logo{text-align:center;margin-bottom:10px;}
-.logo img{width:140px;}
+.logo{text-align:center;margin-bottom:10px;cursor:pointer;}
+.logo img{width:150px;}
 
 .info{
 text-align:center;
@@ -38,12 +38,11 @@ margin-bottom:15px;
 }
 
 .stock{
-background:var(--gris);
+background:var(--card);
 padding:12px;
 border-radius:15px;
 text-align:center;
 margin-bottom:10px;
-font-size:15px;
 }
 
 .stock strong{
@@ -59,18 +58,26 @@ margin-bottom:20px;
 }
 
 .card{
-background:var(--gris);
-padding:15px;
+background:var(--card);
 border-radius:20px;
-margin-bottom:15px;
+overflow:hidden;
+margin-bottom:18px;
 box-shadow:0 8px 30px rgba(0,0,0,.4);
-animation:fade .5s ease;
 }
 
 .card img{
 width:100%;
-border-radius:15px;
-margin-bottom:10px;
+height:200px;
+object-fit:cover;
+transition:.4s;
+}
+
+.card:hover img{
+transform:scale(1.05);
+}
+
+.content{
+padding:15px;
 }
 
 .price{
@@ -99,7 +106,7 @@ transition:.3s;
 .remove{background:#333;color:white;}
 
 .cart{
-background:var(--gris);
+background:var(--card);
 padding:15px;
 border-radius:20px;
 margin-top:20px;
@@ -123,17 +130,24 @@ margin-top:10px;
 color:#ffaaaa;
 }
 
-@keyframes fade{
-from{opacity:0;transform:translateY(15px);}
-to{opacity:1;transform:translateY(0);}
+.admin{
+display:none;
+margin-top:15px;
+text-align:center;
+opacity:.7;
 }
+
+.admin button{
+margin:5px;
+}
+
 </style>
 </head>
 
 <body>
 <div class="app">
 
-<div class="logo">
+<div class="logo" onclick="tapLogo()">
 <img src="logo.png" alt="Go Pollos Rhosse">
 </div>
 
@@ -157,6 +171,13 @@ Av. Moxos • 6:30pm a 10:30pm
 <h3>Total: Bs <span id="total">0</span></h3>
 <button class="whatsapp" onclick="sendOrder()">Reservar por WhatsApp</button>
 <div id="agotadoMsg"></div>
+
+<div class="admin" id="adminPanel">
+<button onclick="adjustStock(-1)">➖ -1</button>
+<button onclick="adjustStock(1)">➕ +1</button>
+<button onclick="resetStock()">🔄 Reset</button>
+</div>
+
 </div>
 
 </div>
@@ -164,12 +185,14 @@ Av. Moxos • 6:30pm a 10:30pm
 <script>
 let maxStock = 8;
 let stock = parseFloat(localStorage.getItem("stock")) || 8;
+let tapCount = 0;
+let adminActive = false;
 
 let productos = [
-{name:"Completo", precio:100, consumo:1},
-{name:"Medio", precio:59, consumo:0.5},
-{name:"Cuarto", precio:25, consumo:0},
-{name:"Económico", precio:15, consumo:0}
+{name:"Completo", precio:100, consumo:1, img:"completo.jpg"},
+{name:"Medio", precio:59, consumo:0.5, img:"medio.jpg"},
+{name:"Cuarto", precio:25, consumo:0, img:"cuarto.jpg"},
+{name:"Económico", precio:15, consumo:0, img:"economico.jpg"}
 ];
 
 let carrito = JSON.parse(localStorage.getItem("carrito")) || {};
@@ -180,11 +203,14 @@ cont.innerHTML="";
 productos.forEach((p,i)=>{
 cont.innerHTML+=`
 <div class="card">
+<img src="${p.img}">
+<div class="content">
 <h3>${p.name}</h3>
 <div class="price">Bs ${p.precio}</div>
 <div class="controls">
 <button class="add" onclick="add(${i})">Agregar</button>
 <button class="remove" onclick="remove(${i})">Eliminar</button>
+</div>
 </div>
 </div>`;
 });
@@ -193,7 +219,6 @@ cont.innerHTML+=`
 function add(i){
 let p=productos[i];
 if(p.consumo>0 && stock-p.consumo<0) return;
-
 carrito[p.name]=(carrito[p.name]||0)+1;
 stock-=p.consumo;
 update();
@@ -202,7 +227,6 @@ update();
 function remove(i){
 let p=productos[i];
 if(!carrito[p.name]) return;
-
 carrito[p.name]--;
 if(carrito[p.name]<=0) delete carrito[p.name];
 stock+=p.consumo;
@@ -228,7 +252,6 @@ document.getElementById("total").innerText=total;
 
 if(stock<=0){
 document.getElementById("agotadoMsg").innerHTML="<div class='agotado'>🔥 POLLOS AGOTADOS</div>";
-playSound();
 }else{
 document.getElementById("agotadoMsg").innerHTML="";
 }
@@ -264,9 +287,29 @@ document.getElementById("countdown").innerText=`${h}h ${m}m ${s}s`;
 },1000);
 }
 
-function playSound(){
-let audio=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-audio.play();
+function tapLogo(){
+tapCount++;
+if(tapCount>=5){
+let pass=prompt("Clave administrador:");
+if(pass==="1234"){
+adminActive=true;
+document.getElementById("adminPanel").style.display="block";
+}
+tapCount=0;
+}
+}
+
+function adjustStock(val){
+stock+=val;
+if(stock<0) stock=0;
+if(stock>8) stock=8;
+update();
+}
+
+function resetStock(){
+stock=8;
+carrito={};
+update();
 }
 
 renderProductos();
