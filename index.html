@@ -3,211 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>8 Pollos a la Leña</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<title>Go Pollos Rhosse</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+:root{
+--azul:#0d1b2a;
+--azul2:#1b263b;
+--naranja:#ff7b00;
+--gris:rgba(255,255,255,0.05);
+}
+
 body{
 margin:0;
 font-family:'Poppins',sans-serif;
-background:#111;
-color:#fff;
-text-align:center;
+background:var(--azul);
+color:white;
 }
 
-header{
-background:linear-gradient(135deg,#b30000,#000);
-padding:20px;
-box-shadow:0 4px 20px rgba(0,0,0,.5);
-}
-
-.logo{
-font-size:28px;
-font-weight:700;
-color:#FFD700;
-}
-
-.sub{
-font-size:14px;
-opacity:.8;
-}
-
-.container{
-padding:20px;
-max-width:600px;
+.app{
+max-width:520px;
 margin:auto;
+padding:20px;
+}
+
+.logo{text-align:center;margin-bottom:10px;}
+.logo img{width:140px;}
+
+.info{
+text-align:center;
+font-size:13px;
+opacity:.7;
+margin-bottom:15px;
+}
+
+.stock{
+background:var(--gris);
+padding:12px;
+border-radius:15px;
+text-align:center;
+margin-bottom:10px;
+font-size:15px;
+}
+
+.stock strong{
+color:var(--naranja);
+font-size:18px;
+}
+
+.timer{
+text-align:center;
+font-size:13px;
+opacity:.7;
+margin-bottom:20px;
 }
 
 .card{
-background:#1c1c1c;
-border-radius:20px;
+background:var(--gris);
 padding:15px;
-margin-bottom:20px;
-box-shadow:0 8px 25px rgba(0,0,0,.5);
-animation:fadeIn .6s ease-in-out;
+border-radius:20px;
+margin-bottom:15px;
+box-shadow:0 8px 30px rgba(0,0,0,.4);
+animation:fade .5s ease;
 }
 
 .card img{
 width:100%;
 border-radius:15px;
+margin-bottom:10px;
 }
 
 .price{
-font-size:22px;
-color:#FFD700;
-margin:10px 0;
+color:var(--naranja);
+font-weight:600;
+margin-bottom:10px;
+}
+
+.controls{
+display:flex;
+gap:10px;
+justify-content:center;
 }
 
 button{
-padding:10px 18px;
 border:none;
 border-radius:30px;
+padding:8px 15px;
 font-weight:600;
 cursor:pointer;
 transition:.3s;
 }
 
-.add{
-background:#b30000;
-color:#fff;
-}
-
-.add:hover{
-background:#ff0000;
-}
-
-.remove{
-background:#444;
-color:#fff;
-margin-left:5px;
-}
+.add{background:var(--azul2);color:white;}
+.add:hover{background:var(--naranja);}
+.remove{background:#333;color:white;}
 
 .cart{
-background:#000;
+background:var(--gris);
 padding:15px;
 border-radius:20px;
 margin-top:20px;
 }
 
 .whatsapp{
-background:#25D366;
-color:#fff;
-margin-top:10px;
+background:var(--naranja);
 width:100%;
+padding:12px;
+color:white;
+font-size:15px;
+margin-top:10px;
 }
 
-.counter{
-font-size:18px;
-margin:10px 0;
+.agotado{
+background:#550000;
+padding:10px;
+border-radius:10px;
+text-align:center;
+margin-top:10px;
+color:#ffaaaa;
 }
 
-.timer{
-font-size:16px;
-color:#FFD700;
-margin-bottom:10px;
-}
-
-@keyframes fadeIn{
-from{opacity:0; transform:translateY(20px);}
-to{opacity:1; transform:translateY(0);}
+@keyframes fade{
+from{opacity:0;transform:translateY(15px);}
+to{opacity:1;transform:translateY(0);}
 }
 </style>
 </head>
+
 <body>
+<div class="app">
 
-<header>
-<div class="logo">🔥 POLLOS A LA LEÑA</div>
-<div class="sub">Producción limitada • Solo 8 por noche</div>
-</header>
+<div class="logo">
+<img src="logo.png" alt="Go Pollos Rhosse">
+</div>
 
-<div class="container">
+<div class="info">
+Av. Moxos • 6:30pm a 10:30pm
+</div>
+
+<div class="stock">
+🔥 Disponibles: <strong><span id="available">8</span></strong> / 8
+</div>
 
 <div class="timer">
-⏳ Cierre en: <span id="countdown"></span>
+⏳ Cierre en <span id="countdown"></span>
 </div>
 
-<div class="counter">
-🔥 Disponibles: <span id="available">8</span> / 8
-</div>
-
-<div class="card">
-<img src="pollo.jpg" alt="Pollo a la leña">
-<h3>Pollo Entero + Papas + Ensalada</h3>
-<div class="price">Bs 90</div>
-<button class="add" onclick="addToCart()">Agregar</button>
-<button class="remove" onclick="removeFromCart()">Eliminar</button>
-</div>
+<div id="productos"></div>
 
 <div class="cart">
 <h3>🛒 Tu Pedido</h3>
-<p>Cantidad: <span id="qty">0</span></p>
-<p>Total: Bs <span id="total">0</span></p>
-<button class="whatsapp" onclick="sendOrder()">Enviar Pedido por WhatsApp</button>
+<div id="resumen"></div>
+<h3>Total: Bs <span id="total">0</span></h3>
+<button class="whatsapp" onclick="sendOrder()">Reservar por WhatsApp</button>
+<div id="agotadoMsg"></div>
 </div>
 
 </div>
 
 <script>
 let maxStock = 8;
-let available = 8;
-let qty = 0;
-let price = 90;
+let stock = parseFloat(localStorage.getItem("stock")) || 8;
 
-function addToCart(){
-if(available > 0){
-qty++;
-available--;
+let productos = [
+{name:"Completo", precio:100, consumo:1},
+{name:"Medio", precio:59, consumo:0.5},
+{name:"Cuarto", precio:25, consumo:0},
+{name:"Económico", precio:15, consumo:0}
+];
+
+let carrito = JSON.parse(localStorage.getItem("carrito")) || {};
+
+function renderProductos(){
+let cont = document.getElementById("productos");
+cont.innerHTML="";
+productos.forEach((p,i)=>{
+cont.innerHTML+=`
+<div class="card">
+<h3>${p.name}</h3>
+<div class="price">Bs ${p.precio}</div>
+<div class="controls">
+<button class="add" onclick="add(${i})">Agregar</button>
+<button class="remove" onclick="remove(${i})">Eliminar</button>
+</div>
+</div>`;
+});
+}
+
+function add(i){
+let p=productos[i];
+if(p.consumo>0 && stock-p.consumo<0) return;
+
+carrito[p.name]=(carrito[p.name]||0)+1;
+stock-=p.consumo;
 update();
 }
-}
 
-function removeFromCart(){
-if(qty > 0){
-qty--;
-available++;
+function remove(i){
+let p=productos[i];
+if(!carrito[p.name]) return;
+
+carrito[p.name]--;
+if(carrito[p.name]<=0) delete carrito[p.name];
+stock+=p.consumo;
 update();
-}
 }
 
 function update(){
-document.getElementById("qty").innerText = qty;
-document.getElementById("total").innerText = qty * price;
-document.getElementById("available").innerText = available;
+localStorage.setItem("carrito",JSON.stringify(carrito));
+localStorage.setItem("stock",stock);
+
+document.getElementById("available").innerText=stock;
+
+let resumen="";
+let total=0;
+for(let k in carrito){
+let p=productos.find(x=>x.name==k);
+let subtotal=carrito[k]*p.precio;
+total+=subtotal;
+resumen+=`${k} x${carrito[k]} = Bs ${subtotal}<br>`;
+}
+document.getElementById("resumen").innerHTML=resumen||"Sin productos";
+document.getElementById("total").innerText=total;
+
+if(stock<=0){
+document.getElementById("agotadoMsg").innerHTML="<div class='agotado'>🔥 POLLOS AGOTADOS</div>";
+playSound();
+}else{
+document.getElementById("agotadoMsg").innerHTML="";
+}
 }
 
 function sendOrder(){
-if(qty == 0){
-alert("Agrega al menos 1 pollo.");
+if(Object.keys(carrito).length==0){
+alert("Agrega productos primero");
 return;
 }
-let message = `Hola, quiero reservar ${qty} pollo(s) a la leña. Total Bs ${qty*price}`;
-let phone = "59168972863";
-window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`,'_blank');
+let mensaje="Hola, quiero reservar:\n";
+for(let k in carrito){
+mensaje+=`${k} x${carrito[k]}\n`;
+}
+mensaje+=`Total Bs ${document.getElementById("total").innerText}`;
+window.open(`https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`,'_blank');
 }
 
-function startCountdown(){
-let closingTime = new Date();
-closingTime.setHours(22,0,0);
-
+function countdown(){
+let close=new Date();
+close.setHours(22,30,0);
 setInterval(()=>{
-let now = new Date();
-let diff = closingTime - now;
-
-if(diff <= 0){
-document.getElementById("countdown").innerText = "Pedidos Cerrados";
+let now=new Date();
+let diff=close-now;
+if(diff<=0){
+document.getElementById("countdown").innerText="Cerrado";
 return;
 }
-
-let hours = Math.floor(diff/1000/60/60);
-let minutes = Math.floor(diff/1000/60)%60;
-let seconds = Math.floor(diff/1000)%60;
-
-document.getElementById("countdown").innerText =
-`${hours}h ${minutes}m ${seconds}s`;
-
+let h=Math.floor(diff/1000/60/60);
+let m=Math.floor(diff/1000/60)%60;
+let s=Math.floor(diff/1000)%60;
+document.getElementById("countdown").innerText=`${h}h ${m}m ${s}s`;
 },1000);
 }
 
-startCountdown();
+function playSound(){
+let audio=new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+audio.play();
+}
+
+renderProductos();
+update();
+countdown();
 </script>
 
 </body>
