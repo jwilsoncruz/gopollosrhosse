@@ -3,111 +3,193 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pollos a la leña - Go Pollos Rhosse- Trinidad, Bolivia</title>
+<title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Bolivia</title>
+<link rel="icon" href="favicon.ico">
 
 <style>
 body{
-  font-family: Arial, sans-serif;
-  margin:0;
-  background:#f5f5f5;
+ font-family: Arial, sans-serif;
+ margin:0;
+ background:#f5f5f5;
 }
 
-header {
-    text-align: center;
-    padding: 40px 20px;
-    background: #d50000; /* Rojo en TODO el header */
-    color: white; /* Texto blanco para que contraste */
+header{
+ text-align:center;
+ padding:40px 20px;
+ background:#d50000;
+ color:white;
 }
 
-.logo {
-    max-width: 200px;
-    width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto 15px auto;
+.logo{
+ max-width:200px;
+ display:block;
+ margin:0 auto 15px auto;
 }
+
 .estado{
-  padding:10px;
-  text-align:center;
-  color:white;
-  font-weight:bold;
+ padding:10px;
+ text-align:center;
+ color:white;
+ font-weight:bold;
 }
 
-.container{
-  padding:20px;
-}
+.container{ padding:20px; }
 
 .categoria{
-  margin-top:35px;
-  font-size:22px;
-  color:#d50000;
+ margin-top:35px;
+ font-size:22px;
+ color:#d50000;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-  gap:15px;
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ gap:15px;
 }
 
 .card{
-  background:white;
-  padding:15px;
-  border-radius:14px;
-  box-shadow:0 6px 16px rgba(0,0,0,0.08);
-  text-align:center;
+ background:white;
+ padding:15px;
+ border-radius:14px;
+ box-shadow:0 6px 16px rgba(0,0,0,0.08);
+ text-align:center;
 }
 
 .card img{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-  border-radius:10px;
+ width:100%;
+ height:120px;
+ object-fit:cover;
+ border-radius:10px;
 }
 
-.precio{
-  font-weight:bold;
-  margin:8px 0;
-}
+.precio{ font-weight:bold; margin:8px 0; }
 
 .boton{
-  background:#25D366;
-  color:white;
-  padding:8px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:bold;
+ background:#25D366;
+ color:white;
+ padding:8px;
+ border:none;
+ border-radius:8px;
+ cursor:pointer;
+ font-weight:bold;
 }
 
 .carrito{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:white;
-  box-shadow:0 -3px 10px rgba(0,0,0,0.1);
-  padding:15px;
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ background:white;
+ box-shadow:0 -3px 10px rgba(0,0,0,0.1);
+ padding:15px;
 }
 
-.total{
-  font-weight:bold;
-  font-size:18px;
+.total{ font-weight:bold; font-size:18px; }
+
+/* ===== COCINA ===== */
+.cocina-card{
+ background:white;
+ margin:15px;
+ padding:15px;
+ border-left:6px solid #d50000;
+ border-radius:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.estado-btn{
+ margin-top:8px;
+ background:#d50000;
+ color:white;
+ border:none;
+ padding:6px 10px;
+ border-radius:6px;
+ cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
+<script>
+const params = new URLSearchParams(window.location.search);
+const modo = params.get("modo");
+</script>
+
+<div id="app"></div>
+
+<script>
+
+// ================== MODO COCINA ==================
+
+if(modo === "cocina"){
+
+document.getElementById("app").innerHTML = `
 <header>
-  <img src="logo.png" alt="Logo Go Pollos Rhosse" class="logo">
-<h1>Pollos a la leña - Go Pollos Rhosse- Trinidad, Bolivia</h1>
-<p>Saludable Pollo a la leña |Arroz|Platano|Papas</p>
+<h1>🍗 PANTALLA COCINA</h1>
+</header>
+<div id="listaPedidos"></div>
+<audio id="alerta" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+`;
+
+function cargarPedidos(){
+ let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+ let html = "";
+ pedidos.forEach((p,i)=>{
+   if(p.estado !== "Entregado"){
+     html += `
+     <div class="cocina-card">
+       <h3>Mesa ${p.mesa}</h3>
+       <p>${p.detalle}</p>
+       <strong>Total: Bs ${p.total}</strong><br>
+       Estado: ${p.estado}<br>
+       <button class="estado-btn" onclick="cambiarEstado(${i})">
+       Cambiar Estado
+       </button>
+     </div>
+     `;
+   }
+ });
+ document.getElementById("listaPedidos").innerHTML = html;
+}
+
+function cambiarEstado(i){
+ let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+ let p = pedidos[i];
+
+ if(p.estado === "Nuevo") p.estado = "En preparación";
+ else if(p.estado === "En preparación") p.estado = "Listo";
+ else p.estado = "Entregado";
+
+ pedidos[i] = p;
+ localStorage.setItem("pedidos", JSON.stringify(pedidos));
+ cargarPedidos();
+}
+
+let ultimoTotal = 0;
+
+setInterval(()=>{
+ let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+ if(pedidos.length > ultimoTotal){
+   document.getElementById("alerta").play();
+   ultimoTotal = pedidos.length;
+ }
+ cargarPedidos();
+},1000);
+
+}
+
+// ================== MODO CLIENTE ==================
+
+else{
+
+document.getElementById("app").innerHTML = `
+<header>
+<img src="logo.png" class="logo">
+<h1>Pollos a la leña - Go Pollos Rhosse</h1>
+<p>Saludable Pollo a la leña | Arroz | Plátano | Papas</p>
 </header>
 
-<div id="estado" class="estado"></div>
-
 <div class="container">
-
 <h2 class="categoria">🍗 Pollos a la leña</h2>
 <div id="pollos" class="grid"></div>
 
@@ -116,99 +198,119 @@ header {
 
 <h2 class="categoria">🍔 Extras</h2>
 <div id="extras" class="grid"></div>
-
 </div>
 
 <div class="carrito">
-<div id="resumen"></div>
+<div id="resumen">Sin productos</div>
 <div class="total" id="total">Total: Bs 0</div>
-<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
+<button class="boton" onclick="enviarPedido()">
+Enviar pedido por WhatsApp
+</button>
 </div>
+`;
 
-<script>
-
-// ===== MESA =====
 function obtenerMesa(){
-  const params = new URLSearchParams(window.location.search);
-  return params.get("mesa") || "No especificada";
+ const params = new URLSearchParams(window.location.search);
+ return params.get("mesa") || "No especificada";
 }
 
-// ===== PRODUCTOS CON IMÁGENES =====
-// Cambia las imágenes por tus archivos reales
 const productos = [
-  {categoria:"pollos", nombre:"Menú Económico", precio:15, img:"menu.jpg"},
-  {categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"cuarto.jpg"},
-  {categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"medio.jpg"},
-  {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
-
-  {categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
-  {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
-
-  {categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
-  {categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}
+{categoria:"pollos", nombre:"Menú Económico", precio:15, img:"menu.jpg"},
+{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"cuarto.jpg"},
+{categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"medio.jpg"},
+{categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
+{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
+{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}
 ];
 
 let carrito = [];
 
 function crearProducto(prod){
-  const div = document.createElement("div");
-  div.className="card";
-  div.innerHTML = `
-    <img src="${prod.img}">
-    <h3>${prod.nombre}</h3>
-    <div class="precio">Bs ${prod.precio}</div>
-    <button class="boton" onclick="agregar('${prod.nombre}', ${prod.precio})">
-      Agregar
-    </button>
-  `;
-  return div;
+ const div = document.createElement("div");
+ div.className="card";
+ div.innerHTML = `
+ <img src="${prod.img}">
+ <h3>${prod.nombre}</h3>
+ <div class="precio">Bs ${prod.precio}</div>
+ <button class="boton"
+ onclick="agregar('${prod.nombre}',${prod.precio})">
+ Agregar
+ </button>
+ `;
+ return div;
 }
 
 function cargarProductos(){
-  productos.forEach(p=>{
-    document.getElementById(p.categoria).appendChild(crearProducto(p));
-  });
+ productos.forEach(p=>{
+   document.getElementById(p.categoria)
+   .appendChild(crearProducto(p));
+ });
 }
 
 function agregar(nombre, precio){
-  carrito.push({nombre, precio});
-  actualizarCarrito();
+ carrito.push({nombre, precio});
+ actualizarCarrito();
 }
 
 function actualizarCarrito(){
-  let resumenHTML="";
-  let total=0;
+ let resumenHTML="";
+ let total=0;
 
-  carrito.forEach((item,i)=>{
-    total += item.precio;
-    resumenHTML += `${item.nombre} - Bs ${item.precio}<br>`;
-  });
+ carrito.forEach(item=>{
+   total += item.precio;
+   resumenHTML += `${item.nombre} - Bs ${item.precio}<br>`;
+ });
 
-  document.getElementById("resumen").innerHTML = resumenHTML || "Sin productos";
-  document.getElementById("total").innerHTML = "Total: Bs " + total;
+ document.getElementById("resumen").innerHTML =
+ resumenHTML || "Sin productos";
+
+ document.getElementById("total").innerHTML =
+ "Total: Bs " + total;
 }
 
 function enviarPedido(){
-  if(carrito.length === 0){
-    alert("Agrega al menos un producto");
-    return;
-  }
+ if(carrito.length===0){
+   alert("Agrega al menos un producto");
+   return;
+ }
 
-  let mensaje = "Hola, quiero hacer este pedido:\n\n";
-  let total=0;
+ let mensaje="Hola, quiero hacer este pedido:\n\n";
+ let detalle="";
+ let total=0;
 
-  carrito.forEach(item=>{
-    mensaje += `${item.nombre} - Bs ${item.precio}\n`;
-    total += item.precio;
-  });
+ carrito.forEach(item=>{
+   mensaje+=`${item.nombre} - Bs ${item.precio}\n`;
+   detalle+=`${item.nombre} - Bs ${item.precio}<br>`;
+   total+=item.precio;
+ });
 
-  mensaje += `\nTotal: Bs ${total}`;
-  mensaje += `\nMesa: ${obtenerMesa()}`;
+ mensaje+=`\nTotal: Bs ${total}`;
+ mensaje+=`\nMesa: ${obtenerMesa()}`;
 
-  window.open(`https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`, "_blank");
+ let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+ pedidos.push({
+   mesa: obtenerMesa(),
+   detalle: detalle,
+   total: total,
+   estado: "Nuevo"
+ });
+
+ localStorage.setItem("pedidos", JSON.stringify(pedidos));
+
+ window.open(
+ `https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`,
+ "_blank"
+ );
+
+ carrito=[];
+ actualizarCarrito();
 }
 
 cargarProductos();
+}
 </script>
 
 </body>
