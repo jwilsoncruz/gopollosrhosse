@@ -26,13 +26,6 @@ header{
  margin:0 auto 15px auto;
 }
 
-.estado{
- padding:10px;
- text-align:center;
- color:white;
- font-weight:bold;
-}
-
 .container{ padding:20px; }
 
 .categoria{
@@ -87,6 +80,7 @@ header{
 .total{ font-weight:bold; font-size:18px; }
 
 /* ===== COCINA ===== */
+
 .cocina-card{
  background:white;
  margin:15px;
@@ -110,18 +104,15 @@ header{
 
 <body>
 
-<script>
-const params = new URLSearchParams(window.location.search);
-const modo = params.get("modo");
-</script>
-
 <div id="app"></div>
 
 <script>
 
+const params = new URLSearchParams(window.location.search);
+const modo = params.get("modo");
+
 // ================== MODO COCINA ==================
 
-<script>
 if(modo === "cocina"){
 
 document.getElementById("app").innerHTML = `
@@ -202,7 +193,7 @@ setInterval(()=>{
 },1000);
 
 }
-</script>
+
 // ================== MODO CLIENTE ==================
 
 else{
@@ -259,8 +250,7 @@ function crearProducto(prod){
  <img src="${prod.img}">
  <h3>${prod.nombre}</h3>
  <div class="precio">Bs ${prod.precio}</div>
- <button class="boton"
- onclick="agregar('${prod.nombre}',${prod.precio})">
+ <button class="boton" onclick="agregar('${prod.nombre}',${prod.precio})">
  Agregar
  </button>
  `;
@@ -285,7 +275,7 @@ function actualizarCarrito(){
 
  carrito.forEach(item=>{
    total += item.precio;
-   resumenHTML += `${item.nombre} - Bs ${item.precio}<br>`;
+   resumenHTML += item.nombre + " - Bs " + item.precio + "<br>";
  });
 
  document.getElementById("resumen").innerHTML =
@@ -306,13 +296,13 @@ function enviarPedido(){
  let total=0;
 
  carrito.forEach(item=>{
-   mensaje+=`${item.nombre} - Bs ${item.precio}\n`;
-   detalle+=`${item.nombre} - Bs ${item.precio}<br>`;
+   mensaje+= item.nombre + " - Bs " + item.precio + "\n";
+   detalle+= item.nombre + " - Bs " + item.precio + "<br>";
    total+=item.precio;
  });
 
- mensaje+=`\nTotal: Bs ${total}`;
- mensaje+=`\nMesa: ${obtenerMesa()}`;
+ mensaje+= "\nTotal: Bs " + total;
+ mensaje+= "\nMesa: " + obtenerMesa();
 
  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
 
@@ -326,7 +316,7 @@ function enviarPedido(){
  localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
  window.open(
- `https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`,
+ "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje),
  "_blank"
  );
 
@@ -335,7 +325,9 @@ function enviarPedido(){
 }
 
 cargarProductos();
+
 }
+
 </script>
 
 </body>
