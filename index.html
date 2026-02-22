@@ -215,6 +215,12 @@ document.getElementById("app").innerHTML = `
 <h1>Pollos a la Leña - Go Pollos Rhosse en Trinidad|Beni|Bolivia</h1>
 <p>Saludable Pollo a la Leña | Arroz | Plátano | Papas</p>
 <p>Av. Moxos - Zona Mercado Pompeya</p>
+<div id="estadoLocal" style="margin:10px 0;font-weight:bold;"></div>
+
+<div style="background:#eee;border-radius:10px;overflow:hidden;margin:10px 0;">
+  <div id="barraPollos" style="height:20px;background:#d32f2f;width:75%;transition:0.5s;"></div>
+</div>
+<div id="textoEscasez" style="font-weight:bold;color:#d32f2f;"></div>
 </header>
 
 <div class="container">
@@ -345,6 +351,77 @@ function enviarPedido(){
 cargarProductos();
 
 }
+
+</script>
+
+ <script>
+
+// ===== CONFIGURACIÓN =====
+const aperturaHora = 18; // 6 PM
+const aperturaMin = 30;
+const cierreHora = 22; // 10 PM
+const cierreMin = 30;
+
+const totalPollos = 8;
+let pollosDisponibles = 2; // 🔥 cámbialo cada noche
+
+// ===== RELOJ Y ESTADO =====
+function actualizarEstado() {
+  const ahora = new Date();
+  const dia = ahora.getDay(); // 0 domingo
+  const horaActual = ahora.getHours();
+  const minActual = ahora.getMinutes();
+
+  const estado = document.getElementById("estadoLocal");
+
+  const abierto =
+    dia >= 1 && dia <= 6 &&
+    (
+      (horaActual > aperturaHora || (horaActual === aperturaHora && minActual >= aperturaMin)) &&
+      (horaActual < cierreHora || (horaActual === cierreHora && minActual <= cierreMin))
+    );
+
+  if (abierto) {
+    estado.innerHTML = "🟢 Estamos ABIERTOS hasta 10:30 PM";
+    estado.style.color = "green";
+  } else {
+    let proximaApertura = new Date();
+    proximaApertura.setHours(aperturaHora, aperturaMin, 0);
+
+    if (horaActual > cierreHora || dia === 0) {
+      proximaApertura.setDate(proximaApertura.getDate() + 1);
+    }
+
+    let diferencia = proximaApertura - ahora;
+
+    let horas = Math.floor(diferencia / (1000 * 60 * 60));
+    let minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+
+    estado.innerHTML =
+      "🔴 Cerrado — Abrimos en " + horas + "h " + minutos + "m";
+    estado.style.color = "red";
+  }
+}
+
+setInterval(actualizarEstado, 60000);
+actualizarEstado();
+
+// ===== ESCACEZ =====
+function actualizarEscasez() {
+  const barra = document.getElementById("barraPollos");
+  const texto = document.getElementById("textoEscasez");
+
+  let porcentaje = (pollosDisponibles / totalPollos) * 100;
+  barra.style.width = porcentaje + "%";
+
+  if (pollosDisponibles <= 2) {
+    texto.innerHTML = "⚠️ ¡Solo quedan " + pollosDisponibles + " pollos de " + totalPollos + " esta noche!";
+  } else {
+    texto.innerHTML = "Disponibles: " + pollosDisponibles + " de " + totalPollos;
+  }
+}
+
+actualizarEscasez();
 
 </script>
 
