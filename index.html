@@ -11,6 +11,7 @@ body{
  font-family: Arial, sans-serif;
  margin:0;
  background:#610000;
+ padding-bottom:240px;
 }
 
 header{
@@ -67,6 +68,11 @@ header{
  font-weight:bold;
 }
 
+.boton:disabled{
+ background:gray;
+ cursor:not-allowed;
+}
+
 .carrito{
  position:fixed;
  bottom:0;
@@ -78,8 +84,6 @@ header{
 }
 
 .total{ font-weight:bold; font-size:18px; }
-
-/* ===== COCINA ===== */
 
 .cocina-card{
  background:white;
@@ -99,17 +103,6 @@ header{
  border-radius:6px;
  cursor:pointer;
 }
-
- /* ===== SOLUCIÓN PARA QUE EL CARRITO NO TAPE PRODUCTOS ===== */
-body {
-  padding-bottom: 220px !important;
-}
-
-@media (max-width: 768px) {
-  body {
-    padding-bottom: 260px !important;
-  }
-}
 </style>
 </head>
 
@@ -122,43 +115,45 @@ body {
 const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 
-// ================== MODO COCINA ==================
+// ================== CONFIGURACIÓN HORARIO ==================
+const aperturaHora = 18;
+const aperturaMin = 30;
+const cierreHora = 22;
+const cierreMin = 30;
 
+const totalPollos = 8;
+let pollosDisponibles = 8; // 🔥 CAMBIA CADA NOCHE
+
+// ================== MODO COCINA ==================
 if(modo === "cocina"){
 
 document.getElementById("app").innerHTML = `
-<header>
-<h1>🍗 PANTALLA COCINA</h1>
-</header>
-
+<header><h1>🍗 PANTALLA COCINA</h1></header>
 <div style="text-align:center;padding:20px;">
 <button onclick="activarSonido()" 
 style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:none;border-radius:10px;">
 🔔 Activar sonido cocina
 </button>
 </div>
-
 <div id="listaPedidos"></div>
-
 <audio id="alerta" preload="auto">
 <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
 </audio>
 `;
 
-let sonidoActivado = false;
+let sonidoActivado=false;
 
 function activarSonido(){
- sonidoActivado = true;
+ sonidoActivado=true;
  alert("Sonido activado 🔔");
 }
 
 function cargarPedidos(){
- let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
- let html = "";
-
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let html="";
  pedidos.forEach((p,i)=>{
-   if(p.estado !== "Entregado"){
-     html += `
+   if(p.estado!=="Entregado"){
+     html+=`
      <div class="cocina-card">
        <h3>Mesa ${p.mesa}</h3>
        <p>${p.detalle}</p>
@@ -167,58 +162,47 @@ function cargarPedidos(){
        <button class="estado-btn" onclick="cambiarEstado(${i})">
        Cambiar Estado
        </button>
-     </div>
-     `;
+     </div>`;
    }
  });
-
- document.getElementById("listaPedidos").innerHTML = html;
+ document.getElementById("listaPedidos").innerHTML=html;
 }
 
 function cambiarEstado(i){
- let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
- let p = pedidos[i];
-
- if(p.estado === "Nuevo") p.estado = "En preparación";
- else if(p.estado === "En preparación") p.estado = "Listo";
- else p.estado = "Entregado";
-
- pedidos[i] = p;
- localStorage.setItem("pedidos", JSON.stringify(pedidos));
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let p=pedidos[i];
+ if(p.estado==="Nuevo") p.estado="En preparación";
+ else if(p.estado==="En preparación") p.estado="Listo";
+ else p.estado="Entregado";
+ pedidos[i]=p;
+ localStorage.setItem("pedidos",JSON.stringify(pedidos));
  cargarPedidos();
 }
 
-let ultimoTotal = 0;
-
+let ultimoTotal=0;
 setInterval(()=>{
- let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-
- if(pedidos.length > ultimoTotal){
-   if(sonidoActivado){
-     document.getElementById("alerta").play();
-   }
-   ultimoTotal = pedidos.length;
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ if(pedidos.length>ultimoTotal){
+   if(sonidoActivado) document.getElementById("alerta").play();
+   ultimoTotal=pedidos.length;
  }
-
  cargarPedidos();
 },1000);
 
 }
 
 // ================== MODO CLIENTE ==================
-
 else{
 
 document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
-<h1>Pollos a la Leña - Go Pollos Rhosse en Trinidad|Beni|Bolivia</h1>
-<p>Saludable Pollo a la Leña | Arroz | Plátano | Papas</p>
+<h1>Pollos a la Leña - Go Pollos Rhosse</h1>
 <p>Av. Moxos - Zona Mercado Pompeya</p>
 <div id="estadoLocal" style="margin:10px 0;font-weight:bold;"></div>
 
 <div style="background:#eee;border-radius:10px;overflow:hidden;margin:10px 0;">
-  <div id="barraPollos" style="height:20px;background:#d32f2f;width:75%;transition:0.5s;"></div>
+<div id="barraPollos" style="height:20px;background:#d32f2f;width:100%;transition:0.5s;"></div>
 </div>
 <div id="textoEscasez" style="font-weight:bold;color:#d32f2f;"></div>
 </header>
@@ -237,46 +221,47 @@ document.getElementById("app").innerHTML = `
 <div class="carrito">
 <div id="resumen">Sin productos</div>
 <div class="total" id="total">Total: Bs 0</div>
-<button class="boton" onclick="enviarPedido()">
-Enviar pedido por WhatsApp
-</button>
+<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
 </div>
 `;
 
 function obtenerMesa(){
- const params = new URLSearchParams(window.location.search);
- return params.get("mesa") || "No especificada";
+ return new URLSearchParams(window.location.search).get("mesa") || "No especificada";
 }
 
-const productos = [
-{categoria:"pollos", nombre:"Pollo Económico", precio:15, img:"menu.jpg"},
-{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"medio.jpg"},
+const productos=[
+{categoria:"pollos", nombre:"Cuarto Pollo Promo", precio:25, img:"medio.jpg", promo:true},
 {categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"cuarto.jpg"},
 {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
-{categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
 {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
- {categoria:"bebidas", nombre:"Limonada Jarra media", precio:5, img:"limonada_mediana.jpg"},
- {categoria:"bebidas", nombre:"Limonada Jarra Grande", precio:10, img:"limonada_grande.jpg"},
- {categoria:"bebidas", nombre:"Limonada Vaso", precio:3, img:"limonada_vaso.jpg"},
-{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
-{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
-{categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
-{categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpg"},
-{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
+{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"}
 ];
 
-let carrito = [];
+let carrito=[];
 
 function crearProducto(prod){
- const div = document.createElement("div");
+ const div=document.createElement("div");
  div.className="card";
- div.innerHTML = `
+
+ let botonHTML="";
+
+ if(prod.promo){
+   botonHTML=`<button class="boton" id="btnPromo"
+   onclick="agregarPromo('${prod.nombre}',${prod.precio})">
+   Agregar
+   </button>`;
+ }else{
+   botonHTML=`<button class="boton"
+   onclick="agregar('${prod.nombre}',${prod.precio})">
+   Agregar
+   </button>`;
+ }
+
+ div.innerHTML=`
  <img src="${prod.img}">
  <h3>${prod.nombre}</h3>
  <div class="precio">Bs ${prod.precio}</div>
- <button class="boton" onclick="agregar('${prod.nombre}',${prod.precio})">
- Agregar
- </button>
+ ${botonHTML}
  `;
  return div;
 }
@@ -288,140 +273,102 @@ function cargarProductos(){
  });
 }
 
-function agregar(nombre, precio){
- carrito.push({nombre, precio});
+function agregar(nombre,precio){
+ carrito.push({nombre,precio});
  actualizarCarrito();
+}
+
+function agregarPromo(nombre,precio){
+ if(pollosDisponibles<=0) return;
+ carrito.push({nombre,precio});
+ pollosDisponibles--;
+ actualizarCarrito();
+ actualizarEscasez();
 }
 
 function actualizarCarrito(){
  let resumenHTML="";
  let total=0;
-
  carrito.forEach(item=>{
-   total += item.precio;
-   resumenHTML += item.nombre + " - Bs " + item.precio + "<br>";
+   total+=item.precio;
+   resumenHTML+=item.nombre+" - Bs "+item.precio+"<br>";
  });
-
- document.getElementById("resumen").innerHTML =
- resumenHTML || "Sin productos";
-
- document.getElementById("total").innerHTML =
- "Total: Bs " + total;
+ document.getElementById("resumen").innerHTML=resumenHTML||"Sin productos";
+ document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 
 function enviarPedido(){
- if(carrito.length===0){
-   alert("Agrega al menos un producto");
-   return;
- }
-
- let mensaje="Hola, quiero hacer este pedido:\n\n";
+ if(carrito.length===0){alert("Agrega al menos un producto");return;}
+ let mensaje="Pedido:\n\n";
  let detalle="";
  let total=0;
-
  carrito.forEach(item=>{
-   mensaje+= item.nombre + " - Bs " + item.precio + "\n";
-   detalle+= item.nombre + " - Bs " + item.precio + "<br>";
+   mensaje+=item.nombre+" - Bs "+item.precio+"\n";
+   detalle+=item.nombre+" - Bs "+item.precio+"<br>";
    total+=item.precio;
  });
-
- mensaje+= "\nTotal: Bs " + total;
- mensaje+= "\nMesa: " + obtenerMesa();
-
- let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-
- pedidos.push({
-   mesa: obtenerMesa(),
-   detalle: detalle,
-   total: total,
-   estado: "Nuevo"
- });
-
- localStorage.setItem("pedidos", JSON.stringify(pedidos));
-
- window.open(
- "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje),
- "_blank"
- );
-
+ mensaje+="\nTotal: Bs "+total+"\nMesa: "+obtenerMesa();
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ pedidos.push({mesa:obtenerMesa(),detalle,total,estado:"Nuevo"});
+ localStorage.setItem("pedidos",JSON.stringify(pedidos));
+ window.open("https://wa.me/59168972863?text="+encodeURIComponent(mensaje),"_blank");
  carrito=[];
  actualizarCarrito();
 }
 
-cargarProductos();
+function actualizarEscasez(){
+ const barra=document.getElementById("barraPollos");
+ const texto=document.getElementById("textoEscasez");
+ const btn=document.getElementById("btnPromo");
 
+ let porcentaje=(pollosDisponibles/totalPollos)*100;
+ barra.style.width=porcentaje+"%";
+
+ if(pollosDisponibles>2){
+   texto.innerHTML="🔥 Disponibles: "+pollosDisponibles+" de "+totalPollos;
+ }else if(pollosDisponibles>0){
+   texto.innerHTML="⚠️ ¡ÚLTIMOS "+pollosDisponibles+" POLLOS!";
+   barra.style.background="orange";
+ }else{
+   texto.innerHTML="❌ PROMOCIÓN AGOTADA";
+   barra.style.background="gray";
+   if(btn){btn.disabled=true;btn.innerText="Agotado";}
+ }
 }
 
-</script>
+function actualizarEstado(){
+ const ahora=new Date();
+ const dia=ahora.getDay();
+ const hora=ahora.getHours();
+ const min=ahora.getMinutes();
+ const estado=document.getElementById("estadoLocal");
 
- <script>
+ const abierto=
+ dia>=1&&dia<=6&&
+ ((hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin))&&
+ (hora<cierreHora||(hora===cierreHora&&min<=cierreMin)));
 
-// ===== CONFIGURACIÓN =====
-const aperturaHora = 18; // 6 PM
-const aperturaMin = 30;
-const cierreHora = 22; // 10 PM
-const cierreMin = 30;
-
-const totalPollos = 8;
-let pollosDisponibles = 2; // 🔥 cámbialo cada noche
-
-// ===== RELOJ Y ESTADO =====
-function actualizarEstado() {
-  const ahora = new Date();
-  const dia = ahora.getDay(); // 0 domingo
-  const horaActual = ahora.getHours();
-  const minActual = ahora.getMinutes();
-
-  const estado = document.getElementById("estadoLocal");
-
-  const abierto =
-    dia >= 1 && dia <= 6 &&
-    (
-      (horaActual > aperturaHora || (horaActual === aperturaHora && minActual >= aperturaMin)) &&
-      (horaActual < cierreHora || (horaActual === cierreHora && minActual <= cierreMin))
-    );
-
-  if (abierto) {
-    estado.innerHTML = "🟢 Estamos ABIERTOS hasta 10:30 PM";
-    estado.style.color = "green";
-  } else {
-    let proximaApertura = new Date();
-    proximaApertura.setHours(aperturaHora, aperturaMin, 0);
-
-    if (horaActual > cierreHora || dia === 0) {
-      proximaApertura.setDate(proximaApertura.getDate() + 1);
-    }
-
-    let diferencia = proximaApertura - ahora;
-
-    let horas = Math.floor(diferencia / (1000 * 60 * 60));
-    let minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
-
-    estado.innerHTML =
-      "🔴 Cerrado — Abrimos en " + horas + "h " + minutos + "m";
-    estado.style.color = "red";
-  }
+ if(abierto){
+   estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:30 PM";
+   estado.style.color="green";
+ }else{
+   let proxima=new Date();
+   proxima.setHours(aperturaHora,aperturaMin,0);
+   if(hora>cierreHora||dia===0) proxima.setDate(proxima.getDate()+1);
+   let diff=proxima-ahora;
+   let h=Math.floor(diff/(1000*60*60));
+   let m=Math.floor((diff%(1000*60*60))/(1000*60));
+   estado.innerHTML="🔴 Cerrado — Abrimos en "+h+"h "+m+"m";
+   estado.style.color="red";
+ }
 }
 
-setInterval(actualizarEstado, 60000);
+setInterval(actualizarEstado,60000);
 actualizarEstado();
-
-// ===== ESCACEZ =====
-function actualizarEscasez() {
-  const barra = document.getElementById("barraPollos");
-  const texto = document.getElementById("textoEscasez");
-
-  let porcentaje = (pollosDisponibles / totalPollos) * 100;
-  barra.style.width = porcentaje + "%";
-
-  if (pollosDisponibles <= 2) {
-    texto.innerHTML = "⚠️ ¡Solo quedan " + pollosDisponibles + " pollos de " + totalPollos + " esta noche!";
-  } else {
-    texto.innerHTML = "Disponibles: " + pollosDisponibles + " de " + totalPollos;
-  }
-}
-
+cargarProductos();
 actualizarEscasez();
+
+}
 
 </script>
 
