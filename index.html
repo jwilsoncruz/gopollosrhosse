@@ -199,6 +199,13 @@ document.getElementById("app").innerHTML = `
 <img src="logo.png" class="logo">
 <h1>Pollos a la Leña - Go Pollos Rhosse</h1>
 <p>Av. Moxos - Zona Mercado Pompeya</p>
+<div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
+  <img src="promo1sodamini.jpg" style="width:100%;border-radius:10px;">
+  <h2 style="color:#d50000;">🔥 PROMO DEL MES</h2>
+  <button class="boton" onclick="agregar('🔥 Promo Cuarto Pollo + Soda Mini',25)">
+    Agregar Promo
+  </button>
+</div>
 <div id="estadoLocal" style="margin:10px 0;font-weight:bold;"></div>
 
 <div style="background:#eee;border-radius:10px;overflow:hidden;margin:10px 0;">
@@ -230,12 +237,22 @@ function obtenerMesa(){
 }
 
 const productos=[
-{categoria:"pollos", nombre:"Cuarto Pollo Promo", precio:25, img:"medio.jpg", promo:true},
+{categoria:"pollos", nombre:"Pollo Económico", precio:15, img:"menu.jpg"},
+{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"medio.jpg"},
 {categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"cuarto.jpg"},
 {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
 {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
-{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"}
+ {categoria:"bebidas", nombre:"Limonada Jarra media", precio:5, img:"limonada_mediana.jpg"},
+ {categoria:"bebidas", nombre:"Limonada Jarra Grande", precio:10, img:"limonada_grande.jpg"},
+ {categoria:"bebidas", nombre:"Limonada Vaso", precio:3, img:"limonada_vaso.jpg"},
+{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
+{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
+{categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
+{categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpg"},
+{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
 ];
+
 
 let carrito=[];
 
