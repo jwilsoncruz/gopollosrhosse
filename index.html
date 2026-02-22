@@ -121,19 +121,39 @@ const modo = params.get("modo");
 
 // ================== MODO COCINA ==================
 
+<script>
 if(modo === "cocina"){
 
 document.getElementById("app").innerHTML = `
 <header>
 <h1>🍗 PANTALLA COCINA</h1>
 </header>
+
+<div style="text-align:center;padding:20px;">
+<button onclick="activarSonido()" 
+style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:none;border-radius:10px;">
+🔔 Activar sonido cocina
+</button>
+</div>
+
 <div id="listaPedidos"></div>
-<audio id="alerta" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+</audio>
 `;
+
+let sonidoActivado = false;
+
+function activarSonido(){
+ sonidoActivado = true;
+ alert("Sonido activado 🔔");
+}
 
 function cargarPedidos(){
  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
  let html = "";
+
  pedidos.forEach((p,i)=>{
    if(p.estado !== "Entregado"){
      html += `
@@ -149,6 +169,7 @@ function cargarPedidos(){
      `;
    }
  });
+
  document.getElementById("listaPedidos").innerHTML = html;
 }
 
@@ -169,15 +190,19 @@ let ultimoTotal = 0;
 
 setInterval(()=>{
  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
  if(pedidos.length > ultimoTotal){
-   document.getElementById("alerta").play();
+   if(sonidoActivado){
+     document.getElementById("alerta").play();
+   }
    ultimoTotal = pedidos.length;
  }
+
  cargarPedidos();
 },1000);
 
 }
-
+</script>
 // ================== MODO CLIENTE ==================
 
 else{
