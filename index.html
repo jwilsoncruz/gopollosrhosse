@@ -195,8 +195,8 @@ setInterval(()=>{
 else{
 
 document.getElementById("app").innerHTML = `
-<header>
-<img src="logo.png" class="logo">
+<header class="header-fijo">
+  <img src="logo.png" alt="Go Pollos Rhosse" class="logo">
 <h1>Pollos a la Leña - Go Pollos Rhosse</h1>
 <p>Av. Moxos - Zona Mercado Pompeya</p>
 <div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
@@ -418,6 +418,27 @@ actualizarEstado();
 cargarProductos();
 actualizarEscasez();
 
+}
+ .header-fijo{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  z-index: 1000;
+}
+
+.logo{
+  height: 60px;
+}
+
+body{
+  padding-top: 110px; /* importante para que no tape contenido */
 }
 
 </script>
