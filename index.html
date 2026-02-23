@@ -3,63 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Bolivia</title>
-<link rel="icon" href="favicon.ico">
+<title>Go Pollos Rhosse</title>
 
 <style>
 body{
- font-family: Arial, sans-serif;
+ font-family: Arial;
  margin:0;
  background:#610000;
- padding-bottom:240px;
+ padding-bottom:200px;
 }
 
 header{
  position:sticky;
  top:0;
- z-index:1000;
- text-align:center;
- padding:25px 20px;
  background:#d50000;
  color:white;
- box-shadow:0 4px 10px rgba(0,0,0,0.4);
- transition:all 0.3s ease;
+ text-align:center;
+ padding:25px;
+ transition:0.3s;
 }
 
 header.compacto{
- padding:10px 20px;
+ padding:10px;
 }
 
 .logo{
- max-width:140px;
- display:block;
- margin:0 auto 10px auto;
- transition:all 0.3s ease;
+ max-width:120px;
+ transition:0.3s;
 }
 
 header.compacto .logo{
- max-width:80px;
+ max-width:70px;
 }
 
-.container{ padding:20px; }
-
-.categoria{
- margin-top:35px;
- font-size:22px;
- color:#d50000;
+.container{
+ padding:20px;
 }
 
 .grid{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
  gap:15px;
 }
 
 .card{
  background:white;
  padding:15px;
- border-radius:14px;
- box-shadow:0 6px 16px rgba(0,0,0,0.08);
+ border-radius:12px;
  text-align:center;
 }
 
@@ -70,21 +60,14 @@ header.compacto .logo{
  border-radius:10px;
 }
 
-.precio{ font-weight:bold; margin:8px 0; }
-
 .boton{
  background:#25D366;
  color:white;
- padding:8px;
  border:none;
- border-radius:8px;
+ padding:8px;
+ border-radius:6px;
  cursor:pointer;
  font-weight:bold;
-}
-
-.boton:disabled{
- background:gray;
- cursor:not-allowed;
 }
 
 .carrito{
@@ -93,184 +76,93 @@ header.compacto .logo{
  left:0;
  right:0;
  background:white;
- box-shadow:0 -3px 10px rgba(0,0,0,0.1);
  padding:15px;
 }
-
-.total{ font-weight:bold; font-size:18px; }
 </style>
 </head>
 
 <body>
 
-<div id="app"></div>
-
-<script>
-
-const params = new URLSearchParams(window.location.search);
-const modo = params.get("modo");
-
-const totalPollos = 8;
-let pollosDisponibles = 4;
-
-if(modo === "cocina"){
- document.getElementById("app").innerHTML = `
- <header><h1>🍗 PANTALLA COCINA</h1></header>
- <div id="listaPedidos"></div>
- `;
-}
-
-else{
-
-document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
-<h1>Pollos a la Leña - Go Pollos Rhosse</h1>
-<p>Av. Moxos - Zona Mercado Pompeya</p>
-
-<div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
-  <img src="promo1sodamini.jpg" style="width:100%;border-radius:10px;">
-  <h2 style="color:#d50000;">🔥 PROMO DEL MES</h2>
-  <button class="boton" id="btnPromo" onclick="agregarPromo('🔥 Promo Cuarto Pollo + Soda Mini',25)">
-    Agregar Promo
-  </button>
-</div>
-
-<div style="background:white;padding:15px;border-radius:14px;margin-top:15px;">
-  <div id="estadoLocal" style="margin-bottom:10px;font-weight:bold;"></div>
-
-  <div style="background:#f5f5f5;border-radius:20px;overflow:hidden;height:20px;margin:10px 0;">
-    <div id="barraPollos" style="height:100%;width:100%;background:#b30000;transition:0.5s;"></div>
-  </div>
-
-  <div id="textoEscasez" style="font-weight:bold;color:#b30000;"></div>
-</div>
-
+<h2>🍗 Go Pollos Rhosse</h2>
 </header>
 
 <div class="container">
-<h2 class="categoria">🍗 Pollos a la leña</h2>
+<h3>🍗 Pollos</h3>
 <div id="pollos" class="grid"></div>
 
-<h2 class="categoria">🥤 Bebidas</h2>
+<h3>🥤 Bebidas</h3>
 <div id="bebidas" class="grid"></div>
 
-<h2 class="categoria">🍔 Extras</h2>
+<h3>🍔 Extras</h3>
 <div id="extras" class="grid"></div>
 </div>
 
 <div class="carrito">
 <div id="resumen">Sin productos</div>
-<div class="total" id="total">Total: Bs 0</div>
-<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
+<div id="total">Total: Bs 0</div>
 </div>
-`;
+
+<script>
 
 const productos=[
-{categoria:"pollos", nombre:"Pollo Económico", precio:15, img:"menu.jpg"},
-{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"medio.jpg"},
-{categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"cuarto.jpg"},
-{categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
-{categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
-{categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
-{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
+{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"menu.jpg"},
+{categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"medio.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa", precio:6, img:"gaseosa.jpg"},
 {categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}
 ];
 
 let carrito=[];
 
-function crearProducto(prod){
+function crearProducto(p){
  const div=document.createElement("div");
  div.className="card";
  div.innerHTML=`
- <img src="${prod.img}">
- <h3>${prod.nombre}</h3>
- <div class="precio">Bs ${prod.precio}</div>
- <button class="boton" onclick="agregar('${prod.nombre}',${prod.precio})">
-   Agregar
- </button>`;
+ <img src="${p.img}">
+ <h4>${p.nombre}</h4>
+ <p>Bs ${p.precio}</p>
+ <button class="boton" onclick="agregar('${p.nombre}',${p.precio})">
+ Agregar
+ </button>
+ `;
  return div;
 }
 
-function cargarProductos(){
+function cargar(){
  productos.forEach(p=>{
-   const contenedor=document.getElementById(p.categoria);
-   if(contenedor){
-     contenedor.appendChild(crearProducto(p));
-   }
+  const cont=document.getElementById(p.categoria);
+  cont.appendChild(crearProducto(p));
  });
 }
 
 function agregar(nombre,precio){
  carrito.push({nombre,precio});
- actualizarCarrito();
+ actualizar();
 }
 
-function agregarPromo(nombre,precio){
- if(pollosDisponibles<=0) return;
- carrito.push({nombre,precio});
- pollosDisponibles--;
- actualizarCarrito();
- actualizarEscasez();
-}
-
-function actualizarCarrito(){
- let resumenHTML="";
+function actualizar(){
+ let html="";
  let total=0;
- carrito.forEach(item=>{
-   total+=item.precio;
-   resumenHTML+=item.nombre+" - Bs "+item.precio+"<br>";
+ carrito.forEach(i=>{
+  total+=i.precio;
+  html+=i.nombre+" - Bs "+i.precio+"<br>";
  });
- document.getElementById("resumen").innerHTML=resumenHTML||"Sin productos";
+ document.getElementById("resumen").innerHTML=html || "Sin productos";
  document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 
-function enviarPedido(){
- if(carrito.length===0){alert("Agrega al menos un producto");return;}
- let mensaje="Pedido:\n\n";
- let total=0;
- carrito.forEach(item=>{
-   mensaje+=item.nombre+" - Bs "+item.precio+"\n";
-   total+=item.precio;
- });
- mensaje+="\nTotal: Bs "+total;
- window.open("https://wa.me/59168972863?text="+encodeURIComponent(mensaje),"_blank");
- carrito=[];
- actualizarCarrito();
-}
-
-function actualizarEscasez(){
- const barra=document.getElementById("barraPollos");
- const texto=document.getElementById("textoEscasez");
- const btn=document.getElementById("btnPromo");
-
- let porcentaje=(pollosDisponibles/totalPollos)*100;
- barra.style.width=porcentaje+"%";
-
- if(pollosDisponibles>0){
-   texto.innerHTML="🔥 Disponibles: "+pollosDisponibles;
- }else{
-   texto.innerHTML="❌ PROMO AGOTADA";
-   barra.style.background="gray";
-   if(btn){btn.disabled=true;btn.innerText="Agotado";}
- }
-}
-
-setTimeout(()=>{
- cargarProductos();
- actualizarEscasez();
-},50);
+cargar();
 
 window.addEventListener("scroll", function(){
  const header=document.querySelector("header");
  if(window.scrollY>50){
-   header.classList.add("compacto");
+  header.classList.add("compacto");
  }else{
-   header.classList.remove("compacto");
+  header.classList.remove("compacto");
  }
 });
 
-}
 </script>
 
 </body>
