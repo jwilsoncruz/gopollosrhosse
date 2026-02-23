@@ -15,16 +15,30 @@ body{
 }
 
 header{
+ position:sticky;
+ top:0;
+ z-index:1000;
  text-align:center;
- padding:40px 20px;
+ padding:25px 20px;
  background:#d50000;
  color:white;
+ box-shadow:0 4px 10px rgba(0,0,0,0.4);
+ transition:all 0.3s ease;
+}
+
+header.compacto{
+ padding:10px 20px;
 }
 
 .logo{
- max-width:200px;
+ max-width:140px;
  display:block;
- margin:0 auto 15px auto;
+ margin:0 auto 10px auto;
+ transition:all 0.3s ease;
+}
+
+header.compacto .logo{
+ max-width:80px;
 }
 
 .container{ padding:20px; }
@@ -419,7 +433,15 @@ cargarProductos();
 actualizarEscasez();
 
 }
-
+// ===== HEADER COMPACTO AL SCROLL =====
+window.addEventListener("scroll", function(){
+ const header = document.querySelector("header");
+ if(window.scrollY > 50){
+   header.classList.add("compacto");
+ }else{
+   header.classList.remove("compacto");
+ }
+});
 </script>
 
 </body>
