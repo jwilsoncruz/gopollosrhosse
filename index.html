@@ -156,7 +156,12 @@ function cargarPedidos(){
  pedidos.forEach((p,i)=>{
    if(p.estado!=="Entregado"){
      html+=`
-     <div class="cocina-card">
+     <div class="cocina-card"
+     style="border-left:6px solid ${
+       p.tipo==="Mesa" ? "#d50000" :
+       p.tipo==="Recoger" ? "orange" :
+       "green"
+     }">
       <h3>
 ${p.tipo === "Mesa" ? "🍽 Mesa " + p.mesa :
   p.tipo === "Recoger" ? "🛍 Pedido para recoger" :
