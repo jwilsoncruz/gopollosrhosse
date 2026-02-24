@@ -424,25 +424,34 @@ function enviarPedido(){
   carrito = [];
   actualizarCarrito();
 }
-}
+
+/* ===================== */
+/* TODO ESTO VA DENTRO DEL ELSE */
+/* ===================== */
+
 function eliminarProducto(index){
   carrito.splice(index,1);
   actualizarCarrito();
 }
+
 function actualizarEscasez(){
  const barra=document.getElementById("barraPollos");
  const texto=document.getElementById("textoEscasez");
  const btn=document.getElementById("btnPromo");
+
+ if(!barra || !texto) return; // 🔥 evita que rompa
 
  let porcentaje=(pollosDisponibles/totalPollos)*100;
  barra.style.width=porcentaje+"%";
 
  if(pollosDisponibles>2){
    texto.innerHTML="🔥 Disponibles: "+pollosDisponibles+" de "+totalPollos;
- }else if(pollosDisponibles>0){
+ }
+ else if(pollosDisponibles>0){
    texto.innerHTML="⚠️ ¡ÚLTIMOS "+pollosDisponibles+" POLLOS!";
    barra.style.background="orange";
- }else{
+ }
+ else{
    texto.innerHTML="❌ PROMOCIÓN AGOTADA";
    barra.style.background="gray";
    if(btn){btn.disabled=true;btn.innerText="Agotado";}
@@ -450,11 +459,13 @@ function actualizarEscasez(){
 }
 
 function actualizarEstado(){
+ const estado=document.getElementById("estadoLocal");
+ if(!estado) return; // 🔥 evita que rompa
+
  const ahora=new Date();
  const dia=ahora.getDay();
  const hora=ahora.getHours();
  const min=ahora.getMinutes();
- const estado=document.getElementById("estadoLocal");
 
  const abierto=
  dia>=1&&dia<=6&&
@@ -482,7 +493,8 @@ actualizarEstado();
 cargarProductos();
 actualizarEscasez();
 
-}
+/* ===================== */
+}  // ← AQUÍ CIERRA EL ELSE
 
 </script>
 
