@@ -122,7 +122,7 @@ const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 8;
-let pollosDisponibles = 1; // 🔥 CAMBIA CADA NOCHE
+let pollosDisponibles = 6; // 8 iniciales - 2 vendidos
 
 // ================== MODO COCINA ==================
 if(modo === "cocina"){
@@ -261,9 +261,31 @@ document.getElementById("app").innerHTML = `
 </div>
 
 <div class="carrito">
-<div id="resumen">Sin productos</div>
-<div class="total" id="total">Total: Bs 0</div>
-<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
+  <div id="resumen">Sin productos</div>
+  <div class="total" id="total">Total: Bs 0</div>
+
+  <div style="margin:10px 0;">
+    <strong>Tipo de pedido:</strong><br>
+
+    <label>
+      <input type="radio" name="tipoPedido" value="Mesa" checked>
+      🍽 En mesa
+    </label><br>
+
+    <label>
+      <input type="radio" name="tipoPedido" value="Recoger">
+      🛍 Recoger
+    </label><br>
+
+    <label>
+      <input type="radio" name="tipoPedido" value="Delivery">
+      🚗 Delivery
+    </label>
+  </div>
+
+  <button class="boton" onclick="enviarPedido()">
+    Enviar pedido por WhatsApp
+  </button>
 </div>
 `;
 
@@ -351,7 +373,10 @@ function actualizarCarrito(){
 
 function enviarPedido(){
  if(carrito.length===0){alert("Agrega al menos un producto");return;}
- let mensaje="Pedido:\n\n";
+let tipoPedido = document.querySelector('input[name="tipoPedido"]:checked').value;
+
+let mensaje = "Pedido:\n";
+mensaje += "Tipo: " + tipoPedido + "\n";
  let detalle="";
  let total=0;
  carrito.forEach(item=>{
