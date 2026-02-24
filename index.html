@@ -157,7 +157,11 @@ function cargarPedidos(){
    if(p.estado!=="Entregado"){
      html+=`
      <div class="cocina-card">
-       <h3>Mesa ${p.mesa}</h3>
+      <h3>
+${p.tipo === "Mesa" ? "🍽 Mesa " + p.mesa :
+  p.tipo === "Recoger" ? "🛍 Pedido para recoger" :
+  "🚗 Delivery"}
+</h3>
        <p>${p.detalle}</p>
        <strong>Total: Bs ${p.total}</strong><br>
        Estado: ${p.estado}<br>
@@ -407,12 +411,13 @@ function enviarPedido(){
 
   let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
 
-  pedidos.push({
-    mesa: obtenerMesa(),
-    detalle: detalle,
-    total: total,
-    estado: "Nuevo"
-  });
+ pedidos.push({
+  mesa: obtenerMesa(),
+  tipo: tipoPedido,
+  detalle: detalle,
+  total: total,
+  estado: "Nuevo"
+});
 
   localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
