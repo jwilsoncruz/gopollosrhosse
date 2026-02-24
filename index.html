@@ -361,42 +361,68 @@ function agregarPromo(nombre,precio){
 }
 
 function actualizarCarrito(){
- let resumenHTML="";
- let total=0;
- carrito.forEach(item=>{
-   total+=item.precio;
-   resumenHTML+=item.nombre+" - Bs "+item.precio+"<br>";
- });
- document.getElementById("resumen").innerHTML=resumenHTML||"Sin productos";
- document.getElementById("total").innerHTML="Total: Bs "+total;
+  let resumenHTML="";
+  let total=0;
+
+  carrito.forEach((item,index)=>{
+    total+=item.precio;
+    resumenHTML+=`
+      ${item.nombre} - Bs ${item.precio}
+      <button onclick="eliminarProducto(${index})"
+      style="background:red;color:white;border:none;border-radius:5px;padding:2px 6px;margin-left:5px;cursor:pointer;">
+      ✖
+      </button>
+      <br>
+    `;
+  });
+
+  document.getElementById("resumen").innerHTML=resumenHTML||"Sin productos";
+  document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 
 function enviarPedido(){
- if(carrito.length===0){alert("Agrega al menos un producto");return;}
-let tipoPedido = document.querySelector('input[name="tipoPedido"]:checked').value;
 
-let mensaje = "Pedido:\n";
-mensaje += "Tipo: " + tipoPedido + "\n";
- let detalle="";
- let total=0;
-carrito.forEach((item,index)=>{
-  total+=item.precio;
-  resumenHTML+=`
-    ${item.nombre} - Bs ${item.precio}
-    <button onclick="eliminarProducto(${index})"
-    style="background:red;color:white;border:none;border-radius:5px;padding:2px 6px;margin-left:5px;cursor:pointer;">
-    ✖
-    </button>
-    <br>
-  `;
-});
- mensaje+="\nTotal: Bs "+total+"\nMesa: "+obtenerMesa();
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- pedidos.push({mesa:obtenerMesa(),detalle,total,estado:"Nuevo"});
- localStorage.setItem("pedidos",JSON.stringify(pedidos));
- window.open("https://wa.me/59168972863?text="+encodeURIComponent(mensaje),"_blank");
- carrito=[];
- actualizarCarrito();
+  if(carrito.length===0){
+    alert("Agrega al menos un producto");
+    return;
+  }
+
+  let tipoPedido = document.querySelector('input[name="tipoPedido"]:checked').value;
+
+  let mensaje = "🍗 Pedido Go Pollos Rhosse\n\n";
+  mensaje += "Tipo: " + tipoPedido + "\n";
+  mensaje += "Mesa: " + obtenerMesa() + "\n\n";
+
+  let detalle="";
+  let total=0;
+
+  carrito.forEach(item=>{
+    detalle += item.nombre + " - Bs " + item.precio + "\n";
+    total += item.precio;
+  });
+
+  mensaje += detalle;
+  mensaje += "\nTotal: Bs " + total;
+
+  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+  pedidos.push({
+    mesa: obtenerMesa(),
+    detalle: detalle,
+    total: total,
+    estado: "Nuevo"
+  });
+
+  localStorage.setItem("pedidos", JSON.stringify(pedidos));
+
+  window.open(
+    "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje),
+    "_blank"
+  );
+
+  carrito = [];
+  actualizarCarrito();
+}
 }
 function eliminarProducto(index){
   carrito.splice(index,1);
