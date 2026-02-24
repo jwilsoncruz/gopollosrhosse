@@ -379,11 +379,17 @@ let mensaje = "Pedido:\n";
 mensaje += "Tipo: " + tipoPedido + "\n";
  let detalle="";
  let total=0;
- carrito.forEach(item=>{
-   mensaje+=item.nombre+" - Bs "+item.precio+"\n";
-   detalle+=item.nombre+" - Bs "+item.precio+"<br>";
-   total+=item.precio;
- });
+carrito.forEach((item,index)=>{
+  total+=item.precio;
+  resumenHTML+=`
+    ${item.nombre} - Bs ${item.precio}
+    <button onclick="eliminarProducto(${index})"
+    style="background:red;color:white;border:none;border-radius:5px;padding:2px 6px;margin-left:5px;cursor:pointer;">
+    ✖
+    </button>
+    <br>
+  `;
+});
  mensaje+="\nTotal: Bs "+total+"\nMesa: "+obtenerMesa();
  let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
  pedidos.push({mesa:obtenerMesa(),detalle,total,estado:"Nuevo"});
@@ -392,7 +398,10 @@ mensaje += "Tipo: " + tipoPedido + "\n";
  carrito=[];
  actualizarCarrito();
 }
-
+function eliminarProducto(index){
+  carrito.splice(index,1);
+  actualizarCarrito();
+}
 function actualizarEscasez(){
  const barra=document.getElementById("barraPollos");
  const texto=document.getElementById("textoEscasez");
