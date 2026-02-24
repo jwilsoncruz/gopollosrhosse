@@ -464,7 +464,8 @@ function actualizarEstado(){
  if(abierto){
    estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:30 PM";
    estado.style.color="green";
- }else{
+ }
+ else{
    let proxima=new Date();
    proxima.setHours(aperturaHora,aperturaMin,0);
    if(hora>cierreHora||dia===0) proxima.setDate(proxima.getDate()+1);
