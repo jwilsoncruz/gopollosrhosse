@@ -134,15 +134,14 @@ document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
 <h1>🍗 PANTALLA COCINA</h1></header>
+
 <div style="text-align:center;padding:20px;">
-<button onclick="cambiarEstado('${p.fecha}','${p.detalle}')"
-style="margin-top:8px;background:#d50000;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
-Cambiar estado
-</button>
+<button onclick="activarSonido()" 
 style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:none;border-radius:10px;">
 🔔 Activar sonido cocina
 </button>
 </div>
+
 <div id="listaPedidos"></div>
 <audio id="alerta" preload="auto">
 <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
@@ -179,7 +178,12 @@ function cargarPedidos(){
           Mesa: ${p.mesa}<br><br>
           ${p.detalle}<br><br>
           Total: Bs ${p.total}<br>
-          Estado: ${p.estado}
+        Estado: ${p.estado}<br>
+
+<button onclick="cambiarEstado('${p.fecha}','${p.detalle}')"
+style="margin-top:8px;background:#d50000;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+Cambiar estado
+</button>
         </div>
       `;
     });
