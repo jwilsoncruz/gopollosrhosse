@@ -417,17 +417,22 @@ function enviarPedido(){
   mensaje += detalle;
   mensaje += "\nTotal: Bs " + total;
 
-  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-
- pedidos.push({
-  mesa: obtenerMesa(),
-  tipo: tipoPedido,
-  detalle: detalle,
-  total: total,
-  estado: "Nuevo"
+fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    tipo: tipoPedido,
+    mesa: obtenerMesa(),
+    detalle: detalle,
+    total: total
+  })
+})
+.then(res => res.json())
+.then(data => {
+  console.log("Pedido guardado en Google Sheets");
+})
+.catch(err => {
+  console.error("Error:", err);
 });
-
-  localStorage.setItem("pedidos", JSON.stringify(pedidos));
 
   window.open(
     "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje),
