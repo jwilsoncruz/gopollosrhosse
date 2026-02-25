@@ -159,7 +159,7 @@ function cargarPedidos(){
   .then(res => res.json())
   .then(pedidos => {
 
-    let contenedor = document.getElementById("contenedorPedidos");
+   let contenedor = document.getElementById("listaPedidos");
     contenedor.innerHTML = "";
 
     pedidos.reverse().forEach(p => {
