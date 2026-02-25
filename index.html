@@ -154,32 +154,35 @@ function activarSonido(){
 }
 
 function cargarPedidos(){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- let html="";
- pedidos.forEach((p,i)=>{
-   if(p.estado!=="Entregado"){
-     html+=`
-     <div class="cocina-card"
-     style="border-left:6px solid ${
-       p.tipo==="Mesa" ? "#d50000" :
-       p.tipo==="Recoger" ? "orange" :
-       "green"
-     }">
-      <h3>
-${p.tipo === "Mesa" ? "🍽 Mesa " + p.mesa :
-  p.tipo === "Recoger" ? "🛍 Pedido para recoger" :
-  "🚗 Delivery"}
-</h3>
-       <p>${p.detalle}</p>
-       <strong>Total: Bs ${p.total}</strong><br>
-       Estado: ${p.estado}<br>
-       <button class="estado-btn" onclick="cambiarEstado(${i})">
-       Cambiar Estado
-       </button>
-     </div>`;
-   }
- });
- document.getElementById("listaPedidos").innerHTML=html;
+
+  fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec")
+  .then(res => res.json())
+  .then(pedidos => {
+
+    let contenedor = document.getElementById("contenedorPedidos");
+    contenedor.innerHTML = "";
+
+    pedidos.reverse().forEach(p => {
+
+      let color = "#ffffff";
+
+      if(p.tipo === "Delivery") color = "#ffe5e5";
+      if(p.tipo === "Mesa") color = "#e5f0ff";
+      if(p.tipo === "Recoger") color = "#e5ffe5";
+
+      contenedor.innerHTML += `
+        <div style="background:${color}; padding:15px; margin-bottom:10px; border-radius:8px;">
+          <strong>${p.tipo}</strong><br>
+          Mesa: ${p.mesa}<br><br>
+          ${p.detalle}<br><br>
+          Total: Bs ${p.total}<br>
+          Estado: ${p.estado}
+        </div>
+      `;
+    });
+
+  });
+
 }
 
 function cambiarEstado(i){
@@ -193,16 +196,11 @@ function cambiarEstado(i){
  cargarPedidos();
 }
 
-let ultimoTotal=0;
-setInterval(()=>{
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- if(pedidos.length>ultimoTotal){
-   if(sonidoActivado) document.getElementById("alerta").play();
-   ultimoTotal=pedidos.length;
- }
- cargarPedidos();
-},1000);
 
+
+setInterval(cargarPedidos, 3000);
+cargarPedidos();
+    
 }
 
 // ================== MODO CLIENTE ==================
