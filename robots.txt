@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jwilsoncruz.github.io/gopollosrhosse/sitemap.xml
