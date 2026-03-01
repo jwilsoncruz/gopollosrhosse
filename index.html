@@ -155,6 +155,17 @@ const cierreMin = 30;
 
 const totalPollos = 8;
 let pollosDisponibles = 5; // 8 iniciales - 2 vendidos
+    // ================== DÍAS CERRADOS ==================
+// 0=Domingo, 1=Lunes, 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes, 6=Sábado
+
+const diasCerrados = [0]; 
+// ejemplo: [0] = solo domingo
+// ejemplo: [0,3] = domingo y miércoles
+// ejemplo: [] = abierto todos los días
+
+// 🔴 CIERRE MANUAL (por emergencia o descanso especial)
+const cierreManual = false; 
+// cambia a true si quieres cerrar hoy sin importar el día
 
 // ================== MODO COCINA ==================
 if(modo === "cocina"){
@@ -252,6 +263,16 @@ document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
 <h1>Pollos a la Leña - Go Pollos Rhosse en Trinidad Beni</h1>
+<div id="bannerCerrado" style="
+ display:none;
+ background:#8b0000;
+ color:white;
+ padding:12px;
+ border-radius:10px;
+ margin-top:10px;
+ font-weight:bold;
+ font-size:16px;">
+</div>
 <p>Av. Moxos - Zona Mercado Pompeya en Trinidad Beni </p>
 <div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
   <img src="promopadre.png" style="width:100%;border-radius:10px;">
@@ -535,31 +556,60 @@ function actualizarEscasez(){
 
 function actualizarEstado(){
  const estado=document.getElementById("estadoLocal");
- if(!estado) return; // 🔥 evita que rompa
+ const banner=document.getElementById("bannerCerrado");
+ if(!estado) return;
 
  const ahora=new Date();
  const dia=ahora.getDay();
  const hora=ahora.getHours();
  const min=ahora.getMinutes();
 
+ // 🔴 CIERRE MANUAL
+ if(cierreManual){
+   estado.innerHTML="🔴 Hoy no estamos atendiendo";
+   estado.style.color="red";
+
+   if(banner){
+     banner.style.display="block";
+     banner.innerHTML="🚫 HOY NO HAY ATENCIÓN — Volvemos mañana desde 18:30 🍗";
+   }
+
+   return;
+ }
+
+ // 🔴 DÍA CERRADO
+ if(diasCerrados.includes(dia)){
+   estado.innerHTML="🔴 Hoy no hay atención";
+   estado.style.color="red";
+
+   if(banner){
+     banner.style.display="block";
+     banner.innerHTML="🚫 HOY NO ATENDEMOS — Te esperamos mañana desde 18:30 🔥";
+   }
+
+   return;
+ }
+
  const abierto=
- dia>=1&&dia<=6&&
  ((hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin))&&
  (hora<cierreHora||(hora===cierreHora&&min<=cierreMin)));
 
  if(abierto){
    estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:30 PM";
    estado.style.color="green";
+
+   if(banner){
+     banner.style.display="none";
+   }
  }
  else{
-   let proxima=new Date();
-   proxima.setHours(aperturaHora,aperturaMin,0);
-   if(hora>cierreHora||dia===0) proxima.setDate(proxima.getDate()+1);
-   let diff=proxima-ahora;
-   let h=Math.floor(diff/(1000*60*60));
-   let m=Math.floor((diff%(1000*60*60))/(1000*60));
-   estado.innerHTML="🔴 Cerrado — Abrimos en "+h+"h "+m+"m";
+   estado.innerHTML="🔴 Cerrado — Atendemos de 18:30 a 22:30";
    estado.style.color="red";
+
+   if(banner){
+     banner.style.display="block";
+     banner.innerHTML="⏰ Estamos cerrados ahora — Abrimos 18:30 🍗";
+   }
  }
 }
 
