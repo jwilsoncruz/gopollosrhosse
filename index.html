@@ -204,8 +204,6 @@ function activarSonido(){
 
 let ultimoPedidoDetectado = null;
 
-let ultimoPedidoDetectado = null;
-
 function cargarPedidos(){
 
   fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec")
@@ -306,8 +304,10 @@ document.getElementById("app").innerHTML = `
 <div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
   <img src="promopadre.png" style="width:100%;border-radius:10px;">
   <h2 style="color:#d50000;">🔥 PROMO DEL MES : PORQUE PAPÁ LO MERECE</h2>
-  <button class="boton" onclick="agregarPromo('🔥 RESERVANDO ... Promo 1 Pollo Entero + 1 Soda 2 litros + Delivery Gratis',120)"
-  </button>
+  <button class="boton"
+onclick="agregarPromo('🔥 RESERVANDO ... Promo 1 Pollo Entero + 1 Soda 2 litros + Delivery Gratis',120)">
+Agregar Promo
+</button>
 </div>
 <!-- ===== ESTADO + ESCACEZ MEJORADO ===== -->
 <div style="
@@ -561,6 +561,10 @@ fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcy
 /* ===================== */
 
 function eliminarProducto(index){
+  if(carrito[index].nombre.includes("Promo")){
+    pollosDisponibles++;
+    actualizarEscasez();
+  }
   carrito.splice(index,1);
   actualizarCarrito();
 }
