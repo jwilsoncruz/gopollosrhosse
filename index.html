@@ -3,151 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:image" content="https://jwilsoncruz.github.io/gopollosrhosse/Preview.jpg">
+    <title>Go Pollos Rhosse - Trinidad</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Bolivia</title>
     <style>
-        body{ font-family: Arial, sans-serif; margin:0; background:#610000; padding-bottom:240px; }
-        header{ text-align:center; padding:40px 20px; background:#d50000; color:white; }
-        .logo{ max-width:200px; display:block; margin:0 auto 15px auto; }
-        .container{ padding:20px; }
-        .categoria{ margin-top:35px; font-size:22px; color:#d50000; }
-        .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:15px; }
-        .card{ background:white; padding:15px; border-radius:14px; text-align:center; }
-        .card img{ width:100%; height:120px; object-fit:cover; border-radius:10px; }
-        .precio{ font-weight:bold; margin:8px 0; }
-        .boton{ background:#25D366; color:white; padding:8px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; }
-        .carrito{ position:fixed; bottom:0; left:0; right:0; background:white; padding:15px; box-shadow:0 -3px 10px rgba(0,0,0,0.1); }
-        .total{ font-weight:bold; font-size:18px; }
-        .redes{ margin-top:40px; text-align:center; }
-        .social-btn{ display:block; margin:10px auto; padding:12px; width:220px; border-radius:10px; text-decoration:none; color:white; }
-        .facebook{ background:#1877F2; } .tiktok{ background:#000; } .youtube{ background:#c4302b; }
+        body{ font-family: 'Segoe UI', Arial, sans-serif; margin:0; background:#610000; color: #333; padding-bottom:200px; }
+        header{ text-align:center; padding:30px; background:#d50000; color:white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .logo{ max-width:180px; margin-bottom:10px; }
+        .container{ padding:15px; max-width: 800px; margin: auto; }
+        .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:15px; margin-top:10px; }
+        .card{ background:white; padding:15px; border-radius:15px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,0.2); }
+        .card img{ width:100%; height:110px; object-fit:cover; border-radius:10px; }
+        .precio{ font-weight:bold; color:#d50000; margin:8px 0; font-size: 1.2em; }
+        .boton{ background:#25D366; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; width: 100%; }
+        .carrito{ position:fixed; bottom:0; left:0; right:0; background:white; padding:20px; box-shadow:0 -5px 15px rgba(0,0,0,0.2); z-index:1000; border-radius: 20px 20px 0 0; }
+        .pedido-card{ background:white; margin:15px; padding:20px; border-radius:12px; border-left:10px solid #d50000; position: relative; }
+        .btn-listo{ background:#28a745; color:white; border:none; padding:15px; width:100%; border-radius:8px; font-size:18px; font-weight:bold; cursor:pointer; margin-top:10px; }
+        .confetti{ position:fixed; width:8px; height:8px; top:-10px; animation:caer linear infinite; opacity:0.8; z-index:999; }
+        @keyframes caer{ to{ transform:translateY(110vh) rotate(360deg); } }
     </style>
 </head>
 <body>
+
 <div id="app"></div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const modo = params.get("modo");
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec";
+const modo = new URLSearchParams(window.location.search).get("modo");
 
-// CONFIG
-const aperturaHora = 18, aperturaMin = 30, cierreHora = 22, cierreMin = 30;
-let pollosDisponibles = 5, totalPollos = 8;
-const diasCerrados =, cierreManual = false;
-
-if(modo === "cocina"){
+// --- MODO COCINA ---
+if(modo === "cocina") {
     document.getElementById("app").innerHTML = `
-        <header><img src="logo.png" class="logo"><h1>🍗 PANTALLA COCINA</h1></header>
-        <div style="text-align:center;padding:20px;"><button onclick="activarSonido()" style="padding:15px;background:#d50000;color:white;border:none;border-radius:10px;">🔔 Activar sonido</button></div>
-        <div id="listaPedidos"></div>
-        <audio id="alerta" preload="auto"><source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg"></audio>
+        <header><h1>👨‍🍳 PANEL DE COCINA</h1><p>Control de Pedidos en Tiempo Real</p></header>
+        <div style="text-align:center; padding:20px;">
+            <button onclick="activarSonido()" style="padding:15px; background:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">🔔 ACTIVAR ALERTA SONORA</button>
+        </div>
+        <div id="lista"></div>
+        <audio id="alerta"><source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg"></audio>
     `;
 
-    let sonidoActivado = false, ultimoPedidoDetectado = null;
-    window.activarSonido = () => { sonidoActivado = true; alert("Sonido OK 🔔"); };
+    let sonidoOk = false;
+    let ultimoId = null;
 
-    window.cargarPedidos = () => {
-        fetch(URL_SCRIPT).then(res => res.json()).then(pedidos => {
-            if(!pedidos) return;
-            let contenedor = document.getElementById("listaPedidos");
-            contenedor.innerHTML = "";
+    window.activarSonido = () => { sonidoOk = true; alert("Sonido listo para nuevos pedidos 🔊"); };
+
+    function actualizarCocina() {
+        fetch(URL_SCRIPT).then(r => r.json()).then(data => {
+            if(!data) return;
+            const lista = document.getElementById("lista");
+            let html = "";
             
-            const reciente = pedidos[pedidos.length - 1];
-            if(sonidoActivado && reciente && ultimoPedidoDetectado !== reciente.fecha){
+            // Alerta sonora para el último pedido
+            if(sonidoOk && data.length > 0 && ultimoId !== data[data.length-1].fecha) {
                 document.getElementById("alerta").play().catch(()=>{});
-                ultimoPedidoDetectado = reciente.fecha;
+                ultimoId = data[data.length-1].fecha;
             }
 
-            pedidos.reverse().forEach(p => {
-                if(p.estado === "Listo") return;
-                let color = (p.tipo === "Delivery") ? "#ffe5e5" : (p.tipo === "Mesa" ? "#e5f0ff" : "#e5ffe5");
-                contenedor.innerHTML += `
-                    <div style="background:${color}; padding:15px; margin:10px; border-radius:8px; border-left:10px solid #d50000;">
-                        <strong>${p.tipo} - Mesa: ${p.mesa}</strong><br>
-                        <p>${p.detalle.replace(/\n/g, "<br>")}</p>
-                        <button onclick="cambiarEstado('${p.fecha}','${p.detalle.replace(/'/g, "\\'")}')" style="background:#25D366; color:white; border:none; padding:10px; width:100%; border-radius:8px; cursor:pointer; font-weight:bold;">✅ MARCAR LISTO</button>
+            data.reverse().forEach(p => {
+                if(p.estado === "Listo") return; // Filtro automático
+                
+                const colorFondo = p.tipo === "Delivery" ? "#fff0f0" : (p.tipo === "Mesa" ? "#f0f7ff" : "#f2fff0");
+                html += `
+                    <div class="pedido-card" style="background:${colorFondo}">
+                        <span style="float:right; font-size:0.8em; color:#666">${new Date(p.fecha).toLocaleTimeString()}</span>
+                        <strong>${p.tipo.toUpperCase()} - ${p.mesa}</strong><br>
+                        <div style="font-size:1.3em; margin:15px 0; white-space:pre-wrap;">${p.detalle}</div>
+                        <button class="btn-listo" onclick="marcarListo('${p.fecha}','${p.detalle.replace(/'/g,"")}')">✅ PEDIDO LISTO</button>
                     </div>`;
             });
-        }).catch(e => console.error(e));
+            lista.innerHTML = html || "<h2 style='text-align:center; color:white'>No hay pedidos pendientes...</h2>";
+        });
+    }
+
+    window.marcarListo = (f, d) => {
+        fetch(URL_SCRIPT, { method: "POST", body: JSON.stringify({ actualizar: true, fecha: f, detalle: d }) })
+        .then(() => actualizarCocina());
     };
 
-    window.cambiarEstado = (fecha, detalle) => {
-        fetch(URL_SCRIPT, { method: "POST", body: JSON.stringify({ actualizar: true, fecha: fecha, detalle: detalle }) })
-        .then(() => cargarPedidos());
-    };
+    setInterval(actualizarCocina, 5000);
+    actualizarCocina();
 
-    setInterval(cargarPedidos, 5000);
-    cargarPedidos();
-
-} else {
-    // MODO CLIENTE
+} else { 
+    // --- MODO CLIENTE ---
     document.getElementById("app").innerHTML = `
         <header>
-            <img src="logo.png" class="logo">
+            <img src="logo.png" class="logo" alt="Logo">
             <h1>Go Pollos Rhosse</h1>
-            <div id="estadoLocal"></div>
+            <p>Av. Moxos - Mercado Pompeya, Trinidad</p>
         </header>
         <div class="container">
-            <div id="pollos" class="grid"></div>
-            <h2 class="categoria">🥤 Bebidas</h2><div id="bebidas" class="grid"></div>
-            <h2 class="categoria">🍔 Extras</h2><div id="extras" class="grid"></div>
+            <h2 style="color:yellow">🍗 Menú Principal</h2>
+            <div id="menu" class="grid"></div>
         </div>
         <div class="carrito">
-            <div id="resumen">Sin productos</div>
-            <div class="total" id="total">Total: Bs 0</div>
-            <div style="margin:5px 0;">
-                <input type="radio" name="tipo" value="Mesa" checked> Mesa
-                <input type="radio" name="tipo" value="Recoger"> Recoger
-                <input type="radio" name="tipo" value="Delivery"> Delivery
+            <div id="resumen" style="max-height:80px; overflow-y:auto; margin-bottom:10px; font-size:0.9em">Carrito vacío</div>
+            <div style="font-weight:bold; font-size:1.2em">Total: Bs <span id="monto">0</span></div>
+            <div style="margin:10px 0">
+                <label><input type="radio" name="t" value="Mesa" checked> Mesa</label>
+                <label><input type="radio" name="t" value="Delivery"> Delivery</label>
+                <label><input type="radio" name="t" value="Recoger"> Recoger</label>
             </div>
-            <button class="boton" onclick="enviarPedido()" style="width:100%">Enviar Pedido</button>
+            <button class="boton" onclick="pedir()" style="font-size:1.1em; padding:15px">🚀 ENVIAR PEDIDO</button>
         </div>
     `;
 
-    const productos=[
-        {categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"medio.jpg"},
-        {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
-        {categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
-        {categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"}
+    const prods = [
+        {n:"Cuarto Pollo", p:25, i:"medio.jpg"},
+        {n:"Medio Pollo", p:50, i:"cuarto.jpg"},
+        {n:"Pollo Entero", p:100, i:"entero.jpg"},
+        {n:"Gaseosa 2L", p:12, i:"gaseosa2l.jpg"},
+        {n:"Extra Papas", p:5, i:"extra_papas.jpeg"}
     ];
 
-    let carrito = [];
-    window.agregar = (nombre, precio) => { carrito.push({nombre, precio}); actualizarCarrito(); };
-    
-    window.actualizarCarrito = () => {
-        let resumen = "", total = 0;
-        carrito.forEach((item, i) => { 
-            resumen += `${item.nombre} <button onclick="carrito.splice(${i},1);actualizarCarrito()">x</button><br>`;
-            total += item.precio;
-        });
-        document.getElementById("resumen").innerHTML = resumen || "Sin productos";
-        document.getElementById("total").innerHTML = "Total: Bs " + total;
-    };
-
-    window.enviarPedido = () => {
-        if(!carrito.length) return alert("Carrito vacío");
-        let tipo = document.querySelector('input[name="tipo"]:checked').value;
-        let detalle = carrito.map(i => i.nombre).join("\n");
-        let total = carrito.reduce((a, b) => a + b.precio, 0);
-        let fecha = new Date().toISOString();
-
-        fetch(URL_SCRIPT, {
-            method: "POST",
-            body: JSON.stringify({ fecha, tipo, mesa: "Mesa", detalle, total })
-        });
-
-        window.open(`https://wa.me/59168972863?text=${encodeURIComponent("Pedido: "+tipo+"\n"+detalle+"\nTotal: "+total)}`);
-        carrito = []; actualizarCarrito();
-    };
-
-    productos.forEach(p => {
-        let d = document.createElement("div"); d.className="card";
-        d.innerHTML = `<img src="${p.img}"><h3>${p.nombre}</h3><p>Bs ${p.precio}</p><button class="boton" onclick="agregar('${p.nombre}',${p.precio})">Agregar</button>`;
-        document.getElementById(p.categoria).appendChild(d);
+    let cart = [];
+    prods.forEach(x => {
+        const d = document.createElement("div"); d.className="card";
+        d.innerHTML = `<img src="${x.i}"><h3>${x.n}</h3><div class="precio">Bs ${x.p}</div><button class="boton" onclick="add('${x.n}',${x.p})">Añadir</button>`;
+        document.getElementById("menu").appendChild(d);
     });
+
+    window.add = (n, p) => { cart.push({n, p}); up(); };
+    window.up = () => {
+        let t = 0; 
+        document.getElementById("resumen").innerHTML = cart.map((x,i) => {
+            t += x.p; 
+            return `${x.n} (Bs ${x.p}) <span onclick="cart.splice(${i},1);up()" style="color:red">✖</span>`;
+        }).join("<br>") || "Carrito vacío";
+        document.getElementById("monto").innerText = t;
+    };
+
+    window.pedir = () => {
+        if(!cart.length) return alert("¡Añade algo al carrito!");
+        const tipo = document.querySelector('input[name="t"]:checked').value;
+        const total = document.getElementById("monto").innerText;
+        const mesa = new URLSearchParams(window.location.search).get("mesa") || "General";
+        const detalle = cart.map(x => x.n).join("\n");
+        const fecha = new Date().toISOString();
+
+        fetch(URL_SCRIPT, { method: "POST", body: JSON.stringify({ fecha, tipo, mesa, detalle, total }) });
+
+        const ws = `https://wa.me/59168972863?text=${encodeURIComponent("🍗 *NUEVO PEDIDO*\n*Tipo:* "+tipo+"\n*Mesa:* "+mesa+"\n\n"+detalle+"\n\n*Total:* Bs "+total)}`;
+        window.open(ws);
+        cart = []; up();
+    };
 }
+
+// Efecto Visual Confetti
+(function(){
+    const colors = ["#ffcc00", "#ff3d00", "#ffffff", "#25D366"];
+    for(let i=0; i<30; i++) {
+        const c = document.createElement("div"); c.className = "confetti";
+        c.style.left = Math.random()*100+"vw";
+        c.style.background = colors[Math.floor(Math.random()*colors.length)];
+        c.style.animationDuration = (Math.random()*3+2)+"s";
+        c.style.opacity = Math.random();
+        document.body.appendChild(c);
+    }
+})();
 </script>
 </body>
 </html>
