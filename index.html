@@ -507,58 +507,28 @@ function actualizarCarrito(){
 }
 
 function enviarPedido(){
-
   if(carrito.length===0){
     alert("Agrega al menos un producto");
     return;
   }
 
   let tipoPedido = document.querySelector('input[name="tipoPedido"]:checked').value;
+  let fechaIso = new Date().toISOString(); // Creamos la marca de tiempo exacta
 
-  let mensaje = "🍗 Pedido Go Pollos Rhosse\n\n";
-  mensaje += "Tipo: " + tipoPedido + "\n";
-  mensaje += "Mesa: " + obtenerMesa() + "\n\n";
+  // ... (resto de tu código de mensaje de whatsapp)
 
-  let detalle="";
-  let total=0;
-
-  carrito.forEach(item=>{
-    detalle += item.nombre + " - Bs " + item.precio + "\n";
-    total += item.precio;
-  });
-
-  mensaje += detalle;
-  mensaje += "\nTotal: Bs " + total;
-
-fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
-  method: "POST",
-  body: JSON.stringify({
-    tipo: tipoPedido,
-    mesa: obtenerMesa(),
-    detalle: detalle,
-    total: total
+  fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ", {
+    method: "POST",
+    body: JSON.stringify({
+      fecha: fechaIso, // Enviamos la fecha como ID
+      tipo: tipoPedido,
+      mesa: obtenerMesa(),
+      detalle: detalle,
+      total: total
+    })
   })
-})
-.then(res => res.json())
-.then(data => {
-  console.log("Pedido guardado en Google Sheets");
-})
-.catch(err => {
-  console.error("Error:", err);
-});
-
-  window.open(
-    "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje),
-    "_blank"
-  );
-
-  carrito = [];
-  actualizarCarrito();
+  // ... resto del fetch
 }
-
-/* ===================== */
-/* TODO ESTO VA DENTRO DEL ELSE */
-/* ===================== */
 
 function eliminarProducto(index){
   if(carrito[index].nombre.includes("Promo")){
