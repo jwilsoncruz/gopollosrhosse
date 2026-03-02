@@ -655,4 +655,37 @@ actualizarEscasez();
   </div>
 </section>
 </body>
+    <style>
+.confetti{
+  position:fixed;
+  width:8px;
+  height:8px;
+  top:-10px;
+  animation:caer linear infinite;
+  opacity:0.9;
+  pointer-events:none;
+  z-index:9999;
+}
+
+@keyframes caer{
+  to{
+    transform:translateY(110vh) rotate(360deg);
+  }
+}
+</style>
+
+<script>
+(function(){
+  const colores=["#ffcc00","#ff3d00","#ffffff","#25D366"];
+  for(let i=0;i<60;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.backgroundColor=colores[Math.floor(Math.random()*colores.length)];
+    c.style.animationDuration=(Math.random()*3+4)+"s";
+    c.style.width=c.style.height=(Math.random()*6+4)+"px";
+    document.body.appendChild(c);
+  }
+})();
+</script>
 </html>
