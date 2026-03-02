@@ -3,161 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<title>Go Pollos Rhosse - FUNCIONAL</title>
+<title>Go Pollos Rhosse</title>
+
 <style>
-    body{ font-family: Arial, sans-serif; margin:0; background:#610000; color:white; padding-bottom:240px; }
-    header{ text-align:center; padding:30px; background:#d50000; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
-    .logo{ max-width:180px; margin-bottom:10px; }
-    .container{ padding:20px; max-width: 800px; margin: auto; }
-    .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:15px; }
-    .card{ background:white; padding:15px; border-radius:15px; text-align:center; color:#333; }
-    .card img{ width:100%; height:110px; object-fit:cover; border-radius:10px; }
-    .precio{ font-weight:bold; color:#d50000; margin:8px 0; }
-    .boton{ background:#25D366; color:white; padding:10px; border:none; border-radius:8px; cursor:pointer; font-weight:bold; width: 100%; }
-    .carrito{ position:fixed; bottom:0; left:0; right:0; background:white; padding:20px; color:#333; box-shadow:0 -5px 15px rgba(0,0,0,0.2); z-index:1000; border-radius: 20px 20px 0 0; }
-    .pedido-card{ background:white; margin:15px; padding:20px; border-radius:12px; border-left:10px solid #ffcc00; color:#333; text-align:left; }
-    .btn-listo{ background:#28a745; color:white; border:none; padding:15px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:10px; }
-    .btn-x{ background:red; color:white; border:none; border-radius:50%; width:25px; height:25px; cursor:pointer; float:right; }
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  background:#610000;
+  padding-bottom:240px;
+}
+
+header{
+  text-align:center;
+  padding:40px 20px;
+  background:#d50000;
+  color:white;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:15px;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  text-align:center;
+}
 </style>
 </head>
+
 <body>
 
 <div id="app"></div>
 
 <script>
-// --- CONFIGURACIÓN ÚNICA ---
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec";
-const params = new URLSearchParams(window.location.search);
-const modo = params.get("modo");
+
+document.getElementById("app").innerHTML = `
+<header>
+  <h1>🍗 Go Pollos Rhosse</h1>
+  <p>Pedidos online</p>
+</header>
+
+<div style="padding:20px">
+  <div class="grid">
+
+    <div class="card">
+      <h3>Pollo Entero</h3>
+      <p>Bs 100</p>
+      <button onclick="agregar('Pollo Entero',100)">
+        Agregar
+      </button>
+    </div>
+
+    <div class="card">
+      <h3>Medio Pollo</h3>
+      <p>Bs 50</p>
+      <button onclick="agregar('Medio Pollo',50)">
+        Agregar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div id="carrito" style="
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:white;
+padding:15px;
+">
+  <div id="resumen">Sin productos</div>
+  <div id="total">Total: Bs 0</div>
+</div>
+`;
 
 let carrito = [];
-let sonidoOk = false;
-let ultimoId = null;
 
-// ================== LÓGICA DE COCINA ==================
-window.marcarPedidoListo = (fecha, detalle) => {
-    fetch(URL_SCRIPT, { 
-        method: "POST", 
-        mode: 'no-cors', // Evita bloqueos de seguridad
-        body: JSON.stringify({ actualizar: true, fecha: fecha, detalle: detalle }) 
-    });
-    // Eliminar de la vista inmediatamente para que el usuario vea el cambio
-    const idElem = "pedido-" + fecha.replace(/[:.]/g, "-");
-    const elem = document.getElementById(idElem);
-    if(elem) elem.style.display = "none";
-};
-
-window.actualizarCocina = () => {
-    fetch(URL_SCRIPT)
-    .then(r => r.json())
-    .then(data => {
-        const contenedor = document.getElementById("listaPedidos");
-        if(!contenedor) return;
-        
-        // Sonido si hay algo nuevo
-        if(sonidoOk && data.length > 0 && ultimoId !== data[data.length-1].fecha){
-            const audio = document.getElementById("alerta");
-            if(audio) audio.play().catch(()=>{});
-            ultimoId = data[data.length-1].fecha;
-        }
-
-        let html = "";
-        data.reverse().forEach(p => {
-            if(p.estado === "Listo") return;
-            const idDiv = "pedido-" + p.fecha.replace(/[:.]/g, "-");
-            html += `
-                <div class="pedido-card" id="${idDiv}">
-                    <span style="float:right; font-size:12px; color:#666">${new Date(p.fecha).toLocaleTimeString()}</span>
-                    <strong>${p.tipo.toUpperCase()} - MESA: ${p.mesa}</strong><br><br>
-                    <div style="font-size:1.2em; white-space:pre-wrap;">${p.detalle}</div>
-                    <button class="btn-listo" onclick="window.marcarPedidoListo('${p.fecha}','${p.detalle.replace(/'/g,"")}')">✅ PEDIDO ENTREGADO</button>
-                </div>`;
-        });
-        contenedor.innerHTML = html || "<h2 style='text-align:center; color:white'>😴 No hay pedidos pendientes</h2>";
-    })
-    .catch(e => console.error("Error cocina:", e));
-};
-
-// ================== LÓGICA DE CLIENTE ==================
-window.addCart = (n, p) => { 
-    carrito.push({n, p}); 
-    window.renderCart(); 
-};
-
-window.delCart = (i) => { 
-    carrito.splice(i, 1); 
-    window.renderCart(); 
-};
-
-window.renderCart = () => {
-    const res = document.getElementById("resumen");
-    const mon = document.getElementById("monto");
-    if(!res) return;
-    let t = 0;
-    res.innerHTML = carrito.map((x, i) => {
-        t += x.p;
-        return `<div>${x.n} - Bs ${x.p} <button class="btn-x" onclick="window.delCart(${i})">✖</button></div>`;
-    }).join("") || "Carrito vacío";
-    mon.innerText = t;
-};
-
-window.enviarWhatsApp = () => {
-    if(!carrito.length) return alert("Añade algo primero");
-    const tipo = document.querySelector('input[name="t"]:checked').value;
-    const mesa = params.get("mesa") || "General";
-    const total = document.getElementById("monto").innerText;
-    const detalle = carrito.map(x => x.n).join("\n");
-    const fecha = new Date().toISOString();
-
-    fetch(URL_SCRIPT, { method: "POST", mode: 'no-cors', body: JSON.stringify({ fecha, tipo, mesa, detalle, total }) });
-
-    const msg = `🍗 *PEDIDO GO POLLOS*\n*Tipo:* ${tipo}\n*Mesa:* ${mesa}\n\n${detalle}\n\n*Total:* Bs ${total}`;
-    window.open("https://wa.me/59168972863?text=" + encodeURIComponent(msg));
-    carrito = []; window.renderCart();
-};
-
-// ================== INICIO DE LA APP ==================
-const app = document.getElementById("app");
-
-if(modo === "cocina") {
-    app.innerHTML = `
-        <header><h1>👨‍🍳 PANEL COCINA</h1></header>
-        <div style="text-align:center; padding:20px;">
-            <button onclick="sonidoOk=true; alert('Sonido OK')" style="padding:15px; background:white; color:red; border:none; border-radius:10px; font-weight:bold;">🔔 ACTIVAR SONIDO</button>
-        </div>
-        <div id="listaPedidos"></div>
-        <audio id="alerta"><source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg"></audio>
-    `;
-    setInterval(window.actualizarCocina, 5000);
-    window.actualizarCocina();
-} else {
-    app.innerHTML = `
-        <header><img src="logo.png" class="logo"><h1>Go Pollos Rhosse</h1></header>
-        <div class="container"><h2 style="color:yellow">🍗 Menú</h2><div id="menu" class="grid"></div></div>
-        <div class="carrito">
-            <div id="resumen" style="max-height:100px; overflow-y:auto; margin-bottom:10px">Carrito vacío</div>
-            <div style="font-weight:bold; font-size:1.2em">Total: Bs <span id="monto">0</span></div>
-            <div style="margin:10px 0">
-                <input type="radio" name="t" value="Mesa" checked> Mesa
-                <input type="radio" name="t" value="Delivery"> Delivery
-            </div>
-            <button class="boton" onclick="window.enviarWhatsApp()" style="padding:15px">🚀 ENVIAR PEDIDO</button>
-        </div>
-    `;
-    const prods = [
-        {n:"Cuarto Pollo", p:25, i:"medio.jpg"},
-        {n:"Medio Pollo", p:50, i:"cuarto.jpg"},
-        {n:"Pollo Entero", p:100, i:"entero.jpg"},
-        {n:"Gaseosa 2L", p:12, i:"gaseosa2l.jpg"}
-    ];
-    const grid = document.getElementById("menu");
-    prods.forEach(x => {
-        const div = document.createElement("div"); div.className="card";
-        div.innerHTML = `<img src="${x.i}"><h3>${x.n}</h3><p>Bs ${x.p}</p><button class="boton" onclick="window.addCart('${x.n}',${x.p})">Añadir</button>`;
-        grid.appendChild(div);
-    });
+function agregar(nombre,precio){
+  carrito.push({nombre,precio});
+  actualizar();
 }
+
+function actualizar(){
+  let total = 0;
+  let html = "";
+
+  carrito.forEach(item=>{
+    total += item.precio;
+    html += item.nombre + " - Bs " + item.precio + "<br>";
+  });
+
+  document.getElementById("resumen").innerHTML =
+    html || "Sin productos";
+
+  document.getElementById("total").innerHTML =
+    "Total: Bs " + total;
+}
+
 </script>
+
 </body>
 </html>
