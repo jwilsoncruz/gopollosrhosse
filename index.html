@@ -193,11 +193,18 @@ style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:no
 `;
 
 let sonidoActivado=false;
+    let ultimoPedido = null;
 
 function activarSonido(){
  sonidoActivado=true;
  alert("Sonido activado 🔔");
 }
+
+
+
+let ultimoPedidoDetectado = null;
+
+let ultimoPedidoDetectado = null;
 
 function cargarPedidos(){
 
@@ -205,13 +212,32 @@ function cargarPedidos(){
   .then(res => res.json())
   .then(pedidos => {
 
-   let contenedor = document.getElementById("listaPedidos");
+    if(!pedidos || pedidos.length === 0) return;
+
+    let contenedor = document.getElementById("listaPedidos");
     contenedor.innerHTML = "";
+
+    const pedidoReciente = pedidos[pedidos.length - 1];
+
+    // 🔔 DETECTAR PEDIDO NUEVO
+    if(sonidoActivado && ultimoPedidoDetectado !== pedidoReciente.fecha){
+
+      const audio = document.getElementById("alerta");
+      audio.currentTime = 0;
+      audio.play().catch(()=>{});
+
+      // 🔴 PARPADEO
+      document.body.style.background = "#ff0000";
+      setTimeout(()=>{
+        document.body.style.background = "#610000";
+      }, 500);
+
+      ultimoPedidoDetectado = pedidoReciente.fecha;
+    }
 
     pedidos.reverse().forEach(p => {
 
       let color = "#ffffff";
-
       if(p.tipo === "Delivery") color = "#ffe5e5";
       if(p.tipo === "Mesa") color = "#e5f0ff";
       if(p.tipo === "Recoger") color = "#e5ffe5";
@@ -222,20 +248,19 @@ function cargarPedidos(){
           Mesa: ${p.mesa}<br><br>
           ${p.detalle}<br><br>
           Total: Bs ${p.total}<br>
-        Estado: ${p.estado}<br>
+          Estado: ${p.estado}<br>
 
-<button onclick="cambiarEstado('${p.fecha}','${p.detalle}')"
-style="margin-top:8px;background:#d50000;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
-Cambiar estado
-</button>
+          <button onclick="cambiarEstado('${p.fecha}','${p.detalle}')"
+          style="margin-top:8px;background:#d50000;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+          Cambiar estado
+          </button>
         </div>
       `;
     });
 
-  });
-
+  })
+  .catch(error => console.error("Error cargando pedidos:", error));
 }
-
 function cambiarEstado(fecha, detalle){
 
   fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
