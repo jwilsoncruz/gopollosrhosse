@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pantalla Cocina - Go Pollos Rhosse</title>
+
+<style>
+body{
+ font-family: Arial, sans-serif;
+ margin:0;
+ background:#610000;
+ color:white;
+}
+
+header{
+ text-align:center;
+ padding:30px;
+ background:#d50000;
+}
+
+.logo{
+ max-width:200px;
+ display:block;
+ margin:0 auto 15px auto;
+}
+
+.cocina-card{
+ background:white;
+ margin:15px;
+ padding:15px;
+ border-left:6px solid #d50000;
+ border-radius:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.2);
+ color:black;
+}
+
+.estado-btn{
+ margin-top:8px;
+ background:#d50000;
+ color:white;
+ border:none;
+ padding:6px 10px;
+ border-radius:6px;
+ cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo.png" class="logo">
+<h1>🍗 PANTALLA COCINA</h1>
+<button onclick="activarSonido()" 
+style="padding:10px 20px;background:white;color:#d50000;border:none;border-radius:8px;font-weight:bold;">
+🔔 Activar sonido
+</button>
+</header>
+
+<div id="listaPedidos"></div>
+
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+</audio>
+
+<script>
+
+let sonidoActivado=false;
+let ultimoTotal=0;
+
+function activarSonido(){
+ sonidoActivado=true;
+ alert("Sonido activado 🔔");
+}
+
+function cargarPedidos(){
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let html="";
+
+ pedidos.forEach((p,i)=>{
+   if(p.estado!=="Entregado"){
+     html+=`
+     <div class="cocina-card">
+       <h3>Mesa ${p.mesa}</h3>
+       <p>${p.detalle.replace(/\n/g,"<br>")}</p>
+       <strong>Total: Bs ${p.total}</strong><br>
+       Estado: ${p.estado}<br>
+       <button class="estado-btn" onclick="cambiarEstado(${i})">
+       Cambiar Estado
+       </button>
+     </div>`;
+   }
+ });
+
+ document.getElementById("listaPedidos").innerHTML=html;
+}
+
+function cambiarEstado(i){
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let p=pedidos[i];
+
+ if(p.estado==="Nuevo") p.estado="En preparación";
+ else if(p.estado==="En preparación") p.estado="Listo";
+ else p.estado="Entregado";
+
+ pedidos[i]=p;
+ localStorage.setItem("pedidos",JSON.stringify(pedidos));
+ cargarPedidos();
+}
+
+setInterval(()=>{
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ if(pedidos.length>ultimoTotal){
+   if(sonidoActivado){
+     document.getElementById("alerta").play();
+   }
+   ultimoTotal=pedidos.length;
+ }
+ cargarPedidos();
+},1000);
+
+cargarPedidos();
+
+</script>
+
+</body>
+</html>
