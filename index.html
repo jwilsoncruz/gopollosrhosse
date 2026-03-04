@@ -262,18 +262,22 @@ function cargarPedidos(){
 function cambiarEstado(fecha, detalle){
 
   fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
-   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    tipo: tipoPedido,
-    mesa: obtenerMesa(),
-    detalle: detalle,
-    total: total
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      actualizar: true,
+      fecha: fecha,
+      detalle: detalle
+    })
   })
-})
-
+  .then(res => res.json())
+  .then(data => {
+    cargarPedidos();
+  })
+  .catch(err => console.error(err));
+}
 
 
 setInterval(cargarPedidos, 3000);
