@@ -112,8 +112,7 @@ header{
 
 <script>
 
-const params = new URLSearchParams(window.location.search);
-const modo = params.get("modo");
+
 
 // ================== CONFIGURACIÓN HORARIO ==================
 const aperturaHora = 18;
@@ -128,7 +127,7 @@ let pollosDisponibles = 0; // 8 iniciales - 2 vendidos
 
 
 // ================== MODO CLIENTE ==================
-else{
+
 
 document.getElementById("app").innerHTML = `
 <header>
