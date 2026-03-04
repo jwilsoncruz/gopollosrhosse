@@ -125,73 +125,7 @@ const totalPollos = 8;
 let pollosDisponibles = 0; // 8 iniciales - 2 vendidos
 
 // ================== MODO COCINA ==================
-if(modo === "cocina"){
 
-document.getElementById("app").innerHTML = `
-<header>
-<img src="logo.png" class="logo">
-<h1>🍗 PANTALLA COCINA</h1></header>
-<div style="text-align:center;padding:20px;">
-<button onclick="activarSonido()" 
-style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:none;border-radius:10px;">
-🔔 Activar sonido cocina
-</button>
-</div>
-<div id="listaPedidos"></div>
-<audio id="alerta" preload="auto">
-<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
-</audio>
-`;
-
-let sonidoActivado=false;
-
-function activarSonido(){
- sonidoActivado=true;
- alert("Sonido activado 🔔");
-}
-
-function cargarPedidos(){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- let html="";
- pedidos.forEach((p,i)=>{
-   if(p.estado!=="Entregado"){
-     html+=`
-     <div class="cocina-card">
-       <h3>Mesa ${p.mesa}</h3>
-       <p>${p.detalle}</p>
-       <strong>Total: Bs ${p.total}</strong><br>
-       Estado: ${p.estado}<br>
-       <button class="estado-btn" onclick="cambiarEstado(${i})">
-       Cambiar Estado
-       </button>
-     </div>`;
-   }
- });
- document.getElementById("listaPedidos").innerHTML=html;
-}
-
-function cambiarEstado(i){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- let p=pedidos[i];
- if(p.estado==="Nuevo") p.estado="En preparación";
- else if(p.estado==="En preparación") p.estado="Listo";
- else p.estado="Entregado";
- pedidos[i]=p;
- localStorage.setItem("pedidos",JSON.stringify(pedidos));
- cargarPedidos();
-}
-
-let ultimoTotal=0;
-setInterval(()=>{
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- if(pedidos.length>ultimoTotal){
-   if(sonidoActivado) document.getElementById("alerta").play();
-   ultimoTotal=pedidos.length;
- }
- cargarPedidos();
-},1000);
-
-}
 
 // ================== MODO CLIENTE ==================
 else{
