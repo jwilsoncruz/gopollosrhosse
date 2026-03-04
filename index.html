@@ -95,13 +95,8 @@ carrito.forEach(p=>{detalle+=p.nombre+" Bs "+p.precio+"\n";total+=p.precio});
 
 fetch(WEBAPP,{
 method:"POST",
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
-tipo:"Web",
-mesa:"No aplica",
-detalle:detalle,
-total:total
-})
-});
 
 window.open("https://wa.me/59168972863?text="+encodeURIComponent(detalle)," _blank");
 carrito=[];actualizar();
