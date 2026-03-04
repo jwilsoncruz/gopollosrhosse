@@ -97,6 +97,12 @@ fetch(WEBAPP,{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
+tipo:"Web",
+mesa:"No aplica",
+detalle:detalle,
+total:total
+})
+});
 
 window.open("https://wa.me/59168972863?text="+encodeURIComponent(detalle)," _blank");
 carrito=[];actualizar();
@@ -107,7 +113,7 @@ carrito=[];actualizar();
 
 function renderCocina(){
 document.getElementById("app").innerHTML=`
-<header><h1>🍗 PANTALLA COCINA</h1></header>
+<h1 style="text-align:center">PANTALLA COCINA</h1>
 <div id="lista"></div>
 `;
 
@@ -118,17 +124,20 @@ fetch(WEBAPP)
 let html="";
 data.reverse().forEach(p=>{
 html+=`
-<div class="cocina-card">
+<div style="background:white;color:black;margin:10px;padding:10px;border-radius:8px">
 <b>${p.tipo}</b><br>
-${p.detalle}<br>
-Total Bs ${p.total}<br>
-Estado: ${p.estado}<br>
-<button onclick='cambiar("${p.fecha}","${p.detalle}")'>Cambiar estado</button>
+<pre>${p.detalle}</pre>
+Total: Bs ${p.total}<br>
+Estado: ${p.estado}
 </div>
-`
+`;
 });
 document.getElementById("lista").innerHTML=html;
 });
+}
+
+setInterval(cargar,3000);
+cargar();
 }
 
 window.cambiar=function(fecha,detalle){
