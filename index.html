@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Bolivia</title>
+<title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Beni, Bolivia</title>
 <link rel="icon" href="favicon.ico">
 
 <style>
@@ -122,7 +122,7 @@ const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 8;
-let pollosDisponibles = 6; // 8 iniciales - 2 vendidos
+let pollosDisponibles = 0; // 8 iniciales - 2 vendidos
 
 // ================== MODO COCINA ==================
 if(modo === "cocina"){
@@ -202,10 +202,10 @@ document.getElementById("app").innerHTML = `
 <h1>Pollos a la Leña - Go Pollos Rhosse</h1>
 <p>Av. Moxos - Zona Mercado Pompeya</p>
 <div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
-  <img src="promo1sodamini.jpg" style="width:100%;border-radius:10px;">
-  <h2 style="color:#d50000;">🔥 PROMO DEL MES</h2>
-  <button class="boton" onclick="agregar('🔥 Promo Cuarto Pollo + Soda Mini',25)">
-    Agregar Promo
+  <img src="promopadre.png" style="width:100%;border-radius:10px;">
+  <h2 style="color:#d50000;">🔥 LA PROMO DEL MES</h2>
+  <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + Soda 2 Litros + Delivery',120)">
+    Reserva Promo del Padre
   </button>
 </div>
 <!-- ===== ESTADO + ESCACEZ MEJORADO ===== -->
@@ -303,8 +303,8 @@ const productos=[
  {categoria:"bebidas", nombre:"Limonada Jarra media", precio:5, img:"limonada_mediana.jpg"},
  {categoria:"bebidas", nombre:"Limonada Jarra Grande", precio:10, img:"limonada_grande.jpg"},
  {categoria:"bebidas", nombre:"Limonada Vaso", precio:3, img:"limonada_vaso.jpg"},
-{categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
-{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
+// {categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
+//{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
 {categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpg"},
 {categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
