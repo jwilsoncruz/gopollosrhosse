@@ -96,17 +96,22 @@ function cargarPedidos(){
  document.getElementById("listaPedidos").innerHTML=html;
 }
 
-function cambiarEstado(i){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- let p=pedidos[i];
+function cambiarEstado(fila, estado){
 
- if(p.estado==="Nuevo") p.estado="En preparación";
- else if(p.estado==="En preparación") p.estado="Listo";
- else p.estado="Entregado";
-
- pedidos[i]=p;
- localStorage.setItem("pedidos",JSON.stringify(pedidos));
- cargarPedidos();
+  fetch("https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `accion=actualizar&fila=${fila}&estado=${estado}`
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.ok){
+      alert("Estado actualizado 🔥");
+      cargarPedidos();
+    }
+  });
 }
 
 setInterval(()=>{
