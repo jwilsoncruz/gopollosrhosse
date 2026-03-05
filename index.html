@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:image" content="https://jwilsoncruz.github.io/gopollosrhosse/Preview.jpg">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Beni, Bolivia</title>
 <link rel="icon" href="favicon.ico">
 
@@ -32,7 +35,7 @@ header{
 .categoria{
  margin-top:35px;
  font-size:22px;
- color:#d50000;
+ color:#FFFF00;
 }
 
 .grid{
@@ -103,6 +106,39 @@ header{
  border-radius:6px;
  cursor:pointer;
 }
+    .redes{
+    margin-top:40px;
+    text-align:center;
+}
+
+.social-btn{
+    display:block;
+    margin:10px auto;
+    padding:12px;
+    width:220px;
+    border-radius:10px;
+    text-decoration:none;
+    color:white;
+    font-size:18px;
+    transition:0.3s;
+}
+
+.facebook{
+    background:#1877F2;
+}
+
+.tiktok{
+    background:#000000;
+}
+
+    .youtube{
+    background:#c4302b;
+}
+
+.social-btn:hover{
+    transform:scale(1.05);
+    opacity:0.85;
+}
 </style>
 </head>
 
@@ -112,31 +148,166 @@ header{
 
 <script>
 
-
+const params = new URLSearchParams(window.location.search);
+const modo = params.get("modo");
 
 // ================== CONFIGURACIÓN HORARIO ==================
 const aperturaHora = 18;
 const aperturaMin = 30;
-const cierreHora = 15;
+const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 4;
-let pollosDisponibles = 4; // 8 iniciales - 2 vendidos
+let pollosDisponibles = 3; // 8 iniciales - 2 vendidos
+    // ================== DÍAS CERRADOS ==================
+// 0=Domingo, 1=Lunes, 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes, 6=Sábado
 
-// ================== MODO CLIENTE ==================
+const diasCerrados = [0]; 
+// ejemplo: [0] = solo domingo
+// ejemplo: [0,3] = domingo y miércoles
+// ejemplo: [] = abierto todos los días
 
+// 🔴 CIERRE MANUAL (por emergencia o descanso especial)
+const cierreManual = false; 
+// cambia a true si quieres cerrar hoy sin importar el día
+
+// ================== MODO COCINA ==================
+if(modo === "cocina"){
 
 document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
-<h1>Pollos a la Leña - Go Pollos Rhosse</h1>
-<p>Av. Moxos - Zona Mercado Pompeya</p>
+<h1>🍗 PANTALLA COCINA</h1></header>
+
+<div style="text-align:center;padding:20px;">
+<button onclick="activarSonido()" 
+style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:none;border-radius:10px;">
+🔔 Activar sonido cocina
+</button>
+</div>
+
+<div id="listaPedidos"></div>
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+</audio>
+`;
+
+let sonidoActivado=false;
+    let ultimoPedido = null;
+
+function activarSonido(){
+ sonidoActivado=true;
+ alert("Sonido activado 🔔");
+}
+
+
+
+let ultimoPedidoDetectado = null;
+
+function cargarPedidos(){
+
+  fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec")
+  .then(res => res.json())
+  .then(pedidos => {
+
+    if(!pedidos || pedidos.length === 0) return;
+
+    let contenedor = document.getElementById("listaPedidos");
+    contenedor.innerHTML = "";
+
+    const pedidoReciente = pedidos[pedidos.length - 1];
+
+    // 🔔 DETECTAR PEDIDO NUEVO
+    if(sonidoActivado && ultimoPedidoDetectado !== pedidoReciente.fecha){
+
+      const audio = document.getElementById("alerta");
+      audio.currentTime = 0;
+      audio.play().catch(()=>{});
+
+      // 🔴 PARPADEO
+      document.body.style.background = "#ff0000";
+      setTimeout(()=>{
+        document.body.style.background = "#610000";
+      }, 500);
+
+      ultimoPedidoDetectado = pedidoReciente.fecha;
+    }
+
+    pedidos.reverse().forEach(p => {
+
+      let color = "#ffffff";
+      if(p.tipo === "Delivery") color = "#ffe5e5";
+      if(p.tipo === "Mesa") color = "#e5f0ff";
+      if(p.tipo === "Recoger") color = "#e5ffe5";
+
+      contenedor.innerHTML += `
+        <div style="background:${color}; padding:15px; margin-bottom:10px; border-radius:8px;">
+          <strong>${p.tipo}</strong><br>
+          Mesa: ${p.mesa}<br><br>
+          ${p.detalle}<br><br>
+          Total: Bs ${p.total}<br>
+          Estado: ${p.estado}<br>
+
+          <button onclick="cambiarEstado('${p.fecha}','${p.detalle}')"
+          style="margin-top:8px;background:#d50000;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+          Cambiar estado
+          </button>
+        </div>
+      `;
+    });
+
+  })
+  .catch(error => console.error("Error cargando pedidos:", error));
+}
+function cambiarEstado(fecha, detalle){
+
+  fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      actualizar:true,
+      fecha:fecha,
+      detalle:detalle
+    })
+  })
+  .then(res=>res.json())
+  .then(()=>{
+    cargarPedidos();
+  });
+
+}
+
+
+
+setInterval(cargarPedidos, 3000);
+cargarPedidos();
+    
+}
+
+// ================== MODO CLIENTE ==================
+else{
+
+document.getElementById("app").innerHTML = `
+<header>
+<img src="logo.png" class="logo">
+<h1>Pollos a la Leña - Go Pollos Rhosse en Trinidad Beni</h1>
+<div id="bannerCerrado" style="
+ display:none;
+ background:#8b0000;
+ color:white;
+ padding:12px;
+ border-radius:10px;
+ margin-top:10px;
+ font-weight:bold;
+ font-size:16px;">
+</div>
+<p>Av. Moxos - Zona Mercado Pompeya en Trinidad Beni </p>
 <div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
   <img src="promopadre.png" style="width:100%;border-radius:10px;">
-  <h2 style="color:#d50000;">🔥 LA PROMO DEL MES</h2>
-  <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + Soda 2 Litros + Delivery',120)">
-    Reserva Promo del Padre
-  </button>
+  <h2 style="color:#d50000;">🔥 PROMO DEL MES : PORQUE PAPÁ LO MERECE</h2>
+  <button class="boton"
+onclick="agregarPromo('🔥 RESERVANDO ... Promo 1 Pollo Entero + 1 Soda 2 litros + Delivery Gratis',120)">
+Agregar Promo
+</button>
 </div>
 <!-- ===== ESTADO + ESCACEZ MEJORADO ===== -->
 <div style="
@@ -188,6 +359,30 @@ document.getElementById("app").innerHTML = `
 
 <h2 class="categoria">🍔 Extras</h2>
 <div id="extras" class="grid"></div>
+<!-- ===== REDES SOCIALES ===== -->
+<div class="redes">
+  <h2>Síguenos en Redes</h2>
+
+  <a href="https://www.facebook.com/GoPollosRhosseTdd/"
+     target="_blank"
+     class="social-btn facebook">
+     <i class="fab fa-facebook-f"></i> Facebook
+  </a>
+
+  <a href="https://tiktok.com/@go.rhosse.pollos.tdd"
+     target="_blank"
+     class="social-btn tiktok">
+     <i class="fab fa-tiktok"></i> TikTok
+  </a>
+
+  <a href="https://www.youtube.com/@PollosalaLenaGoPollosRhosseTdd"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="social-btn youtube">
+   <i class="fab fa-youtube"></i> YouTube
+</a>
+</div>
+</div>
 </div>
 
 <div class="carrito">
@@ -228,15 +423,15 @@ const productos=[
 {categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"medio.jpg"},
 {categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"cuarto.jpg"},
 {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
-{categoria:"bebidas", nombre:"Gaseosa 2L", precio:12, img:"gaseosa2l.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa 2L", precio:13, img:"gaseosa2l.jpg"},
 {categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
  {categoria:"bebidas", nombre:"Limonada Jarra media", precio:5, img:"limonada_mediana.jpg"},
  {categoria:"bebidas", nombre:"Limonada Jarra Grande", precio:10, img:"limonada_grande.jpg"},
  {categoria:"bebidas", nombre:"Limonada Vaso", precio:3, img:"limonada_vaso.jpg"},
 // {categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
-//{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
+// {categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
 {categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
-{categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpg"},
+{categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
 {categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
 ];
 
@@ -335,19 +530,26 @@ function enviarPedido(){
   mensaje += detalle;
   mensaje += "\nTotal: Bs " + total;
 
-  let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
-
-  pedidos.push({
+fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    tipo: tipoPedido,
     mesa: obtenerMesa(),
     detalle: detalle,
-    total: total,
-    estado: "Nuevo"
-  });
-
-  localStorage.setItem("pedidos", JSON.stringify(pedidos));
-
+    total: total
+  })
+})
+.then(res => res.json())
+.then(data => {
+  console.log("Pedido guardado en Google Sheets");
+})
+.catch(err => {
+  console.error("Error:", err);
+});
+// cambiar telefono whatsapp 
   window.open(
-    "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje),
+   // "https://wa.me/59168972863?text=" + encodeURIComponent(mensaje), //Wilson
+   "https://wa.me/59172685867?text=" + encodeURIComponent(mensaje), //Helen
     "_blank"
   );
 
@@ -360,6 +562,10 @@ function enviarPedido(){
 /* ===================== */
 
 function eliminarProducto(index){
+  if(carrito[index].nombre.includes("Promo")){
+    pollosDisponibles++;
+    actualizarEscasez();
+  }
   carrito.splice(index,1);
   actualizarCarrito();
 }
@@ -382,7 +588,7 @@ function actualizarEscasez(){
    barra.style.background="orange";
  }
  else{
-   texto.innerHTML="❌ PROMOCIÓN AGOTADA";
+   texto.innerHTML="❌ POLLOS AGOTADOS";
    barra.style.background="gray";
    if(btn){btn.disabled=true;btn.innerText="Agotado";}
  }
@@ -390,31 +596,60 @@ function actualizarEscasez(){
 
 function actualizarEstado(){
  const estado=document.getElementById("estadoLocal");
- if(!estado) return; // 🔥 evita que rompa
+ const banner=document.getElementById("bannerCerrado");
+ if(!estado) return;
 
  const ahora=new Date();
  const dia=ahora.getDay();
  const hora=ahora.getHours();
  const min=ahora.getMinutes();
 
+ // 🔴 CIERRE MANUAL
+ if(cierreManual){
+   estado.innerHTML="🔴 Hoy no estamos atendiendo";
+   estado.style.color="red";
+
+   if(banner){
+     banner.style.display="block";
+     banner.innerHTML="🚫 HOY NO HAY ATENCIÓN — Volvemos mañana desde 18:30 🍗";
+   }
+
+   return;
+ }
+
+ // 🔴 DÍA CERRADO
+ if(diasCerrados.includes(dia)){
+   estado.innerHTML="🔴 Hoy no hay atención";
+   estado.style.color="red";
+
+   if(banner){
+     banner.style.display="block";
+     banner.innerHTML="🚫 HOY NO ATENDEMOS — Te esperamos mañana desde 18:30 🔥";
+   }
+
+   return;
+ }
+
  const abierto=
- dia>=1&&dia<=6&&
  ((hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin))&&
  (hora<cierreHora||(hora===cierreHora&&min<=cierreMin)));
 
  if(abierto){
-   estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:30 PM";
+   estado.innerHTML="🟢 Estamos ATENDIENDO hasta 10:30 PM";
    estado.style.color="green";
+
+   if(banner){
+     banner.style.display="none";
+   }
  }
  else{
-   let proxima=new Date();
-   proxima.setHours(aperturaHora,aperturaMin,0);
-   if(hora>cierreHora||dia===0) proxima.setDate(proxima.getDate()+1);
-   let diff=proxima-ahora;
-   let h=Math.floor(diff/(1000*60*60));
-   let m=Math.floor((diff%(1000*60*60))/(1000*60));
-   estado.innerHTML="🔴 Cerrado — Abrimos en "+h+"h "+m+"m";
+   estado.innerHTML="🔴 Cerrado — Atendemos de 18:30 a 22:30";
    estado.style.color="red";
+
+   if(banner){
+     banner.style.display="block";
+     banner.innerHTML="⏰ Estamos cerrados ahora — Abrimos a las 18:30 🍗";
+   }
  }
 }
 
@@ -423,7 +658,75 @@ actualizarEstado();
 cargarProductos();
 actualizarEscasez();
 
-</script>
+/* ===================== */
+}  // ← AQUÍ CIERRA EL ELSE
 
+</script>
+<section style="padding:40px 20px; text-align:center;">
+  <h2 style="color:#ff0000;">📍 Nuestra Ubicación</h2>
+
+  <p style="color:#ffffff;">
+    Estamos en Av. Moxos, Zona Mercado Pompeya, Trinidad
+  </p>
+
+  <div style="
+      max-width:1000px;
+      margin:auto;
+      position:relative;
+      padding-bottom:56.25%;
+      height:0;
+      overflow:hidden;
+      border-radius:12px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  ">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3856.7699232971613!2d-64.89931490000001!3d-14.838165399999992!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93dd6f0000a9cc63%3A0xf076558028d4dd!2sPollos%20a%20la%20Le%C3%B1a%20Go%20Pollo&#39;s%20Rhosse%20-%20Trinidad!5e0!3m2!1ses!2sbo!4v1772173700407!5m2!1ses!2sbo"
+      style="
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        border:0;
+      "
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</section>
 </body>
+    <style>
+.confetti{
+  position:fixed;
+  width:8px;
+  height:8px;
+  top:-10px;
+  animation:caer linear infinite;
+  opacity:0.9;
+  pointer-events:none;
+  z-index:9999;
+}
+
+@keyframes caer{
+  to{
+    transform:translateY(110vh) rotate(360deg);
+  }
+}
+</style>
+
+<script>
+(function(){
+  const colores=["#ffcc00","#ff3d00","#ffffff","#25D366"];
+  for(let i=0;i<60;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.backgroundColor=colores[Math.floor(Math.random()*colores.length)];
+    c.style.animationDuration=(Math.random()*3+4)+"s";
+    c.style.width=c.style.height=(Math.random()*6+4)+"px";
+    document.body.appendChild(c);
+  }
+})();
+</script>
 </html>
