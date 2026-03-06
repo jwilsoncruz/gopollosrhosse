@@ -207,7 +207,29 @@ document.getElementById("app").innerHTML = `
   <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + Soda 2 Litros + Delivery',120)">
     Reserva Promo del Padre
   </button>
+</div
+
+<div id="contadorPollos" style="
+background:linear-gradient(45deg,#ff4d4d,#b30000);
+color:white;
+padding:15px;
+border-radius:12px;
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+box-shadow:0 6px 15px rgba(0,0,0,0.25);
+">
+
+<div id="estadoLenia" style="font-size:18px;">
+🔥 Preparando la leña
 </div>
+
+<div id="tiempoApertura" style="font-size:30px;margin-top:5px;">
+00:00:00
+</div>
+
+</div>
+
 <!-- ===== ESTADO + ESCACEZ MEJORADO ===== -->
 <div style="
   background:white;
@@ -491,6 +513,59 @@ setInterval(actualizarEstado,60000);
 actualizarEstado();
 cargarProductos();
 actualizarEscasez();
+
+ function contadorLenia(){
+
+const ahora=new Date();
+
+let prender=new Date();
+prender.setHours(16,30,0);
+
+let abrir=new Date();
+abrir.setHours(18,30,0);
+
+const estado=document.getElementById("estadoLenia");
+const tiempo=document.getElementById("tiempoApertura");
+
+if(!estado) return;
+
+// YA ABIERTO
+if(ahora>=abrir){
+ estado.innerHTML="🍗 ¡YA ESTAMOS ATENDIENDO!";
+ tiempo.innerHTML="🔥 Ven por tu pollo";
+ return;
+}
+
+// LEÑA PRENDIDA
+if(ahora>=prender){
+ estado.innerHTML="🔥 La leña ya está prendida";
+ let diff=abrir-ahora;
+
+ let m=Math.floor(diff/60000);
+ let s=Math.floor((diff%60000)/1000);
+
+ tiempo.innerHTML=m+"m "+s+"s";
+ return;
+}
+
+// CUENTA REGRESIVA
+let diff=prender-ahora;
+
+let h=Math.floor(diff/3600000);
+let m=Math.floor((diff%3600000)/60000);
+let s=Math.floor((diff%60000)/1000);
+
+estado.innerHTML="⏳ Prendemos la leña en";
+
+tiempo.innerHTML=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+}
+
+setInterval(contadorLenia,1000);
+contadorLenia();
 
 /* ===================== */
 }  // ← AQUÍ CIERRA EL ELSE
