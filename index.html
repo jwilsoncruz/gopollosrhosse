@@ -211,7 +211,7 @@ function cargarPedidos(){
     if(!pedidos) return;
     let contenedor = document.getElementById("listaPedidos");
     let html = "";
-    // Solo mostramos los que NO están listos
+    // Solo pedidos que NO están listos
     const pendientes = pedidos.filter(p => p.estado !== "Listo");
     
     if(pendientes.length > 0) {
@@ -227,12 +227,12 @@ function cargarPedidos(){
     pendientes.reverse().forEach(p => {
       let color = p.tipo === "Delivery" ? "#ffe5e5" : (p.tipo === "Mesa" ? "#e5f0ff" : "#e5ffe5");
       html += `
-        <div style="background:${color}; padding:15px; margin-bottom:10px; border-radius:8px; color:#333;">
+        <div style="background:${color}; padding:15px; margin-bottom:10px; border-radius:8px; color:#333; border-left: 8px solid #d50000;">
           <strong>${p.tipo} - Mesa: ${p.mesa}</strong><br>
-          <div style="font-size:1.1em; margin:10px 0;">${p.detalle.replace(/\n/g, "<br>")}</div>
+          <div style="font-size:1.1em; margin:10px 0; font-weight:bold;">${p.detalle.replace(/\n/g, "<br>")}</div>
           Total: Bs ${p.total} | Estado: ${p.estado}<br>
           <button onclick="cambiarEstado('${p.fecha}','${p.detalle.replace(/'/g,"")}')"
-          style="margin-top:8px;background:#d50000;color:white;border:none;padding:10px;border-radius:6px;cursor:pointer;width:100%;font-weight:bold;">
+          style="margin-top:8px;background:#d50000;color:white;border:none;padding:12px;border-radius:6px;cursor:pointer;width:100%;font-weight:bold;">
           ✅ MARCAR COMO ENTREGADO
           </button>
         </div>`;
@@ -240,13 +240,13 @@ function cargarPedidos(){
     contenedor.innerHTML = html || "<h2 style='text-align:center;color:white;'>No hay pedidos pendientes</h2>";
   });
 }
-    function cambiarEstado(fecha, detalle){
+   function cambiarEstado(fecha, detalle){
   fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
     method: "POST",
-    mode: "no-cors", // Para que no se bloquee el envío
+    mode: "no-cors", 
     body: JSON.stringify({ actualizar:true, fecha:fecha, detalle:detalle })
   });
-  // Refresco rápido visual
+  // Borra el pedido visualmente de inmediato mientras el servidor procesa
   setTimeout(cargarPedidos, 500);
 }
 
