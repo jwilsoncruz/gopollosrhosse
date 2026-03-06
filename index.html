@@ -205,82 +205,49 @@ function activarSonido(){
 let ultimoPedidoDetectado = null;
 
 function cargarPedidos(){
-
   fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec")
   .then(res => res.json())
   .then(pedidos => {
-
-    if(!pedidos || pedidos.length === 0) return;
-
+    if(!pedidos) return;
     let contenedor = document.getElementById("listaPedidos");
-    contenedor.innerHTML = "";
-
-    const pedidoReciente = pedidos[pedidos.length - 1];
-
-    // 🔔 DETECTAR PEDIDO NUEVO
-    if(sonidoActivado && ultimoPedidoDetectado !== pedidoReciente.fecha){
-
-      const audio = document.getElementById("alerta");
-      audio.currentTime = 0;
-      audio.play().catch(()=>{});
-
-      // 🔴 PARPADEO
-      document.body.style.background = "#ff0000";
-      setTimeout(()=>{
-        document.body.style.background = "#610000";
-      }, 500);
-
-      ultimoPedidoDetectado = pedidoReciente.fecha;
+    let html = "";
+    // Solo mostramos los que NO están listos
+    const pendientes = pedidos.filter(p => p.estado !== "Listo");
+    
+    if(pendientes.length > 0) {
+      const reciente = pendientes[pendientes.length - 1];
+      if(sonidoActivado && ultimoPedidoDetectado !== reciente.fecha){
+        document.getElementById("alerta").play().catch(()=>{});
+        document.body.style.background = "#ff0000";
+        setTimeout(()=> document.body.style.background = "#610000", 500);
+        ultimoPedidoDetectado = reciente.fecha;
+      }
     }
 
-    pedidos.reverse().forEach(p => {
-
-      let color = "#ffffff";
-      if(p.tipo === "Delivery") color = "#ffe5e5";
-      if(p.tipo === "Mesa") color = "#e5f0ff";
-      if(p.tipo === "Recoger") color = "#e5ffe5";
-
-      contenedor.innerHTML += `
-        <div style="background:${color}; padding:15px; margin-bottom:10px; border-radius:8px;">
-          <strong>${p.tipo}</strong><br>
-          Mesa: ${p.mesa}<br><br>
-          ${p.detalle}<br><br>
-          Total: Bs ${p.total}<br>
-          Estado: ${p.estado}<br>
-
-          <button onclick="cambiarEstado('${p.fecha}','${p.detalle}')"
-          style="margin-top:8px;background:#d50000;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
-          Cambiar estado
+    pendientes.reverse().forEach(p => {
+      let color = p.tipo === "Delivery" ? "#ffe5e5" : (p.tipo === "Mesa" ? "#e5f0ff" : "#e5ffe5");
+      html += `
+        <div style="background:${color}; padding:15px; margin-bottom:10px; border-radius:8px; color:#333;">
+          <strong>${p.tipo} - Mesa: ${p.mesa}</strong><br>
+          <div style="font-size:1.1em; margin:10px 0;">${p.detalle.replace(/\n/g, "<br>")}</div>
+          Total: Bs ${p.total} | Estado: ${p.estado}<br>
+          <button onclick="cambiarEstado('${p.fecha}','${p.detalle.replace(/'/g,"")}')"
+          style="margin-top:8px;background:#d50000;color:white;border:none;padding:10px;border-radius:6px;cursor:pointer;width:100%;font-weight:bold;">
+          ✅ MARCAR COMO ENTREGADO
           </button>
-        </div>
-      `;
+        </div>`;
     });
-
-  })
-  .catch(error => console.error("Error cargando pedidos:", error));
+    contenedor.innerHTML = html || "<h2 style='text-align:center;color:white;'>No hay pedidos pendientes</h2>";
+  });
 }
-function cambiarEstado(fecha, detalle){
-
+    function cambiarEstado(fecha, detalle){
   fetch("https://script.google.com/macros/s/AKfycbxXnNPSV2OTURsEO94cg3HwKjzFMIUJcytuyXyuWsKJ7VJOy80kSHneT6W9sGyEOpDRoQ/exec", {
     method: "POST",
-    body: JSON.stringify({
-      actualizar:true,
-      fecha:fecha,
-      detalle:detalle
-    })
-  })
-  .then(res=>res.json())
-  .then(()=>{
-    cargarPedidos();
+    mode: "no-cors", // Para que no se bloquee el envío
+    body: JSON.stringify({ actualizar:true, fecha:fecha, detalle:detalle })
   });
-
-}
-
-
-
-setInterval(cargarPedidos, 3000);
-cargarPedidos();
-    
+  // Refresco rápido visual
+  setTimeout(cargarPedidos, 500);
 }
 
 // ================== MODO CLIENTE ==================
