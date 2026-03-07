@@ -116,9 +116,9 @@ const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 
 // ================== CONFIGURACIÓN HORARIO ==================
-const aperturaHora = 0;
-const aperturaMin = 39;
-const cierreHora = 0;
+const aperturaHora = 19;
+const aperturaMin = 00;
+const cierreHora = 22;
 const cierreMin = 45;
 
 const totalPollos = 24;
@@ -525,7 +525,7 @@ let prender=new Date();
 prender.setHours(12,32,0);
 
 let abrir=new Date();
-abrir.setHours(12,40,0);
+abrir.setHours(19,00,0);
 
 const estado=document.getElementById("estadoLenia");
 const tiempo=document.getElementById("tiempoApertura");
