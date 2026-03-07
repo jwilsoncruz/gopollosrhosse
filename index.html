@@ -116,13 +116,13 @@ const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 
 // ================== CONFIGURACIÓN HORARIO ==================
-const aperturaHora = 18;
-const aperturaMin = 30;
+const aperturaHora = 19;
+const aperturaMin = 00;
 const cierreHora = 22;
 const cierreMin = 45;
 
-const totalPollos = 6;
-let pollosDisponibles = 4; // 8 iniciales - 2 vendidos
+const totalPollos = 7;
+let pollosDisponibles = 5; // 8 iniciales - 2 vendidos
 
 // ================== MODO COCINA ==================
 if(modo === "cocina"){
@@ -199,12 +199,12 @@ else{
 document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
-<h1>Pollos a la Leña<br>Go Pollos Rhosse<br>de:Trinidad|Beni|Bolivia</h1>
+<h1>Pollos a la Leña<br>Go Pollos Rhosse<br>en Trinidad,Beni,Bolivia</h1>
 <p>Av. Moxos - Zona Mercado Pompeya</p>
 <div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
   <img src="promopadre.png" style="width:100%;border-radius:10px;">
   <h2 style="color:#d50000;">🔥 LA PROMO DEL MES</h2>
-  <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + Soda 2 Litros + Delivery',120)">
+  <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + 1 Soda de 2 Litros + Delivery',120)">
     Reserva Promo del Padre
   </button>
 </div
@@ -225,7 +225,7 @@ box-shadow:0 6px 15px rgba(0,0,0,0.25);
 </div>
 
 <div id="tiempoApertura" style="font-size:30px;margin-top:5px;">
-00:00:00
+19:00:00
 </div>
 
 </div>
@@ -497,7 +497,7 @@ function actualizarEstado(){
  (hora<cierreHora||(hora===cierreHora&&min<=cierreMin)));
 
  if(abierto){
-   estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:30 PM";
+   estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:45 PM";
    estado.style.color="green";
  }
  else{
@@ -522,10 +522,10 @@ actualizarEscasez();
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(16,30,0);
+prender.setHours(16,00,0);
 
 let abrir=new Date();
-abrir.setHours(18,30,0);
+abrir.setHours(19,00,0);
 
 const estado=document.getElementById("estadoLenia");
 const tiempo=document.getElementById("tiempoApertura");
