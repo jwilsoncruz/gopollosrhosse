@@ -620,7 +620,7 @@ const nombres = [
 ];
 
 function pedidoFalso(){
-
+if(cerradoManual) return;
 const nombre = nombres[Math.floor(Math.random()*nombres.length)];
 
 const aviso = document.createElement("div");
@@ -652,7 +652,7 @@ SIMULACIÓN DE PEDIDOS (VERSIÓN MÓVIL)
 =============================== */
 
 document.addEventListener("DOMContentLoaded", function(){
-
+if(cerradoManual) return;
 const nombresPedidos = [
 "Juan Carlos","María Jesús","Juan de Dios","Luis","Ana","Miguel","Jorge","Mario","Raquel","Fernando"
 ];
