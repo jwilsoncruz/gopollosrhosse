@@ -111,7 +111,20 @@ header{
 <div id="app"></div>
 
 <script>
+// ================= CONTROL DEL LOCAL =================
 
+// cerrar manualmente desde botón admin
+let cerradoManual = localStorage.getItem("cerradoManual") === "true";
+
+// días cerrados automáticos
+const diasCerrados = [0]; 
+// 0 = domingo
+
+// fechas especiales cerradas
+const fechasCerrado = [
+ "2026-12-25"
+];
+ 
 const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 
@@ -130,6 +143,12 @@ if(modo === "cocina"){
 document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
+<div style="margin-top:10px;">
+<button onclick="toggleCerrado()" 
+style="background:black;color:white;border:none;padding:6px 10px;border-radius:6px;font-size:12px;">
+⚙️ Admin
+</button>
+</div>
 <h1>🍗 PANTALLA COCINA</h1></header>
 <div style="text-align:center;padding:20px;">
 <button onclick="activarSonido()" 
@@ -405,7 +424,10 @@ function actualizarCarrito(){
 }
 
 function enviarPedido(){
-
+if(cerradoManual){
+ alert("🔴 Hoy no estamos atendiendo");
+ return;
+}
   if(carrito.length===0){
     alert("Agrega al menos un producto");
     return;
@@ -483,6 +505,11 @@ function actualizarEscasez(){
 }
 
 function actualizarEstado(){
+ if(cerradoManual){
+ estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
+ estado.style.color="red";
+ return;
+}
  const estado=document.getElementById("estadoLocal");
  if(!estado) return; // 🔥 evita que rompa
 
@@ -518,7 +545,17 @@ cargarProductos();
 actualizarEscasez();
 
  function contadorLenia(){
+if(cerradoManual){
+ const estado=document.getElementById("estadoLenia");
+ const tiempo=document.getElementById("tiempoApertura");
 
+ if(estado){
+   estado.innerHTML="🔴 HOY NO ATENDEMOS";
+   tiempo.innerHTML="Volvemos mañana 🍗";
+ }
+
+ return;
+}
 const ahora=new Date();
 
 let prender=new Date();
@@ -663,6 +700,22 @@ bajarCupos();
 
 });
 
+ function toggleCerrado(){
+
+cerradoManual = !cerradoManual;
+
+localStorage.setItem("cerradoManual", cerradoManual);
+
+if(cerradoManual){
+ alert("🔴 LOCAL CERRADO MANUALMENTE");
+}
+else{
+ alert("🟢 LOCAL ABIERTO");
+}
+
+location.reload();
+
+}
 
 
 </script>
