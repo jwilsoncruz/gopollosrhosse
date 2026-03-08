@@ -573,6 +573,98 @@ contadorLenia();
 /* ===================== */
 }  // ← AQUÍ CIERRA EL ELSE
 
+  /* ===============================
+   SIMULACIÓN DE PEDIDOS EN VIVO
+   =============================== */
+
+const nombres = [
+"Carlos","María","Juan","Luis","Ana","Pedro","Jorge","Mario","Sofía","Ricardo"
+];
+
+function pedidoFalso(){
+
+const nombre = nombres[Math.floor(Math.random()*nombres.length)];
+
+const aviso = document.createElement("div");
+
+aviso.innerHTML = "🔥 " + nombre + " acaba de realizar un pedido";
+
+aviso.style.position = "fixed";
+aviso.style.bottom = "20px";
+aviso.style.left = "20px";
+aviso.style.background = "#111";
+aviso.style.padding = "10px 15px";
+aviso.style.borderRadius = "10px";
+aviso.style.fontSize = "0.85em";
+aviso.style.boxShadow = "0 0 10px rgba(0,0,0,0.6)";
+aviso.style.zIndex = "9999";
+
+document.body.appendChild(aviso);
+
+setTimeout(()=>{
+aviso.remove();
+},4000);
+
+}
+
+setInterval(pedidoFalso,20000);
+
+/* ===============================
+SIMULACIÓN DE PEDIDOS (VERSIÓN MÓVIL)
+=============================== */
+
+document.addEventListener("DOMContentLoaded", function(){
+
+const nombresPedidos = [
+"Carlos","María","Juan","Luis","Ana","Pedro","Jorge","Mario","Sofía","Ricardo"
+];
+
+function pedidoFalso(){
+
+const nombre = nombresPedidos[Math.floor(Math.random()*nombresPedidos.length)];
+
+const aviso = document.createElement("div");
+
+aviso.innerHTML = "🔥 " + nombre + " acaba de realizar un pedido";
+
+aviso.style.position = "fixed";
+aviso.style.bottom = "20px";
+aviso.style.left = "20px";
+aviso.style.background = "#111";
+aviso.style.padding = "10px 15px";
+aviso.style.borderRadius = "10px";
+aviso.style.fontSize = "14px";
+aviso.style.boxShadow = "0 0 10px rgba(0,0,0,0.6)";
+aviso.style.zIndex = "9999";
+aviso.style.color = "#fff";
+
+document.body.appendChild(aviso);
+
+setTimeout(function(){
+aviso.remove();
+},4000);
+
+}
+
+// esperar un poco para que cargue en móvil
+setTimeout(function(){
+
+setInterval(function(){
+
+pedidoFalso();
+
+if(typeof bajarCupos === "function"){
+bajarCupos();
+}
+
+},20000);
+
+},8000);
+
+});
+
+
+
 </script>
 
 </body>
