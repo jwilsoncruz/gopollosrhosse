@@ -226,7 +226,7 @@ document.getElementById("app").innerHTML = `
   <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + 1 Soda de 2 Litros + Delivery',120)">
     Reserva Promo del Padre
   </button>
-</div
+</div>
 
 <div id="contadorPollos" style="
 background:linear-gradient(45deg,#ff4d4d,#b30000);
@@ -505,16 +505,17 @@ function actualizarEscasez(){
 }
 
 function actualizarEstado(){
- if(cerradoManual){
- estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
- estado.style.color="red";
- return;
-}
- const estado=document.getElementById("estadoLocal");
- if(!estado) return; // 🔥 evita que rompa
 
- const ahora=new Date();
- const dia=ahora.getDay();
+ const estado=document.getElementById("estadoLocal");
+ if(!estado) return;
+
+ if(cerradoManual){
+   estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
+   estado.style.color="red";
+   return;
+ }
+
+ const ahora=new Date(); const dia=ahora.getDay();
  const hora=ahora.getHours();
  const min=ahora.getMinutes();
 
