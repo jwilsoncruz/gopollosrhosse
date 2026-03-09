@@ -622,14 +622,20 @@ tiempo.innerHTML=
 String(h).padStart(2,"0")+":"+
 String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0");
-/* ===================== */
+
+} // ← cierra contadorLenia()
 
 
+// INICIAR SISTEMA
 actualizarEstado();
 cargarProductos();
 actualizarEscasez();
-}
+contadorLenia();
 
+setInterval(actualizarEstado,60000);
+setInterval(contadorLenia,1000);
+
+} // ← cierra el ELSE principal
 </script>
 
 </body>
