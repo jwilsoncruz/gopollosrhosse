@@ -111,324 +111,478 @@ header{
 <div id="app"></div>
 
 <script>
+// ================= CONTROL DEL LOCAL =================
 
-// ================= CONTROL LOCAL =================
-
+// cerrar manualmente desde botón admin
 let cerradoManual = localStorage.getItem("cerradoManual") === "true";
-const diasCerrados = [1];
 
+// días cerrados automáticos
+const diasCerrados = [0]; 
+// 0 = domingo
+
+// fechas especiales cerradas
+const fechasCerrado = [
+ "2026-12-25"
+];
+ 
 const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 
+// ================== CONFIGURACIÓN HORARIO ==================
 const aperturaHora = 19;
-const aperturaMin = 0;
+const aperturaMin = 00;
 const cierreHora = 22;
 const cierreMin = 45;
 
 const totalPollos = 24;
-let pollosDisponibles = 22;
+let pollosDisponibles = 22; // stock inicial del día
 
-
-// ================= MODO COCINA =================
-
+// ================== MODO COCINA ==================
 if(modo === "cocina"){
 
-document.getElementById("app").innerHTML=`
+document.getElementById("app").innerHTML = `
 <header>
 <img src="logo.png" class="logo">
-<h1>🍗 PANTALLA COCINA</h1>
-</header>
-
+<div style="margin-top:10px;">
+<button onclick="toggleCerrado()" 
+style="background:black;color:white;border:none;padding:6px 10px;border-radius:6px;font-size:12px;">
+⚙️ Admin
+</button>
+</div>
+<h1>🍗 PANTALLA COCINA</h1></header>
+<div style="text-align:center;padding:20px;">
+<button onclick="activarSonido()" 
+style="padding:15px 25px;font-size:18px;background:#d50000;color:white;border:none;border-radius:10px;">
+🔔 Activar sonido cocina
+</button>
+</div>
 <div id="listaPedidos"></div>
-
-<audio id="alerta">
-<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
 </audio>
 `;
 
-let ultimoTotal=0;
+let sonidoActivado=false;
+
+function activarSonido(){
+ sonidoActivado=true;
+ alert("Sonido activado 🔔");
+}
 
 function cargarPedidos(){
-
-let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
-let html="";
-
-pedidos.forEach((p,i)=>{
- if(p.estado!=="Entregado"){
- html+=`
- <div class="cocina-card">
- <h3>Mesa ${p.mesa}</h3>
- <p>${p.detalle}</p>
- <strong>Total: Bs ${p.total}</strong><br>
- Estado: ${p.estado}<br>
- <button class="estado-btn" onclick="cambiarEstado(${i})">
- Cambiar Estado
- </button>
- </div>
- `;
- }
-});
-
-document.getElementById("listaPedidos").innerHTML=html;
-
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let html="";
+ pedidos.forEach((p,i)=>{
+   if(p.estado!=="Entregado"){
+     html+=`
+     <div class="cocina-card">
+       <h3>Mesa ${p.mesa}</h3>
+       <p>${p.detalle}</p>
+       <strong>Total: Bs ${p.total}</strong><br>
+       Estado: ${p.estado}<br>
+       <button class="estado-btn" onclick="cambiarEstado(${i})">
+       Cambiar Estado
+       </button>
+     </div>`;
+   }
+ });
+ document.getElementById("listaPedidos").innerHTML=html;
 }
 
 function cambiarEstado(i){
-
-let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
-
-let p=pedidos[i];
-
-if(p.estado==="Nuevo") p.estado="En preparación";
-else if(p.estado==="En preparación") p.estado="Listo";
-else p.estado="Entregado";
-
-pedidos[i]=p;
-
-localStorage.setItem("pedidos",JSON.stringify(pedidos));
-
-cargarPedidos();
-
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let p=pedidos[i];
+ if(p.estado==="Nuevo") p.estado="En preparación";
+ else if(p.estado==="En preparación") p.estado="Listo";
+ else p.estado="Entregado";
+ pedidos[i]=p;
+ localStorage.setItem("pedidos",JSON.stringify(pedidos));
+ cargarPedidos();
 }
 
+let ultimoTotal=0;
 setInterval(()=>{
-
-let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
-
-if(pedidos.length>ultimoTotal){
-document.getElementById("alerta").play();
-ultimoTotal=pedidos.length;
-}
-
-cargarPedidos();
-
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ if(pedidos.length>ultimoTotal){
+   if(sonidoActivado) document.getElementById("alerta").play();
+   ultimoTotal=pedidos.length;
+ }
+ cargarPedidos();
 },1000);
 
-}
-
-
-// ================= MODO CLIENTE =================
-
+// ================== MODO CLIENTE ==================
 else{
 
-document.getElementById("app").innerHTML=`
-
+document.getElementById("app").innerHTML = `
 <header>
-
 <img src="logo.png" class="logo">
+<h1>Pollos a la Leña<br>Go Pollos Rhosse<br>en Trinidad,Beni,Bolivia</h1>
+<p>Av. Moxos - Zona Mercado Pompeya</p>
+<div style="background:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;">
+  <img src="promopadre.png" style="width:100%;border-radius:10px;">
+  <h2 style="color:#d50000;">🔥 LA PROMO DEL MES</h2>
+  <button class="boton" onclick="agregar('🔥 Promo 1 Pollo Entero + 1 Soda de 2 Litros + Delivery',120)">
+    Reserva Promo del Padre
+  </button>
+</div>
 
-<h1>
-Pollos a la Leña<br>
-Go Pollos Rhosse<br>
-Trinidad Beni Bolivia
-</h1>
+<div id="contadorPollos" style="
+background:linear-gradient(45deg,#ff4d4d,#b30000);
+color:white;
+padding:15px;
+border-radius:12px;
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+box-shadow:0 6px 15px rgba(0,0,0,0.25);
+">
 
-<div id="estadoLocal"></div>
+<div id="estadoLenia" style="font-size:18px;">
+🔥 Preparando la leña
+</div>
 
-<div id="estadoLenia">🔥 Preparando la leña</div>
+<div id="tiempoApertura" style="font-size:30px;margin-top:5px;">
+12:25:00
+</div>
 
-<div id="tiempoApertura">00:00:00</div>
+</div>
 
+<!-- ===== ESTADO + ESCACEZ MEJORADO ===== -->
+<div style="
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  margin-top:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.25);
+">
+
+  <div id="estadoLocal"
+       style="
+       margin-bottom:10px;
+       font-weight:bold;
+       font-size:18px;">
+  </div>
+
+  <div style="
+      background:#f5f5f5;
+      border-radius:20px;
+      overflow:hidden;
+      height:20px;
+      margin:10px 0;">
+    <div id="barraPollos"
+         style="
+         height:100%;
+         width:100%;
+         background:linear-gradient(90deg,#ff4d4d,#b30000);
+         transition:0.5s;">
+    </div>
+  </div>
+
+  <div id="textoEscasez"
+       style="
+       font-weight:bold;
+       font-size:16px;
+       color:#b30000;">
+  </div>
+
+</div>
 </header>
 
 <div class="container">
-
-<h2 class="categoria">🍗 Pollos</h2>
+<h2 class="categoria">🍗 Pollos a la leña</h2>
 <div id="pollos" class="grid"></div>
 
 <h2 class="categoria">🥤 Bebidas</h2>
 <div id="bebidas" class="grid"></div>
 
-<h2 class="categoria">🍟 Extras</h2>
+<h2 class="categoria">🍔 Extras</h2>
 <div id="extras" class="grid"></div>
-
 </div>
 
 <div class="carrito">
+  <div id="resumen">Sin productos</div>
+  <div class="total" id="total">Total: Bs 0</div>
 
-<div id="resumen">Sin productos</div>
+  <div style="margin:10px 0;">
+    <strong>Tipo de pedido:</strong> 
+    <label><br>
+      <input type="radio" name="tipoPedido" value="Mesa" checked>
+      🍽 En mesa
+    </label>
 
-<div class="total" id="total">
-Total: Bs 0
-</div>
+    <label>
+      <input type="radio" name="tipoPedido" value="Recoger">
+      🛍 Recoger
+    </label><br>
 
-<button class="boton" onclick="enviarPedido()">
-Enviar pedido por WhatsApp
-</button>
+    <label>
+      <input type="radio" name="tipoPedido" value="Delivery">
+      🚗 Delivery
+    </label>
+  </div>
 
+  <button class="boton" onclick="enviarPedido()">
+    Enviar pedido por WhatsApp
+  </button>
 </div>
 `;
 
-
-// ================= PRODUCTOS =================
+function obtenerMesa(){
+ return new URLSearchParams(window.location.search).get("mesa") || "No especificada";
+}
 
 const productos=[
+{categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
+{categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"cuarto.jpg"},
+{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"medio.jpg"},
+{categoria:"pollos", nombre:"Pollo Económico", precio:15, img:"menu.jpg"},
 
-{categoria:"pollos",nombre:"Pollo Entero",precio:100,img:"entero.jpg"},
-{categoria:"pollos",nombre:"Medio Pollo",precio:50,img:"medio.jpg"},
-{categoria:"pollos",nombre:"Cuarto Pollo",precio:25,img:"cuarto.jpg"},
-
-{categoria:"bebidas",nombre:"Gaseosa 2L",precio:13,img:"gaseosa2l.jpg"},
-{categoria:"bebidas",nombre:"Gaseosa Personal",precio:6,img:"gaseosa.jpg"},
-
-{categoria:"extras",nombre:"Extra Papas",precio:5,img:"extra_papas.jpeg"},
-{categoria:"extras",nombre:"Extra Arroz",precio:5,img:"extra_arroz.jpg"}
-
+{categoria:"bebidas", nombre:"Gaseosa 2L", precio:13, img:"gaseosa2l.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
+ {categoria:"bebidas", nombre:"Limonada Vaso", precio:3, img:"limonada_vaso.jpg"},
+ {categoria:"bebidas", nombre:"Limonada Jarra media", precio:5, img:"limonada_mediana.jpg"},
+ {categoria:"bebidas", nombre:"Limonada Jarra Grande", precio:10, img:"limonada_grande.jpg"},
+ 
+// {categoria:"extras", nombre:"Anticucho", precio:5, img:"anticucho.jpg"},
+//{categoria:"extras", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
+{categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
+{categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
+{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
 ];
 
 
 let carrito=[];
 
-
-// ================= CREAR PRODUCTOS =================
-
 function crearProducto(prod){
+ const div=document.createElement("div");
+ div.className="card";
 
-const div=document.createElement("div");
+ let botonHTML="";
 
-div.className="card";
+ if(prod.promo){
+   botonHTML=`<button class="boton" id="btnPromo"
+   onclick="agregarPromo('${prod.nombre}',${prod.precio})">
+   Agregar
+   </button>`;
+ }
+ else{
+   botonHTML=`<button class="boton"
+   onclick="agregar('${prod.nombre}',${prod.precio})">
+   Agregar
+   </button>`;
+ }
 
-div.innerHTML=`
-
-<img src="${prod.img}">
-
-<h3>${prod.nombre}</h3>
-
-<div class="precio">
-Bs ${prod.precio}
-</div>
-
-<button class="boton"
-onclick="agregar('${prod.nombre}',${prod.precio})">
-Agregar
-</button>
-
-`;
-
-return div;
-
+ div.innerHTML=`
+ <img src="${prod.img}">
+ <h3>${prod.nombre}</h3>
+ <div class="precio">Bs ${prod.precio}</div>
+ ${botonHTML}
+ `;
+ return div;
 }
 
 function cargarProductos(){
-
-productos.forEach(p=>{
-
-document.getElementById(p.categoria)
-.appendChild(crearProducto(p));
-
-});
-
+ productos.forEach(p=>{
+   document.getElementById(p.categoria)
+   .appendChild(crearProducto(p));
+ });
 }
 
-
-// ================= CARRITO =================
-
 function agregar(nombre,precio){
+ carrito.push({nombre,precio});
+ actualizarCarrito();
+}
 
-carrito.push({nombre,precio});
-
-actualizarCarrito();
-
+function agregarPromo(nombre,precio){
+ if(pollosDisponibles<=0) return;
+ carrito.push({nombre,precio});
+ pollosDisponibles--;
+ actualizarCarrito();
+ actualizarEscasez();
 }
 
 function actualizarCarrito(){
+  let resumenHTML="";
+  let total=0;
 
-let resumenHTML="";
-let total=0;
+  carrito.forEach((item,index)=>{
+    total+=item.precio;
+    resumenHTML+=`
+      ${item.nombre} - Bs ${item.precio}
+      <button onclick="eliminarProducto(${index})"
+      style="background:red;color:white;border:none;border-radius:5px;padding:2px 6px;margin-left:5px;cursor:pointer;">
+      ✖
+      </button>
+      <br>
+    `;
+  });
 
-carrito.forEach((item,index)=>{
-
-total+=item.precio;
-
-resumenHTML+=`
-${item.nombre} - Bs ${item.precio}
-<button onclick="eliminarProducto(${index})">✖</button>
-<br>
-`;
-
-});
-
-document.getElementById("resumen").innerHTML=resumenHTML||"Sin productos";
-
-document.getElementById("total").innerHTML="Total: Bs "+total;
-
+  document.getElementById("resumen").innerHTML=resumenHTML||"Sin productos";
+  document.getElementById("total").innerHTML="Total: Bs "+total;
 }
-
-function eliminarProducto(i){
-
-carrito.splice(i,1);
-
-actualizarCarrito();
-
-}
-
-
-// ================= ESTADO LOCAL =================
 
 function localAbierto(){
 
-if(cerradoManual) return false;
+ if(cerradoManual) return false;
 
-const ahora=new Date();
+ const ahora = new Date();
+ const dia = ahora.getDay();
+ const hora = ahora.getHours();
+ const min = ahora.getMinutes();
 
-const dia=ahora.getDay();
+ if(diasCerrados.includes(dia)) return false;
 
-const hora=ahora.getHours();
+ const abierto =
+ ((hora>aperturaHora || (hora===aperturaHora && min>=aperturaMin)) &&
+ (hora<cierreHora || (hora===cierreHora && min<=cierreMin)));
 
-const min=ahora.getMinutes();
-
-if(diasCerrados.includes(dia)) return false;
-
-return (
-
-(hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin))
-&&
-(hora<cierreHora||(hora===cierreHora&&min<=cierreMin))
-
-);
-
+ return abierto;
 }
 
+
+function enviarPedido(){
+
+ if(!localAbierto()){
+   alert("🔴 El restaurante está cerrado.\n\nAbrimos a las 7:00 PM 🍗");
+   return;
+ }
+
+ if(carrito.length===0){
+   alert("Agrega al menos un producto");
+   return;
+ }
+
+ let tipoPedido = document.querySelector('input[name="tipoPedido"]:checked').value;
+
+ let mensaje = "🍗 Pedido Go Pollos Rhosse\n\n";
+ mensaje += "Tipo: " + tipoPedido + "\n";
+ mensaje += "Mesa: " + obtenerMesa() + "\n\n";
+
+ let detalle="";
+ let total=0;
+
+ carrito.forEach(item=>{
+   detalle += item.nombre + " - Bs " + item.precio + "\n";
+   total += item.precio;
+ });
+
+ mensaje += detalle;
+ mensaje += "\nTotal: Bs " + total;
+
+ let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+
+ pedidos.push({
+   mesa: obtenerMesa(),
+   detalle: detalle,
+   total: total,
+   estado: "Nuevo"
+ });
+
+ localStorage.setItem("pedidos", JSON.stringify(pedidos));
+
+ window.open(
+   "https://wa.me/59172685867?text=" + encodeURIComponent(mensaje),
+   "_blank"
+ );
+
+ carrito = [];
+ actualizarCarrito();
+}
+/* ===================== */
+/* TODO ESTO VA DENTRO DEL ELSE */
+/* ===================== */
+
+function eliminarProducto(index){
+  carrito.splice(index,1);
+  actualizarCarrito();
+}
+
+function actualizarEscasez(){
+ const barra=document.getElementById("barraPollos");
+ const texto=document.getElementById("textoEscasez");
+ const btn=document.getElementById("btnPromo");
+
+ if(!barra || !texto) return; // 🔥 evita que rompa
+
+ let porcentaje=(pollosDisponibles/totalPollos)*100;
+ barra.style.width=porcentaje+"%";
+
+ if(pollosDisponibles>2){
+   texto.innerHTML="🔥 Pollos Disponibles para el Día del Padre : "+pollosDisponibles+" de "+totalPollos;
+ }
+ else if(pollosDisponibles>0){
+   texto.innerHTML="⚠️ ¡ÚLTIMOS "+pollosDisponibles+" POLLOS!";
+   barra.style.background="orange";
+ }
+ else{
+   texto.innerHTML="❌ PROMOCIÓN AGOTADA";
+   barra.style.background="gray";
+   if(btn){btn.disabled=true;btn.innerText="Agotado";}
+ }
+}
 
 function actualizarEstado(){
 
-const estado=document.getElementById("estadoLocal");
+ const estado=document.getElementById("estadoLocal");
+ if(!estado) return;
 
-if(!estado) return;
+ if(cerradoManual){
+   estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
+   estado.style.color="red";
+   return;
+ }
 
-if(localAbierto()){
+ const ahora=new Date(); const dia=ahora.getDay();
+ const hora=ahora.getHours();
+ const min=ahora.getMinutes();
 
-estado.innerHTML="🟢 Estamos ABIERTOS";
+ const abierto=
+ dia>=1&&dia<=6&&
+ ((hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin))&&
+ (hora<cierreHora||(hora===cierreHora&&min<=cierreMin)));
 
-estado.style.color="lime";
-
-}
-else{
-
-estado.innerHTML="🔴 Restaurante cerrado";
-
-estado.style.color="white";
-
-}
+ if(abierto){
+   estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:45 PM";
+   estado.style.color="green";
+ }
+ else{
+   let proxima=new Date();
+   proxima.setHours(aperturaHora,aperturaMin,0);
+   if(hora>cierreHora||dia===0) proxima.setDate(proxima.getDate()+1);
+   let diff=proxima-ahora;
+   let h=Math.floor(diff/(1000*60*60));
+   let m=Math.floor((diff%(1000*60*60))/(1000*60));
+   estado.innerHTML="🔴 Cerrado — Abrimos en "+h+"h "+m+"m";
+   estado.style.color="red";
+ }
+ /* 🔴 BLOQUEAR BOTONES SI ESTÁ CERRADO */
 
 document.querySelectorAll(".boton").forEach(b=>{
-
-b.disabled=!localAbierto();
-
+   b.disabled = !localAbierto();
 });
 
-}
+setInterval(actualizarEstado,60000);
 
 
-// ================= CONTADOR LEÑA =================
-
-function contadorLenia(){
+ function contadorLenia(){
 
 const estado=document.getElementById("estadoLenia");
-
 const tiempo=document.getElementById("tiempoApertura");
 
 if(!estado) return;
+
+if(!localAbierto()){
+
+ const ahora=new Date();
+ const dia=ahora.getDay();
+
+ if(diasCerrados.includes(dia)){
+   estado.innerHTML="🔴 Hoy no atendemos";
+   tiempo.innerHTML="Volvemos mañana 🍗";
+   return;
+ }
+
+}
 
 const ahora=new Date();
 
@@ -438,33 +592,27 @@ prender.setHours(16,0,0);
 let abrir=new Date();
 abrir.setHours(19,0,0);
 
+// YA ABIERTO
 if(ahora>=abrir){
-
-estado.innerHTML="🟢 Estamos atendiendo";
-
-tiempo.innerHTML="🍗 Pollos saliendo de la leña";
-
-return;
-
+ estado.innerHTML="🟢 ESTAMOS ATENDIENDO";
+ tiempo.innerHTML="🍗 Pollos recién salidos de la leña";
+ return;
 }
 
+// LEÑA PRENDIDA
 if(ahora>=prender){
+ estado.innerHTML="🔥 La leña está encendida";
+ let diff=abrir-ahora;
 
-estado.innerHTML="🔥 Leña encendida";
+ let m=Math.floor(diff/60000);
+ let s=Math.floor((diff%60000)/1000);
 
-let diff=abrir-ahora;
-
-let m=Math.floor(diff/60000);
-let s=Math.floor((diff%60000)/1000);
-
-tiempo.innerHTML=m+"m "+s+"s";
-
-return;
-
+ tiempo.innerHTML="Abrimos en "+m+"m "+s+"s";
+ return;
 }
 
-let diff=prender-ahora;
-
+  // CUENTA PARA PRENDER LEÑA
+let diff = prender - ahora;
 let h=Math.floor(diff/3600000);
 let m=Math.floor((diff%3600000)/60000);
 let s=Math.floor((diff%60000)/1000);
@@ -473,62 +621,13 @@ tiempo.innerHTML=
 String(h).padStart(2,"0")+":"+
 String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0");
-
-}
-
-
-// ================= ENVIAR PEDIDO =================
-
-function enviarPedido(){
-
-if(!localAbierto()){
-alert("El restaurante está cerrado");
-return;
-}
-
-if(carrito.length===0){
-alert("Agrega productos");
-return;
-}
-
-let mensaje="Pedido Go Pollos Rhosse\n\n";
-
-let total=0;
-
-carrito.forEach(item=>{
-mensaje+=item.nombre+" - Bs "+item.precio+"\n";
-total+=item.precio;
-});
-
-mensaje+="\nTotal Bs "+total;
-
-window.open(
-
-"https://wa.me/59172685867?text="+encodeURIComponent(mensaje),
-
-"_blank"
-
-);
-
-carrito=[];
-actualizarCarrito();
-
-}
-
-
-// ================= INICIAR =================
-
-cargarProductos();
+/* ===================== */
+}  // ← AQUÍ CIERRA EL ELSE
 
 actualizarEstado();
+cargarProductos();
+actualizarEscasez();
 
-contadorLenia();
-
-setInterval(actualizarEstado,60000);
-
-setInterval(contadorLenia,1000);
-
-}
 
 </script>
 
