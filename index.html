@@ -147,7 +147,7 @@ border:1px solid rgba(255,255,255,0.4);
 <script>
 
 // ================= CONTROL DEL LOCAL =================
-let cerradoManual = localStorage.getItem("cerradoManual") === "false";
+let cerradoManual = localStorage.getItem("cerradoManual") === "true";
 
 const diasCerrados = [0];
 
@@ -349,7 +349,26 @@ document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 
 function localAbierto(){
+function localAbierto(){
 
+if(cerradoManual) return false;
+
+const ahora=new Date();
+const dia=ahora.getDay();
+const hora=ahora.getHours();
+const min=ahora.getMinutes();
+
+const fechaHoy = ahora.toISOString().split("T")[0];
+
+if(diasCerrados.includes(dia)) return false;
+if(fechasCerrado.includes(fechaHoy)) return false;
+
+return (
+(hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin)) &&
+(hora<cierreHora||(hora===cierreHora&&min<=cierreMin))
+);
+
+}
 if(cerradoManual) return false;
 
 const ahora=new Date();
