@@ -159,7 +159,7 @@ const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 
 // ================= HORARIO =================
-const aperturaHora = 13;
+const aperturaHora = 18;
 const aperturaMin = 30;
 const cierreHora = 22;
 const cierreMin = 45;
@@ -400,10 +400,10 @@ if(!estado || !tiempo) return;
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(16,00,0,0);
+prender.setHours(16,30,0,0);
 
 let abrir=new Date();
-abrir.setHours(13,30,0,0);
+abrir.setHours(18,30,0,0);
 
 if(localAbierto()){
   estado.innerHTML="🟢 Estamos atendiendo";
