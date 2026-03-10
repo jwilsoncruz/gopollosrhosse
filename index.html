@@ -538,7 +538,7 @@ function actualizarEstado(){
    estado.style.color="red";
  }
 else if(localAbierto()){
-   estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:45 PM";
+   estado.innerHTML="🟢 YA SALIERON LOS POLLOS DE LA LEÑA<br>Pedidos hasta 22:45";
    estado.style.color="green";
    if(logo) logo.style.filter="none";
 }
@@ -559,7 +559,7 @@ else{
    let h=Math.floor(diff/(1000*60*60));
    let m=Math.floor((diff%(1000*60*60))/(1000*60));
 
-   estado.innerHTML="🔴 Cerrado — Abrimos en "+h+"h "+m+"m";
+   estado.innerHTML="🔴 CERRADO AHORA<br>Abrimos a las 19:00";
    estado.style.color="red";
  }
 
