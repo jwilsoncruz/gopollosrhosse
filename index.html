@@ -7,6 +7,12 @@
 <link rel="icon" href="favicon.ico">
 
 <style>
+ .logo{
+ max-width:200px;
+ display:block;
+ margin:0 auto 15px auto;
+ transition:0.5s;
+}
 body{
  font-family: Arial, sans-serif;
  margin:0;
@@ -531,21 +537,21 @@ function actualizarEstado(){
    estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
    estado.style.color="red";
  }
- else if(localAbierto()){
-  if(logo) logo.style.filter="none";
+else if(localAbierto()){
    estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:45 PM";
    estado.style.color="green";
- }
+   if(logo) logo.style.filter="none";
+}
  else{
+
+else{
 
    const ahora=new Date();
 
-   let proxima=new Date();
-   proxima.setHours(aperturaHora,aperturaMin,0);
    if(logo) logo.style.filter="grayscale(100%)";
 
-   if(ahora>proxima){
-     proxima.setDate(proxima.getDate()+1);
+   let proxima=new Date();
+   proxima.setHours(aperturaHora,aperturaMin,0);
    }
 
    let diff=proxima-ahora;
