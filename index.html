@@ -347,43 +347,47 @@ ${p.nombre} Bs ${p.precio}
 document.getElementById("resumen").innerHTML=html||"Sin productos";
 document.getElementById("total").innerHTML="Total: Bs "+total;
 }
+function localAbierto() {
+    if (cerradoManual) return false;
 
-function localAbierto(){
+    const ahora = new Date();
+    const dia = ahora.getDay();
+    const hora = ahora.getHours();
+    const min = ahora.getMinutes();
+    const fechaHoy = ahora.toISOString().split("T")[0];
 
+    if (diasCerrados.includes(dia)) return false;
+    if (fechasCerrado.includes(fechaHoy)) return false;
 
-if(cerradoManual) return false;
+    // Lógica de horas: 18:30 a 22:45
+    const tiempoActual = hora * 60 + min;
+    const tiempoApertura = aperturaHora * 60 + aperturaMin;
+    const tiempoCierre = cierreHora * 60 + cierreMin;
 
-const ahora=new Date();
-const dia=ahora.getDay();
-const hora=ahora.getHours();
-const min=ahora.getMinutes();
-
-const fechaHoy = ahora.toISOString().split("T")[0];
-
-if(diasCerrados.includes(dia)) return false;
-if(fechasCerrado.includes(fechaHoy)) return false;
-
-return (
-(hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin)) &&
-(hora<cierreHora||(hora===cierreHora&&min<=cierreMin))
-);
-
+    return (tiempoActual >= tiempoApertura && tiempoActual <= tiempoCierre);
 }
-if(cerradoManual) return false;
 
-const ahora=new Date();
-const dia=ahora.getDay();
-const hora=ahora.getHours();
-const min=ahora.getMinutes();
+function actualizarEstado() {
+    const estado = document.getElementById("estadoLocal");
+    const logo = document.getElementById("logoLocal");
 
-if(diasCerrados.includes(dia)) return false;
+    if (!estado) return;
 
-return (
-(hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin)) &&
-(hora<cierreHora||(hora===cierreHora&&min<=cierreMin))
-);
+    if (localAbierto()) {
+        estado.innerHTML = "🟢 Estamos ABIERTOS";
+        estado.style.color = "lightgreen";
+        if(logo) logo.style.filter = "none";
+    } else {
+        estado.innerHTML = "🔴 Cerrado";
+        estado.style.color = "yellow";
+        if(logo) logo.style.filter = "grayscale(100%)";
+    }
 
+    document.querySelectorAll(".boton").forEach(b => {
+        b.disabled = !localAbierto();
+    });
 }
+
 
 function actualizarEstado(){
 
