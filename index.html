@@ -389,37 +389,58 @@ function contadorLenia(){
 const estado=document.getElementById("estadoLenia");
 const tiempo=document.getElementById("tiempoApertura");
 
-if(!estado) return;
+if(!estado || !tiempo) return;
 
 const ahora=new Date();
 
-let abrir=new Date();
-abrir.setHours(19,0,0);
+let prender=new Date();
+prender.setHours(16,0,0,0);
 
-let diff=abrir-ahora;
+let abrir=new Date();
+abrir.setHours(19,0,0,0);
 
 if(localAbierto()){
- estado.innerHTML="🟢 Estamos atendiendo";
- tiempo.innerHTML="🍗 Pollos saliendo de la leña";
- return;
+  estado.innerHTML="🟢 Estamos atendiendo";
+  tiempo.innerHTML="🍗 Pollos saliendo de la leña";
+  return;
 }
 
-if(diff<=0){
- estado.innerHTML="🔥 Preparando la leña";
- tiempo.innerHTML="Abrimos pronto";
- return;
-}
+if(ahora < prender){
+
+let diff=prender-ahora;
 
 let h=Math.floor(diff/3600000);
 let m=Math.floor((diff%3600000)/60000);
 let s=Math.floor((diff%60000)/1000);
 
-estado.innerHTML="🔥 Preparando la leña";
+estado.innerHTML="⏳ Abrimos en";
 
 tiempo.innerHTML=
 String(h).padStart(2,"0")+":"+
 String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0");
+
+return;
+}
+
+if(ahora >= prender && ahora < abrir){
+
+let diff=abrir-ahora;
+
+let h=Math.floor(diff/3600000);
+let m=Math.floor((diff%3600000)/60000);
+let s=Math.floor((diff%60000)/1000);
+
+estado.innerHTML="🔥 Leña encendida";
+
+tiempo.innerHTML=
+"Abrimos en "+
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+return;
+}
 
 }
 
