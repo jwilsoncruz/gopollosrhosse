@@ -580,32 +580,22 @@ function actualizarEstado(){
 
  const estado=document.getElementById("estadoLocal");
  if(!estado) return;
+
  const logo = document.getElementById("logoLocal");
 
  if(cerradoManual){
    estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
    estado.style.color="red";
  }
-else if(localAbierto()){
+
+ else if(localAbierto()){
    estado.innerHTML="🟢 YA SALIERON LOS POLLOS DE LA LEÑA<br>Pedidos hasta 22:45";
    estado.style.color="green";
    if(logo) logo.style.filter="none";
-}
+ }
+
  else{
-
-
-   const ahora=new Date();
-
    if(logo) logo.style.filter="grayscale(100%)";
-
-   let proxima=new Date();
-   proxima.setHours(aperturaHora,aperturaMin,0);
-   }
-
-   let diff=proxima-ahora;
-
-   let h=Math.floor(diff/(1000*60*60));
-   let m=Math.floor((diff%(1000*60*60))/(1000*60));
 
    estado.innerHTML="🔴 CERRADO AHORA<br>Abrimos a las 19:00";
    estado.style.color="red";
@@ -616,7 +606,6 @@ else if(localAbierto()){
  });
 
 }
-
 
 
  function contadorLenia(){
