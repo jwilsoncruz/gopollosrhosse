@@ -3,205 +3,298 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Go Pollos Rhosse - Pollos a la leña</title>
+<title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Beni, Bolivia</title>
+<link rel="icon" href="favicon.ico">
 
 <style>
-
 body{
-font-family:Arial;
-margin:0;
-background:#610000;
-color:white;
-}
-
-header{
-text-align:center;
-background:#d50000;
-padding:30px 20px;
-}
-
-.logo{
-max-width:180px;
-display:block;
-margin:auto;
+ font-family: Arial, sans-serif;
+ margin:0;
+ background:#610000;
+ padding-bottom:240px;
 }
 
 .marquesina{
-background:#ffd401;
+width:100%;
+background:linear-gradient(90deg,#ffd401,#ffea61);
 color:#610000;
 overflow:hidden;
 white-space:nowrap;
 font-weight:bold;
-padding:8px 0;
+font-size:16px;
+padding:10px 0;
+text-align:center;
 }
 
 .marquesina span{
 display:inline-block;
 padding-left:100%;
-animation:marquesina 15s linear infinite;
+animation:marquesina 18s linear infinite;
 }
 
 @keyframes marquesina{
-0%{transform:translateX(0)}
-100%{transform:translateX(-100%)}
+0%{transform:translateX(0);}
+100%{transform:translateX(-100%);}
 }
 
-.container{
-padding:20px;
+header{
+ text-align:center;
+ padding:40px 20px;
+ background:#d50000;
+ color:white;
 }
+
+.logo{
+ max-width:200px;
+ display:block;
+ margin:0 auto 15px auto;
+ transition:0.5s;
+}
+
+.container{ padding:20px; }
 
 .categoria{
-color:#ffd401;
-font-size:22px;
-margin-top:25px;
+ margin-top:35px;
+ font-size:22px;
+ color:#ffd401;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:15px;
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ gap:15px;
 }
 
 .card{
-background:white;
-color:black;
-border-radius:12px;
-padding:10px;
-text-align:center;
+ background:white;
+ padding:15px;
+ border-radius:14px;
+ box-shadow:0 6px 16px rgba(0,0,0,0.08);
+ text-align:center;
 }
 
 .card img{
-width:100%;
-height:120px;
-object-fit:cover;
-border-radius:8px;
+ width:100%;
+ height:120px;
+ object-fit:cover;
+ border-radius:10px;
 }
 
-.precio{
-font-weight:bold;
-margin:6px;
-}
+.precio{ font-weight:bold; margin:8px 0; }
 
 .boton{
-background:#25D366;
-color:white;
-border:none;
-padding:8px;
-border-radius:8px;
-cursor:pointer;
+ background:#25D366;
+ color:white;
+ padding:8px;
+ border:none;
+ border-radius:8px;
+ cursor:pointer;
+ font-weight:bold;
+}
+
+.boton:disabled{
+ background:gray;
+ cursor:not-allowed;
 }
 
 .carrito{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:white;
-color:black;
-padding:15px;
+ position:fixed;
+ bottom:0;
+ left:0;
+ right:0;
+ background:white;
+ box-shadow:0 -3px 10px rgba(0,0,0,0.1);
+ padding:15px;
 }
 
-.social{
-text-align:center;
-background:white;
-color:black;
-padding:15px;
+.total{ font-weight:bold; font-size:18px; }
+
+.cocina-card{
+ background:white;
+ margin:15px;
+ padding:15px;
+ border-left:6px solid #d50000;
+ border-radius:10px;
+ box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-.mapa{
-padding:20px;
-background:white;
+.estado-btn{
+ margin-top:8px;
+ background:#d50000;
+ color:white;
+ border:none;
+ padding:6px 10px;
+ border-radius:6px;
+ cursor:pointer;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="marquesina">
-<span>🔥 Próximamente NUEVA UBICACIÓN para Go Pollos Rhosse 🍗 Estamos buscando un mejor lugar para atenderte 🔥</span>
+<span>🔥 Go Pollos Rhosse pronto en una NUEVA UBICACIÓN 🍗</span>
 </div>
 
+<div id="app"></div>
+
+<script>
+
+// ================= CONTROL DEL LOCAL =================
+let cerradoManual = localStorage.getItem("cerradoManual") === "true";
+
+const diasCerrados = [0];
+
+const fechasCerrado = [
+ "2026-12-25"
+];
+
+const params = new URLSearchParams(window.location.search);
+const modo = params.get("modo");
+
+// ================= HORARIO =================
+const aperturaHora = 19;
+const aperturaMin = 0;
+const cierreHora = 22;
+const cierreMin = 45;
+
+const totalPollos = 24;
+let pollosDisponibles = 22;
+
+// ================= MODO COCINA =================
+if(modo === "cocina"){
+
+document.getElementById("app").innerHTML = `
 <header>
-
 <img src="logo.png" class="logo">
+<h1>🍗 PANTALLA COCINA</h1>
+</header>
+<div id="listaPedidos"></div>
 
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+</audio>
+`;
+
+let sonidoActivado=true;
+let ultimoTotal=0;
+
+function cargarPedidos(){
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let html="";
+ pedidos.forEach((p,i)=>{
+   if(p.estado!=="Entregado"){
+     html+=`
+     <div class="cocina-card">
+       <h3>Mesa ${p.mesa}</h3>
+       <p>${p.detalle}</p>
+       <strong>Total: Bs ${p.total}</strong><br>
+       Estado: ${p.estado}<br>
+       <button class="estado-btn" onclick="cambiarEstado(${i})">
+       Cambiar Estado
+       </button>
+     </div>`;
+   }
+ });
+ document.getElementById("listaPedidos").innerHTML=html;
+}
+
+function cambiarEstado(i){
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ let p=pedidos[i];
+
+ if(p.estado==="Nuevo") p.estado="En preparación";
+ else if(p.estado==="En preparación") p.estado="Listo";
+ else p.estado="Entregado";
+
+ pedidos[i]=p;
+ localStorage.setItem("pedidos",JSON.stringify(pedidos));
+ cargarPedidos();
+}
+
+setInterval(()=>{
+ let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+ if(pedidos.length>ultimoTotal){
+   if(sonidoActivado) document.getElementById("alerta").play();
+   ultimoTotal=pedidos.length;
+ }
+ cargarPedidos();
+},1000);
+
+}
+
+// ================= MODO CLIENTE =================
+else{
+
+document.getElementById("app").innerHTML = `
+<header>
+<img src="logo.png" class="logo" id="logoLocal">
 <h1>Pollos a la Leña<br>Go Pollos Rhosse</h1>
+<p>Av. Moxos - Zona Mercado Pompeya</p>
 
-<div id="estado"></div>
+<div id="estadoLocal"></div>
 
-<div id="contador"></div>
+<div id="contadorPollos"
+style="background:#b30000;color:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;font-weight:bold;">
+<div id="estadoLenia">🔥 Preparando la leña</div>
+<div id="tiempoApertura">--:--:--</div>
+</div>
+
+<div style="background:white;padding:15px;border-radius:14px;margin-top:15px;">
+<div style="background:#f5f5f5;border-radius:20px;overflow:hidden;height:20px;">
+<div id="barraPollos" style="height:100%;width:100%;background:red;"></div>
+</div>
+<div id="textoEscasez"></div>
+</div>
 
 </header>
 
 <div class="container">
-
-<h2 class="categoria">🍗 Pollos</h2>
+<h2 class="categoria">🍗 Pollos a la leña</h2>
 <div id="pollos" class="grid"></div>
 
 <h2 class="categoria">🥤 Bebidas</h2>
 <div id="bebidas" class="grid"></div>
 
-<h2 class="categoria">🍟 Extras</h2>
+<h2 class="categoria">🍔 Extras</h2>
 <div id="extras" class="grid"></div>
-
 </div>
 
 <div class="carrito">
-
 <div id="resumen">Sin productos</div>
+<div class="total" id="total">Total: Bs 0</div>
 
-<div id="total">Total Bs 0</div>
-
-<button onclick="pedido()">Enviar pedido por WhatsApp</button>
-
+<div style="margin:10px 0;">
+<strong>Tipo de pedido:</strong><br>
+<label><input type="radio" name="tipoPedido" value="Mesa" checked> 🍽 En mesa</label>
+<label><input type="radio" name="tipoPedido" value="Recoger"> 🛍 Recoger</label>
+<label><input type="radio" name="tipoPedido" value="Delivery"> 🚗 Delivery</label>
 </div>
 
-<div class="social">
-
-<h3>📱 Síguenos</h3>
-
-<a href="https://wa.me/59168972863">WhatsApp</a> |
-<a href="#">Facebook</a> |
-<a href="#">TikTok</a>
-
+<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
 </div>
-
-<div class="mapa">
-
-<h3 style="color:#d50000">📍 Ubicación</h3>
-
-<iframe
-src="https://maps.google.com/maps?q=mercado%20pompeya%20trinidad%20beni&t=&z=15&ie=UTF8&iwloc=&output=embed"
-width="100%"
-height="250"
-style="border:0;border-radius:10px">
-</iframe>
-
-</div>
-
-<script>
+`;
 
 const productos=[
 
-{categoria:"pollos",nombre:"Pollo Entero",precio:100,img:"entero.jpg"},
-{categoria:"pollos",nombre:"Medio Pollo",precio:50,img:"medio.jpg"},
-{categoria:"pollos",nombre:"Cuarto Pollo",precio:25,img:"cuarto.jpg"},
+{categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
+{categoria:"pollos", nombre:"Medio Pollo", precio:50, img:"medio.jpg"},
+{categoria:"pollos", nombre:"Cuarto Pollo", precio:25, img:"cuarto.jpg"},
+{categoria:"pollos", nombre:"Pollo Económico", precio:15, img:"menu.jpg"},
 
-{categoria:"bebidas",nombre:"Gaseosa 2L",precio:13,img:"gaseosa2l.jpg"},
-{categoria:"bebidas",nombre:"Gaseosa Personal",precio:6,img:"gaseosa.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa 2L", precio:13, img:"gaseosa2l.jpg"},
+{categoria:"bebidas", nombre:"Gaseosa Personal", precio:6, img:"gaseosa.jpg"},
 
-{categoria:"extras",nombre:"Extra Papas",precio:5,img:"extra_papas.jpg"},
-{categoria:"extras",nombre:"Extra Arroz",precio:5,img:"extra_arroz.jpg"}
+{categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
+{categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
+{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
 
 ];
 
 let carrito=[];
 
 function crearProducto(p){
-
-let div=document.createElement("div");
+const div=document.createElement("div");
 div.className="card";
 
 div.innerHTML=`
@@ -215,136 +308,152 @@ return div;
 }
 
 function cargarProductos(){
-
 productos.forEach(p=>{
-
 let cont=document.getElementById(p.categoria);
-
 if(cont) cont.appendChild(crearProducto(p));
-
 });
-
 }
 
 function agregar(nombre,precio){
-
 carrito.push({nombre,precio});
-
-actualizar();
-
+actualizarCarrito();
 }
 
-function actualizar(){
+function eliminarProducto(i){
+carrito.splice(i,1);
+actualizarCarrito();
+}
+
+function actualizarCarrito(){
 
 let total=0;
-
 let html="";
 
-carrito.forEach(p=>{
-
+carrito.forEach((p,i)=>{
 total+=p.precio;
 
-html+=p.nombre+" Bs "+p.precio+"<br>";
-
+html+=`
+${p.nombre} Bs ${p.precio}
+<button onclick="eliminarProducto(${i})">❌</button><br>
+`;
 });
 
 document.getElementById("resumen").innerHTML=html||"Sin productos";
+document.getElementById("total").innerHTML="Total: Bs "+total;
+}
 
-document.getElementById("total").innerHTML="Total Bs "+total;
+function localAbierto(){
+
+if(cerradoManual) return false;
+
+const ahora=new Date();
+const dia=ahora.getDay();
+const hora=ahora.getHours();
+const min=ahora.getMinutes();
+
+if(diasCerrados.includes(dia)) return false;
+
+return (
+(hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin)) &&
+(hora<cierreHora||(hora===cierreHora&&min<=cierreMin))
+);
 
 }
 
-function pedido(){
+function actualizarEstado(){
 
-if(carrito.length==0){
+const estado=document.getElementById("estadoLocal");
+const logo=document.getElementById("logoLocal");
 
-alert("Agrega algo al pedido");
+if(!estado) return;
 
-return;
-
+if(localAbierto()){
+estado.innerHTML="🟢 Estamos ABIERTOS";
+estado.style.color="lightgreen";
+logo.style.filter="none";
+}
+else{
+estado.innerHTML="🔴 Cerrado";
+estado.style.color="yellow";
+logo.style.filter="grayscale(100%)";
 }
 
-let texto="🍗 Pedido Go Pollos Rhosse\n\n";
-
-let total=0;
-
-carrito.forEach(p=>{
-
-texto+=p.nombre+" Bs "+p.precio+"\n";
-
-total+=p.precio;
-
+document.querySelectorAll(".boton").forEach(b=>{
+b.disabled=!localAbierto();
 });
 
-texto+="\nTotal Bs "+total;
-
-window.open("https://wa.me/59168972863?text="+encodeURIComponent(texto));
-
 }
 
-function estado(){
+function contadorLenia(){
 
-let ahora=new Date();
+const estado=document.getElementById("estadoLenia");
+const tiempo=document.getElementById("tiempoApertura");
 
-let h=ahora.getHours();
+if(!estado) return;
 
-let estado=document.getElementById("estado");
-
-if(h>=19 && h<=22){
-
-estado.innerHTML="🟢 Estamos atendiendo";
-
-estado.style.color="lightgreen";
-
-}
-
-else{
-
-estado.innerHTML="🔴 Cerrado - Abrimos 19:00";
-
-estado.style.color="yellow";
-
-}
-
-}
-
-function contador(){
-
-let ahora=new Date();
+const ahora=new Date();
 
 let abrir=new Date();
-
 abrir.setHours(19,0,0);
 
 let diff=abrir-ahora;
 
-if(diff<0){
-
-document.getElementById("contador").innerHTML="🔥 Pollos saliendo de la leña";
-
+if(diff<=0){
+estado.innerHTML="🟢 Estamos atendiendo";
+tiempo.innerHTML="🍗 Pollos saliendo de la leña";
 return;
-
 }
 
 let h=Math.floor(diff/3600000);
-
 let m=Math.floor((diff%3600000)/60000);
-
 let s=Math.floor((diff%60000)/1000);
 
-document.getElementById("contador").innerHTML=
+tiempo.innerHTML=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
 
-"Abrimos en "+h+"h "+m+"m "+s+"s";
+}
+
+function enviarPedido(){
+
+if(!localAbierto()){
+alert("🔴 El restaurante está cerrado");
+return;
+}
+
+if(carrito.length===0){
+alert("Agrega al menos un producto");
+return;
+}
+
+let tipoPedido=document.querySelector('input[name="tipoPedido"]:checked').value;
+
+let texto="🍗 Pedido Go Pollos Rhosse\n\n";
+texto+="Tipo: "+tipoPedido+"\n\n";
+
+let total=0;
+
+carrito.forEach(p=>{
+texto+=p.nombre+" Bs "+p.precio+"\n";
+total+=p.precio;
+});
+
+texto+="\nTotal Bs "+total;
+
+window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
 
 }
 
 cargarProductos();
+actualizarEstado();
 
-estado();
+setInterval(actualizarEstado,60000);
+setInterval(contadorLenia,1000);
 
-contador();
+contadorLenia();
 
-setInterval(contador,1000);
+}
 
 </script>
 
