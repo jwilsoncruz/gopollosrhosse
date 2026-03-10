@@ -114,7 +114,7 @@ header{
 // ================= CONTROL DEL LOCAL =================
 
 // cerrar manualmente desde botón admin
-let cerradoManual = localStorage.getItem("cerradoManual") === "false";
+let cerradoManuallet cerradoManual = localStorage.getItem("cerradoManual") === "true";
 
 // días cerrados automáticos
 const diasCerrados = [1]; 
@@ -529,39 +529,36 @@ function actualizarEstado(){
  if(cerradoManual){
    estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
    estado.style.color="red";
-   return;
  }
-
- const ahora=new Date(); const dia=ahora.getDay();
- const hora=ahora.getHours();
- const min=ahora.getMinutes();
-
- const abierto=
- dia>=1&&dia<=6&&
- ((hora>aperturaHora||(hora===aperturaHora&&min>=aperturaMin))&&
- (hora<cierreHora||(hora===cierreHora&&min<=cierreMin)));
-
- if(abierto){
+ else if(localAbierto()){
    estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:45 PM";
    estado.style.color="green";
  }
  else{
+
+   const ahora=new Date();
+
    let proxima=new Date();
    proxima.setHours(aperturaHora,aperturaMin,0);
-   if(hora>cierreHora||dia===0) proxima.setDate(proxima.getDate()+1);
+
+   if(ahora>proxima){
+     proxima.setDate(proxima.getDate()+1);
+   }
+
    let diff=proxima-ahora;
+
    let h=Math.floor(diff/(1000*60*60));
    let m=Math.floor((diff%(1000*60*60))/(1000*60));
+
    estado.innerHTML="🔴 Cerrado — Abrimos en "+h+"h "+m+"m";
    estado.style.color="red";
  }
- /* 🔴 BLOQUEAR BOTONES SI ESTÁ CERRADO */
 
-document.querySelectorAll(".boton").forEach(b=>{
+ document.querySelectorAll(".boton").forEach(b=>{
    b.disabled = !localAbierto();
-});
-}
+ });
 
+}
 
 
 
