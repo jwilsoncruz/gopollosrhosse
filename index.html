@@ -398,15 +398,23 @@ abrir.setHours(19,0,0);
 
 let diff=abrir-ahora;
 
+if(localAbierto()){
+ estado.innerHTML="🟢 Estamos atendiendo";
+ tiempo.innerHTML="🍗 Pollos saliendo de la leña";
+ return;
+}
+
 if(diff<=0){
-estado.innerHTML="🟢 Estamos atendiendo";
-tiempo.innerHTML="🍗 Pollos saliendo de la leña";
-return;
+ estado.innerHTML="🔥 Preparando la leña";
+ tiempo.innerHTML="Abrimos pronto";
+ return;
 }
 
 let h=Math.floor(diff/3600000);
 let m=Math.floor((diff%3600000)/60000);
 let s=Math.floor((diff%60000)/1000);
+
+estado.innerHTML="🔥 Preparando la leña";
 
 tiempo.innerHTML=
 String(h).padStart(2,"0")+":"+
