@@ -525,12 +525,14 @@ function actualizarEstado(){
 
  const estado=document.getElementById("estadoLocal");
  if(!estado) return;
+ const logo = document.getElementById("logoLocal");
 
  if(cerradoManual){
    estado.innerHTML="🔴 HOY NO ESTAMOS ATENDIENDO";
    estado.style.color="red";
  }
  else if(localAbierto()){
+  if(logo) logo.style.filter="none";
    estado.innerHTML="🟢 Estamos ABIERTOS hasta 10:45 PM";
    estado.style.color="green";
  }
@@ -540,6 +542,7 @@ function actualizarEstado(){
 
    let proxima=new Date();
    proxima.setHours(aperturaHora,aperturaMin,0);
+   if(logo) logo.style.filter="grayscale(100%)";
 
    if(ahora>proxima){
      proxima.setDate(proxima.getDate()+1);
