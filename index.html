@@ -105,13 +105,20 @@ header{
  bottom:0;
  left:0;
  right:0;
-background:rgba(255,255,255,0.65);
-backdrop-filter:blur(4px);
-border:1px solid rgba(255,255,255,0.4);
- box-shadow:0 -3px 10px rgba(0,0,0,0.1);
+
+ background:rgba(255,255,255,0.55);
+
+ backdrop-filter:blur(6px);
+ -webkit-backdrop-filter:blur(6px);
+
+ border-top-left-radius:20px;
+ border-top-right-radius:20px;
+
+ border:1px solid rgba(255,255,255,0.35);
+
+ box-shadow:0 -4px 15px rgba(0,0,0,0.25);
+
  padding:15px;
-  border-top-left-radius: 15px;   /* Esquina superior izquierda */
-  border-top-right-radius: 15px;  /* Esquina superior derecha */
 }
 
 .total{ font-weight:bold; font-size:18px; }
@@ -140,7 +147,9 @@ border:1px solid rgba(255,255,255,0.4);
 <body>
 
 <div class="marquesina">
-<span>Atencion :AGOTADO POR HOY - Pollos a la Leña 🔥🚚🍽️Go Pollos Rhosse pronto en una NUEVA UBICACIÓN🍗</span>
+<span>Atencion : atencion
+atencion : 
+🚨​ POLLOS A LA LEÑA  >>> AGOTADO POR HOY - 😢​ 🔥🚚🍽️Go Pollos Rhosse pronto en una NUEVA UBICACIÓN🍗</span>
 </div>
 
 <div id="app"></div>
@@ -148,7 +157,7 @@ border:1px solid rgba(255,255,255,0.4);
 <script>
 
 // ================= CONTROL DEL LOCAL =================
-let cerradoManual = localStorage.getItem("cerradoManual") === "true";
+let cerradoManual = localStorage.getItem("cerradoManual") === "false";
 
 const diasCerrados = [0];
 
@@ -165,8 +174,8 @@ const aperturaMin = 30;
 const cierreHora = 22;
 const cierreMin = 45;
 
-const totalPollos = 0;
-let pollosDisponibles = 0;
+const totalPollos = 6;
+let pollosDisponibles =4;
 
 // ================= MODO COCINA =================
 if(modo === "cocina"){
