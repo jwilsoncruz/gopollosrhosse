@@ -172,7 +172,7 @@ const modo = params.get("modo");
 const aperturaHora = 18;
 const aperturaMin = 30;
 const cierreHora = 22;
-const cierreMin = 45;
+const cierreMin = 30;
 
 const totalPollos = 6;
 let pollosDisponibles =4;
@@ -358,46 +358,25 @@ document.getElementById("resumen").innerHTML=html||"Sin productos";
 document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 function localAbierto() {
-    if (cerradoManual) return false;
 
-    const ahora = new Date();
-    const dia = ahora.getDay();
-    const hora = ahora.getHours();
-    const min = ahora.getMinutes();
-    const fechaHoy = ahora.toISOString().split("T")[0];
+if (cerradoManual) return false;
 
-    if (diasCerrados.includes(dia)) return false;
-    if (fechasCerrado.includes(fechaHoy)) return false;
+const ahora = new Date();
+const dia = ahora.getDay();
+const hora = ahora.getHours();
+const min = ahora.getMinutes();
+const fechaHoy = ahora.toISOString().split("T")[0];
 
-    // Lógica de horas: 18:30 a 22:45
-    const tiempoActual = hora * 60 + min;
-    const tiempoApertura = aperturaHora * 60 + aperturaMin;
-    const tiempoCierre = cierreHora * 60 + cierreMin;
+if (diasCerrados.includes(dia)) return false;
+if (fechasCerrado.includes(fechaHoy)) return false;
 
-    return (tiempoActual >= tiempoApertura && tiempoActual <= tiempoCierre);
+const tiempoActual = hora * 60 + min;
+const tiempoApertura = aperturaHora * 60 + aperturaMin;
+const tiempoCierre = cierreHora * 60 + cierreMin;
+
+return (tiempoActual >= tiempoApertura && tiempoActual <= tiempoCierre);
+
 }
-
-function actualizarEstado() {
-    const estado = document.getElementById("estadoLocal");
-    const logo = document.getElementById("logoLocal");
-
-    if (!estado) return;
-
-    if (localAbierto()) {
-        estado.innerHTML = "🟢 Estamos ABIERTOS";
-        estado.style.color = "lightgreen";
-        if(logo) logo.style.filter = "none";
-    } else {
-        estado.innerHTML = "🔴 Cerrado";
-        estado.style.color = "yellow";
-        if(logo) logo.style.filter = "grayscale(100%)";
-    }
-
-    document.querySelectorAll(".boton").forEach(b => {
-        b.disabled = !localAbierto();
-    });
-}
-
 
 function actualizarEstado(){
 
@@ -407,14 +386,14 @@ const logo=document.getElementById("logoLocal");
 if(!estado) return;
 
 if(localAbierto()){
-estado.innerHTML="🟢 Estamos ABIERTOS";
+estado.innerHTML="🟢 Estamos atendiendo";
 estado.style.color="lightgreen";
-logo.style.filter="none";
+if(logo) logo.style.filter="none";
 }
 else{
 estado.innerHTML="🔴 Cerrado";
 estado.style.color="yellow";
-logo.style.filter="grayscale(100%)";
+if(logo) logo.style.filter="grayscale(100%)";
 }
 
 document.querySelectorAll(".boton").forEach(b=>{
@@ -422,7 +401,6 @@ b.disabled=!localAbierto();
 });
 
 }
-
 function contadorLenia(){
 
 const estado=document.getElementById("estadoLenia");
@@ -436,12 +414,21 @@ let prender=new Date();
 prender.setHours(16,0,0,0);
 
 let abrir=new Date();
-abrir.setHours(19,0,0,0);
+abrir.setHours(18,30,0,0);
+
+let cerrar=new Date();
+cerrar.setHours(22,30,0,0);
 
 if(localAbierto()){
-  estado.innerHTML="🟢 Estamos atendiendo";
-  tiempo.innerHTML="🍗 Pollos saliendo de la leña";
-  return;
+estado.innerHTML="🟢 Estamos atendiendo";
+tiempo.innerHTML="🍗 Pollos saliendo de la leña";
+return;
+}
+
+if(ahora >= cerrar){
+estado.innerHTML="🔴 Restaurante cerrado";
+tiempo.innerHTML="Abrimos mañana 🔥";
+return;
 }
 
 if(ahora < prender){
@@ -452,7 +439,7 @@ let h=Math.floor(diff/3600000);
 let m=Math.floor((diff%3600000)/60000);
 let s=Math.floor((diff%60000)/1000);
 
-estado.innerHTML="⏳ Abrimos en";
+estado.innerHTML="⏳ Prendemos la leña en";
 
 tiempo.innerHTML=
 String(h).padStart(2,"0")+":"+
