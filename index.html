@@ -6,6 +6,7 @@
 <title>Pollos a la leña - Go Pollos Rhosse - Trinidad, Beni, Bolivia</title>
 <link rel="icon" href="favicon.ico">
 
+ 
 <style>
 body{
  font-family: Arial, sans-serif;
@@ -423,10 +424,10 @@ if(!estado || !tiempo) return;
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(16,30,0,0);
+prender.setHours(16,0,0,0);
 
 let abrir=new Date();
-abrir.setHours(18,30,0,0);
+abrir.setHours(19,0,0,0);
 
 if(localAbierto()){
   estado.innerHTML="🟢 Estamos atendiendo";
@@ -472,7 +473,6 @@ return;
 }
 
 }
-
 function enviarPedido(){
 
 if(!localAbierto()){
