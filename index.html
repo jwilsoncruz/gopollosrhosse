@@ -246,8 +246,8 @@ function cambiarEstado(i){
  let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
  let p=pedidos[i];
 
- if(p.estado==="Nuevo") p.estado="En preparación";
- else if(p.estado==="En preparación") p.estado="Listo";
+ if(p.estado==="Nuevo") p.estado="En preparacion";
+ else if(p.estado==="En preparacion") p.estado="Listo";
  else p.estado="Entregado";
 
  pedidos[i]=p;
@@ -335,7 +335,7 @@ const productos=[
 ];
 
 let carrito=[];
-
+actualizarCarrito();
 function crearProducto(p){
 const div=document.createElement("div");
 div.className="card";
@@ -496,7 +496,7 @@ return;
 }
 
 }
-function enviarPedido(){
+function enviarPedido(){function enviarPedido(){
 
 if(!localAbierto()){
 alert("🔴 El restaurante está cerrado");
@@ -514,50 +514,35 @@ let texto="🍗 Pedido Go Pollos Rhosse\n\n";
 texto+="Tipo: "+tipoPedido+"\n\n";
 
 let total=0;
+let detalle="";
 
 carrito.forEach(p=>{
 texto+=p.nombre+" Bs "+p.precio+"\n";
+detalle+=p.nombre+" Bs "+p.precio+"\n";
 total+=p.precio;
 });
 
 texto+="\nTotal Bs "+total;
 
- // window.open("https://wa.me/59168972863?text="+encodeURIComponent(texto)); //Wil
-window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
+let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
 
-}
-
-cargarProductos();
-actualizarEstado();
-
-setInterval(actualizarEstado,10000);
- setInterval(contadorLenia,1000);
-
-contadorLenia();
-leerEstadoServidor();
-setInterval(leerEstadoServidor,10000);
-}
-// ================= PANEL ADMIN =================
-
-let clicksAdmin = 0;
-
-document.addEventListener("click", function(e){
-
-if(e.target.id === "logoLocal"){
-
-clicksAdmin++;
-
-if(clicksAdmin >= 5){
-document.getElementById("panelAdmin").style.display="block";
-clicksAdmin = 0;
-}
-
-setTimeout(()=>{clicksAdmin=0;},2000);
-
-}
-
+pedidos.push({
+mesa: tipoPedido,
+detalle: detalle,
+total: total,
+estado:"Nuevo"
 });
 
+localStorage.setItem("pedidos",JSON.stringify(pedidos));
+
+window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
+
+carrito=[];
+actualizarCarrito();
+
+alert("✅ Pedido enviado a cocina");
+
+}
 function cerrarPanel(){
 document.getElementById("panelAdmin").style.display="none";
 }
