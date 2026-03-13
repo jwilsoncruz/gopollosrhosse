@@ -3,134 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pantalla Cocina - Go Pollos Rhosse</title>
+<title>Cocina PRO - Go Pollos Rhosse</title>
 
 <style>
+
 body{
- font-family: Arial, sans-serif;
- margin:0;
- background:#610000;
- color:white;
+margin:0;
+font-family:Arial, sans-serif;
+background:#4b0000;
+color:white;
 }
 
 header{
- text-align:center;
- padding:30px;
- background:#d50000;
+background:#d50000;
+padding:20px;
+text-align:center;
 }
 
 .logo{
- max-width:200px;
- display:block;
- margin:0 auto 15px auto;
+max-width:160px;
+display:block;
+margin:auto;
 }
 
-.cocina-card{
- background:white;
- margin:15px;
- padding:15px;
- border-left:6px solid #d50000;
- border-radius:10px;
- box-shadow:0 4px 10px rgba(0,0,0,0.2);
- color:black;
+h1{
+margin:10px 0;
 }
 
-.estado-btn{
- margin-top:8px;
- background:#d50000;
- color:white;
- border:none;
- padding:6px 10px;
- border-radius:6px;
- cursor:pointer;
- margin-right:5px;
+#listaPedidos{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:20px;
+padding:20px;
 }
+
+.card{
+border-radius:12px;
+padding:20px;
+box-shadow:0 6px 14px rgba(0,0,0,0.4);
+color:black;
+font-size:18px;
+}
+
+.nuevo{
+background:#ffb3b3;
+border-left:10px solid red;
+}
+
+.preparacion{
+background:#fff3b0;
+border-left:10px solid orange;
+}
+
+.listo{
+background:#b9f6ca;
+border-left:10px solid green;
+}
+
+.detalle{
+margin:15px 0;
+line-height:1.4;
+}
+
+.total{
+font-size:22px;
+font-weight:bold;
+}
+
+.botones{
+margin-top:15px;
+}
+
+button{
+background:#d50000;
+border:none;
+color:white;
+padding:10px 14px;
+border-radius:6px;
+cursor:pointer;
+font-size:15px;
+margin-right:5px;
+}
+
+button:hover{
+opacity:0.85;
+}
+
+.activar{
+margin-top:10px;
+background:white;
+color:#d50000;
+font-weight:bold;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<img src="logo.png" class="logo">
-<h1>🍗 PANTALLA COCINA</h1>
 
-<button onclick="activarSonido()" 
-style="padding:10px 20px;background:white;color:#d50000;border:none;border-radius:8px;font-weight:bold;">
-🔔 Activar sonido
-</button>
+<img src="logo.png" class="logo">
+
+<h1>🍗 Pantalla Cocina PRO</h1>
+
+<button class="activar" onclick="activarSonido()">🔔 Activar sonido</button>
 
 </header>
 
 <div id="listaPedidos"></div>
 
-<audio id="alerta" preload="auto">
-<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+<audio id="alerta">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
 </audio>
 
 <script>
 
-let sonidoActivado=false;
-let ultimoTotal=0;
-
 const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
+let sonido=false;
+let ultimoConteo=0;
+
 function activarSonido(){
- sonidoActivado=true;
- alert("Sonido activado 🔔");
+sonido=true;
+alert("🔔 Sonido activado");
 }
 
 function cargarPedidos(){
 
 fetch(API+"?accion=obtener")
-.then(res=>res.json())
+.then(r=>r.json())
 .then(pedidos=>{
 
- let html="";
+let html="";
 
- pedidos.forEach(p=>{
+pedidos.forEach(p=>{
 
- if(p.estado!=="Entregado"){
+if(p.estado==="Entregado") return;
 
- html+=`
- <div class="cocina-card">
+let clase="nuevo";
 
- <h3>Mesa ${p.mesa}</h3>
+if(p.estado==="En preparación") clase="preparacion";
+if(p.estado==="Listo") clase="listo";
 
- <p>${p.detalle.replace(/\n/g,"<br>")}</p>
+html+=`
 
- <strong>Total: Bs ${p.total}</strong><br>
+<div class="card ${clase}">
 
- Estado: <b>${p.estado}</b><br><br>
+<h2>Pedido ${p.fila}</h2>
 
- <button class="estado-btn"
- onclick="cambiarEstado(${p.fila},'En preparación')">
- Preparando
- </button>
+<div><b>Mesa:</b> ${p.mesa}</div>
 
- <button class="estado-btn"
- onclick="cambiarEstado(${p.fila},'Listo')">
- Listo
- </button>
+<div class="detalle">${p.detalle.replace(/\n/g,"<br>")}</div>
 
- <button class="estado-btn"
- onclick="cambiarEstado(${p.fila},'Entregado')">
- Entregado
- </button>
+<div class="total">Total Bs ${p.total}</div>
 
- </div>
- `;
- }
+<div><b>Estado:</b> ${p.estado}</div>
 
- });
+<div class="botones">
 
- document.getElementById("listaPedidos").innerHTML=html;
+<button onclick="cambiarEstado(${p.fila},'En preparación')">Preparar</button>
 
- if(pedidos.length>ultimoTotal){
-   if(sonidoActivado){
-     document.getElementById("alerta").play();
-   }
-   ultimoTotal=pedidos.length;
- }
+<button onclick="cambiarEstado(${p.fila},'Listo')">Listo</button>
+
+<button onclick="cambiarEstado(${p.fila},'Entregado')">Entregado</button>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("listaPedidos").innerHTML=html;
+
+if(pedidos.length>ultimoConteo){
+if(sonido){
+document.getElementById("alerta").play();
+}
+ultimoConteo=pedidos.length;
+}
 
 });
 
@@ -145,11 +198,11 @@ headers:{
 },
 body:`accion=actualizar&fila=${fila}&estado=${estado}`
 })
-.then(res=>res.json())
-.then(data=>{
- if(data.ok){
-  cargarPedidos();
- }
+.then(r=>r.json())
+.then(d=>{
+if(d.ok){
+cargarPedidos();
+}
 });
 
 }
