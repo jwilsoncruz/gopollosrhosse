@@ -162,11 +162,17 @@ html+=`
 
 <div class="botones">
 
-<button onclick="cambiarEstado(${p.fila},'En preparación')">Preparar</button>
+${p.estado==="Nuevo"
+? `<button onclick="cambiarEstado(${p.fila},'En preparación')">Preparar</button>`
+: `<button disabled style="opacity:0.4">Preparar</button>`}
 
-<button onclick="cambiarEstado(${p.fila},'Listo')">Listo</button>
+${p.estado==="En preparación"
+? `<button onclick="cambiarEstado(${p.fila},'Listo')" style="background:orange">Listo</button>`
+: `<button disabled style="opacity:0.4">Listo</button>`}
 
-<button onclick="cambiarEstado(${p.fila},'Entregado')">Entregado</button>
+${p.estado==="Listo"
+? `<button onclick="cambiarEstado(${p.fila},'Entregado')" style="background:green">Entregado</button>`
+: `<button disabled style="opacity:0.4">Entregado</button>`}
 
 </div>
 
@@ -212,6 +218,5 @@ setInterval(cargarPedidos,3000);
 cargarPedidos();
 
 </script>
-
 </body>
 </html>
