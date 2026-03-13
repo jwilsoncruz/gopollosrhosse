@@ -156,7 +156,7 @@ header{
 <script>
 
 // ================= CONTROL DEL LOCAL =================
-let cerradoManual = localStorage.getItem("cerradoManual") === "true";
+let cerradoManual = localStorage.getItem("cerradoManual") === "false";
 
 const diasCerrados = [0];
 
@@ -170,7 +170,7 @@ const modo = params.get("modo");
 // ================= HORARIO =================
 const aperturaHora = 18;
 const aperturaMin = 30;
-const cierreHora = 23;
+const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 6;
