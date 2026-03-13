@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos Listos - Go Pollos Rhosse</title>
+
+<style>
+
+body{
+margin:0;
+background:#111;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+header{
+background:#d50000;
+padding:20px;
+}
+
+.logo{
+max-width:160px;
+display:block;
+margin:auto;
+}
+
+h1{
+margin-top:10px;
+}
+
+#contenedor{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+padding:30px;
+}
+
+.card{
+padding:30px;
+border-radius:12px;
+font-size:28px;
+font-weight:bold;
+}
+
+.preparando{
+background:#ffd54f;
+color:black;
+}
+
+.listo{
+background:#4caf50;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png" class="logo">
+
+<h1>🍗 Estado de Pedidos</h1>
+
+</header>
+
+<div id="contenedor"></div>
+
+<audio id="sonido">
+<source src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg">
+</audio>
+
+<script>
+
+const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+
+let ultimoListo=0;
+
+function cargar(){
+
+fetch(API+"?accion=obtener")
+.then(r=>r.json())
+.then(pedidos=>{
+
+let html="";
+let listos=0;
+
+pedidos.forEach(p=>{
+
+if(p.estado==="En preparación"){
+
+html+=`
+<div class="card preparando">
+Pedido ${p.fila}<br>
+PREPARANDO
+</div>
+`;
+
+}
+
+if(p.estado==="Listo"){
+
+listos++;
+
+html+=`
+<div class="card listo">
+Pedido ${p.fila}<br>
+LISTO
+</div>
+`;
+
+}
+
+});
+
+document.getElementById("contenedor").innerHTML=html;
+
+if(listos>ultimoListo){
+document.getElementById("sonido").play();
+ultimoListo=listos;
+}
+
+});
+
+}
+
+setInterval(cargar,3000);
+
+cargar();
+
+</script>
+
+</body>
+</html>
