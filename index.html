@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
-<html lang="es"> 
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -186,7 +186,7 @@ text-align:center;
 // ================= CONTROL DEL LOCAL =================
 let cerradoManual = localStorage.getItem("cerradoManual") === "true";
 
-const diasCerrados = [0];
+const diasCerrados = [5];
 
 const fechasCerrado = [
  "2026-12-25"
@@ -197,7 +197,7 @@ const modo = params.get("modo");
 
 // ================= HORARIO =================
 const aperturaHora = 18;
-const aperturaMin = 00;
+const aperturaMin = 30;
 const cierreHora = 22;
 const cierreMin = 30;
 
@@ -246,8 +246,8 @@ function cambiarEstado(i){
  let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
  let p=pedidos[i];
 
- if(p.estado==="Nuevo") p.estado="En preparacion";
- else if(p.estado==="En preparacion") p.estado="Listo";
+ if(p.estado==="Nuevo") p.estado="En preparación";
+ else if(p.estado==="En preparación") p.estado="Listo";
  else p.estado="Entregado";
 
  pedidos[i]=p;
@@ -335,7 +335,7 @@ const productos=[
 ];
 
 let carrito=[];
- 
+
 function crearProducto(p){
 const div=document.createElement("div");
 div.className="card";
@@ -441,7 +441,7 @@ let prender=new Date();
 prender.setHours(16,0,0,0);
 
 let abrir=new Date();
-abrir.setHours(18,00,0,0);
+abrir.setHours(18,30,0,0);
 
 let cerrar=new Date();
 cerrar.setHours(22,30,0,0);
@@ -514,35 +514,50 @@ let texto="🍗 Pedido Go Pollos Rhosse\n\n";
 texto+="Tipo: "+tipoPedido+"\n\n";
 
 let total=0;
-let detalle="";
 
 carrito.forEach(p=>{
 texto+=p.nombre+" Bs "+p.precio+"\n";
-detalle+=p.nombre+" Bs "+p.precio+"\n";
 total+=p.precio;
 });
 
 texto+="\nTotal Bs "+total;
 
-let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
-
-pedidos.push({
-mesa: tipoPedido,
-detalle: detalle,
-total: total,
-estado:"Nuevo"
-});
-
-localStorage.setItem("pedidos",JSON.stringify(pedidos));
-
+ // window.open("https://wa.me/59168972863?text="+encodeURIComponent(texto)); //Wil
 window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
 
-carrito=[];
-actualizarCarrito();
+}
 
-alert("✅ Pedido enviado a cocina");
+cargarProductos();
+actualizarEstado();
+
+setInterval(actualizarEstado,10000);
+ setInterval(contadorLenia,1000);
+
+contadorLenia();
+leerEstadoServidor();
+setInterval(leerEstadoServidor,10000);
+}
+// ================= PANEL ADMIN =================
+
+let clicksAdmin = 0;
+
+document.addEventListener("click", function(e){
+
+if(e.target.id === "logoLocal"){
+
+clicksAdmin++;
+
+if(clicksAdmin >= 5){
+document.getElementById("panelAdmin").style.display="block";
+clicksAdmin = 0;
+}
+
+setTimeout(()=>{clicksAdmin=0;},2000);
 
 }
+
+});
+
 function cerrarPanel(){
 document.getElementById("panelAdmin").style.display="none";
 }
@@ -566,19 +581,10 @@ pollosDisponibles = 0;
 alert("Pollos agotados por hoy");
 }
 
- function reiniciarPollos(){
+function reiniciarPollos(){
 pollosDisponibles = totalPollos;
 alert("Pollos reiniciados");
 }
-
-window.onload = function(){
-
-cargarProductos();
-actualizarEstado();
-setInterval(contadorLenia,1000);
-
-};
-
 </script>
 <!-- REDES SOCIALES -->
 <div style="text-align:center;padding:25px;color:white;">
