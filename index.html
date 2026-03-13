@@ -106,7 +106,7 @@ header{
  left:0;
  right:0;
 
- background:#ffd401;
+ background:rgba(255,212,1,0.92);background:#ffd401;
 
  backdrop-filter:blur(6px);
  -webkit-backdrop-filter:blur(6px);
@@ -381,7 +381,7 @@ ${p.nombre} Bs ${p.precio}
 `;
 });
 
-document.getElementById("resumen").innerHTML=html||"Sin productos";
+document.getElementById("resumen").innerHTML=html||"🛒 Tu carrito está vacío";
 document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 function localAbierto() {
@@ -530,11 +530,12 @@ window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
 cargarProductos();
 actualizarEstado();
 
-setInterval(actualizarEstado,60000);
-setInterval(contadorLenia,1000);
+setInterval(actualizarEstado,10000);
+ setInterval(contadorLenia,1000);
 
 contadorLenia();
-
+leerEstadoServidor();
+setInterval(leerEstadoServidor,10000);
 }
 // ================= PANEL ADMIN =================
 
