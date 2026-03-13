@@ -43,6 +43,7 @@ header{
  padding:6px 10px;
  border-radius:6px;
  cursor:pointer;
+ margin-right:5px;
 }
 </style>
 </head>
@@ -52,10 +53,12 @@ header{
 <header>
 <img src="logo.png" class="logo">
 <h1>🍗 PANTALLA COCINA</h1>
+
 <button onclick="activarSonido()" 
 style="padding:10px 20px;background:white;color:#d50000;border:none;border-radius:8px;font-weight:bold;">
 🔔 Activar sonido
 </button>
+
 </header>
 
 <div id="listaPedidos"></div>
@@ -69,65 +72,91 @@ style="padding:10px 20px;background:white;color:#d50000;border:none;border-radiu
 let sonidoActivado=false;
 let ultimoTotal=0;
 
+const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+
 function activarSonido(){
  sonidoActivado=true;
  alert("Sonido activado 🔔");
 }
 
 function cargarPedidos(){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+
+fetch(API+"?accion=obtener")
+.then(res=>res.json())
+.then(pedidos=>{
+
  let html="";
 
- pedidos.forEach((p,i)=>{
-   if(p.estado!=="Entregado"){
-     html+=`
-     <div class="cocina-card">
-       <h3>Mesa ${p.mesa}</h3>
-       <p>${p.detalle.replace(/\n/g,"<br>")}</p>
-       <strong>Total: Bs ${p.total}</strong><br>
-       Estado: ${p.estado}<br>
-       <button class="estado-btn" onclick="cambiarEstado(${i})">
-       Cambiar Estado
-       </button>
-     </div>`;
-   }
+ pedidos.forEach(p=>{
+
+ if(p.estado!=="Entregado"){
+
+ html+=`
+ <div class="cocina-card">
+
+ <h3>Mesa ${p.mesa}</h3>
+
+ <p>${p.detalle.replace(/\n/g,"<br>")}</p>
+
+ <strong>Total: Bs ${p.total}</strong><br>
+
+ Estado: <b>${p.estado}</b><br><br>
+
+ <button class="estado-btn"
+ onclick="cambiarEstado(${p.fila},'En preparación')">
+ Preparando
+ </button>
+
+ <button class="estado-btn"
+ onclick="cambiarEstado(${p.fila},'Listo')">
+ Listo
+ </button>
+
+ <button class="estado-btn"
+ onclick="cambiarEstado(${p.fila},'Entregado')">
+ Entregado
+ </button>
+
+ </div>
+ `;
+ }
+
  });
 
  document.getElementById("listaPedidos").innerHTML=html;
-}
 
-function cambiarEstado(fila, estado){
-
-  fetch("https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `accion=actualizar&fila=${fila}&estado=${estado}`
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.ok){
-      alert("Estado actualizado 🔥");
-      cargarPedidos();
-    }
-  });
-}
-
-setInterval(()=>{
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
  if(pedidos.length>ultimoTotal){
    if(sonidoActivado){
      document.getElementById("alerta").play();
    }
    ultimoTotal=pedidos.length;
  }
- cargarPedidos();
-},1000);
+
+});
+
+}
+
+function cambiarEstado(fila,estado){
+
+fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+body:`accion=actualizar&fila=${fila}&estado=${estado}`
+})
+.then(res=>res.json())
+.then(data=>{
+ if(data.ok){
+  cargarPedidos();
+ }
+});
+
+}
+
+setInterval(cargarPedidos,3000);
 
 cargarPedidos();
-
-
 
 </script>
 
