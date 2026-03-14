@@ -246,8 +246,8 @@ function cambiarEstado(i){
  let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
  let p=pedidos[i];
 
- if(p.estado==="Nuevo") p.estado="En preparación";
- else if(p.estado==="En preparación") p.estado="Listo";
+ if(p.estado==="Nuevo") p.estado="En preparacion";
+ else if(p.estado==="En preparacion") p.estado="Listo";
  else p.estado="Entregado";
 
  pedidos[i]=p;
