@@ -1,5 +1,5 @@
 <!DOCTYPE html> 
-<html lang="es">
+<html lang="es"> 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -510,54 +510,35 @@ return;
 
 let tipoPedido=document.querySelector('input[name="tipoPedido"]:checked').value;
 
-let texto="🍗 Pedido Go Pollos Rhosse\n\n";
-texto+="Tipo: "+tipoPedido+"\n\n";
-
+let detalle="";
 let total=0;
 
 carrito.forEach(p=>{
-texto+=p.nombre+" Bs "+p.precio+"\n";
+detalle+=p.nombre+" Bs "+p.precio+"\n";
 total+=p.precio;
 });
 
-texto+="\nTotal Bs "+total;
+const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
- // window.open("https://wa.me/59168972863?text="+encodeURIComponent(texto)); //Wil
+fetch(API,{
+method:"POST",
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+body:
+"fecha="+encodeURIComponent(new Date().toLocaleString())+
+"&tipo="+encodeURIComponent(tipoPedido)+
+"&mesa="+encodeURIComponent(tipoPedido)+
+"&detalle="+encodeURIComponent(detalle)+
+"&total="+total
+});
+
+let texto="🍗 Pedido Go Pollos Rhosse\n\n";
+texto+="Tipo: "+tipoPedido+"\n\n"+detalle+"\nTotal Bs "+total;
+
 window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
 
 }
-
-cargarProductos();
-actualizarEstado();
-
-setInterval(actualizarEstado,10000);
- setInterval(contadorLenia,1000);
-
-contadorLenia();
-leerEstadoServidor();
-setInterval(leerEstadoServidor,10000);
-}
-// ================= PANEL ADMIN =================
-
-let clicksAdmin = 0;
-
-document.addEventListener("click", function(e){
-
-if(e.target.id === "logoLocal"){
-
-clicksAdmin++;
-
-if(clicksAdmin >= 5){
-document.getElementById("panelAdmin").style.display="block";
-clicksAdmin = 0;
-}
-
-setTimeout(()=>{clicksAdmin=0;},2000);
-
-}
-
-});
-
 function cerrarPanel(){
 document.getElementById("panelAdmin").style.display="none";
 }
