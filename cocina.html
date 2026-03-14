@@ -143,7 +143,7 @@ if(p.estado==="Entregado") return;
 
 let clase="nuevo";
 
-if(p.estado==="En preparación") clase="preparacion";
+if(p.estado==="En preparacion") clase="preparacion";
 if(p.estado==="Listo") clase="listo";
 
 html+=`
@@ -163,7 +163,7 @@ html+=`
 <div class="botones">
 
 ${p.estado==="Nuevo"
-? `<button onclick="cambiarEstado(${p.fila},'En preparación')">Preparar</button>`
+? `<button onclick="cambiarEstado(${p.fila},'En preparacion')">Preparar</button>`
 : `<button disabled style="opacity:0.4">Preparar</button>`}
 
 ${p.estado==="En preparación"
