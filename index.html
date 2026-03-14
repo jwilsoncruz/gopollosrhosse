@@ -200,8 +200,8 @@ const modo = params.get("modo");
 // ================= HORARIO =================
 const aperturaHora = 18;
 const aperturaMin = 30;
-const cierreHora = 22;
-const cierreMin = 30;
+const cierreHora = 17;
+const cierreMin = 00;
 
 const totalPollos = 6;
 let pollosDisponibles =4;
@@ -449,7 +449,7 @@ let abrir=new Date();
 abrir.setHours(18,30,0,0);
 
 let cerrar=new Date();
-cerrar.setHours(22,30,0,0);
+cerrar.setHours(17,00,0,0);
 
 if(localAbierto()){
 estado.innerHTML="🟢 Estamos atendiendo";
