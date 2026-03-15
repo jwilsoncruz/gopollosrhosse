@@ -338,7 +338,9 @@ let carrito=[];
  cargarProductos();
 actualizarEstado();
 contadorLenia();
-
+setInterval(contadorLenia,1000);
+setInterval(actualizarEstado,10000);
+ 
 function crearProducto(p){
 const div=document.createElement("div");
 div.className="card";
@@ -454,8 +456,23 @@ return;
 }
 
 if(ahora >= cerrar){
+
 estado.innerHTML="🔴 Restaurante cerrado";
-tiempo.innerHTML="Abrimos mañana 🔥";
+
+let proximo = new Date();
+proximo.setDate(ahora.getDate()+1);
+
+// buscar el próximo día abierto
+while (diasCerrados.includes(proximo.getDay()) ||
+       fechasCerrado.includes(proximo.toISOString().split("T")[0])) {
+    proximo.setDate(proximo.getDate()+1);
+}
+
+let opciones = { weekday:'long' };
+let diaTexto = proximo.toLocaleDateString('es-ES',opciones);
+
+tiempo.innerHTML = "Abrimos el " + diaTexto + " 🔥";
+
 return;
 }
 
@@ -544,19 +561,6 @@ function cerrarPanel(){
 document.getElementById("panelAdmin").style.display="none";
 }
 
-function cerrarLocal(){
-localStorage.setItem("cerradoManual","true");
-cerradoManual = true;
-alert("🔴 Restaurante cerrado manualmente");
-actualizarEstado();
-}
-
-function abrirLocal(){
-localStorage.setItem("cerradoManual","false"); //aqui 
-cerradoManual = false;
-alert("🟢 Restaurante abierto");
-actualizarEstado();
-}
 
 function agotado(){
 pollosDisponibles = 0;
@@ -569,8 +573,7 @@ alert("Pollos reiniciados");
 }
 
 }   // ← ESTA LLAVE CIERRA EL else DEL MODO CLIENTE
-setInterval(contadorLenia,1000);
-setInterval(actualizarEstado,10000);
+
 </script>
 <!-- REDES SOCIALES -->
 <div style="text-align:center;padding:25px;color:white;">
