@@ -8,16 +8,26 @@
 
  
 <style>
+ 
+ :root{
+--color-fondo:#0b3d91;
+--color-header:#1e88e5;
+--color-secundario:#1976d2;
+--color-texto-claro:#90caf9;
+--color-marquesina1:#90caf9;
+--color-marquesina2:#e3f2fd;
+}
+ 
 body{
  font-family: Arial, sans-serif;
  margin:0;
- background:#0b3d91; /*610000*/
+ background:var(--color-fondo); /*610000*/
  padding-bottom:240px;
 }
 
 .marquesina{
 width:100%;
-background:linear-gradient(90deg,#ffd401,#ffea61);
+background:background:linear-gradient(90deg,var(--color-marquesina1),var(--color-marquesina2));linear-gradient(90deg,#ffd401,#ffea61);
 color:#610000;
 overflow:hidden;
 white-space:nowrap;
@@ -43,7 +53,7 @@ animation:marquesina 18s linear infinite;
 header{
  text-align:center;
  padding:40px 20px;
- background:#1e88e5; /*d50000*/
+ background:var(--color-header); /*d50000*/
  color:white;
 }
 
@@ -59,7 +69,7 @@ header{
 .categoria{
  margin-top:35px;
  font-size:22px;
- color:#90caf9; /* color:#ffd401;*/
+ color:var(--color-texto-claro); /* color:#ffd401;*/
 }
 
 .grid{
@@ -295,7 +305,7 @@ document.getElementById("app").innerHTML = `
 <div id="estadoLocal"></div>
 
 <div id="contadorPollos"
-style="background:#1976d2;color:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;font-weight:bold;">
+style="background:#197background:var(--color-secundario);6d2;color:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;font-weight:bold;">
 <div id="estadoLenia">🔥 Preparando la leña</div>
 <div id="tiempoApertura">--:--:--</div>
 </div>
