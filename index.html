@@ -540,6 +540,15 @@ const tiempo=document.getElementById("tiempoApertura");
 
 if(!estado || !tiempo) return;
 
+const hoy = new Date();
+const dia = hoy.getDay();
+
+if(diasCerrados.includes(dia)){
+estado.innerHTML="🔴 Hoy está cerrado";
+tiempo.innerHTML="Abrimos mañana 🔥";
+return;
+}
+
 const ahora=new Date();
 
 let prender=new Date();
