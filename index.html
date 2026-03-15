@@ -335,9 +335,10 @@ const productos=[
 ];
 
 let carrito=[];
- cargarProductos();
+cargarProductos();
 actualizarEstado();
 contadorLenia();
+actualizarPollos();
 setInterval(contadorLenia,1000);
 setInterval(actualizarEstado,10000);
  
@@ -362,11 +363,62 @@ if(cont) cont.appendChild(crearProducto(p));
 });
 }
 
-function agregar(nombre,precio){
+functionfunction agregar(nombre,precio){
+
 carrito.push({nombre,precio});
-actualizarCarrito();
+
+if(nombre.includes("Pollo")){
+pollosDisponibles--;
+if(pollosDisponibles < 0) pollosDisponibles = 0;
+actualizarPollos();
 }
 
+actualizarCarrito();
+
+}
+
+ function actualizarPollos(){
+
+const barra = document.getElementById("barraPollos");
+const texto = document.getElementById("textoEscasez");
+
+if(!barra || !texto) return;
+
+let porcentaje = (pollosDisponibles / totalPollos) * 100;
+
+barra.style.width = porcentaje + "%";
+
+if(pollosDisponibles <= 0){
+
+barra.style.background = "#444";
+
+texto.innerHTML = "🍗 POLLOS AGOTADOS POR HOY";
+
+}
+else if(pollosDisponibles == 1){
+
+barra.style.background = "red";
+
+texto.innerHTML = "⚠️ ¡Último pollo disponible!";
+
+}
+else if(pollosDisponibles <= 2){
+
+barra.style.background = "orange";
+
+texto.innerHTML = "🔥 ¡Quedan solo " + pollosDisponibles + " pollos!";
+
+}
+else{
+
+barra.style.background = "green";
+
+texto.innerHTML = "🔥 Quedan " + pollosDisponibles + " pollos a la leña";
+
+}
+
+}
+ 
 function eliminarProducto(i){
 carrito.splice(i,1);
 actualizarCarrito();
@@ -569,6 +621,7 @@ alert("Pollos agotados por hoy");
 
 function reiniciarPollos(){
 pollosDisponibles = totalPollos;
+actualizarPollos();
 alert("Pollos reiniciados");
 }
 
