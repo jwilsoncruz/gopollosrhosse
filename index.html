@@ -354,7 +354,8 @@ const productos=[
 let carrito=[];
 cargarProductos();
 actualizarEstado();
- function actualizarMarquesina(){
+ 
+function actualizarMarquesina(){
 
 const m = document.getElementById("textoMarquesina");
 if(!m) return;
@@ -385,9 +386,10 @@ m.innerHTML = "🔥 HOY POLLOS A LA LEÑA DESDE 6:30 PM — 🚚 Delivery solo 5
 }
 contadorLenia();
 actualizarPollos();
- actualizarMarquesina();
+actualizarMarquesina();
 setInterval(contadorLenia,1000);
 setInterval(actualizarEstado,10000);
+setInterval(actualizarMarquesina,5000);
  
 function crearProducto(p){
 const div=document.createElement("div");
