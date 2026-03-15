@@ -226,6 +226,7 @@ const fechasCerrado = [
 
 const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
+const mesaQR = params.get("mesa");
 
 // ================= HORARIO =================
 const aperturaHora = 8;
@@ -333,7 +334,10 @@ style="background:#197background:var(--color-secundario);6d2;color:white;padding
 </div>
 
 </header>
-
+if(mesaQR){
+document.querySelector("header").innerHTML +=
+"<h2 style='background:white;color:#d50000;padding:10px;border-radius:10px;margin-top:10px;'>🍽 Mesa "+mesaQR+"</h2>";
+}
 <div class="container">
 <h2 class="categoria">🍗 Pollos a la leña</h2>
 <div id="pollos" class="grid"></div>
@@ -680,7 +684,7 @@ detalle+=p.nombre+" Bs "+p.precio+"\n";
 total+=p.precio;
 });
 
-let mesa="Web";
+let mesa = mesaQR ? "Mesa " + mesaQR : "Web";
 
 const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
