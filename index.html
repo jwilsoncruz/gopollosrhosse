@@ -27,7 +27,7 @@ body{
 
 .marquesina{
 width:100%;
-background:background:linear-gradient(90deg,var(--color-marquesina1),var(--color-marquesina2));linear-gradient(90deg,#ffd401,#ffea61);
+background:linear-gradient(90deg,var(--color-marquesina1),var(--color-marquesina2));linear-gradient(90deg,#ffd401,#ffea61);
 color:#610000;
 overflow:hidden;
 white-space:nowrap;
@@ -353,7 +353,31 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 </div>
 
 <div class="carrito">
-...
+
+<div id="resumen">🛒 Tu carrito está vacío</div>
+
+<hr>
+
+<div id="total" class="total">Total: Bs 0</div>
+
+<br>
+
+<label>
+<input type="radio" name="tipoPedido" value="Mesa" checked>
+🍽 Comer aquí
+</label>
+
+<label style="margin-left:10px;">
+<input type="radio" name="tipoPedido" value="Delivery">
+🚚 Delivery
+</label>
+
+<br><br>
+
+<button onclick="enviarPedido()" class="boton" style="width:100%;">
+📲 Enviar pedido
+</button>
+
 </div>
 `;
 if(mesaQR){
