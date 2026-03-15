@@ -186,8 +186,6 @@ text-align:center;
 <script>
 
 // ================= CONTROL DEL LOCAL =================
-let cerradoManual = localStorage.getItem("cerradoManual") === "true";
-
 const diasCerrados = [6,0];
 
 const fechasCerrado = [
@@ -390,8 +388,6 @@ document.getElementById("resumen").innerHTML=html||"🛒 Tu carrito está vacío
 document.getElementById("total").innerHTML="Total: Bs "+total;
 }
 function localAbierto() {
-
-if (cerradoManual) return false;
 
 const ahora = new Date();
 const dia = ahora.getDay();
