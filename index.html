@@ -368,6 +368,11 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 </label>
 
 <label style="margin-left:10px;">
+<input type="radio" name="tipoPedido" value="Recoger">
+🛍 Recoger en local
+</label>
+
+<label style="margin-left:10px;">
 <input type="radio" name="tipoPedido" value="Delivery">
 🚚 Delivery
 </label>
@@ -704,7 +709,7 @@ detalle+=p.nombre+" Bs "+p.precio+"\n";
 total+=p.precio;
 });
 
-let mesa = mesaQR ? "Mesa " + mesaQR : "Web";
+let mesa = mesaQR ? "Mesa " + mesaQR : tipoPedido;
 
 const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
