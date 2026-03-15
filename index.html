@@ -680,6 +680,8 @@ detalle+=p.nombre+" Bs "+p.precio+"\n";
 total+=p.precio;
 });
 
+let mesa="Web";
+
 const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
 fetch(API,{
@@ -690,15 +692,32 @@ headers:{
 body:
 "fecha="+encodeURIComponent(new Date().toLocaleString())+
 "&tipo="+encodeURIComponent(tipoPedido)+
-"&mesa="+encodeURIComponent(tipoPedido)+
+"&mesa="+encodeURIComponent(mesa)+
 "&detalle="+encodeURIComponent(detalle)+
 "&total="+total
-});
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.ok){
 
 let texto="🍗 Pedido Go Pollos Rhosse\n\n";
 texto+="Tipo: "+tipoPedido+"\n\n"+detalle+"\nTotal Bs "+total;
 
 window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
+
+carrito=[];
+actualizarCarrito();
+
+alert("✅ Pedido enviado a cocina");
+
+}
+
+})
+.catch(err=>{
+console.error(err);
+alert("❌ Error enviando pedido");
+});
 
 }
 function cerrarPanel(){
