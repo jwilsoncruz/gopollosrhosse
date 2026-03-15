@@ -314,14 +314,20 @@ display:inline-block;
 margin-bottom:10px;">
 👔 Semana del Padre
 </div>
+
 <img src="logo.png" class="logo" id="logoLocal">
+
 <h1>Pollos a la Leña<br>Go Pollos Rhosse</h1>
-<p>Av. Moxos - Zona Mercado Pompeya<br> en Trinidad-Beni-Bolivia</p>
+
+<p>
+Av. Moxos - Zona Mercado Pompeya<br>
+en Trinidad-Beni-Bolivia
+</p>
 
 <div id="estadoLocal"></div>
 
 <div id="contadorPollos"
-style="background:#197background:var(--color-secundario);6d2;color:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;font-weight:bold;">
+style="background:var(--color-secundario);color:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;font-weight:bold;">
 <div id="estadoLenia">🔥 Preparando la leña</div>
 <div id="tiempoApertura">--:--:--</div>
 </div>
@@ -334,10 +340,7 @@ style="background:#197background:var(--color-secundario);6d2;color:white;padding
 </div>
 
 </header>
-if(mesaQR){
-document.querySelector("header").innerHTML +=
-"<h2 style='background:white;color:#d50000;padding:10px;border-radius:10px;margin-top:10px;'>🍽 Mesa "+mesaQR+"</h2>";
-}
+
 <div class="container">
 <h2 class="categoria">🍗 Pollos a la leña</h2>
 <div id="pollos" class="grid"></div>
@@ -350,20 +353,13 @@ document.querySelector("header").innerHTML +=
 </div>
 
 <div class="carrito">
-<div id="resumen">Sin productos</div>
-<div class="total" id="total">Total: Bs 0</div>
-
-<div style="margin:10px 0;">
-<strong>Tipo de pedido:</strong><br>
-<label><input type="radio" name="tipoPedido" value="Mesa" checked> 🍽 En mesa</label>
-<label><input type="radio" name="tipoPedido" value="Recoger"> 🛍 Recoger</label><br>
-<label><input type="radio" name="tipoPedido" value="Delivery"> 🚗 Delivery+5Bs</label>
-</div>
-
-<button class="boton" onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
+...
 </div>
 `;
-
+if(mesaQR){
+document.querySelector("header").innerHTML +=
+"<h2 style='background:white;color:#d50000;padding:10px;border-radius:10px;margin-top:10px;'>🍽 Mesa "+mesaQR+"</h2>";
+}
 const productos=[
 
 {categoria:"pollos", nombre:"Pollo Entero", precio:100, img:"entero.jpg"},
