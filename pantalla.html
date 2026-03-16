@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pantalla Clientes - Go Pollos Rhosse</title>
+
+<style>
+
+body{
+margin:0;
+background:#0b0b0b;
+font-family:Arial;
+color:white;
+text-align:center;
+}
+
+.video{
+width:100%;
+height:45vh;
+background:black;
+}
+
+.video iframe{
+width:100%;
+height:100%;
+border:0;
+}
+
+.panel{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+padding:20px;
+height:45vh;
+}
+
+.columna{
+background:#1a1a1a;
+border-radius:12px;
+padding:20px;
+}
+
+.titulo{
+font-size:28px;
+margin-bottom:15px;
+}
+
+.lista{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:15px;
+}
+
+.card{
+padding:25px;
+border-radius:10px;
+font-size:42px;
+font-weight:bold;
+}
+
+.preparando{
+background:#ffd54f;
+color:black;
+}
+
+.listo{
+background:#4caf50;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🍗 Estado de Pedidos</h1>
+
+<div class="video">
+
+<iframe
+src="https://www.youtube.com/embed/1sd3NIflMmk?autoplay=1&mute=1&loop=1&playlist=1sd3NIflMmk"
+allow="autoplay"
+allowfullscreen>
+</iframe>
+
+</div>
+
+<div class="panel">
+
+<div class="columna">
+
+<div class="titulo">👨‍🍳 PREPARANDO</div>
+
+<div id="preparando" class="lista"></div>
+
+</div>
+
+<div class="columna">
+
+<div class="titulo">✅ LISTO</div>
+
+<div id="listo" class="lista"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+
+function cargar(){
+
+fetch(API+"?accion=obtener")
+
+.then(r=>r.json())
+
+.then(pedidos=>{
+
+let preparando="";
+let listo="";
+
+pedidos.forEach(p=>{
+
+if(p.estado==="Nuevo" || p.estado==="En preparacion"){
+preparando += "<div class='card preparando'>"+p.fila+"</div>";
+}
+
+if(p.estado==="Listo"){
+listo += "<div class='card listo'>"+p.fila+"</div>";
+}
+
+});
+
+document.getElementById("preparando").innerHTML = preparando || "Sin pedidos";
+document.getElementById("listo").innerHTML = listo || "Esperando...";
+
+});
+
+}
+
+setInterval(cargar,3000);
+
+cargar();
+
+</script>
+
+</body>
+</html>
