@@ -218,7 +218,7 @@ text-align:center;
 <script>
 
 // ================= CONTROL DEL LOCAL =================
-const diasCerrados = [1];
+const diasCerrados = [0];
 
 const fechasCerrado = [
  "2026-03-14"
@@ -229,12 +229,12 @@ const modo = params.get("modo");
 const mesaQR = params.get("mesa");
 
 // ================= HORARIO =================
-const aperturaHora = 18;
+const aperturaHora = 11;
 const aperturaMin = 30;
 const cierreHora = 22;
 const cierreMin = 30;
 
-const totalPollos = 6;
+const totalPollos = 12;
 let pollosDisponibles = totalPollos;
 
 // ================= MODO COCINA =================
@@ -443,7 +443,7 @@ return;
 }
 
 // 🔥 Próxima apertura
-m.innerHTML = "👨‍👧‍👦 SEMANA DEL PADRE — Celebra con Pollos a la Leña 🔥 Delivery solo 5 Bs";
+m.innerHTML = "👨‍👧‍👦 FELIZ DIA DEL PADRE — Celebra con Pollos a la Leña 🔥 Delivery solo 5 Bs";
 
 }
 contadorLenia();
@@ -614,10 +614,10 @@ return;
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(16,0,0,0);
+prender.setHours(8,30,0,0);
 
 let abrir=new Date();
-abrir.setHours(18,30,0,0);
+abrir.setHours(11,30,0,0);
 
 let cerrar=new Date();
 cerrar.setHours(22,30,0,0);
