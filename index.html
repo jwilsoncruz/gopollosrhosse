@@ -338,7 +338,7 @@ else{
 
 document.getElementById("app").innerHTML = `
 <header>
-<!-- <div style="
+<div style="
 background:#1565c0;
 color:white;
 padding:8px;
@@ -346,15 +346,15 @@ font-weight:bold;
 border-radius:20px;
 display:inline-block;
 margin-bottom:10px;">
-👔 Feliz Día del Padre
-</div> -->
+👔 NUEVA DIRECCION
+</div>
 
 <img src="logo.png" class="logo" id="logoLocal">
 
 <h1>Pollos a la Leña<br>Go Pollos Rhosse</h1>
 
 <p>
-Av. Moxos - Zona Mercado Pompeya<br>
+Av.A7 - Zona Arroyo Chico<br>
 en Trinidad-Beni-Bolivia
 </p>
 
@@ -454,7 +454,7 @@ const fechaHoy = ahora.toISOString().split("T")[0];
 
 // 🔴 Día cerrado
 if(diasCerrados.includes(dia) || fechasCerrado.includes(fechaHoy)){
-m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION<<<< 🔥";
+m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA ARROYO CHICO<<<< 🔥";
 return;
 }
 
@@ -472,12 +472,12 @@ return;
 
 // 🟢 Abierto
 if(localAbierto()){
-m.innerHTML = "🍗 Feliz Día Papá >>> POLLOS A LA LEÑA SALIENDO 6:00PM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥 >>> COMBO PARA PAPÁ : 1 Pollo Entero+1 Coca-cola 2L+Delivery en solo 120Bs- ya quedan pacos...";
+m.innerHTML = "🍗 NUEVA DIRECCION EN ZONA ARROYO CHICO >>> POLLOS A LA LEÑA SALIENDO 6:00PM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥- RESERVE YA..";
 return;
 }
 
 // 🔥 Próxima apertura
-m.innerHTML = "👨‍👧‍👦 FELIZ DIA DEL PADRE — Celebra con Pollos a la Leña 🔥 Delivery solo 5 Bs";
+m.innerHTML = "👨‍👧‍👦 ESTAMOS EN UNA NUEVA DIRECCION — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs";
 
 }
 contadorLenia();
