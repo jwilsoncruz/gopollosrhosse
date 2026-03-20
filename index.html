@@ -9,19 +9,21 @@
  
 <style>
  
- :root{
---color-fondo:#0b3d91;
+:root{
+--color-fondo:#2b0b00;          /* fondo oscuro elegante */
 --color-header:transparent;
---color-secundario:#1976d2;
---color-texto-claro:#90caf9;
---color-marquesina1:#90caf9;
---color-marquesina2:#e3f2fd;
+
+--color-secundario:#d84315;     /* rojo parrillero */
+--color-texto-claro:#ffcc80;    /* dorado suave */
+
+--color-marquesina1:#ff6f00;    /* naranja fuego */
+--color-marquesina2:#ffca28;    /* amarillo dorado */
 }
  
 body{
  font-family: Arial, sans-serif;
  margin:0;
- background:linear-gradient(180deg,#1e88e5,#42a5f5);
+ background:linear-gradient(180deg,#2b0b00,#5d1f00);
  padding-bottom:30vh;
 }
 
@@ -101,7 +103,7 @@ header{
 .precio{ font-weight:bold; margin:8px 0; }
 
 .boton{
- background:#25D366;
+ background:#ff6f00;
  color:white;
  padding:8px;
  border:none;
@@ -227,6 +229,38 @@ const fechasCerrado = [
 const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 const mesaQR = params.get("mesa");
+ // ACTIVAR PANEL POR URL
+const admin = params.get("admin");
+
+if(admin === "1"){
+setTimeout(()=>{
+document.getElementById("panelAdmin").style.display = "block";
+},500);
+}
+
+// ACTIVAR PANEL POR 5 CLICS EN EL LOGO
+let clicksAdmin = 0;
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+const logo = document.getElementById("logoLocal");
+
+if(logo){
+logo.addEventListener("click", ()=>{
+
+clicksAdmin++;
+
+if(clicksAdmin >= 5){
+document.getElementById("panelAdmin").style.display = "block";
+clicksAdmin = 0;
+}
+
+setTimeout(()=>{clicksAdmin=0;},2000);
+
+});
+}
+
+});
 
 // ================= HORARIO =================
 const aperturaHora = 16;
@@ -242,7 +276,7 @@ if(modo === "cocina"){
 
 document.getElementById("app").innerHTML = `
 <header>
-<img src="logob.png" class="logo">
+<img src="logo.png" class="logo">
 <h1>🍗 PANTALLA COCINA</h1>
 </header>
 <div id="listaPedidos"></div>
@@ -315,7 +349,7 @@ margin-bottom:10px;">
 👔 Feliz Día del Padre
 </div>
 
-<img src="logob.png" class="logo" id="logoLocal">
+<img src="logo.png" class="logo" id="logoLocal">
 
 <h1>Pollos a la Leña<br>Go Pollos Rhosse</h1>
 
@@ -501,7 +535,7 @@ barra.style.width = porcentaje + "%";
 
 if(pollosDisponibles <= 0){
 
-barra.style.background = "#444";
+barra.style.background = "#00c853"; // muchos (verde fuerte)
 
 texto.innerHTML = "🍗 POLLOS AGOTADOS POR HOY";
 
@@ -509,14 +543,14 @@ actualizarMarquesina();
 }
 else if(pollosDisponibles == 1){
 
-barra.style.background = "red";
+barra.style.background = "#ffab00"; // pocos (amarillo)
 
 texto.innerHTML = "⚠️ ¡Último pollo disponible!";
 
 }
 else if(pollosDisponibles <= 2){
 
-barra.style.background = "orange";
+barra.style.background = "#d50000"; // crítico (rojo)
 
 texto.innerHTML = "🔥 ¡Quedan solo " + pollosDisponibles + " pollos!";
 
