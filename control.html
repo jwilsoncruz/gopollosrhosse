@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control Diario Pollos</title>
+
+<style>
+body{
+ background:#111;
+ color:white;
+ font-family:Arial;
+ text-align:center;
+ padding:10px;
+}
+
+h1{ color:#f5b041; font-size:20px; }
+
+input{
+ width:80%;
+ padding:12px;
+ font-size:18px;
+ border-radius:10px;
+ border:none;
+ margin-top:10px;
+ text-align:center;
+}
+
+button{
+ padding:12px;
+ margin:5px;
+ border:none;
+ border-radius:10px;
+ font-weight:bold;
+ cursor:pointer;
+ font-size:18px;
+ width:40%;
+}
+
+.add{ background:#2ecc71; }
+.sell{ background:#e74c3c; }
+.reset{ background:#555; width:80%; }
+
+.card{
+ margin:10px 0;
+ padding:15px;
+ border-radius:12px;
+ font-size:20px;
+}
+
+/* COLORES */
+.verde{ background:#0f2e1c; border:2px solid #2ecc71; }
+.amarillo{ background:#3a2e0f; border:2px solid #f1c40f; }
+.rojo{ background:#3a0f0f; border:2px solid #e74c3c; }
+
+.resumen{
+ margin:15px 0;
+ padding:12px;
+ border-radius:10px;
+ font-weight:bold;
+ background:#000;
+ font-size:18px;
+}
+
+/* botones grandes para dedos */
+.botones{
+ display:flex;
+ justify-content:center;
+ gap:10px;
+ margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>CONTROL DIARIO</h1>
+
+<div class="resumen" id="resumen"></div>
+
+<input type="number" id="n" placeholder="Cantidad de pollos">
+
+<br>
+
+<button class="add" onclick="cargar()">CARGAR</button>
+<button class="reset" onclick="resetear()">NUEVO DIA</button>
+
+<div id="cardPEC" class="card">
+PEC: <span id="pechugas">0</span>
+<div class="botones">
+<button class="sell" onclick="v('pechugas')">-</button>
+<button class="add" onclick="sumar('pechugas')">+</button>
+</div>
+</div>
+
+<div id="cardALA" class="card">
+ALA: <span id="alas">0</span>
+<div class="botones">
+<button class="sell" onclick="v('alas')">-</button>
+<button class="add" onclick="sumar('alas')">+</button>
+</div>
+</div>
+
+<div id="cardPIE" class="card">
+PIE: <span id="piernas">0</span>
+<div class="botones">
+<button class="sell" onclick="v('piernas')">-</button>
+<button class="add" onclick="sumar('piernas')">+</button>
+</div>
+</div>
+
+<div id="cardCON" class="card">
+CON: <span id="contra">0</span>
+<div class="botones">
+<button class="sell" onclick="v('contra')">-</button>
+<button class="add" onclick="sumar('contra')">+</button>
+</div>
+</div>
+
+<div class="card">
+<div class="botones">
+<button class="sell" onclick="pollo()">- POL</button>
+<button class="add" onclick="devolverPollo()">+ POL</button>
+</div>
+</div>
+
+<script>
+
+let s = {alas:0,piernas:0,contra:0,pechugas:0};
+
+function cargar(){
+let n = parseInt(document.getElementById("n").value);
+if(!n || n<=0) return;
+
+s.alas += n*2;
+s.piernas += n*2;
+s.contra += n*2;
+s.pechugas += n*4;
+
+guardar(); actualizar();
+}
+
+function v(t){
+if(s[t]<=0) return alert("SIN STOCK");
+s[t]--; guardar(); actualizar();
+}
+
+function sumar(t){
+s[t]++; guardar(); actualizar();
+}
+
+function pollo(){
+if(calcularPollos()<1) return alert("NO HAY POLLO COMPLETO");
+
+s.alas-=2;
+s.piernas-=2;
+s.contra-=2;
+s.pechugas-=4;
+
+guardar(); actualizar();
+}
+
+function devolverPollo(){
+s.alas+=2;
+s.piernas+=2;
+s.contra+=2;
+s.pechugas+=4;
+
+guardar(); actualizar();
+}
+
+function calcularPollos(){
+return Math.floor(Math.min(
+s.alas/2,
+s.piernas/2,
+s.contra/2,
+s.pechugas/4
+));
+}
+
+function color(valor, bajo){
+if(valor === 0) return "rojo";
+if(valor <= bajo) return "amarillo";
+return "verde";
+}
+
+function pintar(){
+document.getElementById("cardPEC").className = "card " + color(s.pechugas,4);
+document.getElementById("cardALA").className = "card " + color(s.alas,2);
+document.getElementById("cardPIE").className = "card " + color(s.piernas,2);
+document.getElementById("cardCON").className = "card " + color(s.contra,2);
+}
+
+function actualizarResumen(){
+document.getElementById("resumen").innerHTML =
+"POL: " + calcularPollos() +
+" | PEC: " + s.pechugas +
+" | ALA: " + s.alas +
+" | PIE: " + s.piernas +
+" | CON: " + s.contra;
+}
+
+function actualizar(){
+document.getElementById("alas").innerText=s.alas;
+document.getElementById("piernas").innerText=s.piernas;
+document.getElementById("contra").innerText=s.contra;
+document.getElementById("pechugas").innerText=s.pechugas;
+
+actualizarResumen();
+pintar();
+}
+
+function guardar(){
+localStorage.setItem("pollo",JSON.stringify(s));
+}
+
+function resetear(){
+if(confirm("NUEVO DIA?")){
+s={alas:0,piernas:0,contra:0,pechugas:0};
+localStorage.removeItem("pollo");
+actualizar();
+}
+}
+
+(function(){
+let x=JSON.parse(localStorage.getItem("pollo"));
+if(x) s=x;
+actualizar();
+})();
+
+</script>
+
+</body>
+</html>
