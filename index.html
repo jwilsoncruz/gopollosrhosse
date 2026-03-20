@@ -268,7 +268,7 @@ const aperturaMin = 00;
 const cierreHora = 22;
 const cierreMin = 50;
 
-const totalPollos = 0;
+const totalPollos = 4;
 let pollosDisponibles = totalPollos;
 
 // ================= MODO COCINA =================
@@ -454,7 +454,7 @@ const fechaHoy = ahora.toISOString().split("T")[0];
 
 // 🔴 Día cerrado
 if(diasCerrados.includes(dia) || fechasCerrado.includes(fechaHoy)){
-m.innerHTML = "🔴 Hoy el restaurante está cerrado Servicio contratado privado — Nos vemos mañana 🔥";
+m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION<<<< 🔥";
 return;
 }
 
