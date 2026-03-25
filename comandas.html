@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Go Pollos Rhosse PRO</title>
+
+<style>
+body { font-family: Arial; background:#111; color:#fff; text-align:center; }
+
+h2 { margin-top:10px; }
+
+button {
+padding:14px;
+margin:5px;
+font-size:16px;
+border-radius:10px;
+border:none;
+width:140px;
+}
+
+.entero { background:#e53935; }
+.cuarto { background:#fb8c00; }
+.economico { background:#43a047; }
+.tiktok { background:#8e24aa; }
+.extra { background:#039be5; }
+
+.enviar { background:#4caf50; width:90%; font-size:20px; }
+.reset { background:#f44336; width:90%; }
+
+.total {
+font-size:28px;
+margin:10px;
+}
+
+select {
+padding:10px;
+font-size:16px;
+margin:5px;
+}
+
+#detalle {
+background:#222;
+padding:10px;
+border-radius:10px;
+margin:10px;
+font-size:15px;
+min-height:60px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🔥 GO POLLOS RHOSSE 🔥</h2>
+
+<select id="mesero">
+<option>Dafne</option>
+<option>Mauricio</option>
+<option>Padme</option>
+<option>Karen</option>
+<option>Wilson</option>
+<option>Raquel</option>
+</select>
+
+<select id="mesa">
+<option>Mesa 1</option>
+<option>Mesa 2</option>
+<option>Mesa 3</option>
+<option>Mesa 4</option>
+<option>Mesa 5</option>
+</select>
+
+<h3>🍗 Principales</h3>
+<button class="entero" onclick="add('Pollo Entero',100)">Entero 100</button>
+<button class="entero" onclick="add('Medio Pollo',50)">Medio 50</button>
+
+<h3>🍗 Cuartos</h3>
+<button class="cuarto" onclick="add('Cuarto A (Pierna+Contra)',25)">Pierna+Contra</button>
+<button class="cuarto" onclick="add('Cuarto B (Ala+Pecho)',25)">Ala+Pecho</button>
+
+<h3>💰 Económicos</h3>
+<button class="economico" onclick="add('Pecho',15)">Pecho 15</button>
+<button class="economico" onclick="add('Ala',15)">Ala 15</button>
+
+<h3>🔥 TikTok</h3>
+<button class="tiktok" onclick="add('Pierna',13)">Pierna 13</button>
+<button class="tiktok" onclick="add('Contra',13)">Contra 13</button>
+
+<h3>🥤 Extras</h3>
+<button class="extra" onclick="add('Arroz',5)">Arroz</button>
+<button class="extra" onclick="add('Papas',5)">Papas</button>
+<button class="extra" onclick="add('Plátano',5)">Plátano</button>
+<button class="extra" onclick="add('Bebida',10)">Bebida</button>
+
+<div id="detalle">Sin pedidos</div>
+<div class="total" id="total">Total: 0 Bs</div>
+
+<button class="enviar" onclick="enviar()">📲 ENVIAR PEDIDO</button>
+<button class="enviar" onclick="listo()">✅ PEDIDO LISTO</button>
+<button class="reset" onclick="resetear()">❌ LIMPIAR</button>
+
+<script>
+
+let pedido = [];
+let total = 0;
+
+function add(nombre, precio){
+pedido.push({nombre, precio});
+total += precio;
+actualizarVista();
+}
+
+function actualizarVista(){
+let texto = "";
+pedido.forEach(p => {
+texto += p.nombre + " - " + p.precio + " Bs<br>";
+});
+
+if(texto === "") texto = "Sin pedidos";
+
+document.getElementById("detalle").innerHTML = texto;
+document.getElementById("total").innerText = "Total: " + total + " Bs";
+}
+
+function enviar(){
+
+let mesero = document.getElementById("mesero").value;
+let mesa = document.getElementById("mesa").value;
+
+// agrupar
+let resumen = {};
+pedido.forEach(p => {
+if(!resumen[p.nombre]){
+resumen[p.nombre] = {cantidad:0, precio:p.precio};
+}
+resumen[p.nombre].cantidad++;
+});
+
+let texto = "🔥 PEDIDO NUEVO\n\n";
+texto += "Mesero: " + mesero + "\n";
+texto += "Mesa: " + mesa + "\n\n";
+
+for(let item in resumen){
+let p = resumen[item];
+texto += "- " + p.cantidad + " " + item + " (" + (p.cantidad * p.precio) + " Bs)\n";
+}
+
+texto += "\nTOTAL: " + total + " Bs";
+
+// vibración
+navigator.vibrate(200);
+
+// sonido
+let audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3");
+audio.play();
+
+// enviar whatsapp
+window.open("https://wa.me/59168972863?text=" + encodeURIComponent(texto));
+
+resetear();
+}
+
+function listo(){
+let mesa = document.getElementById("mesa").value;
+let texto = "✅ Pedido listo - " + mesa;
+
+navigator.vibrate(200);
+
+window.open("https://wa.me/59168972863?text=" + encodeURIComponent(texto));
+}
+
+function resetear(){
+pedido = [];
+total = 0;
+actualizarVista();
+}
+
+</script>
+
+</body>
+</html>
