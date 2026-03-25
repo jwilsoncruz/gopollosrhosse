@@ -2,20 +2,42 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Go Pollos Rhosse PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Pollos Rhosse</title>
 
 <style>
-body { font-family: Arial; background:#111; color:#fff; text-align:center; }
+body {
+font-family: Arial;
+background:#111;
+color:#fff;
+margin:0;
+padding:10px;
+text-align:center;
+}
 
-h2 { margin-top:10px; }
+h2 { margin:5px; }
+
+select {
+width:48%;
+padding:12px;
+font-size:16px;
+margin:5px 1%;
+border-radius:8px;
+}
+
+.grid {
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap:10px;
+margin:10px 0;
+}
 
 button {
-padding:14px;
-margin:5px;
+padding:18px;
 font-size:16px;
-border-radius:10px;
+border-radius:12px;
 border:none;
-width:140px;
+width:100%;
 }
 
 .entero { background:#e53935; }
@@ -24,27 +46,30 @@ width:140px;
 .tiktok { background:#8e24aa; }
 .extra { background:#039be5; }
 
-.enviar { background:#4caf50; width:90%; font-size:20px; }
-.reset { background:#f44336; width:90%; }
-
 .total {
 font-size:28px;
 margin:10px;
-}
-
-select {
-padding:10px;
-font-size:16px;
-margin:5px;
 }
 
 #detalle {
 background:#222;
 padding:10px;
 border-radius:10px;
-margin:10px;
-font-size:15px;
+margin:10px 0;
 min-height:60px;
+font-size:14px;
+}
+
+.enviar {
+background:#4caf50;
+font-size:20px;
+padding:20px;
+margin-top:10px;
+}
+
+.reset {
+background:#f44336;
+margin-top:5px;
 }
 </style>
 </head>
@@ -71,26 +96,36 @@ min-height:60px;
 </select>
 
 <h3>🍗 Principales</h3>
+<div class="grid">
 <button class="entero" onclick="add('Pollo Entero',100)">Entero 100</button>
 <button class="entero" onclick="add('Medio Pollo',50)">Medio 50</button>
+</div>
 
 <h3>🍗 Cuartos</h3>
+<div class="grid">
 <button class="cuarto" onclick="add('Cuarto A (Pierna+Contra)',25)">Pierna+Contra</button>
 <button class="cuarto" onclick="add('Cuarto B (Ala+Pecho)',25)">Ala+Pecho</button>
+</div>
 
 <h3>💰 Económicos</h3>
+<div class="grid">
 <button class="economico" onclick="add('Pecho',15)">Pecho 15</button>
 <button class="economico" onclick="add('Ala',15)">Ala 15</button>
+</div>
 
 <h3>🔥 TikTok</h3>
+<div class="grid">
 <button class="tiktok" onclick="add('Pierna',13)">Pierna 13</button>
 <button class="tiktok" onclick="add('Contra',13)">Contra 13</button>
+</div>
 
 <h3>🥤 Extras</h3>
+<div class="grid">
 <button class="extra" onclick="add('Arroz',5)">Arroz</button>
 <button class="extra" onclick="add('Papas',5)">Papas</button>
 <button class="extra" onclick="add('Plátano',5)">Plátano</button>
 <button class="extra" onclick="add('Bebida',10)">Bebida</button>
+</div>
 
 <div id="detalle">Sin pedidos</div>
 <div class="total" id="total">Total: 0 Bs</div>
@@ -115,7 +150,6 @@ let texto = "";
 pedido.forEach(p => {
 texto += p.nombre + " - " + p.precio + " Bs<br>";
 });
-
 if(texto === "") texto = "Sin pedidos";
 
 document.getElementById("detalle").innerHTML = texto;
@@ -123,11 +157,9 @@ document.getElementById("total").innerText = "Total: " + total + " Bs";
 }
 
 function enviar(){
-
 let mesero = document.getElementById("mesero").value;
 let mesa = document.getElementById("mesa").value;
 
-// agrupar
 let resumen = {};
 pedido.forEach(p => {
 if(!resumen[p.nombre]){
@@ -147,14 +179,11 @@ texto += "- " + p.cantidad + " " + item + " (" + (p.cantidad * p.precio) + " Bs)
 
 texto += "\nTOTAL: " + total + " Bs";
 
-// vibración
 navigator.vibrate(200);
 
-// sonido
 let audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3");
 audio.play();
 
-// enviar whatsapp
 window.open("https://wa.me/59168972863?text=" + encodeURIComponent(texto));
 
 resetear();
