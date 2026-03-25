@@ -3,43 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Go Pollos Rhosse PRO STOCK</title>
+<title>Go Pollos PRO</title>
 
 <style>
-body { font-family: Arial; background:#111; color:#fff; text-align:center; }
-
-.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-
-button {
-padding:15px;
-font-size:16px;
-border-radius:10px;
-border:none;
+body {
+font-family: Arial;
+background:#111;
+color:#fff;
+margin:0;
+padding:10px;
+text-align:center;
 }
 
-.entero { background:#e53935; }
+h2 { margin:5px; }
+
+select {
+width:48%;
+padding:12px;
+font-size:16px;
+margin:5px 1%;
+border-radius:8px;
+}
+
+.grid {
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin:10px 0;
+}
+
+button {
+padding:18px;
+font-size:16px;
+border-radius:12px;
+border:none;
+width:100%;
+}
+
 .cuarto { background:#fb8c00; }
 .economico { background:#43a047; }
 .tiktok { background:#8e24aa; }
 
-.enviar { background:#4caf50; width:90%; font-size:20px; }
-.reset { background:#f44336; width:90%; }
+.enviar {
+background:#4caf50;
+font-size:20px;
+padding:20px;
+margin-top:10px;
+}
+
+.reset {
+background:#f44336;
+margin-top:5px;
+}
 
 #stock {
 background:#222;
-padding:10px;
-margin:10px;
+padding:12px;
 border-radius:10px;
+margin:10px 0;
+font-size:14px;
 }
 
 #detalle {
 background:#222;
 padding:10px;
-margin:10px;
 border-radius:10px;
+margin:10px 0;
+min-height:60px;
+font-size:14px;
 }
 
-.total { font-size:25px; }
+.total {
+font-size:26px;
+margin:10px;
+}
 </style>
 </head>
 
@@ -53,58 +90,57 @@ border-radius:10px;
 <option>Dafne</option>
 <option>Mauricio</option>
 <option>Padme</option>
+<option>Karen</option>
+<option>Wilson</option>
+<option>Raquel</option>
 </select>
 
 <select id="mesa">
 <option>Mesa 1</option>
 <option>Mesa 2</option>
 <option>Mesa 3</option>
+<option>Mesa 4</option>
+<option>Mesa 5</option>
 </select>
 
 <h3>🍗 Cuartos</h3>
 <div class="grid">
-<button onclick="addCuartoA()">Pierna+Contra</button>
-<button onclick="addCuartoB()">Ala+Pecho</button>
+<button class="cuarto" onclick="addCuartoA()">Pierna+Contra</button>
+<button class="cuarto" onclick="addCuartoB()">Ala+Pecho</button>
 </div>
 
 <h3>💰 Económicos</h3>
 <div class="grid">
-<button onclick="addPecho()">Pecho</button>
-<button onclick="addAla()">Ala</button>
+<button class="economico" onclick="addPecho()">Pecho 15</button>
+<button class="economico" onclick="addAla()">Ala 15</button>
 </div>
 
 <h3>🔥 TikTok</h3>
 <div class="grid">
-<button onclick="addPierna()">Pierna</button>
-<button onclick="addContra()">Contra</button>
+<button class="tiktok" onclick="addPierna()">Pierna 13</button>
+<button class="tiktok" onclick="addContra()">Contra 13</button>
 </div>
 
 <div id="detalle">Sin pedidos</div>
 <div class="total" id="total">Total: 0 Bs</div>
 
-<button class="enviar" onclick="enviar()">📲 ENVIAR</button>
+<button class="enviar" onclick="enviar()">📲 ENVIAR PEDIDO</button>
 <button class="reset" onclick="resetear()">❌ LIMPIAR</button>
 
 <script>
 
 // STOCK INICIAL (6 pollos)
-let stock = {
-pierna:12,
-contra:12,
-pecho:12,
-ala:12
-};
+let stock = { pierna:12, contra:12, pecho:12, ala:12 };
 
 let pedido = [];
 let total = 0;
 
 function actualizarStock(){
 document.getElementById("stock").innerHTML =
-"🍗 Piernas: "+stock.pierna+
-" | Contra: "+stock.contra+
-" | Pecho: "+stock.pecho+
-" | Ala: "+stock.ala;
+"🍗 P:"+stock.pierna+" | C:"+stock.contra+" | Pe:"+stock.pecho+" | A:"+stock.ala;
 }
+
+function vibrar(){ navigator.vibrate(100); }
 
 function addCuartoA(){
 if(stock.pierna>0 && stock.contra>0){
@@ -112,7 +148,8 @@ stock.pierna--; stock.contra--;
 pedido.push("Cuarto A");
 total+=25;
 actualizar();
-}else alert("❌ Sin stock");
+vibrar();
+}else alert("❌ Sin Pierna o Contra");
 }
 
 function addCuartoB(){
@@ -121,7 +158,8 @@ stock.ala--; stock.pecho--;
 pedido.push("Cuarto B");
 total+=25;
 actualizar();
-}else alert("❌ Sin stock");
+vibrar();
+}else alert("❌ Sin Ala o Pecho");
 }
 
 function addPecho(){
@@ -130,7 +168,8 @@ stock.pecho--;
 pedido.push("Pecho");
 total+=15;
 actualizar();
-}else alert("❌ Sin stock");
+vibrar();
+}else alert("❌ Sin Pecho");
 }
 
 function addAla(){
@@ -139,7 +178,8 @@ stock.ala--;
 pedido.push("Ala");
 total+=15;
 actualizar();
-}else alert("❌ Sin stock");
+vibrar();
+}else alert("❌ Sin Ala");
 }
 
 function addPierna(){
@@ -148,7 +188,8 @@ stock.pierna--;
 pedido.push("Pierna");
 total+=13;
 actualizar();
-}else alert("❌ Sin stock");
+vibrar();
+}else alert("❌ Sin Pierna");
 }
 
 function addContra(){
@@ -157,7 +198,8 @@ stock.contra--;
 pedido.push("Contra");
 total+=13;
 actualizar();
-}else alert("❌ Sin stock");
+vibrar();
+}else alert("❌ Sin Contra");
 }
 
 function actualizar(){
@@ -167,8 +209,8 @@ document.getElementById("total").innerText = "Total: "+total+" Bs";
 }
 
 function enviar(){
-let texto = pedido.join(", ") + " Total: "+total+" Bs";
-window.open("https://wa.me/59168972863?text="+texto);
+let texto = pedido.join(", ") + " | Total: "+total+" Bs";
+window.open("https://wa.me/59168972863?text="+encodeURIComponent(texto));
 resetear();
 }
 
