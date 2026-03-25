@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Go Pollos Rhosse PRO STOCK</title>
+
+<style>
+body { font-family: Arial; background:#111; color:#fff; text-align:center; }
+
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+button {
+padding:15px;
+font-size:16px;
+border-radius:10px;
+border:none;
+}
+
+.entero { background:#e53935; }
+.cuarto { background:#fb8c00; }
+.economico { background:#43a047; }
+.tiktok { background:#8e24aa; }
+
+.enviar { background:#4caf50; width:90%; font-size:20px; }
+.reset { background:#f44336; width:90%; }
+
+#stock {
+background:#222;
+padding:10px;
+margin:10px;
+border-radius:10px;
+}
+
+#detalle {
+background:#222;
+padding:10px;
+margin:10px;
+border-radius:10px;
+}
+
+.total { font-size:25px; }
+</style>
+</head>
+
+<body>
+
+<h2>🔥 GO POLLOS RHOSSE 🔥</h2>
+
+<div id="stock"></div>
+
+<select id="mesero">
+<option>Dafne</option>
+<option>Mauricio</option>
+<option>Padme</option>
+</select>
+
+<select id="mesa">
+<option>Mesa 1</option>
+<option>Mesa 2</option>
+<option>Mesa 3</option>
+</select>
+
+<h3>🍗 Cuartos</h3>
+<div class="grid">
+<button onclick="addCuartoA()">Pierna+Contra</button>
+<button onclick="addCuartoB()">Ala+Pecho</button>
+</div>
+
+<h3>💰 Económicos</h3>
+<div class="grid">
+<button onclick="addPecho()">Pecho</button>
+<button onclick="addAla()">Ala</button>
+</div>
+
+<h3>🔥 TikTok</h3>
+<div class="grid">
+<button onclick="addPierna()">Pierna</button>
+<button onclick="addContra()">Contra</button>
+</div>
+
+<div id="detalle">Sin pedidos</div>
+<div class="total" id="total">Total: 0 Bs</div>
+
+<button class="enviar" onclick="enviar()">📲 ENVIAR</button>
+<button class="reset" onclick="resetear()">❌ LIMPIAR</button>
+
+<script>
+
+// STOCK INICIAL (6 pollos)
+let stock = {
+pierna:12,
+contra:12,
+pecho:12,
+ala:12
+};
+
+let pedido = [];
+let total = 0;
+
+function actualizarStock(){
+document.getElementById("stock").innerHTML =
+"🍗 Piernas: "+stock.pierna+
+" | Contra: "+stock.contra+
+" | Pecho: "+stock.pecho+
+" | Ala: "+stock.ala;
+}
+
+function addCuartoA(){
+if(stock.pierna>0 && stock.contra>0){
+stock.pierna--; stock.contra--;
+pedido.push("Cuarto A");
+total+=25;
+actualizar();
+}else alert("❌ Sin stock");
+}
+
+function addCuartoB(){
+if(stock.ala>0 && stock.pecho>0){
+stock.ala--; stock.pecho--;
+pedido.push("Cuarto B");
+total+=25;
+actualizar();
+}else alert("❌ Sin stock");
+}
+
+function addPecho(){
+if(stock.pecho>0){
+stock.pecho--;
+pedido.push("Pecho");
+total+=15;
+actualizar();
+}else alert("❌ Sin stock");
+}
+
+function addAla(){
+if(stock.ala>0){
+stock.ala--;
+pedido.push("Ala");
+total+=15;
+actualizar();
+}else alert("❌ Sin stock");
+}
+
+function addPierna(){
+if(stock.pierna>0){
+stock.pierna--;
+pedido.push("Pierna");
+total+=13;
+actualizar();
+}else alert("❌ Sin stock");
+}
+
+function addContra(){
+if(stock.contra>0){
+stock.contra--;
+pedido.push("Contra");
+total+=13;
+actualizar();
+}else alert("❌ Sin stock");
+}
+
+function actualizar(){
+actualizarStock();
+document.getElementById("detalle").innerHTML = pedido.join("<br>");
+document.getElementById("total").innerText = "Total: "+total+" Bs";
+}
+
+function enviar(){
+let texto = pedido.join(", ") + " Total: "+total+" Bs";
+window.open("https://wa.me/59168972863?text="+texto);
+resetear();
+}
+
+function resetear(){
+pedido=[]; total=0;
+actualizarStock();
+document.getElementById("detalle").innerHTML="Sin pedidos";
+document.getElementById("total").innerText="Total: 0 Bs";
+}
+
+actualizarStock();
+
+</script>
+
+</body>
+</html>
