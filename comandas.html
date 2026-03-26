@@ -13,7 +13,7 @@ color:#fff;
 margin:0;
 padding:10px;
 text-align:center;
-padding-top:70px;
+padding-top:90px;
 padding-bottom:120px;
 }
 
@@ -54,11 +54,24 @@ top:0;
 left:0;
 width:100%;
 background:#000;
-padding:12px;
+padding:10px;
 font-size:22px;
 font-weight:bold;
 z-index:1000;
 border-bottom:2px solid #4caf50;
+}
+
+#cambio {
+position:fixed;
+top:50px;
+left:0;
+width:100%;
+font-size:24px;
+font-weight:bold;
+background:#000;
+padding:10px;
+border-bottom:2px solid #00e676;
+z-index:1000;
 }
 
 #detalle {
@@ -73,13 +86,6 @@ font-size:14px;
 .total {
 font-size:28px;
 margin:10px;
-}
-
-#cambio {
-font-size:22px;
-margin:10px;
-color:#00e676;
-font-weight:bold;
 }
 
 .floating {
@@ -110,6 +116,8 @@ margin-top:5px;
 <div id="topbar">
 💰 Total: <span id="totalTop">0 Bs</span>
 </div>
+
+<div id="cambio">💵 Cambio: 0 Bs</div>
 
 <h2>🔥 COMANDAS GO POLLOS RHOSSE 🔥</h2>
 
@@ -175,8 +183,6 @@ margin-top:5px;
 <button onclick="pagar(200)">200 Bs</button>
 </div>
 
-<div id="cambio">Cambio: 0 Bs</div>
-
 <div class="floating">
 <button class="enviar" onclick="enviar()">📲 ENVIAR PEDIDO</button>
 <button class="enviar" onclick="listo()">✅ PEDIDO LISTO</button>
@@ -192,6 +198,9 @@ function add(nombre, precio){
 pedido.push({nombre, precio});
 total += precio;
 actualizarVista();
+
+// reset cambio
+document.getElementById("cambio").innerText = "💵 Cambio: 0 Bs";
 }
 
 function actualizarVista(){
@@ -210,11 +219,9 @@ function pagar(monto){
 let cambio = monto - total;
 
 if(cambio < 0){
-document.getElementById("cambio").innerText = "Falta: " + Math.abs(cambio) + " Bs";
-document.getElementById("cambio").style.color = "#ff5252";
+document.getElementById("cambio").innerText = "❌ Falta: " + Math.abs(cambio) + " Bs";
 }else{
-document.getElementById("cambio").innerText = "Cambio: " + cambio + " Bs";
-document.getElementById("cambio").style.color = "#00e676";
+document.getElementById("cambio").innerText = "💵 Cambio: " + cambio + " Bs";
 }
 }
 
@@ -264,7 +271,7 @@ function resetear(){
 pedido = [];
 total = 0;
 actualizarVista();
-document.getElementById("cambio").innerText = "Cambio: 0 Bs";
+document.getElementById("cambio").innerText = "💵 Cambio: 0 Bs";
 }
 
 </script>
