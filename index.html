@@ -1,14 +1,18 @@
 <!DOCTYPE html> 
 <html lang="es">  
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Restaurant",
+  "@id": "https://jwilsoncruz.github.io/gopollosrhosse/#restaurant",
   "name": "Go Pollos Rhosse",
   "image": "https://jwilsoncruz.github.io/gopollosrhosse/logobo.png",
   "url": "https://jwilsoncruz.github.io/gopollosrhosse/",
   "telephone": "+59172685867",
+
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Calle 7-A, Zona Arroyo Chico",
@@ -16,13 +20,21 @@
     "addressRegion": "Beni",
     "addressCountry": "BO"
   },
+
   "geo": {
     "@type": "GeoCoordinates",
     "latitude": -14.831662,
     "longitude": -64.886565
   },
+
   "servesCuisine": "Pollo a la leña",
-  "priceRange": "Bs15-Bs100",
+  "priceRange": "$$",
+
+  "areaServed": {
+    "@type": "City",
+    "name": "Trinidad"
+  },
+
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
@@ -33,6 +45,7 @@
       "closes": "23:30"
     }
   ],
+
   "sameAs": [
     "https://www.facebook.com/GoPollosRhosseTdd",
     "https://www.instagram.com/gopollosrhossetdd",
@@ -246,11 +259,28 @@ z-index:999;
 50%{transform:scale(1.1);}
 100%{transform:scale(1);}
 }
+
+body{
+overflow-x:hidden;
+}
+
+header{
+padding:20px 10px;
+}
+
+h1{
+font-size:22px;
+margin:10px 0;
+}
+
+p{
+font-size:14px;
+}
 </style>
 </head>
 
 <body>
-<! --- <div id="modoMundialBarra">
+<!--- <div id="modoMundialBarra">
   MODO MUNDIAL: OFF
 </div> --->
 
