@@ -54,7 +54,25 @@
 <meta property="og:type" content="website">
  
 <style>
- 
+#modoMundialBarra{
+position:fixed;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+background:#333;
+color:white;
+padding:10px 20px;
+border-radius:30px;
+font-weight:bold;
+cursor:pointer;
+z-index:9999;
+box-shadow:0 4px 10px rgba(0,0,0,0.3);
+transition:0.3s;
+}
+
+#modoMundialBarra.activo{
+background:#00c853;
+}
 :root{
 --color-fondo:#2b0b00;          /* fondo oscuro elegante */
 --color-header:transparent;
@@ -232,6 +250,9 @@ z-index:999;
 </head>
 
 <body>
+<div id="modoMundialBarra">
+  🌎 MODO MUNDIAL: OFF
+</div>
 
 <div class="marquesina">
 <span id="textoMarquesina"></span>
@@ -913,6 +934,36 @@ class="whatsapp-float">
   }
  ]
 }
+
+let modoMundial = false;
+
+const barra = document.getElementById("modoMundialBarra");
+
+barra.addEventListener("click", ()=>{
+
+modoMundial = !modoMundial;
+
+if(modoMundial){
+barra.classList.add("activo");
+barra.innerHTML = "🌎 MODO MUNDIAL: ON ⚽🔥";
+
+// CAMBIOS EN TU WEB
+document.body.style.filter = "contrast(1.1) saturate(1.2)";
+
+// mensaje especial
+document.getElementById("textoMarquesina").innerHTML =
+"⚽ MODO MUNDIAL ACTIVADO — PROMO ESPECIAL HOY 🔥";
+
+}else{
+barra.classList.remove("activo");
+barra.innerHTML = "🌎 MODO MUNDIAL: OFF";
+
+document.body.style.filter = "none";
+
+actualizarMarquesina(); // vuelve a lo normal
+}
+
+});
 </script>
 </body>
 </html>
