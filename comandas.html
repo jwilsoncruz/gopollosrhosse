@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Go Pollos Rhosse</title>
-<link rel="icon" href="comandas.ico">
+<title>Go Pollos Rhosse PRO</title>
+
 <style>
 body {
 font-family: Arial;
@@ -14,17 +14,16 @@ margin:0;
 padding:10px;
 text-align:center;
 padding-top:90px;
-padding-bottom:220px;
+padding-bottom:260px;
 }
 
-h2 { margin:5px; }
-
-select {
+select, input {
 width:48%;
 padding:12px;
 font-size:16px;
 margin:5px 1%;
 border-radius:8px;
+border:none;
 }
 
 .grid {
@@ -35,9 +34,9 @@ margin:10px 0;
 }
 
 button {
-padding:18px;
+padding:16px;
 font-size:16px;
-border-radius:12px;
+border-radius:10px;
 border:none;
 width:100%;
 }
@@ -45,34 +44,19 @@ width:100%;
 .entero { background:#e53935; }
 .cuarto { background:#fb8c00; }
 .economico { background:#43a047; }
-.tiktok { background:#8e24aa; }
 .extra { background:#039be5; }
 
-#topbar {
+#topbar, #cambio {
 position:fixed;
-top:0;
 left:0;
 width:100%;
 background:#000;
 padding:10px;
-font-size:22px;
-font-weight:bold;
 z-index:1000;
-border-bottom:2px solid #4caf50;
 }
 
-#cambio {
-position:fixed;
-top:50px;
-left:0;
-width:100%;
-font-size:24px;
-font-weight:bold;
-background:#000;
-padding:10px;
-border-bottom:2px solid #00e676;
-z-index:1000;
-}
+#topbar { top:0; font-size:22px; }
+#cambio { top:50px; font-size:20px; }
 
 #detalle {
 background:#222;
@@ -80,46 +64,38 @@ padding:10px;
 border-radius:10px;
 margin:10px 0;
 min-height:60px;
-font-size:14px;
 }
 
-.total {
-font-size:28px;
-margin:10px;
-}
+.total { font-size:28px; }
 
 .floating {
 position:fixed;
 bottom:5px;
 left:50%;
 transform:translateX(-50%);
-width:85%;
-z-index:1000;
-}
-
-.floating button {
-width:100%;
-padding:12px;
-font-size:16px;
-border-radius:10px;
-border:none;
-margin-top:4px;
+width:90%;
 }
 
 .enviar { background:#4caf50; }
 .reset { background:#f44336; }
+.caja { background:#ff9800; }
+
+#qrBox {
+display:none;
+margin:10px;
+padding:10px;
+background:#222;
+border-radius:10px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="topbar">
-💰 Total: <span id="totalTop">0 Bs</span>
-</div>
-
+<div id="topbar">💰 Total: <span id="totalTop">0 Bs</span></div>
 <div id="cambio">💵 Cambio: 0 Bs</div>
 
-<h2>🔥 COMANDAS GO POLLOS RHOSSE 🔥</h2>
+<h2>🔥 GO POLLOS RHOSSE PRO 🔥</h2>
 
 <select id="mesero">
 <option>Dafne</option>
@@ -133,59 +109,49 @@ margin-top:4px;
 <select id="mesa">
 <option>Mesa 1</option>
 <option>Mesa 2</option>
-<option>Mesa 3</option>
-<option>Mesa 4</option>
-<option>Mesa 5</option>
 <option>Para Llevar</option>
 <option>Delivery</option>
 </select>
 
-<h3>🍗 Principales</h3>
+<h3>🍗 Menú</h3>
 <div class="grid">
 <button class="entero" onclick="add('Pollo Entero',100)">Entero 100</button>
 <button class="entero" onclick="add('Medio Pollo',50)">Medio 50</button>
-</div>
-
-<h3>🍗 Cuartos</h3>
-<div class="grid">
-<button class="cuarto" onclick="add('Cuarto A (Pierna+Contra)',25)">Pierna+Contra 25</button>
-<button class="cuarto" onclick="add('Cuarto B (Ala+Pecho)',25)">Ala+Pecho 25</button>
-</div>
-
-<h3>💰 Económicos</h3>
-<div class="grid">
-<button class="economico" onclick="add('Pecho',15)">Pecho 15</button>
-<button class="economico" onclick="add('Ala',15)">Ala 15</button>
-</div>
-
-<h3>🔥 TikTok</h3>
-<div class="grid">
-<button class="tiktok" onclick="add('Pierna',13)">Pierna 13</button>
-<button class="tiktok" onclick="add('Contra',13)">Contra 13</button>
-</div>
-
-<h3>🥤 Extras</h3>
-<div class="grid">
-<button class="extra" onclick="add('Arroz',5)">Arroz 5</button>
-<button class="extra" onclick="add('Papas',5)">Papas 5</button>
-<button class="extra" onclick="add('Plátano',5)">Plátano 5</button>
-<button class="extra" onclick="add('Bebida',10)">Limonada 10</button>
+<button class="cuarto" onclick="add('Pierna+Contra',25)">Pierna+Contra</button>
+<button class="cuarto" onclick="add('Ala+Pecho',25)">Ala+Pecho</button>
+<button class="economico" onclick="add('Pecho',15)">Pecho</button>
+<button class="economico" onclick="add('Ala',15)">Ala</button>
+<button class="extra" onclick="add('Arroz',5)">Arroz</button>
+<button class="extra" onclick="add('Papas',5)">Papas</button>
 </div>
 
 <div id="detalle">Sin pedidos</div>
-<div class="total" id="total">Total: 0 Bs</div>
+<div class="total" id="totalText">Total: 0 Bs</div>
 
-<h3>💵 Pago</h3>
+<h3>💳 Pago</h3>
+
+<select id="tipoPago" onchange="cambiarPago()">
+<option value="Efectivo">Efectivo</option>
+<option value="QR">QR</option>
+</select>
+
+<input type="number" id="montoManual" placeholder="Monto recibido">
+
 <div class="grid">
-<button onclick="pagar(20)">20 Bs</button>
-<button onclick="pagar(50)">50 Bs</button>
-<button onclick="pagar(100)">100 Bs</button>
-<button onclick="pagar(200)">200 Bs</button>
+<button onclick="pagar(20)">20</button>
+<button onclick="pagar(50)">50</button>
+<button onclick="pagar(100)">100</button>
+<button onclick="pagar(200)">200</button>
+</div>
+
+<div id="qrBox">
+<h3>📲 Escanear QR</h3>
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PagoGoPollos" width="200">
 </div>
 
 <div class="floating">
-<button class="enviar" onclick="enviar()">📲 ENVIAR PEDIDO</button>
-<button class="enviar" onclick="listo()">✅ PEDIDO LISTO</button>
+<button class="enviar" onclick="enviar()">📲 ENVIAR</button>
+<button class="caja" onclick="verCaja()">📊 CAJA</button>
 <button class="reset" onclick="resetear()">❌ LIMPIAR</button>
 </div>
 
@@ -194,84 +160,90 @@ margin-top:4px;
 let pedido = [];
 let total = 0;
 
-function add(nombre, precio){
-pedido.push({nombre, precio});
-total += precio;
-actualizarVista();
-
-// reset cambio
-document.getElementById("cambio").innerText = "💵 Cambio: 0 Bs";
+function add(n,p){
+pedido.push({n,p});
+total += p;
+render();
 }
 
-function actualizarVista(){
-let texto = "";
-pedido.forEach(p => {
-texto += p.nombre + " - " + p.precio + " Bs<br>";
-});
-if(texto === "") texto = "Sin pedidos";
+function render(){
+let t="";
+pedido.forEach(x=> t+= x.n+" - "+x.p+" Bs<br>");
+if(!t) t="Sin pedidos";
 
-document.getElementById("detalle").innerHTML = texto;
-document.getElementById("total").innerText = "Total: " + total + " Bs";
-document.getElementById("totalTop").innerText = total + " Bs";
+document.getElementById("detalle").innerHTML=t;
+document.getElementById("totalTop").innerText=total+" Bs";
+document.getElementById("totalText").innerText="Total: "+total+" Bs";
 }
 
-function pagar(monto){
-let cambio = monto - total;
-
-if(cambio < 0){
-document.getElementById("cambio").innerText = "❌ Falta: " + Math.abs(cambio) + " Bs";
-}else{
-document.getElementById("cambio").innerText = "💵 Cambio: " + cambio + " Bs";
+function pagar(m){
+if(document.getElementById("tipoPago").value==="QR"){
+document.getElementById("cambio").innerText="📲 Pago QR confirmado";
+return;
 }
+
+let monto = m || parseFloat(document.getElementById("montoManual").value || 0);
+let c = monto-total;
+
+document.getElementById("cambio").innerText =
+c<0 ? "❌ Falta "+Math.abs(c)+" Bs" : "💵 Cambio "+c+" Bs";
+}
+
+function cambiarPago(){
+let tipo = document.getElementById("tipoPago").value;
+document.getElementById("qrBox").style.display = tipo==="QR" ? "block":"none";
+document.getElementById("cambio").innerText="💵 Cambio: 0 Bs";
 }
 
 function enviar(){
-let mesero = document.getElementById("mesero").value;
-let mesa = document.getElementById("mesa").value;
 
-let resumen = {};
-pedido.forEach(p => {
-if(!resumen[p.nombre]){
-resumen[p.nombre] = {cantidad:0, precio:p.precio};
+if(pedido.length===0){
+alert("Sin pedido");
+return;
 }
-resumen[p.nombre].cantidad++;
+
+let txt="🔥 PEDIDO\n\n";
+txt+="Mesa: "+document.getElementById("mesa").value+"\n";
+txt+="Pago: "+document.getElementById("tipoPago").value+"\n\n";
+
+pedido.forEach(x=>{
+txt+="- "+x.n+"\n";
 });
 
-let texto = "🔥 PEDIDO NUEVO\n\n";
-texto += "Mesero: " + mesero + "\n";
-texto += "Mesa: " + mesa + "\n\n";
+txt+="\nTOTAL: "+total+" Bs";
 
-for(let item in resumen){
-let p = resumen[item];
-texto += "- " + p.cantidad + " " + item + " (" + (p.cantidad * p.precio) + " Bs)\n";
-}
+// guardar caja
+let caja = JSON.parse(localStorage.getItem("caja")||"[]");
+caja.push({total, tipo:document.getElementById("tipoPago").value});
+localStorage.setItem("caja", JSON.stringify(caja));
 
-texto += "\nTOTAL: " + total + " Bs";
-
-navigator.vibrate(200);
-
-let audio = new Audio("https://www.soundjay.com/buttons/sounds/button-09.mp3");
-audio.play();
-
-window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
+window.open("https://wa.me/59172685867?text="+encodeURIComponent(txt));
 
 resetear();
 }
 
-function listo(){
-let mesa = document.getElementById("mesa").value;
-let texto = "✅ Pedido listo - " + mesa;
+function verCaja(){
+let caja = JSON.parse(localStorage.getItem("caja")||"[]");
 
-navigator.vibrate(200);
+let totalDia=0, ef=0, qr=0;
 
-window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
+caja.forEach(v=>{
+totalDia+=v.total;
+if(v.tipo==="Efectivo") ef+=v.total;
+else qr+=v.total;
+});
+
+alert("📊 CAJA\nTotal: "+totalDia+" Bs\nEfectivo: "+ef+"\nQR: "+qr);
 }
 
 function resetear(){
-pedido = [];
-total = 0;
-actualizarVista();
-document.getElementById("cambio").innerText = "💵 Cambio: 0 Bs";
+pedido=[];
+total=0;
+render();
+document.getElementById("cambio").innerText="💵 Cambio: 0 Bs";
+document.getElementById("montoManual").value="";
+document.getElementById("tipoPago").value="Efectivo";
+document.getElementById("qrBox").style.display="none";
 }
 
 </script>
