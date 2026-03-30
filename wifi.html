@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WiFi Go Pollos Rhosse</title>
 <link rel="icon" href="wifi.ico">
-
 <style>
 body {
   margin:0;
@@ -64,6 +63,12 @@ button {
 .hidden {
   display:none;
 }
+
+.clave {
+  font-size:32px;
+  color:#ffcc00;
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -78,7 +83,7 @@ button {
 
   <div class="oferta">
     📶 Accede al WiFi GRATIS<br>
-    🎁 Beneficios exclusivos en tu compra
+    🎁 Beneficios en tu compra
   </div>
 
   <p>Regístrate para continuar</p>
@@ -94,18 +99,21 @@ button {
 <!-- PANTALLA 2 -->
 <div class="container hidden" id="pantalla2">
 
-  <h1>✅ ¡Listo!</h1>
+  <h1>✅ ¡Conectado!</h1>
+
+  <div class="oferta">
+    📶 TU CLAVE WIFI:
+    <div class="clave" id="clave"></div>
+  </div>
 
   <div class="oferta">
     🥤 SODA MINI GRATIS<br>
     👉 En compras desde Bs 20
   </div>
 
-  <p>📲 Muestra este mensaje en caja para reclamar</p>
+  <p>📲 Muestra este mensaje en caja</p>
 
-  <p style="color:#ffcc00;">
-    🔥 Promoción válida solo hoy
-  </p>
+  <p style="color:#ffcc00;">🔥 Promoción válida solo hoy</p>
 
   <a href="https://jwilsoncruz.github.io/gopollosrhosse/" target="_blank">
     <button>🍗 PEDIR AHORA</button>
@@ -117,6 +125,14 @@ button {
 
 <script>
 
+// 🔐 Generar clave automática por día
+function generarClave(){
+  let hoy = new Date();
+  let dia = hoy.getDate();
+  return "POLLO" + dia;
+}
+
+// 🚀 Registro
 function continuar(){
 
   let nombre = document.getElementById("nombre").value;
@@ -128,6 +144,7 @@ function continuar(){
     return;
   }
 
+  // Guardar en Google Sheets
   fetch("https://script.google.com/macros/s/AKfycbx-C5jEDv-krY4NMp1Kbw0MVzQeM7IyhP_1-MzhgwffMXz6kkwAAMJwVeJy4nKpTOwvEA/exec", {
     method: "POST",
     body: JSON.stringify({
@@ -137,19 +154,29 @@ function continuar(){
     })
   });
 
+  // Guardar nombre
   localStorage.setItem("cliente_nombre", nombre);
 
+  // Generar y mostrar clave
+  let clave = generarClave();
+  document.getElementById("clave").innerText = clave;
+
+  // Cambiar pantalla
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
+// 📲 WhatsApp
 function enviarWhatsApp(){
   let nombre = localStorage.getItem("cliente_nombre");
+  let clave = generarClave();
 
   let mensaje = `Hola, soy ${nombre} 🍗  
 Ya me registré al WiFi  
 
-👉 Quiero hacer un pedido y aprovechar la promo de la soda mini 🥤  
+📶 Mi clave es ${clave}
+
+👉 Quiero hacer un pedido y aprovechar la promo 🥤  
 
 https://jwilsoncruz.github.io/gopollosrhosse/`;
 
