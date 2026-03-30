@@ -25,12 +25,11 @@ body {
 
 h1 {
   color:#ffcc00;
-  font-size:22px;
 }
 
 .oferta {
   background:#ff0000;
-  padding:10px;
+  padding:12px;
   border-radius:10px;
   margin:15px 0;
   font-weight:bold;
@@ -57,33 +56,30 @@ button {
   font-weight:bold;
 }
 
-button:hover {
-  background:#00e676;
-}
-
 .hidden {
   display:none;
 }
 
-.small {
-  font-size:12px;
-  color:#ccc;
+.clave {
+  font-size:32px;
+  color:#ffcc00;
+  margin:10px 0;
 }
 </style>
 </head>
 
 <body>
 
+<!-- PANTALLA 1 -->
 <div class="container" id="pantalla1">
 
   <img src="https://jwilsoncruz.github.io/gopollosrhosse/logobo.png" class="logo">
 
-  <h1>🍗 WiFi Gratis Go Pollos Rhosse</h1>
+  <h1>🍗 WiFi Gratis</h1>
 
   <div class="oferta">
     🔥 SOLO HOY 🔥<br>
-    10% DESCUENTO en tu pedido<br>
-    📲 Muestra este mensaje en caja
+    10% DESCUENTO en tu pedido
   </div>
 
   <p>Accede al WiFi + promociones exclusivas</p>
@@ -94,27 +90,38 @@ button:hover {
 
   <button onclick="continuar()">📲 OBTENER WIFI + DESCUENTO</button>
 
-  <p class="small">+100 clientes ya conectados hoy</p>
-
 </div>
 
+<!-- PANTALLA 2 -->
 <div class="container hidden" id="pantalla2">
 
-  <h1>✅ ¡Registro exitoso!</h1>
+  <h1>✅ ¡Conectado!</h1>
 
   <div class="oferta">
-    🎁 MUESTRA ESTE MENSAJE<br>
-    y recibe tu descuento HOY
+    📶 TU CLAVE WIFI
+    <div class="clave" id="clave"></div>
   </div>
 
-  <p>Haz clic abajo para obtener tu clave WiFi</p>
+  <div class="oferta">
+    🎁 Muestra este mensaje y recibe tu descuento
+  </div>
 
-  <button onclick="enviarWhatsApp()">📲 OBTENER CLAVE AHORA</button>
+  <button onclick="enviarWhatsApp()">📲 Pedir promoción por WhatsApp</button>
 
 </div>
 
 <script>
+
+// 🔐 Generar clave automática diaria
+function generarClave(){
+  let hoy = new Date();
+  let dia = hoy.getDate();
+  return "POLLO" + dia;
+}
+
+// 🚀 Función principal
 function continuar(){
+
   let nombre = document.getElementById("nombre").value;
   let telefono = document.getElementById("telefono").value;
   let fecha = document.getElementById("fecha").value;
@@ -124,7 +131,7 @@ function continuar(){
     return;
   }
 
-  // ENVIAR A GOOGLE SHEETS 🔥
+  // Guardar en Google Sheets
   fetch("https://script.google.com/macros/s/AKfycbx-C5jEDv-krY4NMp1Kbw0MVzQeM7IyhP_1-MzhgwffMXz6kkwAAMJwVeJy4nKpTOwvEA/exec", {
     method: "POST",
     body: JSON.stringify({
@@ -132,19 +139,34 @@ function continuar(){
       telefono: telefono,
       fecha: fecha
     })
-  })
-  .then(res => console.log("Guardado OK"))
-  .catch(err => console.log("Error", err));
+  });
 
-  // GUARDAR LOCAL
+  // Guardar local
   localStorage.setItem("cliente_nombre", nombre);
   localStorage.setItem("cliente_tel", telefono);
   localStorage.setItem("cliente_fecha", fecha);
 
-  // CAMBIO DE PANTALLA
+  // Generar clave
+  let clave = generarClave();
+  document.getElementById("clave").innerText = clave;
+
+  // Cambiar pantalla
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
+
+// 📲 WhatsApp
+function enviarWhatsApp(){
+  let nombre = localStorage.getItem("cliente_nombre");
+  let clave = generarClave();
+
+  let mensaje = `Hola, soy ${nombre}. Ya me registré al WiFi. Mi clave es ${clave}. Quiero mi promoción`;
+
+  let url = `https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`;
+
+  window.open(url, "_blank");
+}
+
 </script>
 
 </body>
