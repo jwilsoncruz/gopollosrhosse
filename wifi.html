@@ -124,25 +124,26 @@ function continuar(){
     return;
   }
 
-  // Guardar local (simulación)
+  // ENVIAR A GOOGLE SHEETS 🔥
+  fetch("https://script.google.com/macros/s/AKfycbx-C5jEDv-krY4NMp1Kbw0MVzQeM7IyhP_1-MzhgwffMXz6kkwAAMJwVeJy4nKpTOwvEA/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      nombre: nombre,
+      telefono: telefono,
+      fecha: fecha
+    })
+  })
+  .then(res => console.log("Guardado OK"))
+  .catch(err => console.log("Error", err));
+
+  // GUARDAR LOCAL
   localStorage.setItem("cliente_nombre", nombre);
   localStorage.setItem("cliente_tel", telefono);
   localStorage.setItem("cliente_fecha", fecha);
 
+  // CAMBIO DE PANTALLA
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
-}
-
-function enviarWhatsApp(){
-  let nombre = localStorage.getItem("cliente_nombre");
-  let telefono = localStorage.getItem("cliente_tel");
-  let fecha = localStorage.getItem("cliente_fecha");
-
-  let mensaje = `Hola, soy ${nombre}. Ya me registré para el WiFi. Mi número es ${telefono} y mi cumpleaños es ${fecha}. Quiero la clave y mi descuento`;
-
-  let url = `https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`;
-
-  window.open(url, "_blank");
 }
 </script>
 
