@@ -56,14 +56,12 @@ button {
   font-weight:bold;
 }
 
-.hidden {
-  display:none;
+.btn2 {
+  background:#ff9800;
 }
 
-.clave {
-  font-size:32px;
-  color:#ffcc00;
-  margin:10px 0;
+.hidden {
+  display:none;
 }
 </style>
 </head>
@@ -78,8 +76,7 @@ button {
   <h1>🍗 WiFi Gratis</h1>
 
   <div class="oferta">
-    🔥 SOLO HOY 🔥<br>
-    🥤​ 1 sola Mini Gratis en tu pedido
+    🎁 REGÍSTRATE Y GANA UNA SODA MINI 🥤
   </div>
 
   <p>Accede al WiFi + promociones exclusivas</p>
@@ -88,36 +85,30 @@ button {
   <input type="tel" id="telefono" placeholder="Tu WhatsApp">
   <input type="date" id="fecha">
 
-  <button onclick="continuar()">📲 OBTENER WIFI + DESCUENTO</button>
+  <button onclick="continuar()">📲 OBTENER WIFI + REGALO</button>
 
 </div>
 
 <!-- PANTALLA 2 -->
 <div class="container hidden" id="pantalla2">
 
-  <h1>✅ ¡Conectado!</h1>
+  <h1>✅ ¡Registro exitoso!</h1>
 
   <div class="oferta">
-    📶 TU CLAVE WIFI
-    <div class="clave" id="clave"></div>
+    🥤 Reclama tu SODA MINI en caja mostrando este mensaje
   </div>
 
-  <div class="oferta">
-    🎁 Muestra este mensaje y recibe tu descuento
-  </div>
+  <p>👉 ¿Ya tienes hambre?</p>
 
-  <button onclick="enviarWhatsApp()">📲 Pedir promoción por WhatsApp</button>
+  <a href="https://jwilsoncruz.github.io/gopollosrhosse/" target="_blank">
+    <button>🍗 PEDIR POLLO AHORA</button>
+  </a>
+
+  <button class="btn2" onclick="enviarWhatsApp()">📲 Pedir por WhatsApp</button>
 
 </div>
 
 <script>
-
-// 🔐 Generar clave automática diaria PolloAQUIEL DIA ACTUAL
-function generarClave(){
-  let hoy = new Date();
-  let dia = hoy.getDate();
-  return "POLLO" + dia;
-}
 
 // 🚀 Función principal
 function continuar(){
@@ -143,24 +134,21 @@ function continuar(){
 
   // Guardar local
   localStorage.setItem("cliente_nombre", nombre);
-  localStorage.setItem("cliente_tel", telefono);
-  localStorage.setItem("cliente_fecha", fecha);
-
-  // Generar clave
-  let clave = generarClave();
-  document.getElementById("clave").innerText = clave;
 
   // Cambiar pantalla
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
-// 📲 WhatsApp
+// 📲 WhatsApp con link a pedidos
 function enviarWhatsApp(){
   let nombre = localStorage.getItem("cliente_nombre");
-  let clave = generarClave();
 
-  let mensaje = `Hola, soy ${nombre}. Ya me registré al WiFi. La clave del Wifi es ${clave}. Quiero mi promoción`;
+  let mensaje = `Hola, soy ${nombre} 🍗  
+Ya me registré al WiFi y quiero reclamar mi soda mini 🥤  
+
+👉 También quiero hacer un pedido:
+https://jwilsoncruz.github.io/gopollosrhosse/`;
 
   let url = `https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`;
 
