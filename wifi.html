@@ -76,32 +76,38 @@ button {
   <h1>🍗 WiFi Gratis</h1>
 
   <div class="oferta">
-    🎁 REGÍSTRATE Y GANA UNA SODA MINI 🥤
+    📶 Accede al WiFi GRATIS<br>
+    🎁 Beneficios exclusivos en tu compra
   </div>
 
-  <p>Accede al WiFi + promociones exclusivas</p>
+  <p>Regístrate para continuar</p>
 
   <input type="text" id="nombre" placeholder="Tu nombre">
   <input type="tel" id="telefono" placeholder="Tu WhatsApp">
   <input type="date" id="fecha">
 
-  <button onclick="continuar()">📲 OBTENER WIFI + REGALO</button>
+  <button onclick="continuar()">📲 CONTINUAR</button>
 
 </div>
 
 <!-- PANTALLA 2 -->
 <div class="container hidden" id="pantalla2">
 
-  <h1>✅ ¡Registro exitoso!</h1>
+  <h1>✅ ¡Listo!</h1>
 
   <div class="oferta">
-    🥤 Reclama tu SODA MINI en caja mostrando este mensaje
+    🥤 SODA MINI GRATIS<br>
+    👉 En compras desde Bs 20
   </div>
 
-  <p>👉 ¿Ya tienes hambre?</p>
+  <p>📲 Muestra este mensaje en caja para reclamar</p>
+
+  <p style="color:#ffcc00;">
+    🔥 Promoción válida solo hoy
+  </p>
 
   <a href="https://jwilsoncruz.github.io/gopollosrhosse/" target="_blank">
-    <button>🍗 PEDIR POLLO AHORA</button>
+    <button>🍗 PEDIR AHORA</button>
   </a>
 
   <button class="btn2" onclick="enviarWhatsApp()">📲 Pedir por WhatsApp</button>
@@ -110,7 +116,6 @@ button {
 
 <script>
 
-// 🚀 Función principal
 function continuar(){
 
   let nombre = document.getElementById("nombre").value;
@@ -122,7 +127,6 @@ function continuar(){
     return;
   }
 
-  // Guardar en Google Sheets
   fetch("https://script.google.com/macros/s/AKfycbx-C5jEDv-krY4NMp1Kbw0MVzQeM7IyhP_1-MzhgwffMXz6kkwAAMJwVeJy4nKpTOwvEA/exec", {
     method: "POST",
     body: JSON.stringify({
@@ -132,22 +136,20 @@ function continuar(){
     })
   });
 
-  // Guardar local
   localStorage.setItem("cliente_nombre", nombre);
 
-  // Cambiar pantalla
   document.getElementById("pantalla1").classList.add("hidden");
   document.getElementById("pantalla2").classList.remove("hidden");
 }
 
-// 📲 WhatsApp con link a pedidos
 function enviarWhatsApp(){
   let nombre = localStorage.getItem("cliente_nombre");
 
   let mensaje = `Hola, soy ${nombre} 🍗  
-Ya me registré al WiFi y quiero reclamar mi soda mini 🥤  
+Ya me registré al WiFi  
 
-👉 También quiero hacer un pedido:
+👉 Quiero hacer un pedido y aprovechar la promo de la soda mini 🥤  
+
 https://jwilsoncruz.github.io/gopollosrhosse/`;
 
   let url = `https://wa.me/59168972863?text=${encodeURIComponent(mensaje)}`;
