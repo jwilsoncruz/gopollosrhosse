@@ -9,83 +9,195 @@
 body{
   margin:0;
   font-family: Arial;
-  background:#0a3d0a;
   color:white;
   text-align:center;
+
+  /* 🔥 FONDO IMAGEN */
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)),
+              url('FONDO.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
-.container{padding:20px;}
+
+h1{
+  font-size:28px;
+  margin-top:20px;
+}
+
+.box{
+  background: rgba(0,0,0,0.75);
+  padding:20px;
+  margin:20px;
+  border-radius:15px;
+  backdrop-filter: blur(5px);
+  box-shadow:0 0 20px rgba(0,255,0,0.4);
+}
+
 input,button{
-  width:90%; padding:12px; margin:8px;
-  border-radius:10px; border:none;
+  width:90%;
+  padding:12px;
+  margin:8px;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
 }
-button{background:gold; font-weight:bold;}
-.timer{margin:10px; color:#00ffcc;}
+
+input{
+  background:#fff;
+  color:#000;
+}
+
+button{
+  background: linear-gradient(gold, orange);
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  transform: scale(1.05);
+}
+
+.timer{
+  font-size:18px;
+  margin:10px;
+  color:#00ffcc;
+  font-weight:bold;
+}
+
+.alerta{
+  color:yellow;
+  font-weight:bold;
+  font-size:20px;
+}
+
+.lista{
+  max-width:400px;
+  margin:auto;
+  text-align:left;
+  background: rgba(0,0,0,0.6);
+  padding:15px;
+  border-radius:10px;
+}
+
+.logo{
+  width:120px;
+  margin-top:10px;
+}
 </style>
+
 </head>
 
 <body>
 
-<h2>🇧🇴 BOLIVIA vs IRAK 🇮🇶</h2>
+<h1>🇧🇴 BOLIVIA vs IRAK 🇮🇶</h1>
 
-<div class="timer">⏳ Partido: <span id="t1"></span></div>
-<div class="timer">🛑 Cierre: <span id="t2"></span></div>
+<div class="alerta">🔥 ES HOY ES HOY 🔥</div>
 
-<div class="container">
-<input id="nombre" placeholder="Nombre">
+<div class="timer">
+⏳ Partido: <span id="t1"></span>
+</div>
+
+<div class="timer">
+🛑 Cierre: <span id="t2"></span>
+</div>
+
+<!-- 🔥 LOGO -->
+<img src="TU_LOGO.png" class="logo">
+
+<div class="box">
+
+<input id="nombre" placeholder="Nombre completo">
 <input id="wa" placeholder="WhatsApp">
 
 <input id="bol" type="number" placeholder="Bolivia">
 <input id="ira" type="number" placeholder="Irak">
 
-<button onclick="enviar()">REGISTRAR</button>
+<button onclick="enviar()">REGISTRAR PRONÓSTICO</button>
 
-<p>🎁 Si aciertas → ganas cena en GO POLLOS RHOSSE</p>
+<p>🎁 Si aciertas entras al sorteo de</p>
+<h3>🍗 CENA GRATIS EN GO POLLOS RHOSSE</h3>
+
 </div>
 
-<script>
-// FECHAS
-let partido = new Date(); partido.setHours(23,0,0);
-let cierre = new Date(); cierre.setHours(23,59,0);
+<div class="lista" id="lista"></div>
 
+<script>
+// HORARIOS
+let partido = new Date();
+partido.setHours(23,0,0);
+
+let cierre = new Date();
+cierre.setHours(23,59,0);
+
+// CONTADOR
 setInterval(()=>{
-  let now=new Date();
-  document.getElementById("t1").innerHTML=format(partido-now);
-  document.getElementById("t2").innerHTML=format(cierre-now);
+  let now = new Date();
+
+  document.getElementById("t1").innerHTML = format(partido-now);
+  document.getElementById("t2").innerHTML = format(cierre-now);
+
+  if(now > cierre){
+    document.querySelector("button").disabled = true;
+    document.querySelector("button").innerText = "PRONÓSTICOS CERRADOS";
+  }
+
 },1000);
 
 function format(ms){
-  if(ms<=0)return "00:00";
+  if(ms<=0) return "00:00";
   let h=Math.floor(ms/3600000);
   let m=Math.floor((ms%3600000)/60000);
   let s=Math.floor((ms%60000)/1000);
-  return h+"h "+m+"m "+s+"s";
+  return `${h}h ${m}m ${s}s`;
 }
 
 // ENVIAR
 function enviar(){
-  let nombre=document.getElementById("nombre").value;
-  let wa=document.getElementById("wa").value;
-  let bol=document.getElementById("bol").value;
-  let ira=document.getElementById("ira").value;
+  let nombre = document.getElementById("nombre").value;
+  let wa = document.getElementById("wa").value;
+  let bol = document.getElementById("bol").value;
+  let ira = document.getElementById("ira").value;
 
-  if(!nombre||!wa||bol==""||ira==""){
-    alert("Completa todo");
+  if(!nombre || !wa || bol=="" || ira==""){
+    alert("Completa todos los campos");
     return;
   }
 
   let pronostico = bol+"-"+ira;
+
+  let data = JSON.parse(localStorage.getItem("pronos")) || [];
+  data.push({nombre, pronostico});
+  localStorage.setItem("pronos", JSON.stringify(data));
+
+  mostrar();
 
   fetch("https://script.google.com/macros/s/AKfycbzEnV3olExrkEJ0EtMyN0mVZUOWND_lykY_1PeLQIXHWXq-FU9RnSAy0Kpcls1lb5y6tA/exec", {
     method:"POST",
     body:JSON.stringify({nombre,wa,pronostico})
   });
 
-  // ENVIO A WHATSAPP
-  let msg = `🔥 Pronóstico registrado %0A👤 ${nombre}%0A📊 ${pronostico}`;
-  window.open(`https://wa.me/${wa}?text=${msg}`);
+  let mensaje = `🔥 YA ESTÁS PARTICIPANDO 🔥%0A👤 ${nombre}%0A📊 ${pronostico}%0A🍗 ¿Quieres tu pollo listo?`;
 
-  alert("Registrado 🔥");
+  window.open(`https://wa.me/${wa}?text=${mensaje}`);
+
+  alert("🔥 REGISTRADO 🔥");
 }
+
+// MOSTRAR
+function mostrar(){
+  let data = JSON.parse(localStorage.getItem("pronos")) || [];
+
+  let html = "<h3>Participantes 🔥</h3>";
+
+  data.slice(-10).reverse().forEach(p=>{
+    html += `<p>👤 ${p.nombre} → ${p.pronostico}</p>`;
+  });
+
+  document.getElementById("lista").innerHTML = html;
+}
+
+mostrar();
 </script>
 
 </body>
