@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pronósticos Bolivia vs Irak</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#0a3d0a;
+  color:white;
+  text-align:center;
+}
+.container{padding:20px;}
+input,button{
+  width:90%; padding:12px; margin:8px;
+  border-radius:10px; border:none;
+}
+button{background:gold; font-weight:bold;}
+.timer{margin:10px; color:#00ffcc;}
+</style>
+</head>
+
+<body>
+
+<h2>🇧🇴 BOLIVIA vs IRAK 🇮🇶</h2>
+
+<div class="timer">⏳ Partido: <span id="t1"></span></div>
+<div class="timer">🛑 Cierre: <span id="t2"></span></div>
+
+<div class="container">
+<input id="nombre" placeholder="Nombre">
+<input id="wa" placeholder="WhatsApp">
+
+<input id="bol" type="number" placeholder="Bolivia">
+<input id="ira" type="number" placeholder="Irak">
+
+<button onclick="enviar()">REGISTRAR</button>
+
+<p>🎁 Si aciertas → ganas cena en GO POLLOS RHOSSE</p>
+</div>
+
+<script>
+// FECHAS
+let partido = new Date(); partido.setHours(23,0,0);
+let cierre = new Date(); cierre.setHours(23,59,0);
+
+setInterval(()=>{
+  let now=new Date();
+  document.getElementById("t1").innerHTML=format(partido-now);
+  document.getElementById("t2").innerHTML=format(cierre-now);
+},1000);
+
+function format(ms){
+  if(ms<=0)return "00:00";
+  let h=Math.floor(ms/3600000);
+  let m=Math.floor((ms%3600000)/60000);
+  let s=Math.floor((ms%60000)/1000);
+  return h+"h "+m+"m "+s+"s";
+}
+
+// ENVIAR
+function enviar(){
+  let nombre=document.getElementById("nombre").value;
+  let wa=document.getElementById("wa").value;
+  let bol=document.getElementById("bol").value;
+  let ira=document.getElementById("ira").value;
+
+  if(!nombre||!wa||bol==""||ira==""){
+    alert("Completa todo");
+    return;
+  }
+
+  let pronostico = bol+"-"+ira;
+
+  fetch("https://script.google.com/macros/s/AKfycbzEnV3olExrkEJ0EtMyN0mVZUOWND_lykY_1PeLQIXHWXq-FU9RnSAy0Kpcls1lb5y6tA/exec", {
+    method:"POST",
+    body:JSON.stringify({nombre,wa,pronostico})
+  });
+
+  // ENVIO A WHATSAPP
+  let msg = `🔥 Pronóstico registrado %0A👤 ${nombre}%0A📊 ${pronostico}`;
+  window.open(`https://wa.me/${wa}?text=${msg}`);
+
+  alert("Registrado 🔥");
+}
+</script>
+
+</body>
+</html>
