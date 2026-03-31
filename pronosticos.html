@@ -138,8 +138,9 @@ setInterval(()=>{
   document.getElementById("t2").innerHTML = format(cierre-now);
 
   if(now > cierre){
-    document.querySelector("button").disabled = true;
-    document.querySelector("button").innerText = "PRONÓSTICOS CERRADOS";
+    let btn = document.querySelector("button");
+    btn.disabled = true;
+    btn.innerText = "PRONÓSTICOS CERRADOS";
   }
 
 },1000);
@@ -154,29 +155,47 @@ function format(ms){
 
 // ENVIAR
 function enviar(){
-  let nombre = document.getElementById("nombre").value;
-  let wa = document.getElementById("wa").value;
-  let bol = document.getElementById("bol").value;
-  let ira = document.getElementById("ira").value;
+  let nombreInput = document.getElementById("nombre");
+  let waInput = document.getElementById("wa");
+  let bolInput = document.getElementById("bol");
+  let iraInput = document.getElementById("ira");
 
-  if(!nombre || !wa || bol=="" || ira==""){
+  let nombre = nombreInput.value.trim();
+  let wa = waInput.value.trim();
+  let bol = bolInput.value;
+  let ira = iraInput.value;
+
+  if(!nombre || !wa || bol==="" || ira===""){
     alert("Completa todos los campos");
     return;
   }
 
-  let pronostico = bol+"-"+ira;
+  let pronostico = bol + "-" + ira;
 
   let data = JSON.parse(localStorage.getItem("pronos")) || [];
+
   data.push({nombre, pronostico});
+
   localStorage.setItem("pronos", JSON.stringify(data));
 
   mostrar();
 
+  // LIMPIAR CAMPOS 🔥
+  nombreInput.value = "";
+  waInput.value = "";
+  bolInput.value = "";
+  iraInput.value = "";
+
+  // SCROLL ARRIBA 🔥
+  window.scrollTo({top:0, behavior:"smooth"});
+
+  // ENVIAR A SHEETS
   fetch("https://script.google.com/macros/s/AKfycbzEnV3olExrkEJ0EtMyN0mVZUOWND_lykY_1PeLQIXHWXq-FU9RnSAy0Kpcls1lb5y6tA/exec", {
     method:"POST",
     body:JSON.stringify({nombre,wa,pronostico})
   });
 
+  // WHATSAPP
   let mensaje = `🔥 YA ESTÁS PARTICIPANDO 🔥%0A👤 ${nombre}%0A📊 ${pronostico}%0A🍗 ¿Quieres tu pollo listo?`;
 
   window.open(`https://wa.me/${wa}?text=${mensaje}`);
@@ -184,21 +203,27 @@ function enviar(){
   alert("🔥 REGISTRADO 🔥");
 }
 
-// MOSTRAR
+// MOSTRAR (CORREGIDO)
 function mostrar(){
   let data = JSON.parse(localStorage.getItem("pronos")) || [];
+  let contenedor = document.getElementById("lista");
 
-  let html = "<h3>Participantes 🔥</h3>";
+  if(data.length === 0){
+    contenedor.innerHTML = "<p>No hay participantes aún</p>";
+    return;
+  }
+
+  let html = "<h3>🔥 Últimos Pronósticos 🔥</h3>";
 
   data.slice(-10).reverse().forEach(p=>{
     html += `<p>👤 ${p.nombre} → ${p.pronostico}</p>`;
   });
 
-  document.getElementById("lista").innerHTML = html;
+  contenedor.innerHTML = html;
 }
 
+// INICIO
 mostrar();
 </script>
-
 </body>
 </html>
