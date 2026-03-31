@@ -366,7 +366,7 @@ const cierreHora = 23;
 const cierreMin = 30;
 
 const totalPollos = 4;
-let pollosDisponibles = 1; //totalPollos actualizar
+let pollosDisponibles = 0; //totalPollos actualizar
 
 // ================= MODO COCINA =================
 if(modo === "cocina"){
@@ -999,6 +999,52 @@ actualizarMarquesina(); // vuelve a lo normal
 }
 
 });
+
+const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
+
+async function cargarConfig(){
+
+try{
+
+const res = await fetch(API_CONFIG);
+const data = await res.json();
+
+// 🔴 ESTADO
+if(data.estado === "cerrado"){
+  document.getElementById("estadoLocal").innerHTML = "🔴 Cerrado desde sistema";
+  document.querySelectorAll(".boton").forEach(b => b.disabled = true);
+}
+
+// 🔧 MANTENIMIENTO
+if(data.mantenimiento === "si"){
+  document.getElementById("app").innerHTML = `
+    <div style="padding:40px;text-align:center;">
+      <h1>🔧 En mantenimiento</h1>
+      <p>${data.mensaje}</p>
+    </div>
+  `;
+  return;
+}
+
+// 🍗 POLLOS
+pollosDisponibles = parseInt(data.pollos) || 0;
+actualizarPollos();
+
+// 📢 MENSAJE
+if(data.mensaje){
+ document.getElementById("textoMarquesina").innerHTML = data.mensaje;
+}
+
+}catch(e){
+console.error("Error config", e);
+}
+
+}
+
+// actualizar cada 5 segundos
+setInterval(cargarConfig, 5000);
+cargarConfig();
+
 </script>
 <div style="display:none;">
 <a href="delivery-trinidad.html">delivery de pollos a la leña en Trinidad</a>
