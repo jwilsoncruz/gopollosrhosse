@@ -1011,7 +1011,10 @@ const data = await res.json();
 
 // 🔴 ESTADO
 if(data.estado === "cerrado"){
-  document.getElementById("estadoLocal").innerHTML = "🔴 Cerrado desde sistema";
+  const estado = document.getElementById("estadoLocal");
+  if(estado){
+    estado.innerHTML = "🔴 Cerrado desde sistema";
+  }
   document.querySelectorAll(".boton").forEach(b => b.disabled = true);
 }
 
@@ -1042,8 +1045,10 @@ console.error("Error config", e);
 }
 
 // actualizar cada 5 segundos
-setInterval(cargarConfig, 5000);
-cargarConfig();
+setTimeout(()=>{
+  cargarConfig();
+  setInterval(cargarConfig, 5000);
+}, 2000);
 
 </script>
 <div style="display:none;">
