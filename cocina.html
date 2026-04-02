@@ -13,22 +13,14 @@ background:#4b0000;
 color:white;
 }
 
-/* HEADER */
 header{
 background:#d50000;
 padding:20px;
 text-align:center;
 }
 
-.logo{
-max-width:160px;
-display:block;
-margin:auto;
-}
-
 h1{ margin:10px 0; }
 
-/* GRID */
 #listaPedidos{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
@@ -36,7 +28,6 @@ gap:20px;
 padding:20px;
 }
 
-/* CARDS */
 .card{
 border-radius:12px;
 padding:20px;
@@ -45,7 +36,6 @@ color:black;
 font-size:18px;
 }
 
-/* ESTADOS */
 .nuevo{
 background:#ffb3b3;
 border-left:10px solid red;
@@ -62,7 +52,6 @@ background:#b9f6ca;
 border-left:10px solid green;
 }
 
-/* ANIMACION */
 @keyframes blink{
 0%{transform:scale(1);}
 50%{transform:scale(1.05);}
@@ -102,7 +91,6 @@ color:#d50000;
 font-weight:bold;
 }
 
-/* MODO TV */
 .modo-tv header{ display:none; }
 .modo-tv .botones{ display:none; }
 
@@ -112,13 +100,10 @@ font-weight:bold;
 <body>
 
 <header>
-
 <h1>🍗 Pantalla Cocina PRO</h1>
-
 <button class="activar" onclick="activarSonido()">🔔 Sonido</button>
 <button class="activar" onclick="pantallaCompleta()">📺 Full</button>
 <button class="activar" onclick="modoTV()">🖥 TV</button>
-
 </header>
 
 <div id="listaPedidos"></div>
@@ -134,13 +119,12 @@ const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp
 let sonido=false;
 let idsPrevios = new Set();
 
-/* 🔔 ACTIVAR SONIDO */
+/* 🔔 SONIDO */
 function activarSonido(){
 sonido=true;
 alert("🔔 Sonido activado");
 }
 
-/* 🔊 SONIDO PRO */
 function playSound(){
 let audio = document.getElementById("alerta");
 audio.currentTime = 0;
@@ -150,44 +134,37 @@ setTimeout(()=> audio.play(), 300);
 
 /* 🧠 DETECTAR NUEVOS */
 function detectarNuevos(pedidos){
-
 let nuevos = pedidos.filter(p => !idsPrevios.has(p.fila));
-
 if(nuevos.length > 0 && sonido){
 playSound();
 }
-
 idsPrevios = new Set(pedidos.map(p => p.fila));
 }
 
-/* 📺 FULLSCREEN */
+/* 📺 FULL */
 function pantallaCompleta(){
 document.documentElement.requestFullscreen();
 }
 
-/* 🖥 MODO TV */
+/* 🖥 TV */
 function modoTV(){
 document.body.classList.toggle("modo-tv");
 }
 
-/* 📡 CARGAR PEDIDOS */
+/* 📡 CARGAR */
 function cargarPedidos(){
 
 fetch(API+"?accion=obtener")
 .then(r=>r.json())
 .then(pedidos=>{
 
-/* 🧠 ORDEN INTELIGENTE */
+/* 🔥 ORDEN */
 pedidos.sort((a,b)=>{
-const orden = {
-"Nuevo":1,
-"En preparacion":2,
-"Listo":3
-};
+const orden = {"Nuevo":1,"En preparacion":2,"Listo":3};
 return orden[a.estado] - orden[b.estado];
 });
 
-/* 🔔 DETECTAR NUEVOS */
+/* 🔔 NUEVOS */
 detectarNuevos(pedidos);
 
 let html="";
@@ -196,12 +173,28 @@ pedidos.forEach(p=>{
 
 if(p.estado==="Entregado") return;
 
+/* 🧠 LIMPIAR ITEMS */
+let items = p.detalle
+.split("\n")
+.map(x => x.replace("-","").trim())
+.filter(x => x !== "");
+
+/* 🔢 AGRUPAR */
+let contador = {};
+items.forEach(i=>{
+contador[i] = (contador[i] || 0) + 1;
+});
+
+/* 📋 RESUMEN PRO */
+let resumen="";
+for(let k in contador){
+resumen += `🍗 ${contador[k]}x ${k}<br>`;
+}
+
+/* 🎨 CLASE */
 let clase="nuevo";
 if(p.estado==="En preparacion") clase="preparacion";
 if(p.estado==="Listo") clase="listo";
-
-/* 🔢 CONTAR ITEMS */
-let cantidad = p.detalle.split("\n").length;
 
 html+=`
 <div class="card ${clase}">
@@ -210,11 +203,13 @@ html+=`
 
 <div><b>Mesa:</b> ${p.mesa}</div>
 
-<div style="font-size:40px;font-weight:bold;">
-🍗 ${cantidad} items
+<div style="font-size:22px;font-weight:bold;">
+${resumen}
 </div>
 
-<div class="detalle">${p.detalle.replace(/\n/g,"<br>")}</div>
+<div class="detalle">
+${items.map(i=>"• "+i).join("<br>")}
+</div>
 
 <div class="total">Total Bs ${p.total}</div>
 
@@ -238,6 +233,7 @@ ${p.estado==="Listo"
 
 </div>
 `;
+
 });
 
 document.getElementById("listaPedidos").innerHTML=html;
@@ -246,7 +242,7 @@ document.getElementById("listaPedidos").innerHTML=html;
 
 }
 
-/* 🔄 CAMBIAR ESTADO */
+/* 🔄 ESTADO */
 function cambiarEstado(fila,estado){
 
 fetch(API,{
@@ -265,7 +261,7 @@ cargarPedidos();
 
 }
 
-/* ⏱ OPTIMIZADO */
+/* ⏱ */
 setInterval(cargarPedidos,3000);
 
 cargarPedidos();
