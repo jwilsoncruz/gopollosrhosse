@@ -599,7 +599,7 @@ const horaActual = ahora.getHours();
 // ===== TURNOS =====
 let reservas, prender, abrir, cerrar;
 
-// 🌞 ALMUERZO
+// ===== ALMUERZO =====
 if(horaActual < 15){
 
 if(cerrarAlmuerzo){
@@ -608,7 +608,21 @@ tiempo.innerHTML="Disponible en la noche 🌙";
 return;
 }
 
-// 🌙 CENA (👉 ESTE ES EL ELSE CORRECTO)
+reservas = new Date();
+reservas.setHours(8,0,0,0);
+
+prender = new Date();
+prender.setHours(10,0,0,0);
+
+abrir = new Date();
+abrir.setHours(11,30,0,0);
+
+cerrar = new Date();
+cerrar.setHours(15,0,0,0);
+
+}
+
+// ===== CENA =====
 else{
 
 if(cerrarCena){
@@ -616,21 +630,6 @@ estado.innerHTML="🔴 Cena no disponible hoy";
 tiempo.innerHTML="Volvemos mañana 🍗";
 return;
 }
-
-reservas = new Date();
-reservas.setHours(14,0,0,0);
-
-prender = new Date();
-prender.setHours(16,0,0,0);
-
-abrir = new Date();
-abrir.setHours(18,0,0,0);
-
-cerrar = new Date();
-cerrar.setHours(22,30,0,0);
-
-}
-
 
 reservas = new Date();
 reservas.setHours(14,0,0,0);
@@ -851,21 +850,6 @@ document.querySelectorAll(".boton").forEach(b=>{
 b.disabled=!localAbierto();
 });
 
-}
-function contadorLenia(){
-
-const estado=document.getElementById("estadoLenia");
-const tiempo=document.getElementById("tiempoApertura");
-
-if(!estado || !tiempo) return;
-
-const hoy = new Date();
-const dia = hoy.getDay();
-
-if(diasCerrados.includes(dia)){
-estado.innerHTML="🔴 Hoy está cerrado";
-tiempo.innerHTML="Abrimos mañana 🔥";
-return;
 }
 
 const ahora=new Date();
