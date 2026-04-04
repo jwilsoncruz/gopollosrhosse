@@ -318,7 +318,10 @@ text-align:center;
 
 // ================= CONTROL DEL LOCAL =================
 const diasCerrados = [0];
-
+// ================= CONTROL POR TURNO =================
+let cerrarAlmuerzo = false; //true para cerrar almuerzo
+let cerrarCena = false; //true para cerrar cena
+  
 const fechasCerrado = [
  "2026-03-14"
 ];
@@ -599,22 +602,35 @@ let reservas, prender, abrir, cerrar;
 // 🌞 ALMUERZO
 if(horaActual < 15){
 
+if(cerrarAlmuerzo){
+estado.innerHTML="🔴 Almuerzo no disponible hoy";
+tiempo.innerHTML="Disponible en la noche 🌙";
+return;
+}
+
+// 🌙 CENA (👉 ESTE ES EL ELSE CORRECTO)
+else{
+
+if(cerrarCena){
+estado.innerHTML="🔴 Cena no disponible hoy";
+tiempo.innerHTML="Volvemos mañana 🍗";
+return;
+}
+
 reservas = new Date();
-reservas.setHours(8,0,0,0);
+reservas.setHours(14,0,0,0);
 
 prender = new Date();
-prender.setHours(10,0,0,0);
+prender.setHours(16,0,0,0);
 
 abrir = new Date();
-abrir.setHours(11,30,0,0);
+abrir.setHours(18,0,0,0);
 
 cerrar = new Date();
-cerrar.setHours(14,30,0,0);
+cerrar.setHours(22,30,0,0);
 
 }
 
-// 🌙 CENA
-else{
 
 reservas = new Date();
 reservas.setHours(14,0,0,0);
