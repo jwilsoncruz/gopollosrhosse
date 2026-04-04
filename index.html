@@ -318,10 +318,7 @@ text-align:center;
 
 // ================= CONTROL DEL LOCAL =================
 const diasCerrados = [0];
-// ================= CONTROL POR TURNO =================
-let cerrarAlmuerzo = false; //true para cerrar almuerzo
-let cerrarCena = false; //true para cerrar cena
-  
+
 const fechasCerrado = [
  "2026-03-14"
 ];
@@ -583,126 +580,6 @@ m.innerHTML = "👨‍👧‍👦 ESTAMOS EN UNA NUEVA DIRECCION — ZONA BARRIO
 
 }
 contadorLenia();
-// ================== SISTEMA DOBLE TURNO PRO ==================
-function contadorLenia(){
-
-if(typeof sistemaBloqueado === "function" && sistemaBloqueado()) return;
-
-const estado=document.getElementById("estadoLenia");
-const tiempo=document.getElementById("tiempoApertura");
-
-if(!estado || !tiempo) return;
-
-const ahora = new Date();
-const horaActual = ahora.getHours();
-
-// ===== TURNOS =====
-let reservas, prender, abrir, cerrar;
-
-// ===== ALMUERZO =====
-if(horaActual < 15){
-
-if(cerrarAlmuerzo){
-estado.innerHTML="🔴 Almuerzo no disponible hoy";
-tiempo.innerHTML="Disponible en la noche 🌙";
-return;
-}
-
-reservas = new Date();
-reservas.setHours(8,0,0,0);
-
-prender = new Date();
-prender.setHours(10,0,0,0);
-
-abrir = new Date();
-abrir.setHours(11,30,0,0);
-
-cerrar = new Date();
-cerrar.setHours(15,0,0,0);
-
-}
-
-// ===== CENA =====
-else{
-
-if(cerrarCena){
-estado.innerHTML="🔴 Cena no disponible hoy";
-tiempo.innerHTML="Volvemos mañana 🍗";
-return;
-}
-
-reservas = new Date();
-reservas.setHours(14,0,0,0);
-
-prender = new Date();
-prender.setHours(16,0,0,0);
-
-abrir = new Date();
-abrir.setHours(18,0,0,0);
-
-cerrar = new Date();
-cerrar.setHours(22,30,0,0);
-
-}
-
-// ===== RESERVAS =====
-if(ahora >= reservas && ahora < prender){
-
-let diff = prender - ahora;
-
-estado.innerHTML = horaActual < 15 
-? "🟡 Reservas para ALMUERZO 🍗" 
-: "🟡 Reservas para CENA 🌙";
-
-tiempo.innerHTML="🔥 Prendemos leña en " + formatear(diff);
-
-document.querySelectorAll(".boton").forEach(b=>b.disabled=false);
-
-return;
-}
-
-// ===== LEÑA =====
-if(ahora >= prender && ahora < abrir){
-
-let diff = abrir - ahora;
-
-estado.innerHTML = horaActual < 15 
-? "🔥 Leña para ALMUERZO" 
-: "🔥 Leña para CENA";
-
-tiempo.innerHTML="🍗 Abrimos en " + formatear(diff);
-
-return;
-}
-
-// ===== ABIERTO =====
-if(ahora >= abrir && ahora <= cerrar){
-
-estado.innerHTML = horaActual < 15 
-? "🟢 Sirviendo ALMUERZOS 🍗" 
-: "🟢 Sirviendo CENAS 🌙";
-
-tiempo.innerHTML="🍗 Producción activa";
-
-return;
-}
-
-// ===== CERRADO =====
-estado.innerHTML="🔴 Cerrado";
-tiempo.innerHTML="Volvemos mañana 🔥";
-
-}
-
-// helper
-function formatear(ms){
-let h=Math.floor(ms/3600000);
-let m=Math.floor((ms%3600000)/60000);
-let s=Math.floor((ms%60000)/1000);
-
-return String(h).padStart(2,"0")+":"+
-       String(m).padStart(2,"0")+":"+
-       String(s).padStart(2,"0");
-}
 actualizarPollos();
 actualizarMarquesina();
 setInterval(contadorLenia,1000);
@@ -838,7 +715,7 @@ if(!estado) return;
 if(localAbierto()){
 estado.innerHTML="🟢 Estamos atendiendo";
 estado.style.color="lightgreen";
-if(logo) logo.style.filter="none"; 
+if(logo) logo.style.filter="none";
 }
 else{
 estado.innerHTML="🔴 Cerrado";
@@ -850,6 +727,21 @@ document.querySelectorAll(".boton").forEach(b=>{
 b.disabled=!localAbierto();
 });
 
+}
+function contadorLenia(){
+
+const estado=document.getElementById("estadoLenia");
+const tiempo=document.getElementById("tiempoApertura");
+
+if(!estado || !tiempo) return;
+
+const hoy = new Date();
+const dia = hoy.getDay();
+
+if(diasCerrados.includes(dia)){
+estado.innerHTML="🔴 Hoy está cerrado";
+tiempo.innerHTML="Abrimos mañana 🔥";
+return;
 }
 
 const ahora=new Date();
@@ -1078,8 +970,7 @@ class="whatsapp-float">
   }
  ]
 }
-</script>
-<script>
+
 let modoMundial = true;
 
 const barra = document.getElementById("modoMundialBarra");
@@ -1110,6 +1001,55 @@ actualizarMarquesina(); // vuelve a lo normal
 
 });
 
+const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
+
+async function cargarConfig(){
+
+try{
+
+const res = await fetch(API_CONFIG);
+const data = await res.json();
+
+// 🔴 ESTADO
+if(data.estado === "cerrado"){
+  const estado = document.getElementById("estadoLocal");
+  if(estado){
+    estado.innerHTML = "🔴 Cerrado desde sistema";
+  }
+  document.querySelectorAll(".boton").forEach(b => b.disabled = true);
+}
+
+// 🔧 MANTENIMIENTO
+if(data.mantenimiento === "si"){
+  document.getElementById("app").innerHTML = `
+    <div style="padding:40px;text-align:center;">
+      <h1>🔧 En mantenimiento</h1>
+      <p>${data.mensaje}</p>
+    </div>
+  `;
+  return;
+}
+
+// 🍗 POLLOS
+pollosDisponibles = parseInt(data.pollos) || 0;
+actualizarPollos();
+
+// 📢 MENSAJE
+if(data.mensaje){
+ document.getElementById("textoMarquesina").innerHTML = data.mensaje;
+}
+
+}catch(e){
+console.error("Error config", e);
+}
+
+}
+
+// actualizar cada 5 segundos
+setTimeout(()=>{
+  cargarConfig();
+  setInterval(cargarConfig, 5000);
+}, 2000);
 
 <script>
 
