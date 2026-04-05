@@ -125,11 +125,17 @@ button {
 
 <script>
 
-// 🔐 Generar clave automática por día
+// 🔐 Generar clave automática por semana cada domingo
 function generarClave(){
   let hoy = new Date();
-  let dia = hoy.getDate();
-  return "POLLOSRHOSSE" + dia;
+
+  // Obtener número de semana del año
+  let inicioAño = new Date(hoy.getFullYear(), 0, 1);
+  let dias = Math.floor((hoy - inicioAño) / (24 * 60 * 60 * 1000));
+
+  let semana = Math.ceil((dias + inicioAño.getDay() + 1) / 7);
+
+  return "POLLOSRHOSSE" + semana;
 }
 
 // 🚀 Registro
