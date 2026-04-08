@@ -5,30 +5,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script type="application/ld+json">
 {
- "@context": "https://schema.org",
- "@type": "FAQPage",
- "mainEntity": [
-  {
-   "@type": "Question",
-   "name": "¿Dónde comprar pollos a la leña en Trinidad Beni?",
-   "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Go Pollos Rhosse ofrece pollos a la leña en la zona Arroyo Chico en Trinidad, Bolivia, con opción de delivery."
-   }
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "@id": "https://jwilsoncruz.github.io/gopollosrhosse/#restaurant",
+  "name": "Go Pollos Rhosse",
+  "image": "https://jwilsoncruz.github.io/gopollosrhosse/logobo.png",
+  "url": "https://jwilsoncruz.github.io/gopollosrhosse/",
+  "telephone": "+59172685867",
+
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Calle 7-A, Zona Arroyo Chico",
+    "addressLocality": "Trinidad",
+    "addressRegion": "Beni",
+    "addressCountry": "BO"
   },
-  {
-   "@type": "Question",
-   "name": "¿Hacen delivery de pollo en Trinidad?",
-   "acceptedAnswer": {
-     "@type": "Answer",
-     "text": "Sí, Go Pollos Rhosse ofrece delivery económico en Trinidad Beni Bolivia."
-   }
-  }
- ]
+
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": -14.831662,
+    "longitude": -64.886565
+  },
+
+  "servesCuisine": "Pollo a la leña",
+  "priceRange": "$$",
+
+  "areaServed": {
+    "@type": "City",
+    "name": "Trinidad"
+  },
+
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+      ],
+      "opens": "18:00",
+      "closes": "23:30"
+    }
+  ],
+
+  "sameAs": [
+    "https://www.facebook.com/GoPollosRhosseTdd",
+    "https://www.instagram.com/gopollosrhossetdd",
+    "https://www.tiktok.com/@go.rhosse.pollos.tdd",
+    "https://www.youtube.com/@PollosalaLe%C3%B1aGoPollosRhosseTdd"
+  ]
 }
 </script>
-<script>
-let modoMundial = true;
 <meta property="og:title" content="Go Pollos Rhosse - Pollos a la Leña en Trinidad">
 <meta property="og:description" content="Los mejores pollos a la leña en Trinidad Beni. Delivery económico y rápido.">
 <meta property="og:image" content="https://jwilsoncruz.github.io/gopollosrhosse/logo.png">
@@ -39,7 +64,6 @@ let modoMundial = true;
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Go Pollos Rhosse">
 <meta property="og:locale" content="es_BO">
-
 <link rel="icon" href="favicon.ico">
  
 <style>
@@ -336,13 +360,13 @@ setTimeout(()=>{clicksAdmin=0;},2000);
 });
 
 // ================= HORARIO =================
-const aperturaHora = 09;
+const aperturaHora = 14;
 const aperturaMin = 00;
 const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 3;
-let pollosDisponibles = 3; //totalPollos actualizar
+let pollosDisponibles = 1; //totalPollos actualizar
 
 // ================= MODO COCINA =================
 if(modo === "cocina"){
@@ -412,7 +436,7 @@ else{
 document.getElementById("app").innerHTML = `
 <header>
 <div style="background:#FAED27; color:#FF0000; padding:8px; font-weight:bold; border-radius:20px; display:inline-block; margin-bottom:10px;">
-    <a href="https://maps.app.goo.gl/EufL3W7e3Z2HpvAH7" target="_blank" style="color: inherit; text-decoration: none;"> HOY NUEVA DIRECCION CLIC </a>
+    <a href="https://maps.app.goo.gl/EufL3W7e3Z2HpvAH7" target="_blank" style="color: inherit; text-decoration: none;"> NUEVA DIRECCION CLIC </a>
 </div>
 
 <img src="logo.png" class="logo" id="logoLocal">
@@ -423,8 +447,8 @@ Pollos a la leña en Trinidad Beni Bolivia<br>
 </h1>
 
 <p>
-📍 Estamos en Trinidad, Beni
-Barrio Arroyo Chico, Calle 7A (frente al polideportivo)🇧🇴 
+calle 7-A - Zona Arroyo Chico<br>Frente Polideportivo 
+en Trinidad-Beni-Bolivia🇧🇴 
 </p>
 
 <div id="estadoLocal"></div>
@@ -509,8 +533,7 @@ const productos=[
 
 {categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
-{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"},
-{categoria:"extras", nombre:"Extra Fideo", precio:5, img:"extra_fideo.jpg"},
+{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
 // {categoria:"extras", nombre:"Extra Yuca", precio:5, img:"extra_yuca.jpg"}
 
 ];
@@ -542,18 +565,18 @@ return;
 
 // ⚠️ Pocos pollos
 if(pollosDisponibles <= 2){
-m.innerHTML = " HOY ⚠️ ¡QUEDAN SOLO " + pollosDisponibles + " POLLOS A LA LEÑA! — Haz tu pedido 🍗";
+m.innerHTML = "⚠️ ¡QUEDAN SOLO " + pollosDisponibles + " POLLOS A LA LEÑA! — Haz tu pedido 🍗";
 return;
 }
 
 // 🟢 Abierto
 if(localAbierto()){
-m.innerHTML = "🍗 HOY RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO 11:30AM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥";
+m.innerHTML = "🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO 6:30PM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥";
 return;
 }
 
 // 🔥 Próxima apertura
-m.innerHTML = "👨‍👧‍👦 DESDE HOY ATENDEMOS ALMUERZO 11:30 AM de Lunes a Sábado — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES PARA ELALMUERZO SE HABILITARÁN a las 9:00 am para realizar las reservas programadas";
+m.innerHTML = "👨‍👧‍👦 ESTAMOS EN UNA NUEVA DIRECCION — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN al medio dia para realizar las reservas programadas";
 
 }
 contadorLenia();
@@ -724,10 +747,10 @@ return;
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(9,00,0,0);
+prender.setHours(16,00,0,0);
 
 let abrir=new Date();
-abrir.setHours(11,30,0,0);
+abrir.setHours(17,00,0,0);
 
 let cerrar=new Date();
 cerrar.setHours(22,30,0,0);
@@ -840,7 +863,7 @@ body:
 
 if(data.ok){
 
-let texto="🍗 Pedido Pollos Rhosse\n\n";
+let texto="🍗 Pedido Go Pollos Rhosse\n\n";
 texto+="Tipo: "+tipoPedido+"\n\n"+detalle+"\nTotal Bs "+total;
 
 window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
@@ -1128,16 +1151,5 @@ delivery de pollo Trinidad Bolivia
 pollo cerca de mi en Trinidad
 pollo económico Trinidad Beni
 </div>
-<p style="display:none;">
-Pollo a la leña en Trinidad Bolivia disponible hoy desde las 11:30 AM de lunes a sábado. 
-Almuerzo económico con arroz, fideo y plátano. 
-Puedes pedir pollo a la leña cerca de ti con entrega rápida o recoger en local.
-</p>
-<p style="display:none;">
-Ofrecemos pollo a la leña en Trinidad, Bolivia, disponible HOY y todos los días de lunes a sábado 
-desde las 11:30 AM. Nuestro almuerzo incluye arroz, fideo y plátano, con opciones económicas desde 15 Bs. 
-Puedes pedir por WhatsApp o recoger en el local en Barrio Arroyo Chico, frente al polideportivo.
-</p>
-
 </body>
 </html>
