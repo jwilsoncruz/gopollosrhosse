@@ -334,7 +334,7 @@ setTimeout(()=>{clicksAdmin=0;},2000);
 });
 
 // ================= HORARIO =================
-const aperturaHora = 10;
+const aperturaHora = 09;
 const aperturaMin = 00;
 const cierreHora = 22;
 const cierreMin = 30;
@@ -508,6 +508,7 @@ const productos=[
 {categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
 {categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
+{categoria:"extras", nombre:"Extra Fideo", precio:5, img:"extra_fideo.jpg"}
 // {categoria:"extras", nombre:"Extra Yuca", precio:5, img:"extra_yuca.jpg"}
 
 ];
@@ -550,7 +551,7 @@ return;
 }
 
 // 🔥 Próxima apertura
-m.innerHTML = "👨‍👧‍👦 DESDE HOY ATENDEMOS ALMUERZO 11:30 AM de Lunes a Sábado — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN al medio dia para realizar las reservas programadas";
+m.innerHTML = "👨‍👧‍👦 DESDE HOY ATENDEMOS ALMUERZO 11:30 AM de Lunes a Sábado — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES PARA ELALMUERZO SE HABILITARÁN a las 9:00 am para realizar las reservas programadas";
 
 }
 contadorLenia();
@@ -837,7 +838,7 @@ body:
 
 if(data.ok){
 
-let texto="🍗 Pedido Go Pollos Rhosse\n\n";
+let texto="🍗 Pedido Pollos Rhosse\n\n";
 texto+="Tipo: "+tipoPedido+"\n\n"+detalle+"\nTotal Bs "+total;
 
 window.open("https://wa.me/59172685867?text="+encodeURIComponent(texto));
