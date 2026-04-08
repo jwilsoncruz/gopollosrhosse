@@ -41,7 +41,7 @@
       "dayOfWeek": [
         "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
       ],
-      "opens": "18:00",
+      "opens": "10:00",
       "closes": "23:30"
     }
   ],
@@ -360,13 +360,13 @@ setTimeout(()=>{clicksAdmin=0;},2000);
 });
 
 // ================= HORARIO =================
-const aperturaHora = 14;
+const aperturaHora = 10;
 const aperturaMin = 00;
 const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 3;
-let pollosDisponibles = 1; //totalPollos actualizar
+let pollosDisponibles = 3; //totalPollos actualizar
 
 // ================= MODO COCINA =================
 if(modo === "cocina"){
@@ -436,7 +436,7 @@ else{
 document.getElementById("app").innerHTML = `
 <header>
 <div style="background:#FAED27; color:#FF0000; padding:8px; font-weight:bold; border-radius:20px; display:inline-block; margin-bottom:10px;">
-    <a href="https://maps.app.goo.gl/EufL3W7e3Z2HpvAH7" target="_blank" style="color: inherit; text-decoration: none;"> NUEVA DIRECCION CLIC </a>
+    <a href="https://maps.app.goo.gl/EufL3W7e3Z2HpvAH7" target="_blank" style="color: inherit; text-decoration: none;"> DESDE HOY ALMUERZO </a>
 </div>
 
 <img src="logo.png" class="logo" id="logoLocal">
@@ -533,7 +533,8 @@ const productos=[
 
 {categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
-{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
+{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"},
+{categoria:"extras", nombre:"Extra Fideo", precio:5, img:"extra_fideo.jpg"},
 // {categoria:"extras", nombre:"Extra Yuca", precio:5, img:"extra_yuca.jpg"}
 
 ];
@@ -576,7 +577,7 @@ return;
 }
 
 // 🔥 Próxima apertura
-m.innerHTML = "👨‍👧‍👦 ESTAMOS EN UNA NUEVA DIRECCION — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN al medio dia para realizar las reservas programadas";
+m.innerHTML = "👨‍👧‍👦 ESTAMOS ATENDIENDO ALMUERZOS DESDE HOY 11:30 — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN al medio dia para realizar las reservas programadas";
 
 }
 contadorLenia();
@@ -747,10 +748,10 @@ return;
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(16,00,0,0);
+prender.setHours(09,00,0,0);
 
 let abrir=new Date();
-abrir.setHours(17,00,0,0);
+abrir.setHours(10,00,0,0);
 
 let cerrar=new Date();
 cerrar.setHours(22,30,0,0);
