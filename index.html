@@ -5,29 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "Restaurant",
-  "name": "Go Pollos Rhosse",
-  "servesCuisine": "Pollo a la leña",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Trinidad",
-    "addressRegion": "Beni",
-    "addressCountry": "BO"
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "¿Dónde comprar pollos a la leña en Trinidad Beni?",
+   "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Go Pollos Rhosse ofrece pollos a la leña en la zona Arroyo Chico en Trinidad, Bolivia, con opción de delivery."
+   }
   },
-  "openingHoursSpecification": [{
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": [
-      "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
-    ],
-    "opens": "11:30",
-    "closes": "15:30"
-  }],
-  "priceRange": "Bs15-Bs100",
-  "description": "Pollo a la leña en Trinidad disponible hoy desde las 11:30 AM de lunes a sábado. Incluye arroz, fideo y plátano."
+  {
+   "@type": "Question",
+   "name": "¿Hacen delivery de pollo en Trinidad?",
+   "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Sí, Go Pollos Rhosse ofrece delivery económico en Trinidad Beni Bolivia."
+   }
+  }
+ ]
 }
 </script>
 
+<script>
 <meta property="og:title" content="Go Pollos Rhosse - Pollos a la Leña en Trinidad">
 <meta property="og:description" content="Los mejores pollos a la leña en Trinidad Beni. Delivery económico y rápido.">
 <meta property="og:image" content="https://jwilsoncruz.github.io/gopollosrhosse/logo.png">
@@ -507,8 +508,8 @@ const productos=[
 
 {categoria:"extras", nombre:"Extra Platano", precio:5, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:5, img:"extra_papas.jpeg"},
-{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"}
-{categoria:"extras", nombre:"Extra Fideo", precio:5, img:"extra_fideo.jpg"}
+{categoria:"extras", nombre:"Extra Arroz", precio:5, img:"extra_arroz.jpg"},
+{categoria:"extras", nombre:"Extra Fideo", precio:5, img:"extra_fideo.jpg"},
 // {categoria:"extras", nombre:"Extra Yuca", precio:5, img:"extra_yuca.jpg"}
 
 ];
