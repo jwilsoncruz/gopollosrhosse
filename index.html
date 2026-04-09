@@ -469,16 +469,16 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 </header>
 
 <div class="container">
-<h2 class="categoria">🍗Almuerzo</h2>
+<h2 class="categoria" id="categoria-almuerzo">🍗Almuerzo</h2>
 <div id="almuerzo" class="grid"></div>
 
-<h2 class="categoria">🍗Cena</h2>
+<h2 class="categoria" id="categoria-cena">🍗Cena</h2>
 <div id="cena" class="grid"></div>
 
-<h2 class="categoria">🥤 Bebidas</h2>
+<h2 class="categoria" id="categoria-bebidas">🥤 Bebidas</h2>
 <div id="bebidas" class="grid"></div>
 
-<h2 class="categoria">🍔 Extras</h2>
+<h2 class="categoria" id="categoria-extras">🍔 Extras</h2>
 <div id="extras" class="grid"></div>
 </div>
 
@@ -1165,5 +1165,32 @@ delivery de pollo Trinidad Bolivia
 pollo cerca de mi en Trinidad
 pollo económico Trinidad Beni
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  const ahora = new Date();
+  const hora = ahora.getHours();
+
+  const almuerzo = document.getElementById("categoria-almuerzo");
+  const cena = document.getElementById("categoria-cena");
+
+  if (!almuerzo || !cena) {
+    console.log("⚠️ No se encontraron las categorías");
+    return;
+  }
+
+  if (hora >= 11 && hora < 16) {
+    almuerzo.style.display = "block";
+    cena.style.display = "none";
+    console.log("🍽️ Modo Almuerzo");
+  } else {
+    almuerzo.style.display = "none";
+    cena.style.display = "block";
+    console.log("🌙 Modo Cena");
+  }
+
+});
+</script>
 </body>
 </html>
