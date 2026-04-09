@@ -1172,21 +1172,36 @@ document.addEventListener("DOMContentLoaded", function() {
   const ahora = new Date();
   const hora = ahora.getHours();
 
-  const almuerzo = document.getElementById("categoria-almuerzo");
-  const cena = document.getElementById("categoria-cena");
+  // 👉 TITULOS
+  const tituloAlmuerzo = document.getElementById("categoria-almuerzo");
+  const tituloCena = document.getElementById("categoria-cena");
 
-  if (!almuerzo || !cena) {
-    console.log("⚠️ No se encontraron las categorías");
+  // 👉 CONTENEDORES (ESTO TE FALTABA 🔥)
+  const almuerzo = document.getElementById("almuerzo");
+  const cena = document.getElementById("cena");
+
+  if (!tituloAlmuerzo || !tituloCena || !almuerzo || !cena) {
+    console.log("⚠️ No se encontraron elementos");
     return;
   }
 
   if (hora >= 11 && hora < 16) {
-    almuerzo.style.display = "block";
+    // 🍽️ ALMUERZO
+    tituloAlmuerzo.style.display = "block";
+    almuerzo.style.display = "grid";
+
+    tituloCena.style.display = "none";
     cena.style.display = "none";
+
     console.log("🍽️ Modo Almuerzo");
   } else {
+    // 🌙 CENA
+    tituloAlmuerzo.style.display = "none";
     almuerzo.style.display = "none";
-    cena.style.display = "block";
+
+    tituloCena.style.display = "block";
+    cena.style.display = "grid";
+
     console.log("🌙 Modo Cena");
   }
 
