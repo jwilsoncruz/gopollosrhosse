@@ -1,112 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Go Pollos Rhosse | Cumpleaños</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Go Pollos Rhosse | Cumpleaños en Trinidad</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fff8f0;
-    }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
-    header {
-      background: #d62828;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+:root{
+--rojo:#d62828;
+--naranja:#f77f00;
+--oscuro:#1d1d1d;
+--claro:#fff8f0;
+}
 
-    nav {
-      background: #f77f00;
-      text-align: center;
-      padding: 10px;
-    }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
 
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: bold;
-    }
+body{background:var(--claro);color:#333;}
 
-    .hero {
-      padding: 80px 20px;
-      text-align: center;
-      background: #333;
-      color: white;
-    }
+header{background:var(--rojo);color:white;text-align:center;padding:20px;}
 
-    section {
-      padding: 40px 20px;
-      text-align: center;
-    }
+nav{
+background:var(--naranja);
+display:flex;
+justify-content:center;
+gap:20px;
+padding:10px;
+flex-wrap:wrap;
+}
 
-    .calendario {
-      max-width: 900px;
-      margin: auto;
-    }
+nav a{color:white;text-decoration:none;font-weight:500;}
 
-    iframe {
-      width: 100%;
-      height: 600px;
-      border: none;
-    }
+.hero{
+height:90vh;
+background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+url('https://images.unsplash.com/photo-1604908176997-431b0c1b2f9f') center/cover;
+display:flex;align-items:center;justify-content:center;
+text-align:center;color:white;padding:20px;
+}
 
-    .btn {
-      background: #25D366;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 10px;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 10px;
-    }
+.hero h2{font-size:2.5em;margin-bottom:10px;}
+.hero p{margin-bottom:20px;}
 
-    footer {
-      background: #000;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-  </style>
+.btn{
+background:var(--naranja);
+padding:15px 30px;
+border:none;
+color:white;
+border-radius:10px;
+text-decoration:none;
+}
+
+section{padding:60px 20px;text-align:center;}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+max-width:1000px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+.precio{font-weight:bold;margin-top:10px;color:var(--rojo);}
+
+.calendario{
+max-width:1000px;
+margin:auto;
+border-radius:15px;
+overflow:hidden;
+box-shadow:0 5px 20px rgba(0,0,0,0.2);
+}
+
+iframe{width:100%;height:650px;border:none;}
+
+.cta{background:var(--oscuro);color:white;padding:50px 20px;}
+
+footer{background:#000;color:#ccc;text-align:center;padding:20px;}
+
+.whatsapp{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+color:white;
+padding:15px;
+border-radius:50%;
+text-decoration:none;
+}
+
+@media(max-width:600px){
+.hero h2{font-size:1.8em;}
+iframe{height:500px;}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>🍗 Go Pollos Rhosse</h1>
-  <p>Reserva tu cumpleaños</p>
+<h1>🍗 Go Pollos Rhosse</h1>
+<p>Cumpleaños inolvidables en Trinidad 🎉</p>
 </header>
 
 <nav>
-  <a href="#reservas">Reservar</a>
-  <a href="#contacto">Contacto</a>
+<a href="#paquetes">Paquetes</a>
+<a href="#reservas">Reservar</a>
+<a href="#contacto">Contacto</a>
 </nav>
 
 <div class="hero">
-  <h2>🎉 Celebra con nosotros 🎂</h2>
-  <p>Reserva fácil en línea</p>
+<div>
+<h2>🎂 Celebra sin estrés</h2>
+<p>Nosotros nos encargamos de todo</p>
+<a href="#reservas" class="btn">Reservar ahora</a>
+</div>
 </div>
 
-<section id="reservas">
-  <h2>📅 Reserva tu fecha</h2>
-
-  <div class="calendario">
-    <iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2cnr54OdkDdZ8A7wN3vIcknAWp4lr3koDgiT74JUilvUPZ8oYtOJKKVsyASanT0xu1LC_rUBFo?gv=true"></iframe>
-  </div>
+<section>
+<h2>🎉 ¿Qué incluye?</h2>
+<div class="grid">
+<div class="card">🍗 Comida deliciosa</div>
+<div class="card">🎈 Decoración</div>
+<div class="card">🎶 Música</div>
+<div class="card">👨‍👩‍👧 Ambiente familiar</div>
+</div>
 </section>
 
-<section id="contacto">
-  <h2>📲 Contacto directo</h2>
-  <a class="btn" href="https://wa.me/59168972863">WhatsApp</a>
+<section id="paquetes">
+<h2>💰 Paquetes</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Básico</h3>
+<p>Espacio + música</p>
+<div class="precio">Bs. 150</div> <!-- CAMBIAR -->
+</div>
+
+<div class="card">
+<h3>Completo</h3>
+<p>Comida + decoración + espacio</p>
+<div class="precio">Bs. 300</div> <!-- CAMBIAR -->
+</div>
+
+<div class="card">
+<h3>Premium</h3>
+<p>Todo incluido + atención</p>
+<div class="precio">Bs. 500</div> <!-- CAMBIAR -->
+</div>
+
+</div>
+</section>
+
+<section>
+<h2>⭐ Opiniones reales</h2>
+<div class="grid">
+<div class="card">“Muy buena atención, recomendado”</div>
+<div class="card">“Todo organizado, volveremos”</div>
+</div>
+</section>
+
+<section id="reservas">
+<h2>📅 Reserva tu fecha</h2>
+
+<div class="calendario">
+<iframe src="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2cnr54OdkDdZ8A7wN3vIcknAWp4lr3koDgiT74JUilvUPZ8oYtOJKKVsyASanT0xu1LC_rUBFo?gv=true"></iframe>
+</div>
+</section>
+
+<section class="cta" id="contacto">
+<h2>📲 Reserva directa</h2>
+<p>Escríbenos ahora mismo</p>
+<a href="https://wa.me/59168972863" class="btn">WhatsApp</a> <!-- CAMBIAR -->
 </section>
 
 <footer>
-  <p>Trinidad - Beni</p>
+<p>📍 Trinidad, Beni</p>
+<p>📞 +591 68972863</p> <!-- CAMBIAR -->
 </footer>
+
+<a class="whatsapp" href="https://wa.me/59168972863">💬</a> <!-- CAMBIAR -->
 
 </body>
 </html>
