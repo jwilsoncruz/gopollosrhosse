@@ -4,18 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Go Pollos Rhosse | Pollos a la Leña en Trinidad</title>
-<meta name="description" content="Pollos a la leña en Trinidad Beni Bolivia. Delivery rápido y económico.">
+<title>Go Pollos Rhosse | Pollos a la Leña en Trinidad Beni Bolivia</title>
+<meta name="description" content="Pollos a la leña en Trinidad Beni Bolivia. Delivery rápido, económico y delicioso. Servicio en mesa, recoger o delivery.">
+<meta name="keywords" content="pollo a la leña Trinidad Beni Bolivia, pollo cerca de mi Trinidad, delivery pollo Trinidad, mejor pollo Trinidad Beni">
+<meta name="robots" content="index, follow">
 
 <link rel="icon" href="favicon.ico">
 
+<!-- GEO SEO -->
+<meta name="geo.region" content="BO-B">
+<meta name="geo.placename" content="Trinidad, Beni, Bolivia">
+<meta name="geo.position" content="-14.831662;-64.886565">
+
+<!-- OPEN GRAPH -->
+<meta property="og:title" content="Go Pollos Rhosse - Pollos a la Leña en Trinidad">
+<meta property="og:description" content="El mejor pollo a la leña en Trinidad Beni Bolivia.">
+<meta property="og:image" content="https://jwilsoncruz.github.io/gopollosrhosse/logo.png">
+<meta property="og:url" content="https://jwilsoncruz.github.io/gopollosrhosse/">
+
+<!-- STRUCTURED DATA -->
 <script type="application/ld+json">
 {
- "@context":"https://schema.org",
- "@type":"Restaurant",
- "name":"Go Pollos Rhosse",
- "address":{"@type":"PostalAddress","addressLocality":"Trinidad","addressRegion":"Beni","addressCountry":"BO"},
- "servesCuisine":"Pollo a la leña"
+ "@context": "https://schema.org",
+ "@type": "Restaurant",
+ "name": "Go Pollos Rhosse",
+ "image": "https://jwilsoncruz.github.io/gopollosrhosse/logo.png",
+ "address": {
+   "@type": "PostalAddress",
+   "addressLocality": "Trinidad",
+   "addressRegion": "Beni",
+   "addressCountry": "BO"
+ },
+ "servesCuisine": "Pollo a la leña",
+ "telephone": "+59172685867"
+}
+</script>
+
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "¿Dónde comprar pollo a la leña en Trinidad?",
+   "acceptedAnswer": {
+     "@type": "Answer",
+     "text": "Go Pollos Rhosse ofrece pollo a la leña en Trinidad Beni Bolivia con delivery, recoger o consumo en mesa."
+   }
+  }
+ ]
 }
 </script>
 
@@ -23,14 +61,14 @@
 body{margin:0;font-family:Arial;background:#2b0b00;color:white}
 header{text-align:center;padding:20px}
 .logo{max-width:180px}
-.marquesina{background:#ff9800;color:#000;padding:10px;font-weight:bold;text-align:center}
+.marquesina{background:#ff9800;color:#000;padding:10px;text-align:center;font-weight:bold}
 .container{background:white;color:black;border-radius:20px 20px 0 0;padding:20px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
 .card{background:white;padding:10px;border-radius:10px;text-align:center}
 .card img{width:100%;height:120px;object-fit:cover}
 .boton{background:#ff6f00;color:white;border:none;padding:8px;border-radius:6px}
 .carrito{position:fixed;bottom:0;left:0;right:0;background:white;color:black;padding:10px}
-button{margin-top:5px}
+input{width:100%;margin-top:5px;padding:5px}
 </style>
 </head>
 
@@ -39,13 +77,13 @@ button{margin-top:5px}
 <div class="marquesina" id="marquesina"></div>
 
 <header>
-<img src="logo.png" class="logo" id="logo">
-<h1>Go Pollos Rhosse</h1>
+<img src="logo.png" class="logo">
+<h1>🍗 Go Pollos Rhosse</h1>
 <div id="estado"></div>
 </header>
 
 <div class="container">
-<h2>🍗 Menú</h2>
+<h2>Menú</h2>
 <div id="menu" class="grid"></div>
 </div>
 
@@ -53,208 +91,133 @@ button{margin-top:5px}
 <div id="carrito">Vacío</div>
 <div id="total">Total Bs 0</div>
 
-<button onclick="enviar()">📲 WhatsApp</button>
-<button onclick="llamarMesero()">🛎 Llamar Mesero</button>
+<hr>
 
+<label><input type="radio" name="tipo" value="Mesa" checked> Mesa</label>
+<label><input type="radio" name="tipo" value="Recoger"> Recoger</label>
+<label><input type="radio" name="tipo" value="Delivery"> Delivery</label>
+
+<div id="extra"></div>
+
+<br>
+
+<button onclick="enviar()">Enviar Pedido</button>
 </div>
 
-<!-- SONIDO -->
-<audio id="sonidoPedido">
-<source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
-</audio>
-
 <script>
-
-// ===== CONFIG =====
 const WA="59172685867";
-const API_CONFIG="TU_API_SHEETS_AQUI";
-
-// ===== HORARIO =====
+const diasCerrados=[0,6];
 const HORARIO={apertura:16,cierre:22};
 
-// ===== STOCK =====
-let totalPollos=5;
-let pollosDisponibles=5;
+let pollosDisponibles=10;
 
-// ===== PRODUCTOS =====
 const productos=[
 {n:"Pollo Entero",p:100,img:"entero.jpg"},
 {n:"Medio Pollo",p:50,img:"medio.jpg"},
-{n:"Cuarto Pollo",p:25,img:"cuarto.jpg"},
-{n:"Gaseosa",p:6,img:"gaseosa.jpg"}
+{n:"Cuarto Pollo",p:25,img:"cuarto.jpg"}
 ];
 
 let carrito=[];
 
-// ===== MENU =====
+function generarNumeroPedido(){
+let hoy=new Date().toISOString().split("T")[0];
+let data=JSON.parse(localStorage.getItem("pedido"))||{};
+if(data.fecha!==hoy){data={fecha:hoy,num:1}}else{data.num++}
+localStorage.setItem("pedido",JSON.stringify(data));
+return String(data.num).padStart(3,"0");
+}
+
 function cargar(){
-const cont=document.getElementById("menu");
+let c=document.getElementById("menu");
 productos.forEach(p=>{
 let d=document.createElement("div");
 d.className="card";
-d.innerHTML=`
-<img src="${p.img}">
-<h3>${p.n}</h3>
-<p>Bs ${p.p}</p>
-<button class="boton" onclick="add('${p.n}',${p.p})">Agregar</button>
-`;
-cont.appendChild(d);
+d.innerHTML=`<img src="${p.img}"><h3>${p.n}</h3><p>Bs ${p.p}</p><button onclick="add('${p.n}',${p.p})">Agregar</button>`;
+c.appendChild(d);
 });
 }
 
-// ===== CARRITO =====
 function add(n,p){
 carrito.push({n,p});
-if(n.includes("Pollo")){
-pollosDisponibles--;
-if(pollosDisponibles<0) pollosDisponibles=0;
-}
+if(n.includes("Pollo")) pollosDisponibles--;
 render();
 }
 
 function render(){
-let html="",total=0;
-carrito.forEach((i,idx)=>{
-total+=i.p;
-html+=`${i.n} Bs ${i.p} <button onclick="del(${idx})">❌</button><br>`;
-});
+let t=0,html="";
+carrito.forEach((i,x)=>{t+=i.p;html+=`${i.n} Bs ${i.p}<button onclick="del(${x})">❌</button><br>`});
 document.getElementById("carrito").innerHTML=html||"Vacío";
-document.getElementById("total").innerHTML="Total Bs "+total;
+document.getElementById("total").innerHTML="Total Bs "+t;
 }
 
-function del(i){
-carrito.splice(i,1);
-render();
-}
+function del(i){carrito.splice(i,1);render();}
 
-// ===== ESTADO =====
 function abierto(){
-let h=new Date().getHours();
+let d=new Date();
+if(diasCerrados.includes(d.getDay())) return false;
+let h=d.getHours();
 return h>=HORARIO.apertura && h<=HORARIO.cierre;
 }
 
 function estado(){
-let e=document.getElementById("estado");
-if(abierto()){
-e.innerHTML="🟢 Abierto";
-}else{
-e.innerHTML="🔴 Cerrado";
-}
+document.getElementById("estado").innerHTML=abierto()?"🟢 Abierto":"🔴 Cerrado";
 }
 
-// ===== MARKETING PRO (URGENTE) =====
 function marketing(){
 let m=document.getElementById("marquesina");
-
-if(pollosDisponibles<=0){
-m.innerHTML="❌ HOY SE AGOTÓ TODO — Vuelve mañana 🔥";
-return;
+if(diasCerrados.includes(new Date().getDay())){m.innerHTML="CERRADO SABADO Y DOMINGO";return;}
+if(pollosDisponibles<=0){m.innerHTML="AGOTADO";return;}
+m.innerHTML=abierto()?"PIDE YA TU POLLO A LA LEÑA":"Abrimos 16:00";
 }
 
-if(pollosDisponibles==1){
-m.innerHTML="🚨 ÚLTIMO POLLO DISPONIBLE — PÍDELO YA 🔥";
-return;
-}
-
-if(pollosDisponibles<=2){
-m.innerHTML="⚠️ QUEDAN SOLO "+pollosDisponibles+" POLLOS — ALTA DEMANDA 🔥";
-return;
-}
-
-if(abierto()){
-m.innerHTML="🔥 POLLOS SALIENDO DE LA LEÑA — PIDE AHORA 🚀";
-}else{
-m.innerHTML="⏳ ABRIMOS 16:00 — PUEDES RESERVAR";
-}
-}
-
-// ===== WHATSAPP =====
-function enviar(){
-
-if(carrito.length===0){
-alert("Agrega productos");
-return;
-}
-
-let txt="🍗 Pedido Go Pollos Rhosse\n\n";
-let total=0;
-
-carrito.forEach(i=>{
-txt+=`${i.n} Bs ${i.p}\n`;
-total+=i.p;
+document.querySelectorAll("input[name='tipo']").forEach(r=>{
+r.addEventListener("change",()=>{
+let t=r.value;
+let d=document.getElementById("extra");
+if(t==="Delivery") d.innerHTML=`<input id="dir" placeholder="Dirección"><input id="tel" placeholder="Teléfono">`;
+else if(t==="Mesa") d.innerHTML=`<input id="mesa" placeholder="Mesa">`;
+else d.innerHTML="";
+});
 });
 
-txt+="\nTotal Bs "+total;
+function enviar(){
+if(!abierto()) return alert("Cerrado");
+if(carrito.length===0) return alert("Agrega productos");
 
-window.open(`https://wa.me/${WA}?text=`+encodeURIComponent(txt));
+let num=generarNumeroPedido();
+let tipo=document.querySelector("input[name='tipo']:checked").value;
 
-// 🔊 SONIDO
-document.getElementById("sonidoPedido").play();
+let txt="Pedido #"+num+"\n\nTipo:"+tipo+"\n";
 
-// ✅ CONFIRMACIÓN
-setTimeout(()=>{
-alert("✅ Pedido enviado. Te confirmamos por WhatsApp.");
-},500);
+if(tipo==="Delivery"){
+txt+="Dir:"+document.getElementById("dir").value+"\nTel:"+document.getElementById("tel").value+"\n";
+}
+
+if(tipo==="Mesa"){
+txt+="Mesa:"+document.getElementById("mesa").value+"\n";
+}
+
+let total=0;
+carrito.forEach(i=>{txt+=i.n+" "+i.p+"\n";total+=i.p});
+txt+="Total "+total;
+
+window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(txt));
 
 carrito=[];
 render();
 }
 
-// ===== LLAMAR MESERO =====
-function llamarMesero(){
-alert("🛎 Mesero en camino...");
-}
-
-// ===== GOOGLE SHEETS =====
-async function controlRemoto(){
-if(!API_CONFIG.includes("http")) return;
-
-try{
-let r=await fetch(API_CONFIG);
-let d=await r.json();
-
-if(d.pollos) pollosDisponibles=parseInt(d.pollos);
-
-if(d.mensaje){
-document.getElementById("marquesina").innerHTML=d.mensaje;
-}
-
-}catch(e){
-console.log("Sheets offline");
-}
-}
-
-// ===== ADMIN =====
-let clicks=0;
-document.getElementById("logo").onclick=()=>{
-clicks++;
-if(clicks>=5){
-pollosDisponibles=totalPollos;
-alert("ADMIN: Stock reiniciado");
-clicks=0;
-}
-setTimeout(()=>clicks=0,2000);
-};
-
-// ===== RETENCIÓN CLIENTE =====
-setTimeout(()=>{
-if(carrito.length===0){
-alert("🔥 PROMO: Hoy papas GRATIS en tu pedido 🍟");
-}
-},15000);
-
-// ===== INIT =====
 cargar();
-estado();
-marketing();
-
-setInterval(()=>{
-estado();
-marketing();
-controlRemoto();
-},5000);
-
+setInterval(()=>{estado();marketing();},3000);
 </script>
+
+<!-- SEO OCULTO -->
+<div style="display:none;">
+pollo a la leña Trinidad Beni Bolivia
+delivery pollo Trinidad
+pollo cerca de mi Trinidad Beni
+mejor pollo Trinidad Bolivia
+</div>
 
 </body>
 </html>
