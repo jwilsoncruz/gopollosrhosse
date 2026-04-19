@@ -9,7 +9,6 @@
 
 <link rel="icon" href="favicon.ico">
 
-<!-- SEO -->
 <script type="application/ld+json">
 {
  "@context":"https://schema.org",
@@ -31,6 +30,7 @@ header{text-align:center;padding:20px}
 .card img{width:100%;height:120px;object-fit:cover}
 .boton{background:#ff6f00;color:white;border:none;padding:8px;border-radius:6px}
 .carrito{position:fixed;bottom:0;left:0;right:0;background:white;color:black;padding:10px}
+button{margin-top:5px}
 </style>
 </head>
 
@@ -52,8 +52,16 @@ header{text-align:center;padding:20px}
 <div class="carrito">
 <div id="carrito">Vacío</div>
 <div id="total">Total Bs 0</div>
+
 <button onclick="enviar()">📲 WhatsApp</button>
+<button onclick="llamarMesero()">🛎 Llamar Mesero</button>
+
 </div>
+
+<!-- SONIDO -->
+<audio id="sonidoPedido">
+<source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
+</audio>
 
 <script>
 
@@ -76,10 +84,9 @@ const productos=[
 {n:"Gaseosa",p:6,img:"gaseosa.jpg"}
 ];
 
-// ===== APP =====
 let carrito=[];
 
-// MENU
+// ===== MENU =====
 function cargar(){
 const cont=document.getElementById("menu");
 productos.forEach(p=>{
@@ -95,7 +102,7 @@ cont.appendChild(d);
 });
 }
 
-// CARRITO
+// ===== CARRITO =====
 function add(n,p){
 carrito.push({n,p});
 if(n.includes("Pollo")){
@@ -120,7 +127,7 @@ carrito.splice(i,1);
 render();
 }
 
-// ESTADO
+// ===== ESTADO =====
 function abierto(){
 let h=new Date().getHours();
 return h>=HORARIO.apertura && h<=HORARIO.cierre;
@@ -135,29 +142,35 @@ e.innerHTML="🔴 Cerrado";
 }
 }
 
-// MARQUESINA (VENTAS)
+// ===== MARKETING PRO (URGENTE) =====
 function marketing(){
 let m=document.getElementById("marquesina");
 
 if(pollosDisponibles<=0){
-m.innerHTML="🍗 POLLOS AGOTADOS — Gracias Trinidad 🔥";
+m.innerHTML="❌ HOY SE AGOTÓ TODO — Vuelve mañana 🔥";
+return;
+}
+
+if(pollosDisponibles==1){
+m.innerHTML="🚨 ÚLTIMO POLLO DISPONIBLE — PÍDELO YA 🔥";
 return;
 }
 
 if(pollosDisponibles<=2){
-m.innerHTML="⚠️ ÚLTIMOS "+pollosDisponibles+" POLLOS 🔥";
+m.innerHTML="⚠️ QUEDAN SOLO "+pollosDisponibles+" POLLOS — ALTA DEMANDA 🔥";
 return;
 }
 
 if(abierto()){
-m.innerHTML="🔥 PIDE TU POLLO A LA LEÑA — DELIVERY DISPONIBLE";
+m.innerHTML="🔥 POLLOS SALIENDO DE LA LEÑA — PIDE AHORA 🚀";
 }else{
-m.innerHTML="⏳ Abrimos desde las 16:00";
+m.innerHTML="⏳ ABRIMOS 16:00 — PUEDES RESERVAR";
 }
 }
 
-// WHATSAPP
+// ===== WHATSAPP =====
 function enviar(){
+
 if(carrito.length===0){
 alert("Agrega productos");
 return;
@@ -174,9 +187,25 @@ total+=i.p;
 txt+="\nTotal Bs "+total;
 
 window.open(`https://wa.me/${WA}?text=`+encodeURIComponent(txt));
+
+// 🔊 SONIDO
+document.getElementById("sonidoPedido").play();
+
+// ✅ CONFIRMACIÓN
+setTimeout(()=>{
+alert("✅ Pedido enviado. Te confirmamos por WhatsApp.");
+},500);
+
+carrito=[];
+render();
 }
 
-// GOOGLE SHEETS CONTROL
+// ===== LLAMAR MESERO =====
+function llamarMesero(){
+alert("🛎 Mesero en camino...");
+}
+
+// ===== GOOGLE SHEETS =====
 async function controlRemoto(){
 if(!API_CONFIG.includes("http")) return;
 
@@ -195,19 +224,26 @@ console.log("Sheets offline");
 }
 }
 
-// ADMIN SECRETO
+// ===== ADMIN =====
 let clicks=0;
 document.getElementById("logo").onclick=()=>{
 clicks++;
 if(clicks>=5){
-alert("ADMIN: Reset pollos");
 pollosDisponibles=totalPollos;
+alert("ADMIN: Stock reiniciado");
 clicks=0;
 }
 setTimeout(()=>clicks=0,2000);
 };
 
-// INIT
+// ===== RETENCIÓN CLIENTE =====
+setTimeout(()=>{
+if(carrito.length===0){
+alert("🔥 PROMO: Hoy papas GRATIS en tu pedido 🍟");
+}
+},15000);
+
+// ===== INIT =====
 cargar();
 estado();
 marketing();
