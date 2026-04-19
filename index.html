@@ -9,7 +9,7 @@
   "@type": "Restaurant",
   "@id": "https://jwilsoncruz.github.io/gopollosrhosse/#restaurant",
   "name": "Go Pollos Rhosse",
-  "image": "https://jwilsoncruz.github.io/gopollosrhosse/logobo.png",
+  "image": "https://jwilsoncruz.github.io/gopollosrhosse/logo.png",
   "url": "https://jwilsoncruz.github.io/gopollosrhosse/",
   "telephone": "+59172685867",
 
@@ -39,7 +39,7 @@
     {
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": [
-        "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+        "Monday","Tuesday","Wednesday","Thursday","Friday"
       ],
       "opens": "10:00",
       "closes": "23:30"
@@ -317,7 +317,7 @@ text-align:center;
 <script>
 
 // ================= CONTROL DEL LOCAL =================
-const diasCerrados = [0];
+const diasCerrados = [0,6];
 
 const fechasCerrado = [
  "2026-03-14"
@@ -495,11 +495,10 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 <label>
 <input type="radio" name="tipoPedido" value="Mesa" checked>
 🍽 Comer aquí
-</label>
+</label><br>
 
 <label style="margin-left:10px;">
-<input type="radio" name="tipoPedido" value="Recoger">
-🛍 Recoger en local
+<input type="radio" name="tipoPedido" value="Recoger">🛍 Recoger en local
 </label>
 
 <label style="margin-left:10px;">
@@ -1164,6 +1163,9 @@ mejor pollo en Trinidad
 delivery de pollo Trinidad Bolivia
 pollo cerca de mi en Trinidad
 pollo económico Trinidad Beni
+la receta de la abuelita
+pollo jugoso tipo salchicha
+almuerzo y cena de lunes a viernes
 </div>
 
 <script>
