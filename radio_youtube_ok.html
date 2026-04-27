@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Radio PRO</title>
+<style>
+body{
+    font-family: Arial;
+    background:#1e3c72;
+    color:white;
+    text-align:center;
+    padding:40px;
+}
+button{
+    padding:12px 20px;
+    margin:10px;
+    border-radius:10px;
+    border:none;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>📻 Radio Automática</h1>
+
+<button id="btnRadio" disabled>⏳ Cargando radio...</button>
+<button onclick="locucionCompleta()">🎙 Probar voz</button>
+
+<div id="player"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+let player;
+let lista = "PLvNgP5lgV1ETSoUf4nOEFJ3pb_CdJM1O6";
+let ultimaMarca = "";
+
+// 🔥 CUANDO YOUTUBE ESTÁ LISTO
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '0',
+        width: '0',
+        playerVars: {
+            listType: 'playlist',
+            list: lista,
+            autoplay: 0,
+            controls: 0
+        },
+        events: {
+            'onReady': onPlayerReady
+        }
+    });
+}
+
+// 🔥 ACTIVAR BOTÓN CUANDO YA CARGÓ
+function onPlayerReady() {
+    let btn = document.getElementById("btnRadio");
+    btn.innerText = "▶️ Iniciar Radio";
+    btn.disabled = false;
+    btn.onclick = iniciarRadio;
+}
+
+// ▶️ INICIAR
+function iniciarRadio() {
+    player.playVideo();
+    player.unMute();
+    player.setVolume(50);
+}
+
+// 🔉 CONTROL
+function bajarMusica() {
+    if(player) player.setVolume(10);
+}
+function subirMusica() {
+    if(player) player.setVolume(50);
+}
+
+// SALUDO
+function obtenerSaludo() {
+    let h = new Date().getHours();
+    if (h < 12) return "Buenos días";
+    if (h < 19) return "Buenas tardes";
+    return "Buenas noches";
+}
+
+// VOZ
+function hablar(texto) {
+    let voz = new SpeechSynthesisUtterance(texto);
+    voz.lang = "es-MX";
+    voz.rate = 0.95;
+
+    speechSynthesis.cancel();
+    speechSynthesis.speak(voz);
+
+    setTimeout(subirMusica, 9000);
+}
+
+// 🔥 LOCUCIÓN COMPLETA
+function locucionCompleta() {
+    bajarMusica();
+
+    let h = new Date().getHours().toString().padStart(2,'0');
+
+    let texto = `${obtenerSaludo()}. Son las ${h} en punto. 
+    Es hora de degustar un delicioso pollo a la leña, con el sabor único de Go Pollos Rous.`;
+
+    hablar(texto);
+}
+
+// 🔥 SOLO HORA
+function locucionHora() {
+    bajarMusica();
+
+    let now = new Date();
+    let h = now.getHours().toString().padStart(2,'0');
+    let m = now.getMinutes().toString().padStart(2,'0');
+
+    hablar(`Son las ${h} con ${m}`);
+}
+
+// ⏱️ AUTOMÁTICO
+setInterval(() => {
+    let now = new Date();
+    let min = now.getMinutes();
+    let hora = now.getHours();
+
+    let marca = hora + ":" + min;
+
+    if (marca !== ultimaMarca) {
+
+        if (min === 0) locucionCompleta();
+        if (min === 15 || min === 30 || min === 45) locucionHora();
+
+        ultimaMarca = marca;
+    }
+
+}, 60000);
+
+</script>
+
+</body>
+</html>
