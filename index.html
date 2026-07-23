@@ -997,35 +997,6 @@ class="whatsapp-float">
  ]
 }
 
-let modoMundial = true;
-
-const barra = document.getElementById("modoMundialBarra");
-
-barra.addEventListener("click", ()=>{
-
-modoMundial = !modoMundial;
-
-if(modoMundial){
-barra.classList.add("activo");
-barra.innerHTML = "🌎 MODO MUNDIAL: ON ⚽🔥";
-
-// CAMBIOS EN TU WEB
-document.body.style.filter = "contrast(1.1) saturate(1.2)";
-
-// mensaje especial
-document.getElementById("textoMarquesina").innerHTML =
-"⚽ MODO MUNDIAL ACTIVADO — PROMO ESPECIAL HOY 🔥";
-
-}else{
-barra.classList.remove("activo");
-barra.innerHTML = "🌎 MODO MUNDIAL: OFF";
-
-document.body.style.filter = "none";
-
-actualizarMarquesina(); // vuelve a lo normal
-}
-
-});
 
 const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
 
