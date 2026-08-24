@@ -360,9 +360,9 @@ setTimeout(()=>{clicksAdmin=0;},2000);
 });
 
 // ================= HORARIO =================
-const aperturaHora = 13;
+const aperturaHora = 10;
 const aperturaMin = 00;
-const cierreHora = 21;
+const cierreHora = 22;
 const cierreMin = 30;
 
 const totalPollos = 5;
@@ -447,7 +447,7 @@ Pollos a la leña en Trinidad Beni Bolivia<br>
 </h1>
 
 <p>
-calle 7-A - Zona Arroyo Chico<br>Frente Polideportivo 
+Av. Nelson Rocha final - Zona Pedro Ignacio Muiba<br>
 en Trinidad-Beni-Bolivia🇧🇴 
 </p>
 
@@ -579,7 +579,7 @@ const fechaHoy = ahora.toISOString().split("T")[0];
 
 // 🔴 Día cerrado
 if(diasCerrados.includes(dia) || fechasCerrado.includes(fechaHoy)){
-m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA ARROYO CHICO<<<< 🔥Pronto de  Almuerzo su pollito a la leña";
+m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<< 🔥Pronto de  Almuerzo su pollito a la leña";
 return;
 }
 
@@ -597,12 +597,12 @@ return;
 
 // 🟢 Abierto
 if(localAbierto()){
-m.innerHTML = "🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO 6:30PM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥";
+m.innerHTML = "🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO 10:00AM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥";
 return;
 }
 
 // 🔥 Próxima apertura
-m.innerHTML = "👨‍👧‍👦 ESTAMOS ATENDIENDO DESDE LAS 6:30 PM — ZONA BARRIO ARROYO CHICO >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN a las 10am para realizar las reservas programadas";
+m.innerHTML = "👨‍👧‍👦 ESTAMOS ATENDIENDO DESDE LAS 11:00 PM — ZONA BARRIO PEDRO IGNACIO MUIBA >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN a las 10am para realizar las reservas programadas";
 
 }
 contadorLenia();
@@ -773,10 +773,10 @@ return;
 const ahora=new Date();
 
 let prender=new Date();
-prender.setHours(15,00,0,0);
+prender.setHours(9,00,0,0);
 
 let abrir=new Date();
-abrir.setHours(13,00,0,0);
+abrir.setHours(11,00,0,0);
 
 let cerrar=new Date();
 cerrar.setHours(22,30,0,0);
@@ -961,7 +961,7 @@ alert("Pollos reiniciados");
 <h3>📍 Cómo llegar</h3>
 
 <iframe
-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12956.72532821989!2d-64.89623726319914!3d-14.831666528008455!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93dd6f0000a9cc63%3A0xf076558028d4dd!2s%F0%9F%94%A5%20Go%20Pollos%20Rhosse%20%E2%80%93%20Pollos%20a%20la%20Le%C3%B1a%20en%20Trinidad!5e1!3m2!1ses!2sbo!4v1774649153240!5m2!1ses!2sbo"
+src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d882.2596527896158!2d-64.93184106826968!3d-14.832442486963652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1ses!2sbo!4v1787542633304!5m2!1ses!2sbo"
 width="100%"
 height="250"
 style="border:0;border-radius:15px;">
@@ -983,7 +983,7 @@ class="whatsapp-float">
    "name": "¿Dónde comprar pollos a la leña en Trinidad Beni?",
    "acceptedAnswer": {
      "@type": "Answer",
-     "text": "Go Pollos Rhosse ofrece pollos a la leña en la zona Arroyo Chico en Trinidad, Bolivia, con opción de delivery."
+     "text": "Go Pollos Rhosse ofrece pollos a la leña en la zona Pedro Ignacio Muiba en Trinidad, Beni, Bolivia, con opción de delivery."
    }
   },
   {
@@ -1159,10 +1159,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
   const inicioAlmuerzo = 9 * 60;
   const ventaAlmuerzo = 11 * 60;
-  const finAlmuerzo = 12 * 60 + 30;
+  const finAlmuerzo = 22 * 30 + 30;
 
   const inicioCena = 13 * 60;
-  const finCena = 22 * 60 + 30;
+  const finCena = 22 * 30 + 30;
 
   const tituloAlmuerzo = document.getElementById("categoria-almuerzo");
   const almuerzo = document.getElementById("almuerzo");
@@ -1181,7 +1181,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if(tiempo < inicioAlmuerzo){
     ocultarTodo();
-    if(estado) estado.innerHTML = "🔴 Cerrado — Abrimos desde las 9:00 AM";
+    if(estado) estado.innerHTML = "🔴 Cerrado — Abrimos desde las 11:00 AM";
     return;
   }
 
