@@ -23,8 +23,8 @@
 
   "geo": {
     "@type": "GeoCoordinates",
-    "latitude": -14.831662,
-    "longitude": -64.886565
+    "latitude": -14.832442,
+    "longitude": -64.931841
   },
 
   "servesCuisine": "Pollo a la leña",
@@ -530,9 +530,9 @@ const productos=[
 {categoria:"almuerzo", nombre:"Pollo Eco Pierna", precio:16, img:"pierna.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Contra", precio:16, img:"contra.jpg"},
 
-{categoria:"almuerzo", nombre:"Hamburguesa", precio:25, img:"menu.jpg"}, 
-{categoria:"almuerzo", nombre:"Salchipapa", precio:15, img:"menu.jpg"},
-{categoria:"almuerzo", nombre:"Salchipollo", precio:15, img:"menu.jpg"}, 
+{categoria:"almuerzo", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}, 
+{categoria:"almuerzo", nombre:"Salchipapa", precio:15, img:"salchipapas.jfif"},
+{categoria:"almuerzo", nombre:"Salchipollo", precio:15, img:"salchipollo.jfif"}, 
 
 {categoria:"cena", nombre:"Pollo Entero", precio:120, img:"entero.jpg"},
 {categoria:"cena", nombre:"Medio Pollo", precio:60, img:"medio.jpg"},
@@ -543,7 +543,7 @@ const productos=[
 {categoria:"cena", nombre:"Pollo Eco Contra", precio:16, img:"contra.jpg"},
 {categoria:"cena", nombre:"Pollo Eco Pierna", precio:16, img:"pierna.jpg"},
 
-{categoria:"cena", nombre:"Hamburguesa", precio:25, img:"hamburguesa.jpg"}, 
+{categoria:"cena", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}, 
 {categoria:"cena", nombre:"Salchipapa", precio:15, img:"salchipapas.jfif"},
 {categoria:"cena", nombre:"Salchipollo", precio:15, img:"salchipollo.jfif"}, 
   
@@ -579,7 +579,7 @@ const fechaHoy = ahora.toISOString().split("T")[0];
 
 // 🔴 Día cerrado
 if(diasCerrados.includes(dia) || fechasCerrado.includes(fechaHoy)){
-m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<< 🔥Pronto de  Almuerzo su pollito a la leña";
+m.innerHTML = "🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<< 🔥desde las 11am de  Almuerzo su pollito a la leña";
 return;
 }
 
