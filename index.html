@@ -368,66 +368,6 @@ const cierreMin = 30;
 const totalPollos = 5;
 let pollosDisponibles = 3; //totalPollos actualizar
 
-// ================= MODO COCINA =================
-if(modo === "cocina"){
-
-document.getElementById("app").innerHTML = `
-<header>
-<img src="logo.png" class="logo">
-<h1>🍗 PANTALLA COCINA</h1>
-</header>
-<div id="listaPedidos"></div>
-
-<audio id="alerta" preload="auto">
-<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
-</audio>
-`;
-
-let sonidoActivado=true;
-let ultimoTotal=0;
-
-function cargarPedidos(){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- let html="";
- pedidos.forEach((p,i)=>{
-   if(p.estado!=="Entregado"){
-     html+=`
-     <div class="cocina-card">
-       <h3>Mesa ${p.mesa}</h3>
-       <p>${p.detalle}</p>
-       <strong>Total: Bs ${p.total}</strong><br>
-       Estado: ${p.estado}<br>
-       <button class="estado-btn" onclick="cambiarEstado(${i})">
-       Cambiar Estado
-       </button>
-     </div>`;
-   }
- });
- document.getElementById("listaPedidos").innerHTML=html;
-}
-
-function cambiarEstado(i){
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- let p=pedidos[i];
-
- if(p.estado==="Nuevo") p.estado="En preparacion";
- else if(p.estado==="En preparacion") p.estado="Listo";
- else p.estado="Entregado";
-
- pedidos[i]=p;
- localStorage.setItem("pedidos",JSON.stringify(pedidos));
- cargarPedidos();
-}
-
-setInterval(()=>{
- let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
- if(pedidos.length>ultimoTotal){
-   if(sonidoActivado) document.getElementById("alerta").play();
-   ultimoTotal=pedidos.length;
- }
- cargarPedidos();
-},1000);
-
 }
 
 // ================= MODO CLIENTE =================
@@ -997,56 +937,6 @@ class="whatsapp-float">
  ]
 }
 
-
-const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
-
-async function cargarConfig(){
-
-try{
-
-const res = await fetch(API_CONFIG);
-const data = await res.json();
-
-// 🔴 ESTADO
-if(data.estado === "cerrado"){
-  const estado = document.getElementById("estadoLocal");
-  if(estado){
-    estado.innerHTML = "🔴 Cerrado desde sistema";
-  }
-  document.querySelectorAll(".boton").forEach(b => b.disabled = true);
-}
-
-// 🔧 MANTENIMIENTO
-if(data.mantenimiento === "si"){
-  document.getElementById("app").innerHTML = `
-    <div style="padding:40px;text-align:center;">
-      <h1>🔧 En mantenimiento</h1>
-      <p>${data.mensaje}</p>
-    </div>
-  `;
-  return;
-}
-
-// 🍗 POLLOS
-pollosDisponibles = parseInt(data.pollos) || 0;
-actualizarPollos();
-
-// 📢 MENSAJE
-if(data.mensaje){
- document.getElementById("textoMarquesina").innerHTML = data.mensaje;
-}
-
-}catch(e){
-console.error("Error config", e);
-}
-
-}
-
-// actualizar cada 5 segundos
-setTimeout(()=>{
-  cargarConfig();
-  setInterval(cargarConfig, 5000);
-}, 2000);
 
 <script>
 
