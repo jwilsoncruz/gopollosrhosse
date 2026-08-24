@@ -1,4 +1,5 @@
 <!DOCTYPE html> 
+
 <html lang="es">  
 <head>
 <meta charset="UTF-8">
@@ -13,45 +14,45 @@
   "url": "https://jwilsoncruz.github.io/gopollosrhosse/",
   "telephone": "+59172685867",
 
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Av. Nelson Rocha final 6 de agosto, Zona Pedro Ignacio Muiba",
-    "addressLocality": "Trinidad",
-    "addressRegion": "Beni",
-    "addressCountry": "BO"
-  },
+"address": {
+"@type": "PostalAddress",
+"streetAddress": "Av. Nelson Rocha final 6 de agosto, Zona Pedro Ignacio Muiba",
+"addressLocality": "Trinidad",
+"addressRegion": "Beni",
+"addressCountry": "BO"
+},
 
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": -14.832442,
-    "longitude": -64.931841
-  },
+"geo": {
+"@type": "GeoCoordinates",
+"latitude": -14.832442,
+"longitude": -64.931841
+},
 
-  "servesCuisine": "Pollo a la leña",
-  "priceRange": "$$",
+"servesCuisine": "Pollo a la leña",
+"priceRange": "$$",
 
-  "areaServed": {
-    "@type": "City",
-    "name": "Trinidad"
-  },
+"areaServed": {
+"@type": "City",
+"name": "Trinidad"
+},
 
-  "openingHoursSpecification": [
-    {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": [
-        "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
-      ],
-      "opens": "11:00",
-      "closes": "22:30"
-    }
-  ],
+"openingHoursSpecification": [
+{
+"@type": "OpeningHoursSpecification",
+"dayOfWeek": [
+"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+],
+"opens": "11:00",
+"closes": "22:30"
+}
+],
 
-  "sameAs": [
-    "https://www.facebook.com/GoPollosRhosseTdd",
-    "https://www.instagram.com/gopollosrhossetdd",
-    "https://www.tiktok.com/@go.rhosse.pollos.tdd",
-    "https://www.youtube.com/@PollosalaLe%C3%B1aGoPollosRhosseTdd"
-  ]
+"sameAs": [
+"https://www.facebook.com/GoPollosRhosseTdd",
+"https://www.instagram.com/gopollosrhossetdd",
+"https://www.tiktok.com/@go.rhosse.pollos.tdd",
+"https://www.youtube.com/@PollosalaLe%C3%B1aGoPollosRhosseTdd"
+]
 }
 </script>
 <meta property="og:title" content="Go Pollos Rhosse - Pollos a la Leña en Trinidad">
@@ -64,8 +65,9 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Go Pollos Rhosse">
 <meta property="og:locale" content="es_BO">
+
 <link rel="icon" href="favicon.ico">
- 
+
 <style>
 #modoMundialBarra{
 position:fixed;
@@ -277,6 +279,7 @@ p{
 font-size:14px;
 }
 </style>
+
 </head>
 
 <body>
@@ -312,7 +315,7 @@ text-align:center;
 <button onclick="reiniciarPollos()" class="estado-btn">♻ Reiniciar Pollos</button><br><br>
 
 <button onclick="cerrarPanel()" class="estado-btn">❌ Cerrar</button>
- 
+
 </div>
 <script>
 
@@ -320,13 +323,13 @@ text-align:center;
 const diasCerrados = [0];
 
 const fechasCerrado = [
- "2026-03-14"
+"2026-03-14"
 ];
 
 const params = new URLSearchParams(window.location.search);
 const modo = params.get("modo");
 const mesaQR = params.get("mesa");
- // ACTIVAR PANEL POR URL
+// ACTIVAR PANEL POR URL
 const admin = params.get("admin");
 
 if(admin === "1"){
@@ -368,12 +371,74 @@ const cierreMin = 30;
 const totalPollos = 5;
 let pollosDisponibles = 3; //totalPollos actualizar
 
+// ================= MODO COCINA =================
+if(modo === "cocina"){
+
+document.getElementById("app").innerHTML = `
+
+<header>
+<img src="logo.png" class="logo">
+<h1>🍗 PANTALLA COCINA</h1>
+</header>
+<div id="listaPedidos"></div>
+
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+</audio>
+`;
+
+let sonidoActivado=true;
+let ultimoTotal=0;
+
+function cargarPedidos(){
+let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+let html="";
+pedidos.forEach((p,i)=>{
+if(p.estado!=="Entregado"){
+html+=
+     <div class="cocina-card">
+       <h3>Mesa ${p.mesa}</h3>
+       <p>${p.detalle}</p>
+       <strong>Total: Bs ${p.total}</strong><br>
+       Estado: ${p.estado}<br>
+       <button class="estado-btn" onclick="cambiarEstado(${i})">
+       Cambiar Estado
+       </button>
+     </div>;
+}
+});
+document.getElementById("listaPedidos").innerHTML=html;
+}
+
+function cambiarEstado(i){
+let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+let p=pedidos[i];
+
+if(p.estado==="Nuevo") p.estado="En preparacion";
+else if(p.estado==="En preparacion") p.estado="Listo";
+else p.estado="Entregado";
+
+pedidos[i]=p;
+localStorage.setItem("pedidos",JSON.stringify(pedidos));
+cargarPedidos();
+}
+
+setInterval(()=>{
+let pedidos=JSON.parse(localStorage.getItem("pedidos"))||[];
+if(pedidos.length>ultimoTotal){
+if(sonidoActivado) document.getElementById("alerta").play();
+ultimoTotal=pedidos.length;
+}
+cargarPedidos();
+},1000);
+
 }
 
 // ================= MODO CLIENTE =================
 else{
 
 document.getElementById("app").innerHTML = `
+
 <header>
 <div style="background:#FAED27; color:#FF0000; padding:8px; font-weight:bold; border-radius:20px; display:inline-block; margin-bottom:10px;">
     <a href="https://maps.app.goo.gl/EufL3W7e3Z2HpvAH7" target="_blank" style="color: inherit; text-decoration: none;"> NUEVA UBICACION </a>
@@ -470,9 +535,9 @@ const productos=[
 {categoria:"almuerzo", nombre:"Pollo Eco Pierna", precio:16, img:"pierna.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Contra", precio:16, img:"contra.jpg"},
 
-{categoria:"almuerzo", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}, 
+{categoria:"almuerzo", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
 {categoria:"almuerzo", nombre:"Salchipapa", precio:15, img:"salchipapas.jfif"},
-{categoria:"almuerzo", nombre:"Salchipollo", precio:15, img:"salchipollo.jfif"}, 
+{categoria:"almuerzo", nombre:"Salchipollo", precio:15, img:"salchipollo.jfif"},
 
 {categoria:"cena", nombre:"Pollo Entero", precio:120, img:"entero.jpg"},
 {categoria:"cena", nombre:"Medio Pollo", precio:60, img:"medio.jpg"},
@@ -483,16 +548,16 @@ const productos=[
 {categoria:"cena", nombre:"Pollo Eco Contra", precio:16, img:"contra.jpg"},
 {categoria:"cena", nombre:"Pollo Eco Pierna", precio:16, img:"pierna.jpg"},
 
-{categoria:"cena", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"}, 
+{categoria:"cena", nombre:"Hamburguesa", precio:15, img:"hamburguesa.jpg"},
 {categoria:"cena", nombre:"Salchipapa", precio:15, img:"salchipapas.jfif"},
-{categoria:"cena", nombre:"Salchipollo", precio:15, img:"salchipollo.jfif"}, 
-  
+{categoria:"cena", nombre:"Salchipollo", precio:15, img:"salchipollo.jfif"},
+
 {categoria:"bebidas", nombre:"Gaseosa 2L", precio:13, img:"gaseosa2l.jpg"},
 {categoria:"bebidas", nombre:"190ml Mini Coca-Cola", precio:3, img:"190ml Mini CocaCola.webp"},
 {categoria:"bebidas", nombre:"190ml Mini fanta", precio:3, img:"190ml Mini Fanta.jpg"},
 {categoria:"bebidas", nombre:"600ml Coca-Cola Popular", precio:7, img:"600ml popular cocacola.webp"},
-{categoria:"bebidas", nombre:"350ml Fanta Popular", precio:7, img:"gaseosa.jpg"},  
-{categoria:"bebidas", nombre:"350ml Sprite Popular", precio:7, img:"gaseosa.jpg"}, 
+{categoria:"bebidas", nombre:"350ml Fanta Popular", precio:7, img:"gaseosa.jpg"},
+{categoria:"bebidas", nombre:"350ml Sprite Popular", precio:7, img:"gaseosa.jpg"},
 {categoria:"bebidas", nombre:"Limonada Mediana ", precio:5, img:"limonada_mediana.jpg"},
 {categoria:"bebidas", nombre:"Refresco Vaso", precio:3, img:"limonada_vaso.jpg"},
 
@@ -507,7 +572,7 @@ const productos=[
 let carrito=[];
 cargarProductos();
 actualizarEstado();
- 
+
 function actualizarMarquesina(){
 
 const m = document.getElementById("textoMarquesina");
@@ -551,13 +616,14 @@ actualizarMarquesina();
 setInterval(contadorLenia,1000);
 setInterval(actualizarEstado,10000);
 setInterval(actualizarMarquesina,5000);
- 
+
 function crearProducto(p){
 const div=document.createElement("div");
 div.className="card";
 
 div.innerHTML=`
 <img src="${p.img}">
+
 <h3>${p.nombre}</h3>
 <div class="precio">Bs ${p.precio}</div>
 <button class="boton" onclick="agregar('${p.nombre}',${p.precio})">Agregar</button>
@@ -587,7 +653,7 @@ actualizarCarrito();
 
 }
 
- function actualizarPollos(){
+function actualizarPollos(){
 
 const barra = document.getElementById("barraPollos");
 const texto = document.getElementById("textoEscasez");
@@ -629,7 +695,7 @@ texto.innerHTML = "🔥 Quedan " + pollosDisponibles + " pollos a la leña";
 }
 actualizarMarquesina();
 }
- 
+
 function eliminarProducto(i){
 carrito.splice(i,1);
 actualizarCarrito();
@@ -643,10 +709,8 @@ let html="";
 carrito.forEach((p,i)=>{
 total+=p.precio;
 
-html+=`
-${p.nombre} Bs ${p.precio}
-<button onclick="eliminarProducto(${i})">❌</button><br>
-`;
+html+=${p.nombre} Bs ${p.precio}
+<button onclick="eliminarProducto(${i})">❌</button><br>;
 });
 
 document.getElementById("resumen").innerHTML=html||"🛒 Tu carrito está vacío";
@@ -736,8 +800,8 @@ proximo.setDate(ahora.getDate()+1);
 
 // buscar el próximo día abierto
 while (diasCerrados.includes(proximo.getDay()) ||
-       fechasCerrado.includes(proximo.toISOString().split("T")[0])) {
-    proximo.setDate(proximo.getDate()+1);
+fechasCerrado.includes(proximo.toISOString().split("T")[0])) {
+proximo.setDate(proximo.getDate()+1);
 }
 
 let opciones = { weekday:'long' };
@@ -798,7 +862,7 @@ alert("Agrega al menos un producto");
 return;
 }
 
-let tipoPedido=document.querySelector('input[name="tipoPedido"]:checked').value;
+let tipoPedido=document.querySelector('input[name="tipoPedido"]').value;
 
 let detalle="";
 let total=0;
@@ -852,7 +916,6 @@ function cerrarPanel(){
 document.getElementById("panelAdmin").style.display="none";
 }
 
-
 function agotado(){
 pollosDisponibles = 0;
 alert("Pollos agotados por hoy");
@@ -894,8 +957,8 @@ alert("Pollos reiniciados");
 
 </div>
 
-
 <!-- MAPA -->
+
 <div style="padding:20px;text-align:center;color:white;">
 
 <h3>📍 Cómo llegar</h3>
@@ -913,6 +976,7 @@ target="_blank"
 class="whatsapp-float">
 💬
 </a> --->
+
  <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -937,6 +1001,56 @@ class="whatsapp-float">
  ]
 }
 
+
+const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
+
+async function cargarConfig(){
+
+try{
+
+const res = await fetch(API_CONFIG);
+const data = await res.json();
+
+// 🔴 ESTADO
+if(data.estado === "cerrado"){
+  const estado = document.getElementById("estadoLocal");
+  if(estado){
+    estado.innerHTML = "🔴 Cerrado desde sistema";
+  }
+  document.querySelectorAll(".boton").forEach(b => b.disabled = true);
+}
+
+// 🔧 MANTENIMIENTO
+if(data.mantenimiento === "si"){
+  document.getElementById("app").innerHTML = `
+    <div style="padding:40px;text-align:center;">
+      <h1>🔧 En mantenimiento</h1>
+      <p>${data.mensaje}</p>
+    </div>
+  `;
+  return;
+}
+
+// 🍗 POLLOS
+pollosDisponibles = parseInt(data.pollos) || 0;
+actualizarPollos();
+
+// 📢 MENSAJE
+if(data.mensaje){
+ document.getElementById("textoMarquesina").innerHTML = data.mensaje;
+}
+
+}catch(e){
+console.error("Error config", e);
+}
+
+}
+
+// actualizar cada 5 segundos
+setTimeout(()=>{
+  cargarConfig();
+  setInterval(cargarConfig, 5000);
+}, 2000);
 
 <script>
 
@@ -1024,7 +1138,7 @@ setInterval(cargarConfig, 5000);
 },2000);
 
 </script>
-   
+
 </script>
 <div style="display:none;">
 <a href="delivery-trinidad.html">delivery de pollos a la leña en Trinidad, Beni</a>
@@ -1112,5 +1226,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 </script>
+
 </body>
 </html>
