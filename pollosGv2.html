@@ -1,0 +1,2979 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Go Pollos Rhosse | Pollos a la Leña en Trinidad Beni</title>
+
+<meta name="description" content="Go Pollos Rhosse - Pollos a la leña en Trinidad, Beni, Bolivia. Menú, pedidos, delivery y ubicación.">
+
+<link rel="icon" href="favicon.ico">
+
+<!-- =========================================================
+     SEO / OPEN GRAPH
+========================================================= -->
+
+<meta property="og:title" content="Go Pollos Rhosse - Pollos a la Leña en Trinidad">
+<meta property="og:description" content="Pollos a la leña en Trinidad Beni. Menú, pedidos y delivery.">
+<meta property="og:image" content="https://jwilsoncruz.github.io/gopollosrhosse/logo.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:url" content="https://jwilsoncruz.github.io/gopollosrhosse/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Go Pollos Rhosse">
+<meta property="og:locale" content="es_BO">
+
+<!-- =========================================================
+     SCHEMA RESTAURANT
+========================================================= -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  "@id": "https://jwilsoncruz.github.io/gopollosrhosse/#restaurant",
+  "name": "Go Pollos Rhosse",
+  "image": "https://jwilsoncruz.github.io/gopollosrhosse/logo.png",
+  "url": "https://jwilsoncruz.github.io/gopollosrhosse/",
+  "telephone": "+59172685867",
+
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Av. Nelson Rocha final 6 de agosto, Zona Pedro Ignacio Muiba",
+    "addressLocality": "Trinidad",
+    "addressRegion": "Beni",
+    "addressCountry": "BO"
+  },
+
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": -14.832442,
+    "longitude": -64.931841
+  },
+
+  "servesCuisine": "Pollo a la leña",
+  "priceRange": "$$",
+
+  "areaServed": {
+    "@type": "City",
+    "name": "Trinidad"
+  },
+
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "10:00",
+      "closes": "22:30"
+    }
+  ],
+
+  "sameAs": [
+    "https://www.facebook.com/GoPollosRhosseTdd",
+    "https://www.instagram.com/gopollosrhossetdd",
+    "https://www.tiktok.com/@go.rhosse.pollos.tdd",
+    "https://www.youtube.com/@PollosalaLe%C3%B1aGoPollosRhosseTdd"
+  ]
+}
+</script>
+
+<!-- =========================================================
+     SCHEMA FAQ
+========================================================= -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Dónde comprar pollos a la leña en Trinidad Beni?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Go Pollos Rhosse ofrece pollos a la leña en la zona Pedro Ignacio Muiba en Trinidad, Beni, Bolivia, con opción de delivery."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Hacen delivery de pollo en Trinidad?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí, Go Pollos Rhosse ofrece delivery económico en Trinidad, Beni, Bolivia."
+      }
+    }
+  ]
+}
+</script>
+
+<!-- =========================================================
+     ESTILOS
+========================================================= -->
+
+<style>
+
+:root{
+  --fondo:#2b0b00;
+  --fondo2:#5d1f00;
+  --rojo:#d84315;
+  --naranja:#ff6f00;
+  --amarillo:#ffca28;
+  --dorado:#ffcc80;
+  --verde:#00c853;
+  --blanco:#ffffff;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(180deg,var(--fondo),var(--fondo2));
+  overflow-x:hidden;
+  padding-bottom:250px;
+}
+
+/* =========================================================
+   MARQUESINA
+========================================================= */
+
+.marquesina{
+  width:100%;
+  background:linear-gradient(
+    90deg,
+    var(--naranja),
+    var(--amarillo)
+  );
+  color:#610000;
+  overflow:hidden;
+  white-space:nowrap;
+  font-weight:bold;
+  font-size:16px;
+  padding:10px 0;
+  text-align:center;
+  border-bottom-left-radius:15px;
+  border-bottom-right-radius:15px;
+}
+
+.marquesina span{
+  display:inline-block;
+  padding-left:100%;
+  animation:marquesina 18s linear infinite;
+}
+
+@keyframes marquesina{
+  0%{
+    transform:translateX(0);
+  }
+  100%{
+    transform:translateX(-100%);
+  }
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header{
+  text-align:center;
+  padding:20px 10px;
+  color:white;
+}
+
+.logo{
+  max-width:200px;
+  width:100%;
+  display:block;
+  margin:0 auto 15px;
+  transition:.5s;
+  cursor:pointer;
+}
+
+h1{
+  font-size:22px;
+  margin:10px 0;
+  line-height:1.3;
+}
+
+p{
+  font-size:14px;
+}
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+.container{
+  padding:20px;
+  background:white;
+  border-radius:20px 20px 0 0;
+  margin-top:30px;
+  min-height:400px;
+}
+
+.categoria{
+  margin-top:35px;
+  font-size:22px;
+  color:var(--dorado);
+}
+
+.container .categoria{
+  color:#d84315;
+}
+
+/* =========================================================
+   PRODUCTOS
+========================================================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:15px;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
+  text-align:center;
+}
+
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.precio{
+  font-weight:bold;
+  margin:8px 0;
+  font-size:18px;
+}
+
+.boton{
+  background:var(--naranja);
+  color:white;
+  padding:9px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.boton:hover{
+  opacity:.9;
+}
+
+.boton:disabled{
+  background:gray;
+  cursor:not-allowed;
+}
+
+/* =========================================================
+   ESTADO LOCAL
+========================================================= */
+
+#estadoLocal{
+  font-weight:bold;
+  margin:10px 0;
+}
+
+/* =========================================================
+   CONTADOR POLLOS
+========================================================= */
+
+#contadorPollos{
+  background:var(--rojo);
+  color:white;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+  text-align:center;
+  font-weight:bold;
+}
+
+#barraPollos{
+  height:100%;
+  width:100%;
+  background:green;
+  transition:width .4s;
+}
+
+/* =========================================================
+   CARRITO
+========================================================= */
+
+.carrito{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+
+  background:rgba(227,242,253,.97);
+
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+
+  border:1px solid rgba(255,255,255,.35);
+
+  box-shadow:0 -4px 15px rgba(0,0,0,.25);
+
+  padding:15px;
+
+  z-index:2000;
+}
+
+.total{
+  font-weight:bold;
+  font-size:18px;
+}
+
+#resumen{
+  max-height:100px;
+  overflow-y:auto;
+}
+
+/* =========================================================
+   WHATSAPP
+========================================================= */
+
+.whatsapp-float{
+  position:fixed;
+  bottom:270px;
+  right:20px;
+
+  background:#25D366;
+  color:white;
+
+  border-radius:50%;
+  width:60px;
+  height:60px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:30px;
+  text-decoration:none;
+
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+
+  animation:latido 1.5s infinite;
+
+  z-index:999;
+}
+
+@keyframes latido{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
+}
+
+/* =========================================================
+   COCINA
+========================================================= */
+
+.cocina-card{
+  background:white;
+  margin:15px;
+  padding:15px;
+  border-left:6px solid #d50000;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.estado-btn{
+  margin-top:8px;
+  background:#d50000;
+  color:white;
+  border:none;
+  padding:8px 10px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* =========================================================
+   PANEL ADMIN
+========================================================= */
+
+#panelAdmin{
+  display:none;
+
+  position:fixed;
+  top:50%;
+  left:50%;
+
+  transform:translate(-50%,-50%);
+
+  background:white;
+  padding:25px;
+
+  border-radius:15px;
+
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+
+  z-index:9999;
+
+  text-align:center;
+
+  width:min(90%,350px);
+}
+
+#panelAdmin button{
+  width:100%;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer{
+  text-align:center;
+  padding:25px;
+  color:white;
+}
+
+.footer a{
+  margin:8px;
+  color:white;
+  text-decoration:none;
+  display:inline-block;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:600px){
+
+  .grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .card{
+    padding:10px;
+  }
+
+  .card img{
+    height:110px;
+  }
+
+  .carrito{
+    padding:10px;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================================================
+     MARQUESINA
+========================================================= -->
+
+<div class="marquesina">
+  <span id="textoMarquesina">
+    🍗 Go Pollos Rhosse — Pollos a la leña en Trinidad 🔥
+  </span>
+</div>
+
+<!-- =========================================================
+     APLICACIÓN
+========================================================= -->
+
+<div id="app"></div>
+
+<!-- =========================================================
+     PANEL ADMIN
+========================================================= -->
+
+<div id="panelAdmin">
+
+  <h2>⚙ Panel Admin</h2>
+
+  <button
+    onclick="agotado()"
+    class="estado-btn">
+    🍗 Pollos Agotados
+  </button>
+
+  <br><br>
+
+  <button
+    onclick="reiniciarPollos()"
+    class="estado-btn">
+    ♻ Reiniciar Pollos
+  </button>
+
+  <br><br>
+
+  <button
+    onclick="cerrarPanel()"
+    class="estado-btn">
+    ❌ Cerrar
+  </button>
+
+</div>
+
+<!-- =========================================================
+     JAVASCRIPT PRINCIPAL
+========================================================= -->
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN GENERAL
+========================================================= */
+
+const diasCerrados = [0];
+
+const fechasCerrado = [
+  "2026-03-14"
+];
+
+/*
+   HORARIO GENERAL DEL LOCAL
+
+   Apertura: 10:00
+   Cierre:   22:30
+
+   Domingo cerrado.
+*/
+
+const aperturaHora = 10;
+const aperturaMin = 0;
+
+const cierreHora = 22;
+const cierreMin = 30;
+
+/*
+   PRODUCCIÓN
+*/
+
+const totalPollos = 5;
+
+let pollosDisponibles = 3;
+
+/*
+   URL OLA CLICK
+
+   Se utiliza como canal de pedido online.
+*/
+
+const URL_OLACLICK =
+"https://gopollosrhosse.ola.click/products";
+
+/*
+   GOOGLE SHEETS
+*/
+
+const API_PEDIDOS =
+"https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+
+const API_CONFIG =
+"https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
+
+
+/* =========================================================
+   URL PARAMETROS
+========================================================= */
+
+const params =
+new URLSearchParams(window.location.search);
+
+const modo =
+params.get("modo");
+
+const mesaQR =
+params.get("mesa");
+
+const admin =
+params.get("admin");
+
+
+/* =========================================================
+   PANEL ADMIN
+========================================================= */
+
+if(admin === "1"){
+
+  setTimeout(function(){
+
+    const panel =
+    document.getElementById("panelAdmin");
+
+    if(panel){
+      panel.style.display = "block";
+    }
+
+  },500);
+
+}
+
+
+/* =========================================================
+   ADMIN POR 5 CLICS EN LOGO
+========================================================= */
+
+let clicksAdmin = 0;
+
+document.addEventListener(
+"DOMContentLoaded",
+function(){
+
+  const logo =
+  document.getElementById("logoLocal");
+
+  if(!logo) return;
+
+  logo.addEventListener(
+  "click",
+  function(){
+
+    clicksAdmin++;
+
+    if(clicksAdmin >= 5){
+
+      document.getElementById(
+        "panelAdmin"
+      ).style.display = "block";
+
+      clicksAdmin = 0;
+
+    }
+
+    setTimeout(
+      function(){
+        clicksAdmin = 0;
+      },
+      2000
+    );
+
+  });
+
+});
+
+
+/* =========================================================
+   FUNCIONES DE FECHA
+========================================================= */
+
+function obtenerFechaLocal(){
+
+  const ahora = new Date();
+
+  const año =
+  ahora.getFullYear();
+
+  const mes =
+  String(ahora.getMonth()+1)
+  .padStart(2,"0");
+
+  const dia =
+  String(ahora.getDate())
+  .padStart(2,"0");
+
+  return año+"-"+mes+"-"+dia;
+
+}
+
+
+/* =========================================================
+   ESTADO LOCAL
+========================================================= */
+
+function localAbierto(){
+
+  const ahora =
+  new Date();
+
+  const dia =
+  ahora.getDay();
+
+  const fechaHoy =
+  obtenerFechaLocal();
+
+  if(
+    diasCerrados.includes(dia)
+  ){
+    return false;
+  }
+
+  if(
+    fechasCerrado.includes(fechaHoy)
+  ){
+    return false;
+  }
+
+  const tiempoActual =
+    ahora.getHours()*60 +
+    ahora.getMinutes();
+
+  const tiempoApertura =
+    aperturaHora*60 +
+    aperturaMin;
+
+  const tiempoCierre =
+    cierreHora*60 +
+    cierreMin;
+
+  return (
+    tiempoActual >= tiempoApertura &&
+    tiempoActual <= tiempoCierre
+  );
+
+}
+
+
+/* =========================================================
+   PRODUCTOS
+========================================================= */
+
+const productos = [
+
+  {
+    categoria:"almuerzo",
+    nombre:"Pollo Entero",
+    precio:120,
+    img:"entero.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Medio Pollo",
+    precio:60,
+    img:"medio.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Cuarto Pollo AlaPecho",
+    precio:27,
+    img:"cuartoala.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Cuarto Pollo PiernaContra",
+    precio:27,
+    img:"cuartopierna.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Pollo Eco Ala",
+    precio:16,
+    img:"ala.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Pollo Eco Pecho",
+    precio:16,
+    img:"pecho.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Pollo Eco Pierna",
+    precio:16,
+    img:"pierna.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Pollo Eco Contra",
+    precio:16,
+    img:"contra.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Hamburguesa",
+    precio:25,
+    img:"menu.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Salchipapa",
+    precio:15,
+    img:"menu.jpg"
+  },
+
+  {
+    categoria:"almuerzo",
+    nombre:"Salchipollo",
+    precio:15,
+    img:"menu.jpg"
+  },
+
+
+  /* CENA */
+
+  {
+    categoria:"cena",
+    nombre:"Pollo Entero",
+    precio:120,
+    img:"entero.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Medio Pollo",
+    precio:60,
+    img:"medio.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Cuarto Pollo AlaPecho",
+    precio:27,
+    img:"cuartoala.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Cuarto Pollo PiernaContra",
+    precio:27,
+    img:"cuartopierna.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Pollo Eco Ala",
+    precio:16,
+    img:"ala.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Pollo Eco Pecho",
+    precio:16,
+    img:"pecho.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Pollo Eco Contra",
+    precio:16,
+    img:"contra.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Pollo Eco Pierna",
+    precio:16,
+    img:"pierna.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Hamburguesa",
+    precio:25,
+    img:"hamburguesa.jpg"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Salchipapa",
+    precio:15,
+    img:"salchipapas.jfif"
+  },
+
+  {
+    categoria:"cena",
+    nombre:"Salchipollo",
+    precio:15,
+    img:"salchipollo.jfif"
+  },
+
+
+  /* BEBIDAS */
+
+  {
+    categoria:"bebidas",
+    nombre:"Gaseosa 2L",
+    precio:13,
+    img:"gaseosa2l.jpg"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"190ml Mini Coca-Cola",
+    precio:3,
+    img:"190ml Mini CocaCola.webp"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"190ml Mini Fanta",
+    precio:3,
+    img:"190ml Mini Fanta.jpg"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"600ml Coca-Cola Popular",
+    precio:7,
+    img:"600ml popular cocacola.webp"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"350ml Fanta Popular",
+    precio:7,
+    img:"gaseosa.jpg"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"350ml Sprite Popular",
+    precio:7,
+    img:"gaseosa.jpg"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"Limonada Mediana",
+    precio:5,
+    img:"limonada_mediana.jpg"
+  },
+
+  {
+    categoria:"bebidas",
+    nombre:"Refresco Vaso",
+    precio:3,
+    img:"limonada_vaso.jpg"
+  },
+
+
+  /* EXTRAS */
+
+  {
+    categoria:"extras",
+    nombre:"Extra Platano",
+    precio:7,
+    img:"extra_platano.jpg"
+  },
+
+  {
+    categoria:"extras",
+    nombre:"Extra Papas",
+    precio:7,
+    img:"extra_papas.jpeg"
+  },
+
+  {
+    categoria:"extras",
+    nombre:"Extra Arroz",
+    precio:7,
+    img:"extra_arroz.jpg"
+  }
+
+];
+
+
+/* =========================================================
+   CARRITO
+========================================================= */
+
+let carrito = [];
+
+
+/* =========================================================
+   MODO COCINA
+========================================================= */
+
+if(modo === "cocina"){
+
+  document.getElementById("app").innerHTML = `
+
+    <header>
+
+      <img
+        src="logo.png"
+        class="logo"
+        alt="Go Pollos Rhosse">
+
+      <h1>
+        🍗 PANTALLA DE COCINA
+      </h1>
+
+    </header>
+
+    <div id="listaPedidos"></div>
+
+    <audio
+      id="alerta"
+      preload="auto">
+
+      <source
+        src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+
+    </audio>
+  `;
+
+
+  let sonidoActivado = true;
+
+  let ultimoTotal = 0;
+
+
+  function cargarPedidos(){
+
+    /*
+      IMPORTANTE:
+
+      localStorage solamente sincroniza
+      dentro del mismo navegador/dispositivo.
+
+      No sustituye todavía una base de datos
+      multi-dispositivo.
+    */
+
+    let pedidos =
+      JSON.parse(
+        localStorage.getItem("pedidos")
+      ) || [];
+
+
+    let html = "";
+
+
+    pedidos.forEach(
+    function(p,i){
+
+      if(p.estado !== "Entregado"){
+
+        html += `
+
+          <div class="cocina-card">
+
+            <h3>
+              🍽 ${escapeHTML(p.mesa || "Pedido")}
+            </h3>
+
+            <p>
+              ${escapeHTML(p.detalle || "")}
+            </p>
+
+            <strong>
+              Total: Bs ${p.total || 0}
+            </strong>
+
+            <br><br>
+
+            Estado:
+            <strong>
+              ${escapeHTML(p.estado || "Nuevo")}
+            </strong>
+
+            <br>
+
+            <button
+              class="estado-btn"
+              onclick="cambiarEstado(${i})">
+
+              Cambiar Estado
+
+            </button>
+
+          </div>
+        `;
+
+      }
+
+    });
+
+
+    document.getElementById(
+      "listaPedidos"
+    ).innerHTML =
+      html ||
+      "<p style='text-align:center;color:white;'>No hay pedidos pendientes.</p>";
+
+  }
+
+
+  window.cambiarEstado =
+  function(i){
+
+    let pedidos =
+      JSON.parse(
+        localStorage.getItem("pedidos")
+      ) || [];
+
+
+    let p = pedidos[i];
+
+    if(!p) return;
+
+
+    if(p.estado === "Nuevo"){
+
+      p.estado = "En preparacion";
+
+    }
+
+    else if(
+      p.estado === "En preparacion"
+    ){
+
+      p.estado = "Listo";
+
+    }
+
+    else{
+
+      p.estado = "Entregado";
+
+    }
+
+
+    pedidos[i] = p;
+
+    localStorage.setItem(
+      "pedidos",
+      JSON.stringify(pedidos)
+    );
+
+    cargarPedidos();
+
+  };
+
+
+  setInterval(
+  function(){
+
+    let pedidos =
+      JSON.parse(
+        localStorage.getItem("pedidos")
+      ) || [];
+
+
+    if(
+      pedidos.length > ultimoTotal
+    ){
+
+      const alerta =
+        document.getElementById("alerta");
+
+      if(
+        sonidoActivado &&
+        alerta
+      ){
+
+        alerta.play()
+        .catch(
+          function(){}
+        );
+
+      }
+
+      ultimoTotal =
+        pedidos.length;
+
+    }
+
+    cargarPedidos();
+
+  },1000);
+
+
+  cargarPedidos();
+
+}
+
+
+/* =========================================================
+   MODO CLIENTE
+========================================================= */
+
+else{
+
+  document.getElementById("app").innerHTML = `
+
+    <header>
+
+      <div
+        style="
+        background:#FAED27;
+        color:#FF0000;
+        padding:8px;
+        font-weight:bold;
+        border-radius:20px;
+        display:inline-block;
+        margin-bottom:10px;
+        ">
+
+        <a
+          href="https://maps.app.goo.gl/iLtaCcWtiTKKQ4c3A"
+          target="_blank"
+          rel="noopener"
+          style="
+          color:inherit;
+          text-decoration:none;
+          ">
+
+          📍 NUEVA UBICACION
+
+        </a>
+
+      </div>
+
+
+      <img
+        src="logo.png"
+        class="logo"
+        id="logoLocal"
+        alt="Go Pollos Rhosse - Pollos a la leña">
+
+
+      <h1>
+
+        Pollos a la leña en Trinidad Beni Bolivia
+
+        <br>
+
+        <span style="font-size:18px;">
+          Go Pollos Rhosse
+        </span>
+
+      </h1>
+
+
+      <p>
+
+        Av. Nelson Rocha final 6 de agosto
+
+        <br>
+
+        Zona Pedro Ignacio Muiba
+
+        <br>
+
+        Trinidad - Beni - Bolivia 🇧🇴
+
+      </p>
+
+
+      <div id="estadoLocal"></div>
+
+
+      <!-- CONTADOR -->
+
+      <div id="contadorPollos">
+
+        <div id="estadoLenia">
+          🔥 Preparando la leña
+        </div>
+
+        <div id="tiempoApertura">
+          --:--:--
+        </div>
+
+      </div>
+
+
+      <!-- BARRA STOCK -->
+
+      <div
+        style="
+        background:white;
+        padding:15px;
+        border-radius:14px;
+        margin-top:15px;
+        ">
+
+        <div
+          style="
+          background:#f5f5f5;
+          border-radius:20px;
+          overflow:hidden;
+          height:20px;
+          ">
+
+          <div id="barraPollos"></div>
+
+        </div>
+
+        <div id="textoEscasez"></div>
+
+      </div>
+
+
+      <!-- MESA QR -->
+
+      <div id="mesaActual"></div>
+
+    </header>
+
+
+    <!-- MENU -->
+
+    <div class="container">
+
+      <h2
+        class="categoria"
+        id="categoria-almuerzo">
+
+        🍗 Almuerzo
+
+      </h2>
+
+      <div
+        id="almuerzo"
+        class="grid">
+      </div>
+
+
+      <h2
+        class="categoria"
+        id="categoria-cena">
+
+        🌙 Cena
+
+      </h2>
+
+      <div
+        id="cena"
+        class="grid">
+      </div>
+
+
+      <h2
+        class="categoria"
+        id="categoria-bebidas">
+
+        🥤 Bebidas
+
+      </h2>
+
+      <div
+        id="bebidas"
+        class="grid">
+      </div>
+
+
+      <h2
+        class="categoria"
+        id="categoria-extras">
+
+        🍔 Extras
+
+      </h2>
+
+      <div
+        id="extras"
+        class="grid">
+      </div>
+
+
+      <!-- PEDIR EN OLACLICK -->
+
+      <div
+        style="
+        margin-top:35px;
+        padding:20px;
+        background:#fff3e0;
+        border-radius:15px;
+        text-align:center;
+        ">
+
+        <h2>
+          🛒 ¿Prefieres hacer tu pedido online?
+        </h2>
+
+        <p>
+          También puedes pedir directamente
+          desde nuestro menú online.
+        </p>
+
+        <a
+          href="${URL_OLACLICK}"
+          target="_blank"
+          rel="noopener"
+          class="boton"
+          style="
+          display:block;
+          text-decoration:none;
+          font-size:18px;
+          ">
+
+          🛒 PEDIR ONLINE
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- CARRITO -->
+
+    <div class="carrito">
+
+      <div id="resumen">
+        🛒 Tu carrito está vacío
+      </div>
+
+      <hr>
+
+      <div
+        id="total"
+        class="total">
+
+        Total: Bs 0
+
+      </div>
+
+      <br>
+
+
+      <label>
+
+        <input
+          type="radio"
+          name="tipoPedido"
+          value="Mesa"
+          checked>
+
+        🍽 Comer aquí
+
+      </label>
+
+
+      <label
+        style="margin-left:10px;">
+
+        <input
+          type="radio"
+          name="tipoPedido"
+          value="Recoger">
+
+        🛍 Recoger
+
+      </label>
+
+
+      <label
+        style="margin-left:10px;">
+
+        <input
+          type="radio"
+          name="tipoPedido"
+          value="Delivery">
+
+        🚚 Delivery
+
+      </label>
+
+
+      <br><br>
+
+
+      <button
+        onclick="enviarPedido()"
+        class="boton"
+        style="width:100%;">
+
+        📲 Enviar pedido por WhatsApp
+
+      </button>
+
+
+      <a
+        href="${URL_OLACLICK}"
+        target="_blank"
+        rel="noopener"
+        class="boton"
+        style="
+        width:100%;
+        display:block;
+        text-align:center;
+        text-decoration:none;
+        margin-top:8px;
+        background:#d84315;
+        ">
+
+        🛒 Pedir por OlaClick
+
+      </a>
+
+    </div>
+
+  `;
+
+
+  /* =======================================================
+     MESA QR
+  ======================================================= */
+
+  if(mesaQR){
+
+    document.getElementById(
+      "mesaActual"
+    ).innerHTML = `
+
+      <h2
+        style="
+        background:white;
+        color:#d50000;
+        padding:10px;
+        border-radius:10px;
+        margin-top:10px;
+        ">
+
+        🍽 Mesa ${escapeHTML(mesaQR)}
+
+      </h2>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     CREAR PRODUCTO
+  ======================================================= */
+
+  function crearProducto(p){
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "card";
+
+
+    div.innerHTML = `
+
+      <img
+        src="${escapeAttribute(p.img)}"
+        alt="${escapeAttribute(p.nombre)}"
+        loading="lazy"
+        onerror="this.style.display='none';">
+
+      <h3>
+        ${escapeHTML(p.nombre)}
+      </h3>
+
+      <div class="precio">
+        Bs ${p.precio}
+      </div>
+
+      <button
+        class="boton"
+        onclick="agregarProducto(${productos.indexOf(p)})">
+
+        Agregar
+
+      </button>
+
+    `;
+
+
+    return div;
+
+  }
+
+
+  /* =======================================================
+     CARGAR PRODUCTOS
+  ======================================================= */
+
+  function cargarProductos(){
+
+    productos.forEach(
+    function(p){
+
+      const cont =
+        document.getElementById(
+          p.categoria
+        );
+
+      if(cont){
+
+        cont.appendChild(
+          crearProducto(p)
+        );
+
+      }
+
+    });
+
+  }
+
+
+  /* =======================================================
+     AGREGAR PRODUCTO
+  ======================================================= */
+
+  window.agregarProducto =
+  function(indice){
+
+    const p =
+      productos[indice];
+
+    if(!p) return;
+
+
+    if(!localAbierto()){
+
+      alert(
+        "🔴 El restaurante está cerrado."
+      );
+
+      return;
+
+    }
+
+
+    carrito.push({
+
+      nombre:p.nombre,
+
+      precio:p.precio
+
+    });
+
+
+    /*
+      Solamente descontamos stock
+      cuando realmente se agrega un
+      producto de pollo.
+    */
+
+    if(
+      p.nombre.toLowerCase()
+      .includes("pollo")
+    ){
+
+      pollosDisponibles--;
+
+      if(
+        pollosDisponibles < 0
+      ){
+
+        pollosDisponibles = 0;
+
+      }
+
+      actualizarPollos();
+
+    }
+
+
+    actualizarCarrito();
+
+  };
+
+
+  /* =======================================================
+     STOCK
+  ======================================================= */
+
+  window.actualizarPollos =
+  function(){
+
+    const barra =
+      document.getElementById(
+        "barraPollos"
+      );
+
+    const texto =
+      document.getElementById(
+        "textoEscasez"
+      );
+
+
+    if(!barra || !texto)
+      return;
+
+
+    let porcentaje =
+      totalPollos > 0
+      ? (pollosDisponibles / totalPollos) * 100
+      : 0;
+
+
+    porcentaje =
+      Math.max(
+        0,
+        Math.min(
+          100,
+          porcentaje
+        )
+      );
+
+
+    barra.style.width =
+      porcentaje + "%";
+
+
+    if(
+      pollosDisponibles <= 0
+    ){
+
+      barra.style.background =
+        "#d50000";
+
+      texto.innerHTML =
+        "🍗 POLLOS AGOTADOS POR HOY";
+
+    }
+
+    else if(
+      pollosDisponibles === 1
+    ){
+
+      barra.style.background =
+        "#ffab00";
+
+      texto.innerHTML =
+        "⚠️ ¡Último pollo disponible!";
+
+    }
+
+    else if(
+      pollosDisponibles <= 2
+    ){
+
+      barra.style.background =
+        "#d50000";
+
+      texto.innerHTML =
+        "🔥 ¡Quedan solo " +
+        pollosDisponibles +
+        " pollos!";
+
+    }
+
+    else{
+
+      barra.style.background =
+        "green";
+
+      texto.innerHTML =
+        "🔥 Quedan " +
+        pollosDisponibles +
+        " pollos a la leña";
+
+    }
+
+  };
+
+
+  /* =======================================================
+     ELIMINAR PRODUCTO
+  ======================================================= */
+
+  window.eliminarProducto =
+  function(i){
+
+    const producto =
+      carrito[i];
+
+    if(!producto) return;
+
+
+    if(
+      producto.nombre
+      .toLowerCase()
+      .includes("pollo")
+    ){
+
+      pollosDisponibles++;
+
+      if(
+        pollosDisponibles >
+        totalPollos
+      ){
+
+        pollosDisponibles =
+          totalPollos;
+
+      }
+
+      actualizarPollos();
+
+    }
+
+
+    carrito.splice(i,1);
+
+    actualizarCarrito();
+
+  };
+
+
+  /* =======================================================
+     ACTUALIZAR CARRITO
+  ======================================================= */
+
+  window.actualizarCarrito =
+  function(){
+
+    let total = 0;
+
+    let html = "";
+
+
+    carrito.forEach(
+    function(p,i){
+
+      total +=
+        Number(p.precio);
+
+
+      html += `
+
+        <div>
+
+          ${escapeHTML(p.nombre)}
+
+          — Bs ${p.precio}
+
+          <button
+            onclick="eliminarProducto(${i})">
+
+            ❌
+
+          </button>
+
+        </div>
+
+      `;
+
+    });
+
+
+    document.getElementById(
+      "resumen"
+    ).innerHTML =
+      html ||
+      "🛒 Tu carrito está vacío";
+
+
+    document.getElementById(
+      "total"
+    ).innerHTML =
+      "Total: Bs " + total;
+
+  };
+
+
+  /* =======================================================
+     ESTADO LOCAL
+  ======================================================= */
+
+  window.actualizarEstado =
+  function(){
+
+    const estado =
+      document.getElementById(
+        "estadoLocal"
+      );
+
+    const logo =
+      document.getElementById(
+        "logoLocal"
+      );
+
+
+    if(!estado)
+      return;
+
+
+    if(
+      localAbierto()
+    ){
+
+      estado.innerHTML =
+        "🟢 Estamos atendiendo";
+
+      estado.style.color =
+        "lightgreen";
+
+      if(logo)
+        logo.style.filter =
+          "none";
+
+    }
+
+    else{
+
+      estado.innerHTML =
+        "🔴 Cerrado";
+
+      estado.style.color =
+        "yellow";
+
+      if(logo)
+        logo.style.filter =
+          "grayscale(100%)";
+
+    }
+
+
+    document
+      .querySelectorAll(".boton")
+      .forEach(
+      function(b){
+
+        /*
+          NO deshabilitar el botón
+          de OlaClick.
+
+          Solo botones de agregar.
+        */
+
+        if(
+          b.getAttribute("onclick") ===
+          null
+        ){
+
+          return;
+
+        }
+
+        b.disabled =
+          !localAbierto();
+
+      });
+
+  };
+
+
+  /* =======================================================
+     CONTADOR DE LEÑA
+  ======================================================= */
+
+  window.contadorLenia =
+  function(){
+
+    const estado =
+      document.getElementById(
+        "estadoLenia"
+      );
+
+    const tiempo =
+      document.getElementById(
+        "tiempoApertura"
+      );
+
+
+    if(!estado || !tiempo)
+      return;
+
+
+    const ahora =
+      new Date();
+
+    const dia =
+      ahora.getDay();
+
+
+    if(
+      diasCerrados.includes(dia)
+    ){
+
+      estado.innerHTML =
+        "🔴 Hoy está cerrado";
+
+      tiempo.innerHTML =
+        "Abrimos mañana 🔥";
+
+      return;
+
+    }
+
+
+    if(
+      localAbierto()
+    ){
+
+      estado.innerHTML =
+        "🟢 Estamos atendiendo";
+
+      tiempo.innerHTML =
+        "🍗 Pollos saliendo de la leña";
+
+      return;
+
+    }
+
+
+    /*
+      Preparación de leña:
+      09:00
+    */
+
+    let prender =
+      new Date();
+
+    prender.setHours(
+      9,0,0,0
+    );
+
+
+    /*
+      Inicio de atención:
+      10:00
+    */
+
+    let abrir =
+      new Date();
+
+    abrir.setHours(
+      10,0,0,0
+    );
+
+
+    /*
+      Cierre:
+      22:30
+    */
+
+    let cerrar =
+      new Date();
+
+    cerrar.setHours(
+      22,30,0,0
+    );
+
+
+    if(
+      ahora >= cerrar
+    ){
+
+      estado.innerHTML =
+        "🔴 Restaurante cerrado";
+
+      tiempo.innerHTML =
+        "Abrimos mañana 🔥";
+
+      return;
+
+    }
+
+
+    if(
+      ahora < prender
+    ){
+
+      mostrarCuenta(
+        prender-ahora,
+        "⏳ Prendemos la leña en"
+      );
+
+      return;
+
+    }
+
+
+    if(
+      ahora >= prender &&
+      ahora < abrir
+    ){
+
+      mostrarCuenta(
+        abrir-ahora,
+        "🔥 Leña encendida — abrimos en"
+      );
+
+      return;
+
+    }
+
+  };
+
+
+  function mostrarCuenta(
+    diferencia,
+    mensaje
+  ){
+
+    const estado =
+      document.getElementById(
+        "estadoLenia"
+      );
+
+    const tiempo =
+      document.getElementById(
+        "tiempoApertura"
+      );
+
+
+    let h =
+      Math.floor(
+        diferencia / 3600000
+      );
+
+    let m =
+      Math.floor(
+        (diferencia % 3600000)
+        / 60000
+      );
+
+    let s =
+      Math.floor(
+        (diferencia % 60000)
+        / 1000
+      );
+
+
+    estado.innerHTML =
+      mensaje;
+
+    tiempo.innerHTML =
+
+      String(h).padStart(2,"0")
+      + ":" +
+
+      String(m).padStart(2,"0")
+      + ":" +
+
+      String(s).padStart(2,"0");
+
+  }
+
+
+  /* =======================================================
+     MARQUESINA
+  ======================================================= */
+
+  window.actualizarMarquesina =
+  function(){
+
+    const m =
+      document.getElementById(
+        "textoMarquesina"
+      );
+
+
+    if(!m)
+      return;
+
+
+    const ahora =
+      new Date();
+
+    const dia =
+      ahora.getDay();
+
+    const fechaHoy =
+      obtenerFechaLocal();
+
+
+    if(
+      diasCerrados.includes(dia) ||
+      fechasCerrado.includes(fechaHoy)
+    ){
+
+      m.innerHTML =
+        "🔴 Hoy estamos cerrados — Nos vemos mañana 🔥";
+
+      return;
+
+    }
+
+
+    if(
+      pollosDisponibles <= 0
+    ){
+
+      m.innerHTML =
+        "🍗 POLLOS AGOTADOS POR HOY — Gracias Trinidad por la preferencia 🔥";
+
+      return;
+
+    }
+
+
+    if(
+      pollosDisponibles <= 2
+    ){
+
+      m.innerHTML =
+        "⚠️ ¡QUEDAN SOLO " +
+        pollosDisponibles +
+        " POLLOS A LA LEÑA! — Haz tu pedido 🍗";
+
+      return;
+
+    }
+
+
+    if(
+      localAbierto()
+    ){
+
+      m.innerHTML =
+        "🍗 ESTAMOS ATENDIENDO — Pollos a la leña 🔥 — Delivery — Haz tu pedido ahora";
+
+      return;
+
+    }
+
+
+    m.innerHTML =
+      "🔥 Go Pollos Rhosse — Abrimos desde las 10:00 AM — Zona Pedro Ignacio Muiba";
+
+  };
+
+
+  /* =======================================================
+     ENVIAR PEDIDO
+  ======================================================= */
+
+  window.enviarPedido =
+  async function(){
+
+    if(
+      !localAbierto()
+    ){
+
+      alert(
+        "🔴 El restaurante está cerrado."
+      );
+
+      return;
+
+    }
+
+
+    if(
+      carrito.length === 0
+    ){
+
+      alert(
+        "Agrega al menos un producto."
+      );
+
+      return;
+
+    }
+
+
+    const tipoPedido =
+      document
+      .querySelector(
+        'input[name="tipoPedido"]:checked'
+      ).value;
+
+
+    let detalle = "";
+
+    let total = 0;
+
+
+    carrito.forEach(
+    function(p){
+
+      detalle +=
+        p.nombre +
+        " Bs " +
+        p.precio +
+        "\n";
+
+      total +=
+        Number(p.precio);
+
+    });
+
+
+    const mesa =
+      mesaQR
+      ? "Mesa " + mesaQR
+      : tipoPedido;
+
+
+    /*
+      Guardar también localmente
+      para la pantalla de cocina
+      cuando se usa el mismo dispositivo.
+    */
+
+    const pedidoLocal = {
+
+      fecha:
+        new Date()
+        .toLocaleString(),
+
+      tipo:
+        tipoPedido,
+
+      mesa:
+        mesa,
+
+      detalle:
+        detalle,
+
+      total:
+        total,
+
+      estado:
+        "Nuevo"
+
+    };
+
+
+    let pedidos =
+      JSON.parse(
+        localStorage.getItem("pedidos")
+      ) || [];
+
+
+    pedidos.push(
+      pedidoLocal
+    );
+
+
+    localStorage.setItem(
+      "pedidos",
+      JSON.stringify(pedidos)
+    );
+
+
+    /*
+      Enviar a Google Sheets.
+    */
+
+    try{
+
+      const body =
+
+        "fecha=" +
+        encodeURIComponent(
+          pedidoLocal.fecha
+        ) +
+
+        "&tipo=" +
+        encodeURIComponent(
+          pedidoLocal.tipo
+        ) +
+
+        "&mesa=" +
+        encodeURIComponent(
+          pedidoLocal.mesa
+        ) +
+
+        "&detalle=" +
+        encodeURIComponent(
+          pedidoLocal.detalle
+        ) +
+
+        "&total=" +
+        encodeURIComponent(
+          pedidoLocal.total
+        );
+
+
+      const respuesta =
+        await fetch(
+          API_PEDIDOS,
+          {
+            method:"POST",
+
+            headers:{
+              "Content-Type":
+              "application/x-www-form-urlencoded"
+            },
+
+            body:body
+          }
+        );
+
+
+      /*
+        No asumimos que Google
+        siempre devuelve JSON.
+      */
+
+      let resultado = null;
+
+      try{
+
+        resultado =
+          await respuesta.json();
+
+      }
+
+      catch(e){
+
+        console.log(
+          "Respuesta no JSON de Sheets"
+        );
+
+      }
+
+
+      /*
+        WhatsApp
+      */
+
+      let texto =
+        "🍗 *Pedido Go Pollos Rhosse*"
+        + "\n\n";
+
+      texto +=
+        "Tipo: " +
+        tipoPedido +
+        "\n";
+
+      texto +=
+        "Mesa: " +
+        mesa +
+        "\n\n";
+
+      texto +=
+        detalle;
+
+      texto +=
+        "\n*Total: Bs " +
+        total +
+        "*";
+
+
+      window.open(
+        "https://wa.me/59172685867?text=" +
+        encodeURIComponent(texto),
+        "_blank"
+      );
+
+
+      carrito = [];
+
+      actualizarCarrito();
+
+
+      alert(
+        "✅ Pedido enviado correctamente."
+      );
+
+    }
+
+    catch(error){
+
+      console.error(
+        "Error enviando pedido:",
+        error
+      );
+
+
+      /*
+        Aunque Sheets falle,
+        WhatsApp sigue funcionando.
+      */
+
+      let texto =
+        "🍗 *Pedido Go Pollos Rhosse*"
+        + "\n\n";
+
+      texto +=
+        "Tipo: " +
+        tipoPedido +
+        "\n";
+
+      texto +=
+        "Mesa: " +
+        mesa +
+        "\n\n";
+
+      texto +=
+        detalle;
+
+      texto +=
+        "\n*Total: Bs " +
+        total +
+        "*";
+
+
+      window.open(
+        "https://wa.me/59172685867?text=" +
+        encodeURIComponent(texto),
+        "_blank"
+      );
+
+
+      carrito = [];
+
+      actualizarCarrito();
+
+
+      alert(
+        "⚠️ Pedido enviado por WhatsApp. Google Sheets no respondió."
+      );
+
+    }
+
+  };
+
+
+  /* =======================================================
+     INICIALIZACIÓN
+  ======================================================= */
+
+  cargarProductos();
+
+  actualizarEstado();
+
+  contadorLenia();
+
+  actualizarPollos();
+
+  actualizarMarquesina();
+
+
+  setInterval(
+    contadorLenia,
+    1000
+  );
+
+  setInterval(
+    actualizarEstado,
+    10000
+  );
+
+  setInterval(
+    actualizarMarquesina,
+    5000
+  );
+
+
+  /* =======================================================
+     CONTROL REMOTO
+  ======================================================= */
+
+  let controlRemotoActivo =
+    false;
+
+
+  async function cargarConfig(){
+
+    try{
+
+      const res =
+        await fetch(
+          API_CONFIG +
+          "?t=" +
+          Date.now()
+        );
+
+
+      const data =
+        await res.json();
+
+
+      controlRemotoActivo =
+        true;
+
+
+      /*
+        MANTENIMIENTO
+      */
+
+      if(
+        data.mantenimiento === "si"
+      ){
+
+        document.getElementById(
+          "app"
+        ).innerHTML = `
+
+          <div
+            style="
+            background:white;
+            margin:30px;
+            padding:40px;
+            border-radius:20px;
+            text-align:center;
+            ">
+
+            <h1>
+              🔧 En mantenimiento
+            </h1>
+
+            <p>
+              ${escapeHTML(
+                data.mensaje ||
+                "Estamos realizando mejoras."
+              )}
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      /*
+        POLLOS DESDE SHEETS
+      */
+
+      if(
+        data.pollos !== undefined
+      ){
+
+        const valor =
+          parseInt(
+            data.pollos,
+            10
+          );
+
+
+        if(
+          !isNaN(valor)
+        ){
+
+          pollosDisponibles =
+            Math.max(
+              0,
+              valor
+            );
+
+          actualizarPollos();
+
+        }
+
+      }
+
+
+      /*
+        ESTADO FORZADO
+      */
+
+      if(
+        data.estado === "cerrado"
+      ){
+
+        const estado =
+          document.getElementById(
+            "estadoLocal"
+          );
+
+
+        if(estado){
+
+          estado.innerHTML =
+            "🔴 Cerrado desde sistema";
+
+          estado.style.color =
+            "red";
+
+        }
+
+
+        /*
+          Deshabilitar solamente
+          botones de productos.
+        */
+
+        document
+          .querySelectorAll(
+            ".card .boton"
+          )
+          .forEach(
+          function(b){
+
+            b.disabled = true;
+
+          });
+
+      }
+
+
+      /*
+        MENSAJE DINÁMICO
+      */
+
+      if(
+        data.mensaje
+      ){
+
+        const m =
+          document.getElementById(
+            "textoMarquesina"
+          );
+
+
+        if(m){
+
+          m.innerHTML =
+            escapeHTML(
+              data.mensaje
+            );
+
+        }
+
+      }
+
+    }
+
+    catch(e){
+
+      console.log(
+        "Google Sheets no disponible:",
+        e
+      );
+
+      /*
+        IMPORTANTE:
+
+        Si Sheets falla,
+        el sitio sigue utilizando
+        el horario local.
+      */
+
+      controlRemotoActivo =
+        false;
+
+    }
+
+  }
+
+
+  /*
+    Primera consulta después de 2 segundos.
+  */
+
+  setTimeout(
+    function(){
+
+      cargarConfig();
+
+      setInterval(
+        cargarConfig,
+        5000
+      );
+
+    },
+    2000
+  );
+
+}
+
+
+/* =========================================================
+   FUNCIONES DE SEGURIDAD HTML
+========================================================= */
+
+function escapeHTML(text){
+
+  return String(text ?? "")
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+function escapeAttribute(text){
+
+  return escapeHTML(text);
+
+}
+
+
+/* =========================================================
+   FUNCIONES ADMIN
+========================================================= */
+
+function cerrarPanel(){
+
+  const panel =
+    document.getElementById(
+      "panelAdmin"
+    );
+
+  if(panel){
+
+    panel.style.display =
+      "none";
+
+  }
+
+}
+
+
+function agotado(){
+
+  pollosDisponibles = 0;
+
+  actualizarPollos();
+
+  actualizarMarquesina();
+
+  alert(
+    "🍗 Pollos agotados por hoy."
+  );
+
+}
+
+
+function reiniciarPollos(){
+
+  pollosDisponibles =
+    totalPollos;
+
+  actualizarPollos();
+
+  actualizarMarquesina();
+
+  alert(
+    "♻ Pollos reiniciados."
+  );
+
+}
+
+</script>
+
+<!-- =========================================================
+     REDES SOCIALES
+========================================================= -->
+
+<div class="footer">
+
+  <h3>
+    🌐 Síguenos
+  </h3>
+
+  <a
+    href="https://www.facebook.com/GoPollosRhosseTdd"
+    target="_blank"
+    rel="noopener">
+
+    📘 Facebook
+
+  </a>
+
+  <a
+    href="https://www.instagram.com/gopollosrhossetdd"
+    target="_blank"
+    rel="noopener">
+
+    📷 Instagram
+
+  </a>
+
+  <a
+    href="https://www.tiktok.com/@go.rhosse.pollos.tdd"
+    target="_blank"
+    rel="noopener">
+
+    🎵 TikTok
+
+  </a>
+
+  <a
+    href="https://www.youtube.com/@PollosalaLe%C3%B1aGoPollosRhosseTdd"
+    target="_blank"
+    rel="noopener">
+
+    📺 YouTube
+
+  </a>
+
+</div>
+
+
+<!-- =========================================================
+     MAPA
+========================================================= -->
+
+<div
+  style="
+  padding:20px;
+  text-align:center;
+  color:white;
+  ">
+
+  <h3>
+    📍 Cómo llegar
+  </h3>
+
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d882.2596527896158!2d-64.93184106826968!3d-14.832442486963652!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1ses!2sbo!4v1787542633304!5m2!1ses!2sbo"
+    width="100%"
+    height="250"
+    style="border:0;border-radius:15px;"
+    loading="lazy">
+  </iframe>
+
+</div>
+
+
+<!-- =========================================================
+     SEO INTERNO
+========================================================= -->
+
+<div style="display:none;">
+
+  <a href="delivery-trinidad.html">
+    delivery de pollos a la leña en Trinidad, Beni
+  </a>
+
+  <a href="pollo-cerca.html">
+    pollo a la leña cerca de mí en Trinidad, Beni
+  </a>
+
+  <a href="mejor-pollo-trinidad.html">
+    mejor pollo a la leña en Trinidad, Beni
+  </a>
+
+</div>
+
+</body>
+</html>
+```
+https://jwilsoncruz.github.io/gopollosrhosse/
+jwilsoncruz+olacloclrev@gmail.com
+* /ocr2026
