@@ -157,6 +157,17 @@ function escapar(texto){
   return div.innerHTML;
 }
 
+// ================= NÚMERO DE PEDIDO A MOSTRAR =================
+// p.numero es el contador que se reinicia cada día (columna 7 de la hoja).
+// p.fila es la fila real en la hoja de cálculo, que nunca se reinicia.
+// Usamos p.numero siempre que exista; p.fila queda solo como respaldo
+// para pedidos guardados antes de que existiera la columna "numero".
+function numeroVisible(p){
+  return (p.numero !== null && p.numero !== undefined && p.numero !== "")
+    ? p.numero
+    : p.fila;
+}
+
 // ================= SONIDO =================
 function activarSonido(){
   sonido = true;
@@ -264,7 +275,7 @@ function cargarPedidos(){
       html += `
 <div class="card ${clase}">
 
-<h2>Pedido ${escapar(p.fila)}</h2>
+<h2>Pedido ${escapar(numeroVisible(p))}</h2>
 
 <div><b>Mesa:</b> ${escapar(p.mesa)}</div>
 
