@@ -269,6 +269,18 @@ text-align:center;
 
 <button onclick="reiniciarPollos()" class="estado-btn">♻ Reiniciar Pollos</button><br><br>
 
+<hr>
+
+<button onclick="forzarApertura()" class="estado-btn" style="background:#00c853;">🟢 Forzar Apertura</button><br><br>
+
+<button onclick="forzarCierre()" class="estado-btn" style="background:#d50000;">🔴 Forzar Cierre</button><br><br>
+
+<button onclick="modoAutomatico()" class="estado-btn" style="background:#1976d2;">🔄 Modo Automático (horario normal)</button><br><br>
+
+<div id="estadoForzadoTexto" style="font-size:13px;color:#555;margin-bottom:10px;"></div>
+
+<hr>
+
 <button onclick="cerrarPanel()" class="estado-btn">❌ Cerrar</button>
 
 </div>
@@ -342,6 +354,12 @@ let remoto = null;          // última configuración recibida de Google Sheets
 let enMantenimiento = false;
 let enviando = false;
 
+// Forzado manual local desde el panel admin:
+// null = automático (respeta horario y Google Sheets)
+// "abierto" = fuerza el local a ABIERTO sin importar la hora
+// "cerrado" = fuerza el local a CERRADO sin importar la hora
+let forzarEstado = null;
+
 const params = new URLSearchParams(window.location.search);
 // Solo letras, números, guion y espacio (evita meter código por la URL)
 const mesaQR = (params.get("mesa") || "").replace(/[^\w\- ]/g, "").slice(0, 10);
@@ -364,6 +382,10 @@ function cerradoTodoElDia(d){
 }
 
 function localAbierto(){
+  // El forzado manual desde el panel admin tiene prioridad máxima
+  if(forzarEstado === "abierto") return true;
+  if(forzarEstado === "cerrado") return false;
+
   if(remoto && remoto.estado === "cerrado") return false;
 
   const ahora = new Date();
@@ -632,6 +654,18 @@ function actualizarMarquesina(){
     return;
   }
 
+  // 🟢 Forzado manualmente ABIERTO
+  if(forzarEstado === "abierto"){
+    ponerMarquesina("🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥");
+    return;
+  }
+
+  // 🔴 Forzado manualmente CERRADO
+  if(forzarEstado === "cerrado"){
+    ponerMarquesina("🔴 Local cerrado temporalmente — Vuelve pronto 🔥 >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<<");
+    return;
+  }
+
   // 🔴 Día cerrado
   if(cerradoTodoElDia(new Date())){
     ponerMarquesina("🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<< 🔥Pronto de  Almuerzo su pollito a la leña");
@@ -670,9 +704,14 @@ function actualizarEstado(){
   const abierto = localAbierto();
 
   if(abierto){
-    estado.innerHTML = "🟢 Estamos atendiendo";
+    estado.innerHTML = (forzarEstado === "abierto") ? "🟢 Abierto (forzado manualmente)" : "🟢 Estamos atendiendo";
     estado.style.color = "lightgreen";
     if(logo) logo.style.filter = "none";
+  }
+  else if(forzarEstado === "cerrado"){
+    estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
+    estado.style.color = "red";
+    if(logo) logo.style.filter = "grayscale(100%)";
   }
   else if(remoto && remoto.estado === "cerrado"){
     estado.innerHTML = "🔴 Cerrado desde sistema";
@@ -688,6 +727,18 @@ function actualizarEstado(){
   document.querySelectorAll(".boton").forEach(b=>{
     b.disabled = !abierto;
   });
+
+  // Texto informativo dentro del panel admin
+  const textoForzado = document.getElementById("estadoForzadoTexto");
+  if(textoForzado){
+    if(forzarEstado === "abierto"){
+      textoForzado.textContent = "Estado actual: FORZADO ABIERTO";
+    }else if(forzarEstado === "cerrado"){
+      textoForzado.textContent = "Estado actual: FORZADO CERRADO";
+    }else{
+      textoForzado.textContent = "Estado actual: Automático (horario normal)";
+    }
+  }
 }
 
 // ================= CONTADOR DE LA LEÑA =================
@@ -705,6 +756,19 @@ function contadorLenia(){
   const tiempo = document.getElementById("tiempoApertura");
 
   if(!estado || !tiempo) return;
+
+  // El forzado manual tiene prioridad sobre cualquier otra lógica de horario
+  if(forzarEstado === "abierto"){
+    estado.innerHTML = "🟢 Abierto (forzado manualmente)";
+    tiempo.innerHTML = "🍗 Pollos saliendo de la leña";
+    return;
+  }
+
+  if(forzarEstado === "cerrado"){
+    estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
+    tiempo.innerHTML = "Reactivar desde el panel admin";
+    return;
+  }
 
   const ahora = new Date();
 
@@ -787,6 +851,28 @@ function actualizarMenuPorHora(){
     if(almuerzo) almuerzo.style.display = "none";
     if(tituloCena) tituloCena.style.display = "none";
     if(cena) cena.style.display = "none";
+  }
+
+  // 🔴 Forzado manualmente CERRADO: ocultar todos los menús
+  if(forzarEstado === "cerrado"){
+    ocultarTodo();
+    if(estado) estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
+    return;
+  }
+
+  // 🟢 Forzado manualmente ABIERTO: mostrar el menú que corresponda a la hora
+  // (o almuerzo si el forzado se usa fuera del horario habitual)
+  if(forzarEstado === "abierto"){
+    ocultarTodo();
+    if(tiempo < finAlmuerzo){
+      if(tituloAlmuerzo) tituloAlmuerzo.style.display = "block";
+      if(almuerzo) almuerzo.style.display = "grid";
+    }else{
+      if(tituloCena) tituloCena.style.display = "block";
+      if(cena) cena.style.display = "grid";
+    }
+    if(estado) estado.innerHTML = "🟢 Abierto (forzado manualmente)";
+    return;
   }
 
   if(tiempo < inicioAlmuerzo){
@@ -950,6 +1036,36 @@ function reiniciarPollos(){
   pollosDisponibles = totalPollos;
   actualizarPollos();
   alert("Pollos reiniciados");
+}
+
+// Fuerza el local a ABIERTO sin importar el horario configurado
+function forzarApertura(){
+  forzarEstado = "abierto";
+  actualizarEstado();
+  actualizarMarquesina();
+  contadorLenia();
+  actualizarMenuPorHora();
+  alert("🟢 Local forzado a ABIERTO");
+}
+
+// Fuerza el local a CERRADO sin importar el horario configurado
+function forzarCierre(){
+  forzarEstado = "cerrado";
+  actualizarEstado();
+  actualizarMarquesina();
+  contadorLenia();
+  actualizarMenuPorHora();
+  alert("🔴 Local forzado a CERRADO");
+}
+
+// Vuelve al horario automático normal
+function modoAutomatico(){
+  forzarEstado = null;
+  actualizarEstado();
+  actualizarMarquesina();
+  contadorLenia();
+  actualizarMenuPorHora();
+  alert("🔄 Local en modo automático (horario normal)");
 }
 
 // ================= ARRANQUE =================
