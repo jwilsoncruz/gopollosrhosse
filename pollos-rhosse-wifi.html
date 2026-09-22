@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pollos Rhosse · WiFi y Premios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#1c130d;
+    --panel:#2a1c13;
+    --panel-2:#231810;
+    --line:rgba(243,167,18,.35);
+    --amber:#f3a712;
+    --amber-dark:#c97e0a;
+    --chili:#e2482a;
+    --cream:#fff4df;
+    --green:#4caf6b;
+    --muted:#c9b6a3;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, #3a2716 0%, transparent 45%),
+      var(--bg);
+    color:var(--cream);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding-bottom:32px;
+  }
+  .app{width:100%;max-width:420px;padding:0 18px;}
+
+  .marca{
+    text-align:center;
+    padding:22px 0 6px;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:.3px;
+    color:var(--amber);
+  }
+
+  h1{
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
+    font-size:28px;
+    line-height:1.15;
+    margin:6px 0 14px;
+    color:var(--cream);
+  }
+  p{line-height:1.5;}
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin:14px 0;
+  }
+  .oferta{
+    background:linear-gradient(135deg,var(--chili),#c9351d);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin:14px 0;
+    font-size:15px;
+    box-shadow:0 6px 0 #96261300;
+  }
+
+  label.campo{display:block;margin:12px 0 6px;font-size:13px;color:var(--muted);}
+  input{
+    width:100%;
+    padding:13px 14px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--panel-2);
+    color:var(--cream);
+    font-size:16px;
+  }
+  input::placeholder{color:#8a7563;}
+  input:focus-visible, button:focus-visible, a:focus-visible{
+    outline:3px solid var(--amber);
+    outline-offset:2px;
+  }
+  .error{color:#ff9e8a;font-size:13px;margin-top:6px;min-height:16px;}
+
+  button, .btn{
+    width:100%;
+    padding:15px;
+    margin-top:12px;
+    border:none;
+    border-radius:12px;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:17px;
+    cursor:pointer;
+    color:#241608;
+    background:var(--amber);
+    box-shadow:0 4px 0 var(--amber-dark);
+    transition:transform .05s ease;
+  }
+  button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--amber-dark);}
+  button.secundario{
+    background:transparent;
+    color:var(--amber);
+    box-shadow:none;
+    border:1px solid var(--line);
+  }
+  button.verde{background:var(--green);box-shadow:0 4px 0 #2f7a49;color:#0e2216;}
+  button.hidden, .hidden{display:none !important;}
+
+  .clave{
+    font-family:'Baloo 2',sans-serif;
+    font-size:26px;
+    font-weight:800;
+    color:var(--amber);
+    letter-spacing:1px;
+    word-break:break-all;
+  }
+  .saludo{color:var(--muted);margin-top:-6px;}
+
+  .stamps{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;}
+  .stamp{
+    width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+  }
+  .stamp.lleno{background:var(--amber);border-color:var(--amber);}
+  .stamps-label{text-align:center;font-size:13px;color:var(--muted);margin-bottom:8px;}
+
+  canvas{
+    display:block;
+    margin:18px auto 6px;
+    border-radius:12px;
+    touch-action:none;
+    max-width:100%;
+    box-shadow:0 0 0 1px var(--line);
+  }
+  .raspa-wrap{text-align:center;}
+  .pista{font-size:13px;color:var(--muted);margin-top:-2px;}
+
+  .codigo{
+    font-family:'Baloo 2',sans-serif;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:1px;
+    background:var(--panel-2);
+    border:1px dashed var(--amber);
+    border-radius:10px;
+    padding:10px;
+    margin-top:8px;
+  }
+  .cambiar{
+    display:block;text-align:center;margin-top:16px;
+    color:var(--muted);font-size:13px;text-decoration:underline;
+  }
+  .badge-cumple{
+    background:linear-gradient(135deg,#7a3ff2,#c94fd8);
+    border-radius:var(--radius);
+    padding:12px 16px;margin-bottom:10px;font-size:14px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    button{transition:none;}
+  }
+</style>
+</head>
+
+<body>
+<div class="app">
+<div class="marca">🍗 Pollos Rhosse</div>
+
+<!-- REGISTRO -->
+<div id="pantalla1">
+  <h1>WiFi gratis y premios<br>cada vez que vienes</h1>
+  <div class="oferta">📶 Conéctate gratis y raspa tu premio<br>🎁 Válido en compras desde Bs 20</div>
+
+  <label class="campo" for="nombre">Tu nombre</label>
+  <input type="text" id="nombre" placeholder="Ej: María Flores" autocomplete="name">
+
+  <label class="campo" for="telefono">Tu WhatsApp</label>
+  <input type="tel" id="telefono" placeholder="Ej: 71234567" inputmode="numeric" autocomplete="tel">
+
+  <label class="campo" for="fecha">Tu fecha de nacimiento</label>
+  <input type="date" id="fecha">
+
+  <label class="campo" for="invito">¿Quién te invitó? (opcional)</label>
+  <input type="text" id="invito" placeholder="Nombre de tu amigo/a">
+
+  <div class="error" id="errorRegistro"></div>
+  <button id="btnContinuar">📲 Conectarme</button>
+</div>
+
+<!-- WIFI -->
+<div class="panel hidden" id="pantalla2">
+  <h1 style="font-size:22px;margin-top:0;">✅ Ya estás conectado</h1>
+  <p class="saludo" id="saludo"></p>
+
+  <div class="oferta">
+    📶 Tu clave WiFi
+    <div class="clave" id="clave"></div>
+  </div>
+  <button class="secundario" id="btnCopiarClave">📋 Copiar clave</button>
+
+  <div class="stamps-label" id="stampsLabel"></div>
+  <div class="stamps" id="stamps"></div>
+
+  <button id="btnSeguir">🎁 Ir a mi raspadito de hoy</button>
+  <a href="#" class="cambiar" id="linkCambiar">¿No eres tú? Cambiar datos</a>
+</div>
+
+<!-- YA JUGASTE HOY -->
+<div class="panel hidden" id="yaJugaste">
+  <h1 style="font-size:22px;margin-top:0;">🍗 ¡Ya raspaste hoy!</h1>
+  <p id="mensajeVuelve">Vuelve mañana por tu próximo raspadito.</p>
+
+  <div class="stamps-label" id="stampsLabel2"></div>
+  <div class="stamps" id="stamps2"></div>
+
+  <button class="verde" id="btnPedirAhora">🍗 Hacer pedido ahora</button>
+  <a href="#" class="cambiar" id="linkCambiar2">¿No eres tú? Cambiar datos</a>
+</div>
+
+<!-- RASPA -->
+<div class="panel hidden raspa-wrap" id="raspa">
+  <div class="badge-cumple hidden" id="badgeCumple">🎂 ¡Feliz cumpleaños! Tenemos algo especial para ti.</div>
+  <h1 style="font-size:22px;margin-top:0;">🎁 Raspa y gana</h1>
+  <p class="pista">Desliza el dedo sobre el recuadro</p>
+
+  <canvas id="canvas" width="300" height="150" aria-label="Tarjeta para raspar y revelar tu premio"></canvas>
+
+  <div class="oferta hidden" id="premioBox">
+    🎉 Tu premio
+    <div class="clave" id="premioTexto"></div>
+    <p style="color:#ffe6b3;margin-bottom:0;">⚠️ Válido en compras desde Bs 20</p>
+  </div>
+
+  <div class="codigo hidden" id="codigoBox"></div>
+
+  <button id="btnPremio" class="hidden">🎁 Usar mi premio por WhatsApp</button>
+  <button id="btnCompartir" class="secundario hidden">📤 Invitar a un amigo</button>
+  <button id="segundaBtn" class="hidden">🎁 Segunda oportunidad</button>
+</div>
+
+</div>
+
+<script>
+// ---------- CONEXIÓN A GOOGLE SHEETS (Apps Script) ----------
+// Pega aquí la URL que termina en /exec cuando la tengas.
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzKUhFIjw-41T7W9ZunKtlU_clWWZxyfFvEEfjsLvm9LgU7K1NCK1TL3foHzfQl51_lIg/exec";
+
+function enviarAAppsScript(datos){
+  if(!APPS_SCRIPT_URL) return; // aún no conectado, no hace nada
+  try{
+    fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify(datos)
+    });
+  }catch(e){ /* si falla el envío, no interrumpe la experiencia del cliente */ }
+}
+
+// ---------- ALMACENAMIENTO ----------
+const STORAGE_KEY = "prc_cliente_v2";
+
+function hoyStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function cargarCliente(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+function guardarCliente(c){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); }
+  catch(e){ /* almacenamiento no disponible, la sesión sigue funcionando */ }
+}
+
+function jugoHoy(c){ return c.visitas.includes(hoyStr()); }
+
+function esCumpleHoy(c){
+  if(!c.nacimiento) return false;
+  return c.nacimiento.slice(5) === hoyStr().slice(5); // compara MM-DD
+}
+
+// ---------- SELECTORES ----------
+const pantalla1 = document.getElementById("pantalla1");
+const pantalla2 = document.getElementById("pantalla2");
+const yaJugasteDiv = document.getElementById("yaJugaste");
+const raspaDiv = document.getElementById("raspa");
+
+const nombreInput = document.getElementById("nombre");
+const telefonoInput = document.getElementById("telefono");
+const fechaInput = document.getElementById("fecha");
+const invitoInput = document.getElementById("invito");
+const errorRegistro = document.getElementById("errorRegistro");
+
+const saludo = document.getElementById("saludo");
+const claveDiv = document.getElementById("clave");
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const badgeCumple = document.getElementById("badgeCumple");
+const premioBox = document.getElementById("premioBox");
+const premioTexto = document.getElementById("premioTexto");
+const codigoBox = document.getElementById("codigoBox");
+
+const btnPremio = document.getElementById("btnPremio");
+const btnCompartir = document.getElementById("btnCompartir");
+const segundaBtn = document.getElementById("segundaBtn");
+const btnContinuar = document.getElementById("btnContinuar");
+const btnSeguir = document.getElementById("btnSeguir");
+const btnCopiarClave = document.getElementById("btnCopiarClave");
+const btnPedirAhora = document.getElementById("btnPedirAhora");
+
+// ---------- ESTADO ----------
+let cliente = null;
+let intento = 1;
+let premioActual = null;   // {label, codigo}
+let premioForzado = null;  // premio garantizado (cumpleaños / fidelidad)
+let raspando = false;
+let raspadoTotal = 0;
+let yaRevelo = false;
+
+// ---------- PREMIOS ----------
+function elegirPremio(tabla){
+  const r = Math.random();
+  let acumulado = 0;
+  for(const opcion of tabla){
+    acumulado += opcion.peso;
+    if(r < acumulado) return opcion;
+  }
+  return tabla[tabla.length-1];
+}
+
+const PREMIOS_INTENTO_1 = [
+  {peso:0.35, label:"❌ Sigue intentando", codigo:"NONE"},
+  {peso:0.25, label:"🥤 Bebida GRATIS",     codigo:"SODA"},
+  {peso:0.20, label:"🍟 Papas 50% OFF",     codigo:"PAPA"},
+  {peso:0.12, label:"🍗 Presa extra GRATIS", codigo:"PRES"},
+  {peso:0.08, label:"🎉 Postre GRATIS",      codigo:"POST"},
+];
+const PREMIOS_INTENTO_2 = [
+  {peso:0.25, label:"❌ Sigue intentando", codigo:"NONE"},
+  {peso:0.30, label:"🥤 Bebida GRATIS",     codigo:"SODA"},
+  {peso:0.30, label:"🍟 Papas 50% OFF",     codigo:"PAPA"},
+  {peso:0.15, label:"🍗 Presa extra GRATIS", codigo:"PRES"},
+];
+
+// ---------- CLAVE WIFI (cambia cada domingo) ----------
+function generarClave(){
+  const hoy = new Date();
+  const domingo = new Date(hoy);
+  domingo.setDate(hoy.getDate() - hoy.getDay());
+  return "POLLOSRHOSSE" + domingo.getDate();
+}
+
+// ---------- CÓDIGO DE CANJE (para que el mesero lo valide) ----------
+function generarCodigo(codigoPremio){
+  const hoy = new Date();
+  const mmdd = String(hoy.getMonth()+1).padStart(2,"0") + String(hoy.getDate()).padStart(2,"0");
+  const ult4 = (cliente.telefono || "0000").replace(/\D/g,"").slice(-4).padStart(4,"0");
+  return `PR-${mmdd}-${ult4}-${codigoPremio}`;
+}
+
+// ---------- INICIO ----------
+document.addEventListener("DOMContentLoaded", init);
+
+function init(){
+  setupCanvasResolution();
+  cliente = cargarCliente();
+
+  if(cliente && jugoHoy(cliente)){
+    mostrarYaJugaste();
+  } else if(cliente){
+    mostrarWifi();
+  } else {
+    // pantalla1 ya es visible por defecto
+  }
+}
+
+// ---------- REGISTRO ----------
+btnContinuar.addEventListener("click", registrar);
+
+function registrar(){
+  const nombre = nombreInput.value.trim();
+  const telefonoLimpio = telefonoInput.value.replace(/\D/g,"");
+  const fecha = fechaInput.value;
+
+  if(nombre.length < 2){
+    errorRegistro.textContent = "Escribe tu nombre completo.";
+    return;
+  }
+  if(telefonoLimpio.length < 7 || telefonoLimpio.length > 8){
+    errorRegistro.textContent = "Ingresa un WhatsApp válido (7 u 8 dígitos).";
+    return;
+  }
+  if(!fecha){
+    errorRegistro.textContent = "Selecciona tu fecha de nacimiento.";
+    return;
+  }
+  errorRegistro.textContent = "";
+
+  cliente = {
+    nombre,
+    telefono: telefonoLimpio,
+    nacimiento: fecha,
+    invito: invitoInput.value.trim(),
+    visitas: [],
+    creado: hoyStr()
+  };
+  guardarCliente(cliente);
+  enviarAAppsScript({
+    tipo: "registro",
+    nombre: cliente.nombre,
+    telefono: cliente.telefono,
+    nacimiento: cliente.nacimiento,
+    invito: cliente.invito
+  });
+
+  pantalla1.classList.add("hidden");
+  mostrarWifi();
+}
+
+// ---------- PANTALLA WIFI ----------
+function mostrarWifi(){
+  saludo.textContent = `Hola, ${cliente.nombre} 👋`;
+  claveDiv.textContent = generarClave();
+  pintarStamps(document.getElementById("stamps"), document.getElementById("stampsLabel"), cliente.visitas.length);
+
+  pantalla1.classList.add("hidden");
+  yaJugasteDiv.classList.add("hidden");
+  pantalla2.classList.remove("hidden");
+}
+
+btnCopiarClave.addEventListener("click", () => {
+  copiarTexto(claveDiv.textContent, "Clave copiada ✅");
+});
+
+function copiarTexto(texto, mensajeOk){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(
+      () => alert(mensajeOk),
+      () => alert(texto)
+    );
+  } else {
+    alert(texto);
+  }
+}
+
+// ---------- PANTALLA YA JUGASTE ----------
+function mostrarYaJugaste(){
+  pintarStamps(document.getElementById("stamps2"), document.getElementById("stampsLabel2"), cliente.visitas.length);
+  pantalla1.classList.add("hidden");
+  pantalla2.classList.add("hidden");
+  yaJugasteDiv.classList.remove("hidden");
+}
+
+btnPedirAhora.addEventListener("click", () => {
+  const msg = `Hola 🍗\nSoy ${cliente.nombre}\n👉 Quiero hacer un pedido (mínimo Bs 20)`;
+  window.open(`https://wa.me/59168972863?text=${encodeURIComponent(msg)}`);
+});
+
+// ---------- CAMBIAR DATOS (dispositivo compartido) ----------
+document.getElementById("linkCambiar").addEventListener("click", cambiarDatos);
+document.getElementById("linkCambiar2").addEventListener("click", cambiarDatos);
+
+function cambiarDatos(e){
+  e.preventDefault();
+  if(confirm("Esto borrará tus datos guardados en este teléfono. ¿Continuar?")){
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+}
+
+// ---------- BARRA DE FIDELIDAD ----------
+function pintarStamps(contenedor, etiqueta, totalVisitas){
+  const enCiclo = totalVisitas > 0 && totalVisitas % 5 === 0 ? 5 : totalVisitas % 5;
+  contenedor.innerHTML = "";
+  for(let i=1;i<=5;i++){
+    const s = document.createElement("div");
+    s.className = "stamp" + (i <= enCiclo ? " lleno" : "");
+    s.textContent = i <= enCiclo ? "🍗" : "☆";
+    contenedor.appendChild(s);
+  }
+  etiqueta.textContent = enCiclo === 5
+    ? "¡Completaste tu tarjeta de fidelidad! 🎉"
+    : `${enCiclo}/5 visitas para tu combo especial`;
+}
+
+// ---------- IR A RASPAR ----------
+btnSeguir.addEventListener("click", pasarARaspa);
+
+function pasarARaspa(){
+  const yaConteoHoy = cliente.visitas.includes(hoyStr());
+  if(!yaConteoHoy) cliente.visitas.push(hoyStr());
+  guardarCliente(cliente);
+
+  const totalVisitas = cliente.visitas.length;
+  const esHito = totalVisitas > 0 && totalVisitas % 5 === 0;
+  const cumple = esCumpleHoy(cliente);
+
+  badgeCumple.classList.toggle("hidden", !cumple);
+
+  if(cumple){
+    premioForzado = {label:"🎂 Postre de cumpleaños GRATIS", codigo:"CUMPLE"};
+  } else if(esHito){
+    premioForzado = {label:"🎉 Premio fidelidad: combo especial GRATIS", codigo:"FIDEL"};
+  } else {
+    premioForzado = null;
+  }
+
+  intento = 1;
+  pantalla2.classList.add("hidden");
+  raspaDiv.classList.remove("hidden");
+  iniciarRaspa();
+}
+
+// ---------- LÓGICA DE RASPADO ----------
+function setupCanvasResolution(){
+  const dpr = window.devicePixelRatio || 1;
+  const w = 300, h = 150;
+  canvas.style.width = w + "px";
+  canvas.style.height = h + "px";
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function iniciarRaspa(){
+  raspadoTotal = 0;
+  yaRevelo = false;
+
+  const opcion = premioForzado
+    ? premioForzado
+    : (intento === 1 ? elegirPremio(PREMIOS_INTENTO_1) : elegirPremio(PREMIOS_INTENTO_2));
+
+  premioActual = opcion;
+
+  premioBox.classList.add("hidden");
+  codigoBox.classList.add("hidden");
+  btnPremio.classList.add("hidden");
+  btnCompartir.classList.add("hidden");
+  segundaBtn.classList.add("hidden");
+
+  dibujarFoil();
+
+  ctx.globalCompositeOperation = "destination-out";
+}
+
+function dibujarFoil(){
+  ctx.globalCompositeOperation = "source-over";
+  const grad = ctx.createLinearGradient(0,0,300,150);
+  grad.addColorStop(0, "#d8d8d8");
+  grad.addColorStop(0.5, "#bfbfbf");
+  grad.addColorStop(1, "#d8d8d8");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,300,150);
+
+  ctx.strokeStyle = "rgba(255,255,255,.35)";
+  ctx.lineWidth = 2;
+  for(let x=-150; x<300; x+=14){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x+150,150);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = "#5a4a3a";
+  ctx.font = "700 18px 'Baloo 2', Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("🎁 RASPA AQUÍ 🎁", 150, 80);
+  ctx.textAlign = "left";
+}
+
+canvas.addEventListener("mousedown", () => raspando = true);
+window.addEventListener("mouseup", () => raspando = false);
+canvas.addEventListener("mousemove", raspar);
+
+canvas.addEventListener("touchstart", (e) => { raspando = true; rasparTouch(e); }, {passive:false});
+canvas.addEventListener("touchend", () => raspando = false);
+canvas.addEventListener("touchmove", rasparTouch, {passive:false});
+
+function raspar(e){
+  if(!raspando || yaRevelo) return;
+  ctx.beginPath();
+  ctx.arc(e.offsetX, e.offsetY, 15, 0, Math.PI*2);
+  ctx.fill();
+  raspadoTotal++;
+  if(raspadoTotal > 40) mostrarPremio();
+}
+
+function rasparTouch(e){
+  e.preventDefault();
+  if(!raspando || yaRevelo) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.touches[0].clientX - rect.left;
+  const y = e.touches[0].clientY - rect.top;
+  ctx.beginPath();
+  ctx.arc(x, y, 15, 0, Math.PI*2);
+  ctx.fill();
+  raspadoTotal++;
+  if(raspadoTotal > 40) mostrarPremio();
+}
+
+function mostrarPremio(){
+  yaRevelo = true;
+
+  premioTexto.textContent = premioActual.label;
+  premioBox.classList.remove("hidden");
+
+  const perdio = premioActual.codigo === "NONE";
+
+  enviarAAppsScript({
+    tipo: "premio",
+    nombre: cliente.nombre,
+    telefono: cliente.telefono,
+    intento: intento,
+    premio: premioActual.label,
+    codigo: perdio ? "" : generarCodigo(premioActual.codigo)
+  });
+
+  if(perdio && intento === 1){
+    segundaBtn.classList.remove("hidden");
+    return;
+  }
+
+  if(perdio && intento === 2){
+    btnPremio.textContent = "🍗 Ver menú y pedir";
+    btnPremio.classList.remove("hidden");
+    return;
+  }
+
+  const codigo = generarCodigo(premioActual.codigo);
+  codigoBox.textContent = "Código de canje: " + codigo;
+  codigoBox.classList.remove("hidden");
+  codigoBox.dataset.codigo = codigo;
+
+  btnPremio.textContent = "🎁 Usar mi premio por WhatsApp";
+  btnPremio.classList.remove("hidden");
+  btnCompartir.classList.remove("hidden");
+}
+
+segundaBtn.addEventListener("click", () => {
+  intento = 2;
+  premioForzado = null; // el cupo garantizado ya se usó en el primer intento si aplicaba
+  iniciarRaspa();
+});
+
+codigoBox.addEventListener("click", () => {
+  if(codigoBox.dataset.codigo) copiarTexto(codigoBox.dataset.codigo, "Código copiado ✅");
+});
+
+// ---------- USAR PREMIO POR WHATSAPP ----------
+btnPremio.addEventListener("click", () => {
+  const perdio = premioActual.codigo === "NONE";
+  const codigo = codigoBox.dataset.codigo || "";
+
+  const msg = perdio
+    ? `Hola 🍗\nSoy ${cliente.nombre}\n\nNo gané premio esta vez 😅\n👉 Quiero hacer un pedido`
+    : `Hola 🍗\nSoy ${cliente.nombre}\n\n🎁 Me salió: ${premioActual.label}\n🔑 Código: ${codigo}\n👉 Voy a hacer un pedido (mínimo Bs 20)`;
+
+  window.open(`https://wa.me/59168972863?text=${encodeURIComponent(msg)}`);
+});
+
+// ---------- INVITAR A UN AMIGO ----------
+btnCompartir.addEventListener("click", () => {
+  const msg = `🍗 ¡Oye! En Pollos Rhosse te conectas al WiFi gratis y raspas un premio en cada visita. Diles que te invitó ${cliente.nombre} 😉`;
+  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  if(navigator.share){
+    navigator.share({text: msg}).catch(() => window.open(url));
+  } else {
+    window.open(url);
+  }
+});
+</script>
+
+</body>
+</html>
