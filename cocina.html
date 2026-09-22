@@ -21,11 +21,24 @@ text-align:center;
 
 h1{ margin:10px 0; }
 
+#estadoConexion{
+font-size:13px;
+opacity:0.85;
+margin-top:4px;
+}
+
 #listaPedidos{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
 gap:20px;
 padding:20px;
+}
+
+#sinPedidos{
+text-align:center;
+padding:60px 20px;
+font-size:20px;
+opacity:0.8;
 }
 
 .card{
@@ -94,6 +107,20 @@ font-weight:bold;
 .modo-tv header{ display:none; }
 .modo-tv .botones{ display:none; }
 
+#avisoTV{
+display:none;
+position:fixed;
+bottom:10px;
+right:10px;
+background:rgba(0,0,0,0.6);
+color:white;
+padding:8px 12px;
+border-radius:8px;
+font-size:13px;
+z-index:999;
+}
+.modo-tv #avisoTV{ display:block; }
+
 </style>
 </head>
 
@@ -101,170 +128,217 @@ font-weight:bold;
 
 <header>
 <h1>🍗 Pantalla Cocina PRO</h1>
-<button class="activar" onclick="activarSonido()">🔔 Sonido</button>
-<button class="activar" onclick="pantallaCompleta()">📺 Full</button>
-<button class="activar" onclick="modoTV()">🖥 TV</button>
+<button class="activar" id="btnSonido" onclick="activarSonido()">🔔 Activar sonido</button>
+<button class="activar" onclick="pantallaCompleta()">📺 Pantalla completa</button>
+<button class="activar" onclick="modoTV()">🖥 Modo TV</button>
+<div id="estadoConexion">Conectando...</div>
 </header>
 
 <div id="listaPedidos"></div>
+<div id="sinPedidos" style="display:none;">✅ No hay pedidos pendientes</div>
+<div id="avisoTV">Doble clic en cualquier parte, o tecla Esc, para salir del Modo TV</div>
 
-<audio id="alerta">
+<audio id="alerta" preload="auto">
 <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
 </audio>
 
 <script>
 
-const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+const API = "https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
-let sonido=false;
+let sonido = false;
 let idsPrevios = new Set();
+let primerCarga = true;
 
-/* 🔔 SONIDO */
+// ================= UTILIDAD: evitar HTML inyectado =================
+function escapar(texto){
+  const div = document.createElement("div");
+  div.textContent = String(texto ?? "");
+  return div.innerHTML;
+}
+
+// ================= SONIDO =================
 function activarSonido(){
-sonido=true;
-alert("🔔 Sonido activado");
+  sonido = true;
+  const btn = document.getElementById("btnSonido");
+  if(btn) btn.textContent = "🔔 Sonido activado";
+  // Desbloquea el audio en el navegador aprovechando el clic del usuario
+  const audio = document.getElementById("alerta");
+  audio.play().then(()=>{ audio.pause(); audio.currentTime = 0; }).catch(()=>{});
 }
 
 function playSound(){
-let audio = document.getElementById("alerta");
-audio.currentTime = 0;
-audio.play();
-setTimeout(()=> audio.play(), 300);
+  const audio = document.getElementById("alerta");
+  audio.currentTime = 0;
+  audio.play().catch(()=>{});
+  setTimeout(()=>{ audio.currentTime = 0; audio.play().catch(()=>{}); }, 300);
 }
 
-/* 🧠 DETECTAR NUEVOS */
+// ================= DETECTAR PEDIDOS NUEVOS =================
 function detectarNuevos(pedidos){
-let nuevos = pedidos.filter(p => !idsPrevios.has(p.fila));
-if(nuevos.length > 0 && sonido){
-playSound();
-}
-idsPrevios = new Set(pedidos.map(p => p.fila));
+  const nuevos = pedidos.filter(p => !idsPrevios.has(p.fila));
+
+  // En la primera carga no suena (evita alarmas con pedidos que ya estaban ahí)
+  if(nuevos.length > 0 && sonido && !primerCarga){
+    playSound();
+  }
+
+  idsPrevios = new Set(pedidos.map(p => p.fila));
+  primerCarga = false;
 }
 
-/* 📺 FULL */
+// ================= PANTALLA COMPLETA =================
 function pantallaCompleta(){
-document.documentElement.requestFullscreen();
+  document.documentElement.requestFullscreen().catch(()=>{});
 }
 
-/* 🖥 TV */
+// ================= MODO TV (con salida garantizada) =================
 function modoTV(){
-document.body.classList.toggle("modo-tv");
+  document.body.classList.toggle("modo-tv");
 }
 
-/* 📡 CARGAR */
+document.addEventListener("dblclick", ()=>{
+  if(document.body.classList.contains("modo-tv")){
+    document.body.classList.remove("modo-tv");
+  }
+});
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape" && document.body.classList.contains("modo-tv")){
+    document.body.classList.remove("modo-tv");
+  }
+});
+
+// ================= CARGAR PEDIDOS =================
 function cargarPedidos(){
 
-fetch(API+"?accion=obtener")
-.then(r=>r.json())
-.then(pedidos=>{
+  fetch(API + "?accion=obtener")
+  .then(r=>r.json())
+  .then(pedidosRecibidos=>{
 
-/* 🔥 ORDEN */
-pedidos.sort((a,b)=>{
-const orden = {"Nuevo":1,"En preparacion":2,"Listo":3};
-return orden[a.estado] - orden[b.estado];
-});
+    const pedidos = Array.isArray(pedidosRecibidos) ? pedidosRecibidos : [];
+    document.getElementById("estadoConexion").textContent = "🟢 Conectado";
 
-/* 🔔 NUEVOS */
-detectarNuevos(pedidos);
+    // 🔥 ORDEN: Nuevo -> En preparacion -> Listo -> (Entregado al final)
+    const orden = {"Nuevo":1, "En preparacion":2, "Listo":3, "Entregado":4};
+    pedidos.sort((a,b)=> (orden[a.estado] || 99) - (orden[b.estado] || 99));
 
-let html="";
+    // 🔔 detectar pedidos nuevos (usando todos los que llegan, no solo los visibles)
+    detectarNuevos(pedidos.filter(p => p.estado !== "Entregado"));
 
-pedidos.forEach(p=>{
+    const activos = pedidos.filter(p => p.estado !== "Entregado");
 
-if(p.estado==="Entregado") return;
+    if(activos.length === 0){
+      document.getElementById("listaPedidos").innerHTML = "";
+      document.getElementById("sinPedidos").style.display = "block";
+      return;
+    }
+    document.getElementById("sinPedidos").style.display = "none";
 
-/* 🧠 LIMPIAR ITEMS */
-let items = p.detalle
-.split("\n")
-.map(x => x.replace("-","").trim())
-.filter(x => x !== "");
+    let html = "";
 
-/* 🔢 AGRUPAR */
-let contador = {};
-items.forEach(i=>{
-contador[i] = (contador[i] || 0) + 1;
-});
+    activos.forEach(p=>{
 
-/* 📋 RESUMEN PRO */
-let resumen="";
-for(let k in contador){
-resumen += `🍗 ${contador[k]}x ${k}<br>`;
-}
+      // 🧠 limpiar y contar los items del pedido
+      const items = String(p.detalle || "")
+        .split("\n")
+        .map(x => x.replace(/^-+/, "").trim())
+        .filter(x => x !== "");
 
-/* 🎨 CLASE */
-let clase="nuevo";
-if(p.estado==="En preparacion") clase="preparacion";
-if(p.estado==="Listo") clase="listo";
+      const contador = {};
+      items.forEach(i=>{
+        contador[i] = (contador[i] || 0) + 1;
+      });
 
-html+=`
+      let resumen = "";
+      for(const k in contador){
+        resumen += `🍗 ${contador[k]}x ${escapar(k)}<br>`;
+      }
+
+      let clase = "nuevo";
+      if(p.estado === "En preparacion") clase = "preparacion";
+      if(p.estado === "Listo") clase = "listo";
+
+      const fila = encodeURIComponent(p.fila);
+
+      html += `
 <div class="card ${clase}">
 
-<h2>Pedido ${p.fila}</h2>
+<h2>Pedido ${escapar(p.fila)}</h2>
 
-<div><b>Mesa:</b> ${p.mesa}</div>
+<div><b>Mesa:</b> ${escapar(p.mesa)}</div>
 
 <div style="font-size:22px;font-weight:bold;">
 ${resumen}
 </div>
 
 <div class="detalle">
-${items.map(i=>"• "+i).join("<br>")}
+${items.map(i => "• " + escapar(i)).join("<br>")}
 </div>
 
-<div class="total">Total Bs ${p.total}</div>
+<div class="total">Total Bs ${escapar(p.total)}</div>
 
-<div><b>Estado:</b> ${p.estado}</div>
+<div><b>Estado:</b> ${escapar(p.estado)}</div>
 
 <div class="botones">
 
-${p.estado==="Nuevo"
-? `<button onclick="cambiarEstado(${p.fila},'En preparacion')">Preparar</button>`
-: `<button disabled style="opacity:0.4">Preparar</button>`}
+${p.estado === "Nuevo"
+  ? `<button onclick="cambiarEstado('${fila}','En preparacion')">Preparar</button>`
+  : `<button disabled style="opacity:0.4">Preparar</button>`}
 
-${p.estado==="En preparacion"
-? `<button onclick="cambiarEstado(${p.fila},'Listo')" style="background:orange">Listo</button>`
-: `<button disabled style="opacity:0.4">Listo</button>`}
+${p.estado === "En preparacion"
+  ? `<button onclick="cambiarEstado('${fila}','Listo')" style="background:orange">Listo</button>`
+  : `<button disabled style="opacity:0.4">Listo</button>`}
 
-${p.estado==="Listo"
-? `<button onclick="cambiarEstado(${p.fila},'Entregado')" style="background:green">Entregado</button>`
-: `<button disabled style="opacity:0.4">Entregado</button>`}
+${p.estado === "Listo"
+  ? `<button onclick="cambiarEstado('${fila}','Entregado')" style="background:green">Entregado</button>`
+  : `<button disabled style="opacity:0.4">Entregado</button>`}
 
 </div>
 
 </div>
 `;
 
-});
+    });
 
-document.getElementById("listaPedidos").innerHTML=html;
+    document.getElementById("listaPedidos").innerHTML = html;
 
-});
+  })
+  .catch(err=>{
+    console.error(err);
+    document.getElementById("estadoConexion").textContent = "🔴 Sin conexión — reintentando...";
+  });
 
 }
 
-/* 🔄 ESTADO */
-function cambiarEstado(fila,estado){
+// ================= CAMBIAR ESTADO =================
+function cambiarEstado(fila, estado){
 
-fetch(API,{
-method:"POST",
-headers:{
-"Content-Type":"application/x-www-form-urlencoded"
-},
-body:`accion=actualizar&fila=${fila}&estado=${estado}`
-})
-.then(r=>r.json())
-.then(d=>{
-if(d.ok){
+  fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "accion=actualizar&fila=" + encodeURIComponent(fila) + "&estado=" + encodeURIComponent(estado)
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.ok){
+      cargarPedidos();
+    }else{
+      alert("❌ No se pudo actualizar el pedido");
+    }
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("❌ Error de conexión al actualizar el pedido");
+  });
+
+}
+
+// ================= ARRANQUE =================
 cargarPedidos();
-}
-});
-
-}
-
-/* ⏱ */
-setInterval(cargarPedidos,3000);
-
-cargarPedidos();
+setInterval(cargarPedidos, 3000);
 
 </script>
 
