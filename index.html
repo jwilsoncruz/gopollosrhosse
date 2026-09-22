@@ -333,7 +333,7 @@ style="border:0;border-radius:15px;">
 const diasCerrados = [0];      // 0 = domingo, 1 = lunes ... 6 = sábado
 const fechasCerrado = [];      // días sueltos cerrados, formato "AAAA-MM-DD" (ej: "2026-12-25")
 
-const aperturaHora = 7;
+const aperturaHora = 10;
 const aperturaMin = 0;
 const cierreHora = 22;
 const cierreMin = 30;
@@ -360,6 +360,30 @@ let enviando = false;
 // "cerrado" = fuerza el local a CERRADO sin importar la hora
 let forzarEstado = null;
 
+// Combina el forzado hecho en ESTE navegador (forzarEstado) con el
+// estado guardado en la hoja de cálculo (remoto.estado). El forzado
+// local manda primero (respuesta inmediata al tocar el botón); si no
+// hay forzado local, se usa lo que diga la hoja, para que otros
+// dispositivos (celulares de clientes, otra compu, etc.) también
+// respeten el cierre/apertura forzados desde el panel admin.
+function estadoForzado(){
+  if(forzarEstado === "abierto" || forzarEstado === "cerrado") return forzarEstado;
+  if(remoto && (remoto.estado === "abierto" || remoto.estado === "cerrado")) return remoto.estado;
+  return null;
+}
+
+// Guarda el estado forzado (o "" para modo automático) en la hoja CONFIG,
+// usando el mismo formato {tipo, valor} que espera tu Apps Script.
+function actualizarEstadoRemoto(valor){
+  return fetch(API_CONFIG, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ tipo: "estado", valor: valor })
+  }).catch(err=>{
+    console.error("No se pudo guardar el estado en la hoja", err);
+  });
+}
+
 const params = new URLSearchParams(window.location.search);
 // Solo letras, números, guion y espacio (evita meter código por la URL)
 const mesaQR = (params.get("mesa") || "").replace(/[^\w\- ]/g, "").slice(0, 10);
@@ -382,11 +406,10 @@ function cerradoTodoElDia(d){
 }
 
 function localAbierto(){
-  // El forzado manual desde el panel admin tiene prioridad máxima
-  if(forzarEstado === "abierto") return true;
-  if(forzarEstado === "cerrado") return false;
-
-  if(remoto && remoto.estado === "cerrado") return false;
+  // El forzado manual (de este navegador o desde la hoja) tiene prioridad máxima
+  const forzado = estadoForzado();
+  if(forzado === "abierto") return true;
+  if(forzado === "cerrado") return false;
 
   const ahora = new Date();
   if(cerradoTodoElDia(ahora)) return false;
@@ -654,14 +677,16 @@ function actualizarMarquesina(){
     return;
   }
 
-  // 🟢 Forzado manualmente ABIERTO
-  if(forzarEstado === "abierto"){
+  const forzado = estadoForzado();
+
+  // 🟢 Forzado ABIERTO (local o desde la hoja)
+  if(forzado === "abierto"){
     ponerMarquesina("🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥");
     return;
   }
 
-  // 🔴 Forzado manualmente CERRADO
-  if(forzarEstado === "cerrado"){
+  // 🔴 Forzado CERRADO (local o desde la hoja)
+  if(forzado === "cerrado"){
     ponerMarquesina("🔴 Local cerrado temporalmente — Vuelve pronto 🔥 >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<<");
     return;
   }
@@ -701,20 +726,16 @@ function actualizarEstado(){
 
   if(!estado) return;
 
+  const forzado = estadoForzado();
   const abierto = localAbierto();
 
   if(abierto){
-    estado.innerHTML = (forzarEstado === "abierto") ? "🟢 Abierto (forzado manualmente)" : "🟢 Estamos atendiendo";
+    estado.innerHTML = (forzado === "abierto") ? "🟢 Abierto (forzado manualmente)" : "🟢 Estamos atendiendo";
     estado.style.color = "lightgreen";
     if(logo) logo.style.filter = "none";
   }
-  else if(forzarEstado === "cerrado"){
+  else if(forzado === "cerrado"){
     estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
-    estado.style.color = "red";
-    if(logo) logo.style.filter = "grayscale(100%)";
-  }
-  else if(remoto && remoto.estado === "cerrado"){
-    estado.innerHTML = "🔴 Cerrado desde sistema";
     estado.style.color = "red";
     if(logo) logo.style.filter = "grayscale(100%)";
   }
@@ -731,10 +752,10 @@ function actualizarEstado(){
   // Texto informativo dentro del panel admin
   const textoForzado = document.getElementById("estadoForzadoTexto");
   if(textoForzado){
-    if(forzarEstado === "abierto"){
-      textoForzado.textContent = "Estado actual: FORZADO ABIERTO";
-    }else if(forzarEstado === "cerrado"){
-      textoForzado.textContent = "Estado actual: FORZADO CERRADO";
+    if(forzado === "abierto"){
+      textoForzado.textContent = "Estado actual: FORZADO ABIERTO" + (forzarEstado ? " (este navegador)" : " (desde la hoja)");
+    }else if(forzado === "cerrado"){
+      textoForzado.textContent = "Estado actual: FORZADO CERRADO" + (forzarEstado ? " (este navegador)" : " (desde la hoja)");
     }else{
       textoForzado.textContent = "Estado actual: Automático (horario normal)";
     }
@@ -757,14 +778,16 @@ function contadorLenia(){
 
   if(!estado || !tiempo) return;
 
-  // El forzado manual tiene prioridad sobre cualquier otra lógica de horario
-  if(forzarEstado === "abierto"){
+  // El forzado (local o desde la hoja) tiene prioridad sobre cualquier otra lógica de horario
+  const forzadoLenia = estadoForzado();
+
+  if(forzadoLenia === "abierto"){
     estado.innerHTML = "🟢 Abierto (forzado manualmente)";
     tiempo.innerHTML = "🍗 Pollos saliendo de la leña";
     return;
   }
 
-  if(forzarEstado === "cerrado"){
+  if(forzadoLenia === "cerrado"){
     estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
     tiempo.innerHTML = "Reactivar desde el panel admin";
     return;
@@ -853,16 +876,18 @@ function actualizarMenuPorHora(){
     if(cena) cena.style.display = "none";
   }
 
-  // 🔴 Forzado manualmente CERRADO: ocultar todos los menús
-  if(forzarEstado === "cerrado"){
+  const forzadoMenu = estadoForzado();
+
+  // 🔴 Forzado CERRADO (local o desde la hoja): ocultar todos los menús
+  if(forzadoMenu === "cerrado"){
     ocultarTodo();
     if(estado) estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
     return;
   }
 
-  // 🟢 Forzado manualmente ABIERTO: mostrar el menú que corresponda a la hora
+  // 🟢 Forzado ABIERTO (local o desde la hoja): mostrar el menú que corresponda a la hora
   // (o almuerzo si el forzado se usa fuera del horario habitual)
-  if(forzarEstado === "abierto"){
+  if(forzadoMenu === "abierto"){
     ocultarTodo();
     if(tiempo < finAlmuerzo){
       if(tituloAlmuerzo) tituloAlmuerzo.style.display = "block";
@@ -944,6 +969,7 @@ async function cargarConfig(){
     actualizarEstado();
     actualizarMarquesina();
     contadorLenia();
+    actualizarMenuPorHora();
 
   }catch(e){
     console.error("Error conectando con Google Sheets", e);
@@ -1038,34 +1064,39 @@ function reiniciarPollos(){
   alert("Pollos reiniciados");
 }
 
-// Fuerza el local a ABIERTO sin importar el horario configurado
+// Fuerza el local a ABIERTO sin importar el horario configurado,
+// y lo guarda en la hoja para que se refleje en todos los dispositivos
 function forzarApertura(){
   forzarEstado = "abierto";
   actualizarEstado();
   actualizarMarquesina();
   contadorLenia();
   actualizarMenuPorHora();
-  alert("🟢 Local forzado a ABIERTO");
+  actualizarEstadoRemoto("abierto");
+  alert("🟢 Local forzado a ABIERTO (guardando en la hoja...)");
 }
 
-// Fuerza el local a CERRADO sin importar el horario configurado
+// Fuerza el local a CERRADO sin importar el horario configurado,
+// y lo guarda en la hoja para que se refleje en todos los dispositivos
 function forzarCierre(){
   forzarEstado = "cerrado";
   actualizarEstado();
   actualizarMarquesina();
   contadorLenia();
   actualizarMenuPorHora();
-  alert("🔴 Local forzado a CERRADO");
+  actualizarEstadoRemoto("cerrado");
+  alert("🔴 Local forzado a CERRADO (guardando en la hoja...)");
 }
 
-// Vuelve al horario automático normal
+// Vuelve al horario automático normal, en este navegador y en la hoja
 function modoAutomatico(){
   forzarEstado = null;
   actualizarEstado();
   actualizarMarquesina();
   contadorLenia();
   actualizarMenuPorHora();
-  alert("🔄 Local en modo automático (horario normal)");
+  actualizarEstadoRemoto("");
+  alert("🔄 Local en modo automático (guardando en la hoja...)");
 }
 
 // ================= ARRANQUE =================
