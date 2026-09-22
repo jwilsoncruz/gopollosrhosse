@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cocina PRO - Go Pollos Rhosse</title>
+<link rel="icon" href="cocina.ico">
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#4b0000;
+color:white;
+}
+
+header{
+background:#d50000;
+padding:20px;
+text-align:center;
+}
+
+h1{ margin:10px 0; }
+
+#estadoConexion{
+font-size:13px;
+opacity:0.85;
+margin-top:4px;
+}
+
+#estadoBotones{
+font-size:13px;
+opacity:0.85;
+margin-top:4px;
+}
+
+#listaPedidos{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:20px;
+padding:20px;
+}
+
+#sinPedidos{
+text-align:center;
+padding:60px 20px;
+font-size:20px;
+opacity:0.8;
+}
+
+.card{
+border-radius:12px;
+padding:20px;
+box-shadow:0 6px 14px rgba(0,0,0,0.4);
+color:black;
+font-size:18px;
+position:relative;
+}
+
+.nuevo{
+background:#ffb3b3;
+border-left:10px solid red;
+animation:blink 1s infinite;
+}
+
+.preparacion{
+background:#fff3b0;
+border-left:10px solid orange;
+}
+
+.listo{
+background:#b9f6ca;
+border-left:10px solid green;
+}
+
+@keyframes blink{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+
+.detalle{
+margin:15px 0;
+line-height:1.4;
+}
+
+.total{
+font-size:22px;
+font-weight:bold;
+}
+
+.botones{
+margin-top:15px;
+}
+
+button{
+background:#d50000;
+border:none;
+color:white;
+padding:10px 14px;
+border-radius:6px;
+cursor:pointer;
+font-size:15px;
+margin:5px;
+}
+
+button:hover{ opacity:0.85; }
+
+.activar{
+background:white;
+color:#d50000;
+font-weight:bold;
+}
+
+.modo-tv header{ display:none; }
+.modo-tv .botones{ display:none; }
+
+#avisoTV{
+display:none;
+position:fixed;
+bottom:10px;
+right:10px;
+background:rgba(0,0,0,0.6);
+color:white;
+padding:8px 12px;
+border-radius:8px;
+font-size:13px;
+z-index:999;
+}
+.modo-tv #avisoTV{ display:block; }
+
+/* Etiqueta que marca cuál tarjeta se moverá con el botón físico correspondiente */
+.etiqueta-siguiente{
+position:absolute;
+top:-12px;
+right:12px;
+background:#4b0000;
+color:white;
+font-size:13px;
+font-weight:bold;
+padding:4px 10px;
+border-radius:20px;
+box-shadow:0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* Aviso visual grande cuando se presiona un boton fisico */
+#flashBoton{
+display:none;
+position:fixed;
+top:0; left:0; right:0; bottom:0;
+background:rgba(0,255,0,0.15);
+pointer-events:none;
+z-index:998;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🍗 Pantalla Cocina PRO</h1>
+<button class="activar" id="btnSonido" onclick="activarSonido()">🔔 Activar sonido</button>
+<button class="activar" onclick="pantallaCompleta()">📺 Pantalla completa</button>
+<button class="activar" onclick="modoTV()">🖥 Modo TV</button>
+<div id="estadoConexion">Conectando...</div>
+<div id="estadoBotones">🎮 Botones físicos: tecla 1 = Preparar · tecla 2 = Listo · tecla 3 = Entregado</div>
+</header>
+
+<div id="listaPedidos"></div>
+<div id="sinPedidos" style="display:none;">✅ No hay pedidos pendientes</div>
+<div id="avisoTV">Doble clic en cualquier parte, o tecla Esc, para salir del Modo TV</div>
+<div id="flashBoton"></div>
+
+<audio id="alerta" preload="auto">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+</audio>
+
+<script>
+
+const API = "https://script.google.com/macros/s/AKfycbw2m9_YSX_-11iMZCmMT24GwESuGub15Z943HcXBceA1Ez_md6eYKfINeL4wz2PDigO/exec";
+
+let sonido = false;
+let idsPrevios = new Set();
+let primerCarga = true;
+
+// Guardamos aquí la última lista de pedidos tal cual llegó de la API,
+// para que los botones físicos sepan a qué pedido aplicar el cambio.
+let pedidosActuales = [];
+
+// ================= UTILIDAD: evitar HTML inyectado =================
+function escapar(texto){
+  const div = document.createElement("div");
+  div.textContent = String(texto ?? "");
+  return div.innerHTML;
+}
+
+// ================= NÚMERO DE PEDIDO A MOSTRAR =================
+function numeroVisible(p){
+  return (p.numero !== null && p.numero !== undefined && p.numero !== "")
+    ? p.numero
+    : p.fila;
+}
+
+// ================= SONIDO =================
+function activarSonido(){
+  sonido = true;
+  const btn = document.getElementById("btnSonido");
+  if(btn) btn.textContent = "🔔 Sonido activado";
+  const audio = document.getElementById("alerta");
+  audio.play().then(()=>{ audio.pause(); audio.currentTime = 0; }).catch(()=>{});
+}
+
+function playSound(){
+  const audio = document.getElementById("alerta");
+  audio.currentTime = 0;
+  audio.play().catch(()=>{});
+  setTimeout(()=>{ audio.currentTime = 0; audio.play().catch(()=>{}); }, 300);
+}
+
+// ================= DETECTAR PEDIDOS NUEVOS =================
+function detectarNuevos(pedidos){
+  const nuevos = pedidos.filter(p => !idsPrevios.has(p.fila));
+
+  if(nuevos.length > 0 && sonido && !primerCarga){
+    playSound();
+  }
+
+  idsPrevios = new Set(pedidos.map(p => p.fila));
+  primerCarga = false;
+}
+
+// ================= PANTALLA COMPLETA =================
+function pantallaCompleta(){
+  document.documentElement.requestFullscreen().catch(()=>{});
+}
+
+// ================= MODO TV (con salida garantizada) =================
+function modoTV(){
+  document.body.classList.toggle("modo-tv");
+}
+
+document.addEventListener("dblclick", ()=>{
+  if(document.body.classList.contains("modo-tv")){
+    document.body.classList.remove("modo-tv");
+  }
+});
+
+// ================= BOTONES FÍSICOS (teclado emulado por encoder USB) =================
+// La lógica es FIFO: el botón físico siempre actúa sobre el pedido MÁS ANTIGUO
+// que esté en el estado de origen correspondiente. Así nadie necesita "seleccionar"
+// nada en pantalla, solo presionar el botón grande.
+//
+//   Botón/tecla "1"  ->  Nuevo            -> En preparacion   (equivale a "Preparar")
+//   Botón/tecla "2"  ->  En preparacion   -> Listo             (equivale a "Listo")
+//   Botón/tecla "3"  ->  Listo            -> Entregado         (equivale a "Entregado")
+//
+// Si usas un encoder tipo Zero Delay/iPac, configura sus 3 botones para que envíen
+// las teclas 1, 2 y 3 (o cualquier otra tecla: solo cambia los "case" de abajo).
+
+function siguientePedido(estadoOrigen){
+  const candidatos = pedidosActuales
+    .filter(p => p.estado === estadoOrigen)
+    .sort((a,b) => Number(a.fila) - Number(b.fila));
+  return candidatos.length > 0 ? candidatos[0] : null;
+}
+
+function accionBotonFisico(estadoOrigen, estadoDestino){
+  const pedido = siguientePedido(estadoOrigen);
+  if(!pedido){
+    // No hay ningún pedido en ese estado: no hacemos nada, solo un parpadeo corto en rojo
+    flashPantalla("rgba(255,0,0,0.15)");
+    return;
+  }
+  flashPantalla("rgba(0,255,0,0.2)");
+  cambiarEstado(encodeURIComponent(pedido.fila), estadoDestino);
+}
+
+function flashPantalla(color){
+  const el = document.getElementById("flashBoton");
+  el.style.background = color;
+  el.style.display = "block";
+  setTimeout(()=>{ el.style.display = "none"; }, 180);
+}
+
+document.addEventListener("keydown", (e)=>{
+  // Ignoramos si el usuario está escribiendo en algún campo de texto (por si acaso)
+  const tag = document.activeElement ? document.activeElement.tagName : "";
+  if(tag === "INPUT" || tag === "TEXTAREA") return;
+
+  if(e.key === "Escape" && document.body.classList.contains("modo-tv")){
+    document.body.classList.remove("modo-tv");
+    return;
+  }
+
+  if(e.key === "1"){ accionBotonFisico("Nuevo", "En preparacion"); }
+  if(e.key === "2"){ accionBotonFisico("En preparacion", "Listo"); }
+  if(e.key === "3"){ accionBotonFisico("Listo", "Entregado"); }
+});
+
+// ================= CARGAR PEDIDOS =================
+function cargarPedidos(){
+
+  fetch(API + "?accion=obtener")
+  .then(r=>r.json())
+  .then(pedidosRecibidos=>{
+
+    const pedidos = Array.isArray(pedidosRecibidos) ? pedidosRecibidos : [];
+    document.getElementById("estadoConexion").textContent = "🟢 Conectado";
+
+    // Guardamos copia sin ordenar (orden cronológico real) para los botones físicos
+    pedidosActuales = pedidos.slice();
+
+    // 🔥 ORDEN VISUAL: Nuevo -> En preparacion -> Listo -> (Entregado al final)
+    const orden = {"Nuevo":1, "En preparacion":2, "Listo":3, "Entregado":4};
+    pedidos.sort((a,b)=> (orden[a.estado] || 99) - (orden[b.estado] || 99));
+
+    detectarNuevos(pedidos.filter(p => p.estado !== "Entregado"));
+
+    const activos = pedidos.filter(p => p.estado !== "Entregado");
+
+    if(activos.length === 0){
+      document.getElementById("listaPedidos").innerHTML = "";
+      document.getElementById("sinPedidos").style.display = "block";
+      return;
+    }
+    document.getElementById("sinPedidos").style.display = "none";
+
+    // Identificamos cuál tarjeta recibirá cada botón físico, para mostrar la etiqueta
+    const proximoNuevo = siguientePedido("Nuevo");
+    const proximoPrep = siguientePedido("En preparacion");
+    const proximoListo = siguientePedido("Listo");
+
+    let html = "";
+
+    activos.forEach(p=>{
+
+      const items = String(p.detalle || "")
+        .split("\n")
+        .map(x => x.replace(/^-+/, "").trim())
+        .filter(x => x !== "");
+
+      const contador = {};
+      items.forEach(i=>{
+        contador[i] = (contador[i] || 0) + 1;
+      });
+
+      let resumen = "";
+      for(const k in contador){
+        resumen += `🍗 ${contador[k]}x ${escapar(k)}<br>`;
+      }
+
+      let clase = "nuevo";
+      if(p.estado === "En preparacion") clase = "preparacion";
+      if(p.estado === "Listo") clase = "listo";
+
+      const fila = encodeURIComponent(p.fila);
+
+      // Etiqueta indicando que este pedido es el que activará el botón físico
+      let etiqueta = "";
+      if(proximoNuevo && p.fila === proximoNuevo.fila) etiqueta = `<div class="etiqueta-siguiente">🎮 Botón 1</div>`;
+      if(proximoPrep && p.fila === proximoPrep.fila) etiqueta = `<div class="etiqueta-siguiente">🎮 Botón 2</div>`;
+      if(proximoListo && p.fila === proximoListo.fila) etiqueta = `<div class="etiqueta-siguiente">🎮 Botón 3</div>`;
+
+      html += `
+<div class="card ${clase}">
+${etiqueta}
+<h2>Pedido ${escapar(numeroVisible(p))}</h2>
+
+<div><b>Mesa:</b> ${escapar(p.mesa)}</div>
+
+<div style="font-size:22px;font-weight:bold;">
+${resumen}
+</div>
+
+<div class="detalle">
+${items.map(i => "• " + escapar(i)).join("<br>")}
+</div>
+
+<div class="total">Total Bs ${escapar(p.total)}</div>
+
+<div><b>Estado:</b> ${escapar(p.estado)}</div>
+
+<div class="botones">
+
+${p.estado === "Nuevo"
+  ? `<button onclick="cambiarEstado('${fila}','En preparacion')">Preparar</button>`
+  : `<button disabled style="opacity:0.4">Preparar</button>`}
+
+${p.estado === "En preparacion"
+  ? `<button onclick="cambiarEstado('${fila}','Listo')" style="background:orange">Listo</button>`
+  : `<button disabled style="opacity:0.4">Listo</button>`}
+
+${p.estado === "Listo"
+  ? `<button onclick="cambiarEstado('${fila}','Entregado')" style="background:green">Entregado</button>`
+  : `<button disabled style="opacity:0.4">Entregado</button>`}
+
+</div>
+
+</div>
+`;
+
+    });
+
+    document.getElementById("listaPedidos").innerHTML = html;
+
+  })
+  .catch(err=>{
+    console.error(err);
+    document.getElementById("estadoConexion").textContent = "🔴 Sin conexión — reintentando...";
+  });
+
+}
+
+// ================= CAMBIAR ESTADO =================
+function cambiarEstado(fila, estado){
+
+  fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "accion=actualizar&fila=" + encodeURIComponent(fila) + "&estado=" + encodeURIComponent(estado)
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.ok){
+      cargarPedidos();
+    }else{
+      alert("❌ No se pudo actualizar el pedido");
+    }
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("❌ Error de conexión al actualizar el pedido");
+  });
+
+}
+
+// ================= ARRANQUE =================
+cargarPedidos();
+setInterval(cargarPedidos, 3000);
+
+</script>
+
+</body>
+</html>
