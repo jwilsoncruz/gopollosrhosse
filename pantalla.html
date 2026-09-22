@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Pantalla Clientes - Go Pollos Rhosse</title>
-<title>🖥️​Pantalla Clientes - Go Pollos Rhosse</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🖥️Pantalla Clientes - Go Pollos Rhosse</title>
 
 <style>
 
@@ -147,9 +148,19 @@ allowfullscreen>
 
 <script>
 
-const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+// Misma API que usa Cocina PRO, para que ambas pantallas muestren el mismo número de pedido
+const API="https://script.google.com/macros/s/AKfycbw2m9_YSX_-11iMZCmMT24GwESuGub15Z943HcXBceA1Ez_md6eYKfINeL4wz2PDigO/exec";
 
 let ultimosListos=[];
+
+// p.numero es el contador que se reinicia cada día (columna 7 de la hoja).
+// p.fila es la fila real en la hoja, que nunca se reinicia y solo se usa
+// como respaldo para pedidos guardados antes de que existiera "numero".
+function numeroVisible(p){
+  return (p.numero !== null && p.numero !== undefined && p.numero !== "")
+    ? p.numero
+    : p.fila;
+}
 
 function cargar(){
 
@@ -166,13 +177,15 @@ let nuevosListos=[];
 
 pedidos.forEach(p=>{
 
+const numero = numeroVisible(p);
+
 if(p.estado==="Nuevo" || p.estado==="En preparacion"){
-preparando += "<div class='card preparando'>"+p.fila+"</div>";
+preparando += "<div class='card preparando'>"+numero+"</div>";
 }
 
 if(p.estado==="Listo"){
-listo += "<div class='card listo'>"+p.fila+"</div>";
-nuevosListos.push(p.fila);
+listo += "<div class='card listo'>"+numero+"</div>";
+nuevosListos.push(numero);
 }
 
 });
