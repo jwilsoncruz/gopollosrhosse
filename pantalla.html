@@ -180,11 +180,11 @@ pedidos.forEach(p=>{
 const numero = numeroVisible(p);
 
 if(p.estado==="Nuevo" || p.estado==="En preparacion"){
-preparando += "<div class='card preparando'>"+numero+"</div>";
+preparando += "<div class='card preparando'>Pedido "+numero+"</div>";
 }
 
 if(p.estado==="Listo"){
-listo += "<div class='card listo'>"+numero+"</div>";
+listo += "<div class='card listo'>Pedido "+numero+"</div>";
 nuevosListos.push(numero);
 }
 
