@@ -1,355 +1,211 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cocina PRO - Go Pollos Rhosse</title>
-<link rel="icon" href="cocina.ico">
+<title>Pantalla Clientes - Go Pollos Rhosse</title>
+<title>🖥️​Pantalla Clientes - Go Pollos Rhosse</title>
+
 <style>
+
 body{
 margin:0;
-font-family:Arial, sans-serif;
-background:#4b0000;
+background:#0b0b0b;
+font-family:Arial;
 color:white;
-}
-
-header{
-background:#d50000;
-padding:20px;
 text-align:center;
 }
 
-h1{ margin:10px 0; }
-
-#estadoConexion{
-font-size:13px;
-opacity:0.85;
-margin-top:4px;
+h1{
+margin:10px;
 }
 
-#listaPedidos{
+.video{
+width:100%;
+height:45vh;
+background:black;
+}
+
+.video iframe{
+width:100%;
+height:100%;
+border:0;
+}
+
+.panel{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+grid-template-columns:1fr 1fr;
 gap:20px;
 padding:20px;
+height:45vh;
 }
 
-#sinPedidos{
-text-align:center;
-padding:60px 20px;
-font-size:20px;
-opacity:0.8;
+.columna{
+background:#1a1a1a;
+border-radius:12px;
+padding:20px;
+}
+
+.titulo{
+font-size:28px;
+margin-bottom:15px;
+}
+
+.lista{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+gap:15px;
 }
 
 .card{
-border-radius:12px;
-padding:20px;
-box-shadow:0 6px 14px rgba(0,0,0,0.4);
+padding:25px;
+border-radius:10px;
+font-size:42px;
+font-weight:bold;
+}
+
+.preparando{
+background:#ffd54f;
 color:black;
-font-size:18px;
-}
-
-.nuevo{
-background:#ffb3b3;
-border-left:10px solid red;
-animation:blink 1s infinite;
-}
-
-.preparacion{
-background:#fff3b0;
-border-left:10px solid orange;
 }
 
 .listo{
-background:#b9f6ca;
-border-left:10px solid green;
+background:#4caf50;
+animation:parpadeo 1s infinite;
 }
 
-@keyframes blink{
-0%{transform:scale(1);}
-50%{transform:scale(1.05);}
-100%{transform:scale(1);}
+@keyframes parpadeo{
+0%{transform:scale(1)}
+50%{transform:scale(1.15)}
+100%{transform:scale(1)}
 }
 
-.detalle{
-margin:15px 0;
-line-height:1.4;
-}
+/* flash pantalla */
 
-.total{
-font-size:22px;
-font-weight:bold;
-}
-
-.botones{
-margin-top:15px;
-}
-
-button{
-background:#d50000;
-border:none;
-color:white;
-padding:10px 14px;
-border-radius:6px;
-cursor:pointer;
-font-size:15px;
-margin:5px;
-}
-
-button:hover{ opacity:0.85; }
-
-.activar{
-background:white;
-color:#d50000;
-font-weight:bold;
-}
-
-.modo-tv header{ display:none; }
-.modo-tv .botones{ display:none; }
-
-#avisoTV{
-display:none;
+.flash{
 position:fixed;
-bottom:10px;
-right:10px;
-background:rgba(0,0,0,0.6);
-color:white;
-padding:8px 12px;
-border-radius:8px;
-font-size:13px;
-z-index:999;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:red;
+opacity:0;
+pointer-events:none;
 }
-.modo-tv #avisoTV{ display:block; }
+
+.flash.activo{
+animation:flashAnim 0.6s;
+}
+
+@keyframes flashAnim{
+0%{opacity:0}
+50%{opacity:0.6}
+100%{opacity:0}
+}
 
 </style>
+
 </head>
 
 <body>
 
-<header>
-<h1>🍗 Pantalla Cocina PRO</h1>
-<button class="activar" id="btnSonido" onclick="activarSonido()">🔔 Activar sonido</button>
-<button class="activar" onclick="pantallaCompleta()">📺 Pantalla completa</button>
-<button class="activar" onclick="modoTV()">🖥 Modo TV</button>
-<div id="estadoConexion">Conectando...</div>
-</header>
+<h1>🍗 Estado de Pedidos</h1>
 
-<div id="listaPedidos"></div>
-<div id="sinPedidos" style="display:none;">✅ No hay pedidos pendientes</div>
-<div id="avisoTV">Doble clic en cualquier parte, o tecla Esc, para salir del Modo TV</div>
+<div class="video">
 
-<audio id="alerta" preload="auto">
-<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+<iframe
+src="https://www.youtube.com/embed/videoseries?list=PLvNgP5lgV1ETSoUf4nOEFJ3pb_CdJM1O6&autoplay=1&mute=1"
+allow="autoplay"
+allowfullscreen>
+</iframe>
+
+</div>
+
+<div class="panel">
+
+<div class="columna">
+
+<div class="titulo">👨‍🍳 PREPARANDO</div>
+
+<div id="preparando" class="lista"></div>
+
+</div>
+
+<div class="columna">
+
+<div class="titulo">✅ LISTO</div>
+
+<div id="listo" class="lista"></div>
+
+</div>
+
+</div>
+
+<div id="flash" class="flash"></div>
+
+<audio id="campana">
+<source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">
 </audio>
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
+const API="https://script.google.com/macros/s/AKfycbzoZMkmQgnMSgavhk-w1RfvKfnLpp-YkAzEhcbmGyJAVp5YjKl91zAe-3T3F8bMiNdx/exec";
 
-let sonido = false;
-let idsPrevios = new Set();
-let primerCarga = true;
+let ultimosListos=[];
 
-// ================= UTILIDAD: evitar HTML inyectado =================
-function escapar(texto){
-  const div = document.createElement("div");
-  div.textContent = String(texto ?? "");
-  return div.innerHTML;
+function cargar(){
+
+fetch(API+"?accion=obtener")
+
+.then(r=>r.json())
+
+.then(pedidos=>{
+
+let preparando="";
+let listo="";
+
+let nuevosListos=[];
+
+pedidos.forEach(p=>{
+
+if(p.estado==="Nuevo" || p.estado==="En preparacion"){
+preparando += "<div class='card preparando'>"+p.fila+"</div>";
 }
 
-// ================= NÚMERO DE PEDIDO A MOSTRAR =================
-// p.numero es el contador que se reinicia cada día (columna 7 de la hoja).
-// p.fila es la fila real en la hoja de cálculo, que nunca se reinicia.
-// Usamos p.numero siempre que exista; p.fila queda solo como respaldo
-// para pedidos guardados antes de que existiera la columna "numero".
-function numeroVisible(p){
-  return (p.numero !== null && p.numero !== undefined && p.numero !== "")
-    ? p.numero
-    : p.fila;
+if(p.estado==="Listo"){
+listo += "<div class='card listo'>"+p.fila+"</div>";
+nuevosListos.push(p.fila);
 }
 
-// ================= SONIDO =================
-function activarSonido(){
-  sonido = true;
-  const btn = document.getElementById("btnSonido");
-  if(btn) btn.textContent = "🔔 Sonido activado";
-  // Desbloquea el audio en el navegador aprovechando el clic del usuario
-  const audio = document.getElementById("alerta");
-  audio.play().then(()=>{ audio.pause(); audio.currentTime = 0; }).catch(()=>{});
-}
-
-function playSound(){
-  const audio = document.getElementById("alerta");
-  audio.currentTime = 0;
-  audio.play().catch(()=>{});
-  setTimeout(()=>{ audio.currentTime = 0; audio.play().catch(()=>{}); }, 300);
-}
-
-// ================= DETECTAR PEDIDOS NUEVOS =================
-function detectarNuevos(pedidos){
-  const nuevos = pedidos.filter(p => !idsPrevios.has(p.fila));
-
-  // En la primera carga no suena (evita alarmas con pedidos que ya estaban ahí)
-  if(nuevos.length > 0 && sonido && !primerCarga){
-    playSound();
-  }
-
-  idsPrevios = new Set(pedidos.map(p => p.fila));
-  primerCarga = false;
-}
-
-// ================= PANTALLA COMPLETA =================
-function pantallaCompleta(){
-  document.documentElement.requestFullscreen().catch(()=>{});
-}
-
-// ================= MODO TV (con salida garantizada) =================
-function modoTV(){
-  document.body.classList.toggle("modo-tv");
-}
-
-document.addEventListener("dblclick", ()=>{
-  if(document.body.classList.contains("modo-tv")){
-    document.body.classList.remove("modo-tv");
-  }
 });
 
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape" && document.body.classList.contains("modo-tv")){
-    document.body.classList.remove("modo-tv");
-  }
+document.getElementById("preparando").innerHTML = preparando || "Sin pedidos";
+document.getElementById("listo").innerHTML = listo || "Esperando...";
+
+nuevosListos.forEach(n=>{
+
+if(!ultimosListos.includes(n)){
+
+document.getElementById("campana").play();
+
+let flash=document.getElementById("flash");
+flash.classList.add("activo");
+
+setTimeout(()=>{
+flash.classList.remove("activo");
+},600);
+
+}
+
 });
 
-// ================= CARGAR PEDIDOS =================
-function cargarPedidos(){
+ultimosListos=nuevosListos;
 
-  fetch(API + "?accion=obtener")
-  .then(r=>r.json())
-  .then(pedidosRecibidos=>{
-
-    const pedidos = Array.isArray(pedidosRecibidos) ? pedidosRecibidos : [];
-    document.getElementById("estadoConexion").textContent = "🟢 Conectado";
-
-    // 🔥 ORDEN: Nuevo -> En preparacion -> Listo -> (Entregado al final)
-    const orden = {"Nuevo":1, "En preparacion":2, "Listo":3, "Entregado":4};
-    pedidos.sort((a,b)=> (orden[a.estado] || 99) - (orden[b.estado] || 99));
-
-    // 🔔 detectar pedidos nuevos (usando todos los que llegan, no solo los visibles)
-    detectarNuevos(pedidos.filter(p => p.estado !== "Entregado"));
-
-    const activos = pedidos.filter(p => p.estado !== "Entregado");
-
-    if(activos.length === 0){
-      document.getElementById("listaPedidos").innerHTML = "";
-      document.getElementById("sinPedidos").style.display = "block";
-      return;
-    }
-    document.getElementById("sinPedidos").style.display = "none";
-
-    let html = "";
-
-    activos.forEach(p=>{
-
-      // 🧠 limpiar y contar los items del pedido
-      const items = String(p.detalle || "")
-        .split("\n")
-        .map(x => x.replace(/^-+/, "").trim())
-        .filter(x => x !== "");
-
-      const contador = {};
-      items.forEach(i=>{
-        contador[i] = (contador[i] || 0) + 1;
-      });
-
-      let resumen = "";
-      for(const k in contador){
-        resumen += `🍗 ${contador[k]}x ${escapar(k)}<br>`;
-      }
-
-      let clase = "nuevo";
-      if(p.estado === "En preparacion") clase = "preparacion";
-      if(p.estado === "Listo") clase = "listo";
-
-      const fila = encodeURIComponent(p.fila);
-
-      html += `
-<div class="card ${clase}">
-
-<h2>Pedido ${escapar(numeroVisible(p))}</h2>
-
-<div><b>Mesa:</b> ${escapar(p.mesa)}</div>
-
-<div style="font-size:22px;font-weight:bold;">
-${resumen}
-</div>
-
-<div class="detalle">
-${items.map(i => "• " + escapar(i)).join("<br>")}
-</div>
-
-<div class="total">Total Bs ${escapar(p.total)}</div>
-
-<div><b>Estado:</b> ${escapar(p.estado)}</div>
-
-<div class="botones">
-
-${p.estado === "Nuevo"
-  ? `<button onclick="cambiarEstado('${fila}','En preparacion')">Preparar</button>`
-  : `<button disabled style="opacity:0.4">Preparar</button>`}
-
-${p.estado === "En preparacion"
-  ? `<button onclick="cambiarEstado('${fila}','Listo')" style="background:orange">Listo</button>`
-  : `<button disabled style="opacity:0.4">Listo</button>`}
-
-${p.estado === "Listo"
-  ? `<button onclick="cambiarEstado('${fila}','Entregado')" style="background:green">Entregado</button>`
-  : `<button disabled style="opacity:0.4">Entregado</button>`}
-
-</div>
-
-</div>
-`;
-
-    });
-
-    document.getElementById("listaPedidos").innerHTML = html;
-
-  })
-  .catch(err=>{
-    console.error(err);
-    document.getElementById("estadoConexion").textContent = "🔴 Sin conexión — reintentando...";
-  });
+});
 
 }
 
-// ================= CAMBIAR ESTADO =================
-function cambiarEstado(fila, estado){
+setInterval(cargar,3000);
 
-  fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: "accion=actualizar&fila=" + encodeURIComponent(fila) + "&estado=" + encodeURIComponent(estado)
-  })
-  .then(r=>r.json())
-  .then(d=>{
-    if(d.ok){
-      cargarPedidos();
-    }else{
-      alert("❌ No se pudo actualizar el pedido");
-    }
-  })
-  .catch(err=>{
-    console.error(err);
-    alert("❌ Error de conexión al actualizar el pedido");
-  });
-
-}
-
-// ================= ARRANQUE =================
-cargarPedidos();
-setInterval(cargarPedidos, 3000);
+cargar();
 
 </script>
 
