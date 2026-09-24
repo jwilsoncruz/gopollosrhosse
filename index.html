@@ -385,8 +385,19 @@ function actualizarEstadoRemoto(valor){
 }
 
 const params = new URLSearchParams(window.location.search);
+
+// Normalmente el QR trae ?mesa=1. Pero si algún QR ya impreso quedó con el
+// formato viejo sin nombre de parámetro (ej: ?=mesa1), igual se rescata el
+// valor tomando el primer parámetro que traiga la URL.
+let mesaRaw = params.get("mesa");
+if(!mesaRaw){
+  for(const [clave, valor] of params.entries()){
+    if(clave !== "admin" && valor){ mesaRaw = valor; break; }
+  }
+}
+
 // Solo letras, números, guion y espacio (evita meter código por la URL)
-const mesaQR = (params.get("mesa") || "").replace(/[^\w\- ]/g, "").slice(0, 10);
+const mesaQR = (mesaRaw || "").replace(/[^\w\- ]/g, "").slice(0, 10);
 
 // ACTIVAR PANEL ADMIN POR URL (?admin=1)
 if(params.get("admin") === "1"){
