@@ -149,6 +149,7 @@ const API = "https://script.google.com/macros/s/AKfycbw2m9_YSX_-11iMZCmMT24GwESu
 let sonido = false;
 let idsPrevios = new Set();
 let primerCarga = true;
+let pedidosActuales = [];   // última lista de pedidos conocida (para actualizar la pantalla al instante)
 
 // ================= UTILIDAD: evitar HTML inyectado =================
 function escapar(texto){
@@ -220,59 +221,46 @@ document.addEventListener("keydown", (e)=>{
   }
 });
 
-// ================= CARGAR PEDIDOS =================
-function cargarPedidos(){
+// ================= DIBUJAR TARJETAS =================
+// Recibe la lista de pedidos ya filtrada (sin "Entregado") y la pinta.
+// Separado de cargarPedidos() para poder redibujar al instante cuando
+// se toca un botón, sin tener que esperar otra vuelta a Google Sheets.
+function renderPedidos(activos){
 
-  fetch(API + "?accion=obtener")
-  .then(r=>r.json())
-  .then(pedidosRecibidos=>{
+  if(activos.length === 0){
+    document.getElementById("listaPedidos").innerHTML = "";
+    document.getElementById("sinPedidos").style.display = "block";
+    return;
+  }
+  document.getElementById("sinPedidos").style.display = "none";
 
-    const pedidos = Array.isArray(pedidosRecibidos) ? pedidosRecibidos : [];
-    document.getElementById("estadoConexion").textContent = "🟢 Conectado";
+  let html = "";
 
-    // 🔥 ORDEN: Nuevo -> En preparacion -> Listo -> (Entregado al final)
-    const orden = {"Nuevo":1, "En preparacion":2, "Listo":3, "Entregado":4};
-    pedidos.sort((a,b)=> (orden[a.estado] || 99) - (orden[b.estado] || 99));
+  activos.forEach(p=>{
 
-    // 🔔 detectar pedidos nuevos (usando todos los que llegan, no solo los visibles)
-    detectarNuevos(pedidos.filter(p => p.estado !== "Entregado"));
+    // 🧠 limpiar y contar los items del pedido
+    const items = String(p.detalle || "")
+      .split("\n")
+      .map(x => x.replace(/^-+/, "").trim())
+      .filter(x => x !== "");
 
-    const activos = pedidos.filter(p => p.estado !== "Entregado");
+    const contador = {};
+    items.forEach(i=>{
+      contador[i] = (contador[i] || 0) + 1;
+    });
 
-    if(activos.length === 0){
-      document.getElementById("listaPedidos").innerHTML = "";
-      document.getElementById("sinPedidos").style.display = "block";
-      return;
+    let resumen = "";
+    for(const k in contador){
+      resumen += `🍗 ${contador[k]}x ${escapar(k)}<br>`;
     }
-    document.getElementById("sinPedidos").style.display = "none";
 
-    let html = "";
+    let clase = "nuevo";
+    if(p.estado === "En preparacion") clase = "preparacion";
+    if(p.estado === "Listo") clase = "listo";
 
-    activos.forEach(p=>{
+    const fila = encodeURIComponent(p.fila);
 
-      // 🧠 limpiar y contar los items del pedido
-      const items = String(p.detalle || "")
-        .split("\n")
-        .map(x => x.replace(/^-+/, "").trim())
-        .filter(x => x !== "");
-
-      const contador = {};
-      items.forEach(i=>{
-        contador[i] = (contador[i] || 0) + 1;
-      });
-
-      let resumen = "";
-      for(const k in contador){
-        resumen += `🍗 ${contador[k]}x ${escapar(k)}<br>`;
-      }
-
-      let clase = "nuevo";
-      if(p.estado === "En preparacion") clase = "preparacion";
-      if(p.estado === "Listo") clase = "listo";
-
-      const fila = encodeURIComponent(p.fila);
-
-      html += `
+    html += `
 <div class="card ${clase}">
 
 <h2>Pedido ${escapar(numeroVisible(p))}</h2>
@@ -310,9 +298,37 @@ ${p.estado === "Listo"
 </div>
 `;
 
-    });
+  });
 
-    document.getElementById("listaPedidos").innerHTML = html;
+  document.getElementById("listaPedidos").innerHTML = html;
+}
+
+// ================= PROCESAR LISTA RECIBIDA DE LA HOJA =================
+function procesarYRenderizar(pedidos){
+
+  // 🔥 ORDEN: Nuevo -> En preparacion -> Listo -> (Entregado al final)
+  const orden = {"Nuevo":1, "En preparacion":2, "Listo":3, "Entregado":4};
+  pedidos.sort((a,b)=> (orden[a.estado] || 99) - (orden[b.estado] || 99));
+
+  // 🔔 detectar pedidos nuevos (usando todos los que llegan, no solo los visibles)
+  detectarNuevos(pedidos.filter(p => p.estado !== "Entregado"));
+
+  pedidosActuales = pedidos;
+
+  renderPedidos(pedidos.filter(p => p.estado !== "Entregado"));
+}
+
+// ================= CARGAR PEDIDOS =================
+function cargarPedidos(){
+
+  fetch(API + "?accion=obtener")
+  .then(r=>r.json())
+  .then(pedidosRecibidos=>{
+
+    const pedidos = Array.isArray(pedidosRecibidos) ? pedidosRecibidos : [];
+    document.getElementById("estadoConexion").textContent = "🟢 Conectado";
+
+    procesarYRenderizar(pedidos);
 
   })
   .catch(err=>{
@@ -325,6 +341,17 @@ ${p.estado === "Listo"
 // ================= CAMBIAR ESTADO =================
 function cambiarEstado(fila, estado){
 
+  // 1) Actualiza la pantalla AL INSTANTE con lo que ya sabemos en el navegador,
+  //    sin esperar la respuesta de Google Sheets. Así no hay delay perceptible.
+  const pedido = pedidosActuales.find(p => String(p.fila) === String(fila));
+  const estadoAnterior = pedido ? pedido.estado : null;
+
+  if(pedido){
+    pedido.estado = estado;
+    renderPedidos(pedidosActuales.filter(p => p.estado !== "Entregado"));
+  }
+
+  // 2) Guarda el cambio real en la hoja, en segundo plano.
   fetch(API, {
     method: "POST",
     headers: {
@@ -334,14 +361,23 @@ function cambiarEstado(fila, estado){
   })
   .then(r=>r.json())
   .then(d=>{
-    if(d.ok){
-      cargarPedidos();
-    }else{
+    if(!d.ok){
+      // No se pudo guardar: revertir el cambio visual y avisar
+      if(pedido){
+        pedido.estado = estadoAnterior;
+        renderPedidos(pedidosActuales.filter(p => p.estado !== "Entregado"));
+      }
       alert("❌ No se pudo actualizar el pedido");
     }
+    // Si sí se guardó, no hace falta recargar nada: la pantalla ya está
+    // al día, y el sondeo automático cada 3s mantiene todo sincronizado.
   })
   .catch(err=>{
     console.error(err);
+    if(pedido){
+      pedido.estado = estadoAnterior;
+      renderPedidos(pedidosActuales.filter(p => p.estado !== "Entregado"));
+    }
     alert("❌ Error de conexión al actualizar el pedido");
   });
 
