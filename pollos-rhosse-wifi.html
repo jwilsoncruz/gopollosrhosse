@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
-<link rel="icon" href="wifi.ico">
+
 <style>
   :root{
     --bg:#1c130d;
@@ -125,11 +125,11 @@
   }
   .saludo{color:var(--muted);margin-top:-6px;}
 
-  .stamps{display:flex;gap:8px;justify-content:center;margin:14px 0 4px;}
+  .stamps{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0 4px;}
   .stamp{
-    width:34px;height:34px;border-radius:50%;
+    width:26px;height:26px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:16px;
+    font-size:12px;
     background:var(--panel-2);
     border:1px solid var(--line);
   }
@@ -291,6 +291,8 @@ function guardarCliente(c){
 
 function jugoHoy(c){ return c.visitas.includes(hoyStr()); }
 
+function totalSellos(c){ return (c.bono || 0) + c.visitas.length; }
+
 function esCumpleHoy(c){
   if(!c.nacimiento) return false;
   return c.nacimiento.slice(5) === hoyStr().slice(5); // compara MM-DD
@@ -421,6 +423,7 @@ function registrar(){
     nacimiento: fecha,
     invito: invitoInput.value.trim(),
     visitas: [],
+    bono: 2, // sellos de cortesía por registrarte
     creado: hoyStr()
   };
   guardarCliente(cliente);
@@ -440,7 +443,7 @@ function registrar(){
 function mostrarWifi(){
   saludo.textContent = `Hola, ${cliente.nombre} 👋`;
   claveDiv.textContent = generarClave();
-  pintarStamps(document.getElementById("stamps"), document.getElementById("stampsLabel"), cliente.visitas.length);
+  pintarStamps(document.getElementById("stamps"), document.getElementById("stampsLabel"), totalSellos(cliente));
 
   pantalla1.classList.add("hidden");
   yaJugasteDiv.classList.add("hidden");
@@ -464,7 +467,7 @@ function copiarTexto(texto, mensajeOk){
 
 // ---------- PANTALLA YA JUGASTE ----------
 function mostrarYaJugaste(){
-  pintarStamps(document.getElementById("stamps2"), document.getElementById("stampsLabel2"), cliente.visitas.length);
+  pintarStamps(document.getElementById("stamps2"), document.getElementById("stampsLabel2"), totalSellos(cliente));
   pantalla1.classList.add("hidden");
   pantalla2.classList.add("hidden");
   yaJugasteDiv.classList.remove("hidden");
@@ -488,18 +491,18 @@ function cambiarDatos(e){
 }
 
 // ---------- BARRA DE FIDELIDAD ----------
-function pintarStamps(contenedor, etiqueta, totalVisitas){
-  const enCiclo = totalVisitas > 0 && totalVisitas % 5 === 0 ? 5 : totalVisitas % 5;
+function pintarStamps(contenedor, etiqueta, totalSellos){
+  const enCiclo = totalSellos > 0 && totalSellos % 10 === 0 ? 10 : totalSellos % 10;
   contenedor.innerHTML = "";
-  for(let i=1;i<=5;i++){
+  for(let i=1;i<=10;i++){
     const s = document.createElement("div");
     s.className = "stamp" + (i <= enCiclo ? " lleno" : "");
     s.textContent = i <= enCiclo ? "🍗" : "☆";
     contenedor.appendChild(s);
   }
-  etiqueta.textContent = enCiclo === 5
+  etiqueta.textContent = enCiclo === 10
     ? "¡Completaste tu tarjeta de fidelidad! 🎉"
-    : `${enCiclo}/5 visitas para tu combo especial`;
+    : `${enCiclo}/10 sellos para tu combo especial`;
 }
 
 // ---------- IR A RASPAR ----------
@@ -510,8 +513,8 @@ function pasarARaspa(){
   if(!yaConteoHoy) cliente.visitas.push(hoyStr());
   guardarCliente(cliente);
 
-  const totalVisitas = cliente.visitas.length;
-  const esHito = totalVisitas > 0 && totalVisitas % 5 === 0;
+  const total = totalSellos(cliente);
+  const esHito = total > 0 && total % 10 === 0;
   const cumple = esCumpleHoy(cliente);
 
   badgeCumple.classList.toggle("hidden", !cumple);
@@ -519,7 +522,7 @@ function pasarARaspa(){
   if(cumple){
     premioForzado = {label:"🎂 Postre de cumpleaños GRATIS", codigo:"CUMPLE"};
   } else if(esHito){
-    premioForzado = {label:"🎉 Premio fidelidad: combo especial GRATIS", codigo:"FIDEL"};
+    premioForzado = {label:"🎉 Premio fidelidad: 1 Economico Pollo a la leña especial GRATIS", codigo:"FIDEL10"};
   } else {
     premioForzado = null;
   }
