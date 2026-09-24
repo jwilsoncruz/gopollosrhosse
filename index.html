@@ -1037,9 +1037,11 @@ function enviarPedido(){
       if(data.numero){
         texto += "🔖 N° de pedido: #" + data.numero + "\n";
       }
-      texto += "Tipo: " + tipoPedido + "\n\n" + detalle + "\nTotal Bs " + total;
+      texto += "Tipo: " + mesa + "\n\n" + detalle + "\nTotal Bs " + total;
 
-      window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
+      // Se usa api.whatsapp.com directo (en vez de wa.me) porque el
+      // redireccionador de wa.me a veces corrompe emojis como 🍗 o 🔖.
+      window.open("https://api.whatsapp.com/send?phone=59172685867&text=" + encodeURIComponent(texto));
 
       carrito = [];
       actualizarCarrito();
