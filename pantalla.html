@@ -162,6 +162,18 @@ function numeroVisible(p){
     : p.fila;
 }
 
+// ================= VOZ (anuncia "Listo") =================
+// Usa la síntesis de voz del propio navegador, no necesita internet
+// aparte ni ninguna librería. Si el navegador no la soporta, no hace nada.
+function anunciarListo(numero){
+  if(!('speechSynthesis' in window)) return;
+
+  const utterance = new SpeechSynthesisUtterance("Pedido número " + numero + ", listo");
+  utterance.lang = "es-ES";
+  utterance.rate = 0.95;
+  speechSynthesis.speak(utterance);
+}
+
 function cargar(){
 
 fetch(API+"?accion=obtener")
@@ -198,6 +210,7 @@ nuevosListos.forEach(n=>{
 if(!ultimosListos.includes(n)){
 
 document.getElementById("campana").play();
+anunciarListo(n);
 
 let flash=document.getElementById("flash");
 flash.classList.add("activo");
