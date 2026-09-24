@@ -1023,6 +1023,9 @@ function enviarPedido(){
     if(data.ok){
 
       let texto = "🍗 Pedido Go Pollos Rhosse\n\n";
+      if(data.numero){
+        texto += "🔖 N° de pedido: #" + data.numero + "\n";
+      }
       texto += "Tipo: " + tipoPedido + "\n\n" + detalle + "\nTotal Bs " + total;
 
       window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
