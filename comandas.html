@@ -1,252 +1,662 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Go Pollos Rhosse PRO</title>
 
 <style>
-body {
-font-family: Arial;
-background:#111;
-color:#fff;
-margin:0;
-padding:10px;
-text-align:center;
-padding-top:90px;
-padding-bottom:260px;
+:root{
+  --rojo:#d50000;
+  --vino:#4b0000;
+  --naranja:#ff6f00;
+  --dorado:#ffca28;
+  --verde:#2e7d32;
+  --bg:#141414;
+  --card:#1f1f1f;
+  --card2:#262626;
+  --borde:#3a3a3a;
+  --texto-sec:#bdbdbd;
 }
 
-select, input {
-width:48%;
-padding:12px;
-font-size:16px;
-margin:5px 1%;
-border-radius:8px;
-border:none;
+*{ box-sizing:border-box; }
+
+body{
+  font-family:Arial, sans-serif;
+  background:var(--bg);
+  color:#fff;
+  margin:0;
+  padding:0 0 110px 0;
+  text-align:center;
 }
 
-.grid {
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin:10px 0;
+.contenedor{
+  max-width:480px;
+  margin:0 auto;
+  padding:0 12px;
 }
 
-button {
-padding:16px;
-font-size:16px;
-border-radius:10px;
-border:none;
-width:100%;
+/* ---------- BARRA SUPERIOR ---------- */
+#topbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  background:#000;
+  padding:8px 12px 10px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-bottom:2px solid var(--rojo);
 }
 
-.entero { background:#e53935; }
-.cuarto { background:#fb8c00; }
-.economico { background:#43a047; }
-.extra { background:#039be5; }
-
-#topbar, #cambio {
-position:fixed;
-left:0;
-width:100%;
-background:#000;
-padding:10px;
-z-index:1000;
+#topbar img{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  flex-shrink:0;
 }
 
-#topbar { top:0; font-size:22px; }
-#cambio { top:50px; font-size:20px; }
-
-#detalle {
-background:#222;
-padding:10px;
-border-radius:10px;
-margin:10px 0;
-min-height:60px;
+#topbar .info{
+  flex:1;
+  text-align:left;
+  line-height:1.25;
 }
 
-.total { font-size:28px; }
-
-.floating {
-position:fixed;
-bottom:5px;
-left:50%;
-transform:translateX(-50%);
-width:90%;
+#topbar .totalLinea{
+  font-size:18px;
+  font-weight:bold;
+  color:var(--dorado);
 }
 
-.enviar { background:#4caf50; }
-.reset { background:#f44336; }
-.caja { background:#ff9800; }
+#topbar .cambioLinea{
+  font-size:13px;
+  color:var(--texto-sec);
+}
 
-#qrBox {
-display:none;
-margin:10px;
-padding:10px;
-background:#222;
-border-radius:10px;
+#topbar .cambioLinea.ok{ color:#69f0ae; }
+#topbar .cambioLinea.falta{ color:#ff8a80; }
+
+.vuelto-panel{
+  margin-top:10px;
+  padding:14px;
+  border-radius:10px;
+  background:var(--card2);
+  border:2px solid var(--borde);
+  text-align:center;
+}
+
+.vuelto-panel .etiqueta{
+  font-size:13px;
+  color:var(--texto-sec);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.vuelto-panel .monto{
+  font-size:30px;
+  font-weight:bold;
+  margin-top:2px;
+}
+
+.vuelto-panel.ok{ border-color:#69f0ae; }
+.vuelto-panel.ok .monto{ color:#69f0ae; }
+
+.vuelto-panel.falta{ border-color:#ff8a80; }
+.vuelto-panel.falta .monto{ color:#ff8a80; }
+
+h2.titulo{
+  margin:14px 0 4px 0;
+  font-size:20px;
+  color:var(--dorado);
+}
+
+h3.subtitulo{
+  text-align:left;
+  margin:18px 0 8px 0;
+  font-size:15px;
+  color:var(--texto-sec);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+/* ---------- SELECTORES ---------- */
+.fila-selects{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+
+select, input{
+  width:100%;
+  padding:12px;
+  font-size:15px;
+  border-radius:8px;
+  border:1px solid var(--borde);
+  background:var(--card2);
+  color:#fff;
+}
+
+/* ---------- MENÚ ---------- */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+button{
+  padding:14px 8px;
+  font-size:14px;
+  border-radius:10px;
+  border:none;
+  width:100%;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  line-height:1.3;
+}
+
+button:active{ transform:scale(0.97); }
+
+.entero{ background:var(--rojo); }
+.cuarto{ background:var(--naranja); }
+.economico{ background:#00897b; }
+.tiktok{ background:#8d6e63; }
+.extra{ background:#5e35b1; }
+
+/* ---------- CARRITO ---------- */
+#detalle{
+  background:var(--card);
+  border:1px solid var(--borde);
+  padding:10px;
+  border-radius:10px;
+  margin:10px 0;
+  min-height:50px;
+  text-align:left;
+}
+
+.item-carrito{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:7px 0;
+  border-bottom:1px solid var(--borde);
+  font-size:14px;
+}
+
+.item-carrito:last-child{ border-bottom:none; }
+
+.item-carrito .nombre{ text-align:left; flex:1; }
+
+.item-carrito .subtotal{
+  color:var(--dorado);
+  font-weight:bold;
+  margin:0 8px;
+  white-space:nowrap;
+}
+
+.item-carrito button.quitar{
+  width:auto;
+  padding:4px 9px;
+  font-size:13px;
+  border-radius:6px;
+  background:var(--rojo);
+}
+
+.vacio{ color:var(--texto-sec); text-align:center; padding:10px 0; }
+
+.total{
+  font-size:24px;
+  font-weight:bold;
+  margin:10px 0;
+  color:var(--dorado);
+}
+
+/* ---------- PAGO ---------- */
+.metodos-pago{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+
+.metodo-btn{
+  padding:12px;
+  border-radius:8px;
+  border:2px solid var(--borde);
+  background:var(--card2);
+  color:var(--texto-sec);
+  font-weight:bold;
+}
+
+.metodo-btn.activo{
+  border-color:var(--dorado);
+  color:var(--dorado);
+  background:#2a2410;
+}
+
+.fila-monto{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-top:8px;
+}
+
+.fila-monto button{
+  background:var(--card2);
+  border:1px solid var(--borde);
+  width:auto;
+  padding:12px 14px;
+}
+
+.montos-rapidos{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:8px;
+}
+
+.montos-rapidos button{
+  background:var(--card2);
+  border:1px solid var(--borde);
+}
+
+#qrBox{
+  display:none;
+  margin:12px 0;
+  padding:12px;
+  background:var(--card);
+  border-radius:10px;
+}
+
+#qrBox img{ border-radius:8px; }
+
+/* ---------- BARRA INFERIOR ---------- */
+.floating{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  background:#000;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px)) 12px;
+  border-top:2px solid var(--rojo);
+  z-index:1000;
+}
+
+.floating-grid{
+  max-width:480px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:8px;
+}
+
+.enviar{ background:var(--verde); }
+.enviar:disabled{ background:#555; }
+.whatsapp{ background:#25d366; font-size:12px; }
+.caja{ background:var(--naranja); font-size:12px; }
+.reset{ background:var(--rojo); font-size:12px; }
+
+.fila-secundaria{
+  max-width:480px;
+  margin:8px auto 0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.aviso{
+  font-size:12px;
+  color:var(--texto-sec);
+  margin-top:6px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="topbar">💰 Total: <span id="totalTop">0 Bs</span></div>
-<div id="cambio">💵 Cambio: 0 Bs</div>
-
-<h2>🔥 GO POLLOS RHOSSE PRO 🔥</h2>
-
-<select id="mesero">
-<option>Dafne</option>
-<option>Mauricio</option>
-<option>Padme</option>
-<option>Karen</option>
-<option>Wilson</option>
-<option>Raquel</option>
-</select>
-
-<select id="mesa">
-<option>Mesa 1</option>
-<option>Mesa 2</option>
-<option>Para Llevar</option>
-<option>Delivery</option>
-</select>
-
-<h3>🍗 Menú</h3>
-<div class="grid">
-<button class="entero" onclick="add('Pollo Entero',100)">Entero 100</button>
-<button class="entero" onclick="add('Medio Pollo',50)">Medio 50</button>
-<button class="cuarto" onclick="add('Pierna+Contra',25)">Pierna+Contra 25</button>
-<button class="cuarto" onclick="add('Ala+Pecho',25)">Ala+Pecho 25</button>
-<button class="economico" onclick="add('Pecho',15)">Pecho 15</button>
-<button class="economico" onclick="add('Ala',15)">Ala 15</button>
-<button class="Super eco" onclick="add('Pierna Tiktok',13)">Pierna Tiktok 13</button>
-<button class="Super eco" onclick="add('Contra Tiktok',15)">Contra Tiktok 13</button>
-<button class="extra" onclick="add('Arroz',5)">Arroz</button>
-<button class="extra" onclick="add('Papas',5)">Papas</button>
+<div id="topbar">
+  <img src="logo.png" alt="Go Pollos Rhosse">
+  <div class="info">
+    <div class="totalLinea" id="totalTop">Total: 0 Bs</div>
+    <div class="cambioLinea" id="cambio">Cambio: 0 Bs</div>
+  </div>
 </div>
 
-<div id="detalle">Sin pedidos</div>
+<div class="contenedor">
+
+<h2 class="titulo">🔥 GO POLLOS RHOSSE PRO 🔥</h2>
+
+<div class="fila-selects">
+  <select id="mesero">
+    <option>Dafne</option>
+    <option>Mauricio</option>
+    <option>Padme</option>
+    <option>Karen</option>
+    <option>Wilson</option>
+    <option>Raquel</option>
+  </select>
+
+  <select id="mesa">
+    <option>Mesa 1</option>
+    <option>Mesa 2</option>
+    <option>Para Llevar</option>
+    <option>Delivery</option>
+  </select>
+</div>
+
+<h3 class="subtitulo">🍗 Menú</h3>
+<div class="grid">
+<button class="entero" onclick="add('Pollo Entero',130)">Entero<br>130 Bs</button>
+<button class="entero" onclick="add('Medio Pollo',65)">Medio<br>65 Bs</button>
+<button class="cuarto" onclick="add('Pierna+Contra',30)">Pierna+Contra<br>30 Bs</button>
+<button class="cuarto" onclick="add('Ala+Pecho',30)">Ala+Pecho<br>30 Bs</button>
+<button class="economico" onclick="add('Pecho',17)">Pecho<br>17 Bs</button>
+<button class="economico" onclick="add('Ala',17)">Ala<br>17 Bs</button>
+<button class="tiktok" onclick="add('Pierna Tiktok',15)">Pierna Tiktok<br>15 Bs</button>
+<button class="tiktok" onclick="add('Contra Tiktok',15)">Contra Tiktok<br>15 Bs</button>
+<button class="extra" onclick="add('Arroz',7)">Arroz<br>7 Bs</button>
+<button class="extra" onclick="add('Papas',7)">Papas<br>7 Bs</button>
+</div>
+
+<h3 class="subtitulo">🛒 Pedido actual</h3>
+<div id="detalle"><div class="vacio">Sin pedidos</div></div>
 <div class="total" id="totalText">Total: 0 Bs</div>
 
-<h3>💳 Pago</h3>
+<h3 class="subtitulo">💳 Pago</h3>
 
-<select id="tipoPago" onchange="cambiarPago()">
-<option value="Efectivo">Efectivo</option>
-<option value="QR">QR</option>
-</select>
-
-<input type="number" id="montoManual" placeholder="Monto recibido">
-
-<div class="grid">
-<button onclick="pagar(20)">20</button>
-<button onclick="pagar(50)">50</button>
-<button onclick="pagar(100)">100</button>
-<button onclick="pagar(200)">200</button>
+<div class="metodos-pago">
+  <button type="button" class="metodo-btn activo" id="btnEfectivo" onclick="elegirPago('Efectivo')">💵 Efectivo</button>
+  <button type="button" class="metodo-btn" id="btnQR" onclick="elegirPago('QR')">📲 QR</button>
 </div>
 
 <div id="qrBox">
-<h3>📲 Escanear QR</h3>
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PagoGoPollos" width="200">
+  <div>Escanea para pagar</div>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=PagoGoPollos" width="180" height="180">
 </div>
 
+<div class="montos-rapidos" id="montosRapidos">
+  <button type="button" onclick="pagar(20)">20</button>
+  <button type="button" onclick="pagar(50)">50</button>
+  <button type="button" onclick="pagar(100)">100</button>
+  <button type="button" onclick="pagar(200)">200</button>
+</div>
+
+<div class="fila-monto" id="filaMontoManual">
+  <input type="number" id="montoManual" placeholder="Otro monto recibido">
+  <button type="button" onclick="pagarManual()">OK</button>
+</div>
+
+<div class="vuelto-panel" id="vueltoPanel">
+  <div class="etiqueta">Vuelto a entregar</div>
+  <div class="monto" id="vueltoMonto">— Bs</div>
+</div>
+
+</div><!-- /contenedor -->
+
 <div class="floating">
-<button class="enviar" onclick="enviar()">📲 ENVIAR</button>
-<button class="caja" onclick="verCaja()">📊 CAJA</button>
-<button class="reset" onclick="resetear()">❌ LIMPIAR</button>
+  <div class="floating-grid">
+    <button class="enviar" id="btnEnviar" onclick="enviarComanda()">📲 ENVIAR A COCINA</button>
+    <button class="caja" onclick="verCaja()">📊 CAJA</button>
+    <button class="reset" onclick="resetear()">❌ LIMPIAR</button>
+  </div>
+  <div class="fila-secundaria">
+    <button class="whatsapp" onclick="enviarWhatsapp()">💬 Enviar también por WhatsApp</button>
+    <div></div>
+  </div>
 </div>
 
 <script>
 
-let pedido = [];
-let total = 0;
+// Misma API que usan Cocina PRO, Pantalla Clientes y el sitio principal,
+// para que un pedido tomado aquí aparezca automáticamente en cocina.
+const API = "https://script.google.com/macros/s/AKfycbw2m9_YSX_-11iMZCmMT24GwESuGub15Z943HcXBceA1Ez_md6eYKfINeL4wz2PDigO/exec";
 
-function add(n,p){
-pedido.push({n,p});
-total += p;
-render();
+let pedido = [];   // [{n, p}] una entrada por unidad (igual formato que usa el sitio principal)
+let total = 0;
+let tipoPago = "Efectivo";
+let enviando = false;
+
+// ================= CARRITO =================
+function add(n, p){
+  pedido.push({ n, p });
+  total += p;
+  render();
+}
+
+function quitarUno(nombre){
+  const i = pedido.findIndex(x => x.n === nombre);
+  if(i === -1) return;
+  total -= pedido[i].p;
+  pedido.splice(i, 1);
+  render();
+}
+
+function agrupar(){
+  const grupos = {};
+  pedido.forEach(x=>{
+    if(!grupos[x.n]) grupos[x.n] = { n:x.n, p:x.p, cant:0 };
+    grupos[x.n].cant++;
+  });
+  return Object.values(grupos);
 }
 
 function render(){
-let t="";
-pedido.forEach(x=> t+= x.n+" - "+x.p+" Bs<br>");
-if(!t) t="Sin pedidos";
+  const grupos = agrupar();
 
-document.getElementById("detalle").innerHTML=t;
-document.getElementById("totalTop").innerText=total+" Bs";
-document.getElementById("totalText").innerText="Total: "+total+" Bs";
+  if(grupos.length === 0){
+    document.getElementById("detalle").innerHTML = '<div class="vacio">Sin pedidos</div>';
+  }else{
+    let html = "";
+    grupos.forEach(g=>{
+      html += `
+        <div class="item-carrito">
+          <div class="nombre">${g.cant}x ${g.n}</div>
+          <div class="subtotal">${g.cant * g.p} Bs</div>
+          <button class="quitar" onclick="quitarUno('${g.n.replace(/'/g,"\\'")}')">✕</button>
+        </div>`;
+    });
+    document.getElementById("detalle").innerHTML = html;
+  }
+
+  document.getElementById("totalTop").innerText = "Total: " + total + " Bs";
+  document.getElementById("totalText").innerText = "Total: " + total + " Bs";
+  actualizarCambio(null);
 }
 
-function pagar(m){
-if(document.getElementById("tipoPago").value==="QR"){
-document.getElementById("cambio").innerText="📲 Pago QR confirmado";
-return;
+// ================= PAGO =================
+function elegirPago(tipo){
+  tipoPago = tipo;
+
+  document.getElementById("btnEfectivo").classList.toggle("activo", tipo === "Efectivo");
+  document.getElementById("btnQR").classList.toggle("activo", tipo === "QR");
+
+  document.getElementById("qrBox").style.display = tipo === "QR" ? "block" : "none";
+  document.getElementById("montosRapidos").style.display = tipo === "QR" ? "none" : "grid";
+  document.getElementById("filaMontoManual").style.display = tipo === "QR" ? "none" : "grid";
+
+  if(tipo === "QR"){
+    actualizarCambio("qr");
+  }else{
+    actualizarCambio(null);
+  }
 }
 
-let monto = m || parseFloat(document.getElementById("montoManual").value || 0);
-let c = monto-total;
+function actualizarCambio(modo){
+  const el = document.getElementById("cambio");
+  const panel = document.getElementById("vueltoPanel");
+  const monto = document.getElementById("vueltoMonto");
 
-document.getElementById("cambio").innerText =
-c<0 ? "❌ Falta "+Math.abs(c)+" Bs" : "💵 Cambio "+c+" Bs";
+  el.classList.remove("ok","falta");
+  panel.classList.remove("ok","falta");
+
+  if(modo === "qr"){
+    el.innerText = "📲 Pago con QR";
+    monto.innerText = "Pago con QR";
+    return;
+  }
+
+  if(modo === null){
+    el.innerText = "Vuelto: 0 Bs";
+    monto.innerText = "— Bs";
+    return;
+  }
+
+  const c = modo - total;
+  if(c < 0){
+    el.innerText = "❌ Falta " + Math.abs(c) + " Bs";
+    el.classList.add("falta");
+    panel.classList.add("falta");
+    monto.innerText = "Falta " + Math.abs(c) + " Bs";
+  }else{
+    el.innerText = "💵 Vuelto " + c + " Bs";
+    el.classList.add("ok");
+    panel.classList.add("ok");
+    monto.innerText = c + " Bs";
+  }
 }
 
-function cambiarPago(){
-let tipo = document.getElementById("tipoPago").value;
-document.getElementById("qrBox").style.display = tipo==="QR" ? "block":"none";
-document.getElementById("cambio").innerText="💵 Cambio: 0 Bs";
+function pagar(monto){
+  actualizarCambio(monto);
 }
 
-function enviar(){
-
-if(pedido.length===0){
-alert("Sin pedido");
-return;
+function pagarManual(){
+  const monto = parseFloat(document.getElementById("montoManual").value || 0);
+  actualizarCambio(monto);
 }
 
-let txt="🔥 PEDIDO\n\n";
-txt+="Mesa: "+document.getElementById("mesa").value+"\n";
-txt+="Pago: "+document.getElementById("tipoPago").value+"\n\n";
-
-pedido.forEach(x=>{
-txt+="- "+x.n+"\n";
-});
-
-txt+="\nTOTAL: "+total+" Bs";
-
-// guardar caja
-let caja = JSON.parse(localStorage.getItem("caja")||"[]");
-caja.push({total, tipo:document.getElementById("tipoPago").value});
-localStorage.setItem("caja", JSON.stringify(caja));
-
-window.open("https://wa.me/59172685867?text="+encodeURIComponent(txt));
-
-resetear();
+// ================= ENVIAR A COCINA (integración con el ecosistema) =================
+function construirDetalle(){
+  // Una línea por unidad, en el mismo formato "Nombre Bs Precio" que usa
+  // el sitio principal, para que Cocina PRO y Pantalla Clientes los agrupen igual.
+  return pedido.map(x => x.n + " Bs " + x.p).join("\n");
 }
 
+function mesaConMesero(){
+  const mesa = document.getElementById("mesa").value;
+  const mesero = document.getElementById("mesero").value;
+  return mesa + " (" + mesero + ")";
+}
+
+function tipoParaSheet(){
+  const mesa = document.getElementById("mesa").value;
+  if(mesa === "Para Llevar") return "Recoger";
+  if(mesa === "Delivery") return "Delivery";
+  return "Mesa";
+}
+
+function enviarComanda(){
+
+  if(enviando) return;
+
+  if(pedido.length === 0){
+    alert("Agrega al menos un producto");
+    return;
+  }
+
+  enviando = true;
+  const btn = document.getElementById("btnEnviar");
+  btn.disabled = true;
+  btn.innerText = "Enviando...";
+
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body:
+      "fecha=" + encodeURIComponent(new Date().toLocaleString()) +
+      "&tipo=" + encodeURIComponent(tipoParaSheet()) +
+      "&mesa=" + encodeURIComponent(mesaConMesero()) +
+      "&detalle=" + encodeURIComponent(construirDetalle()) +
+      "&total=" + total +
+      "&pago=" + encodeURIComponent(tipoPago)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.ok){
+      alert("✅ Pedido #" + data.numero + " enviado a cocina");
+      resetear();
+    }else{
+      alert("❌ No se pudo enviar el pedido");
+    }
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("❌ Error de conexión. El pedido NO llegó a cocina — revisa internet e inténtalo de nuevo.");
+  })
+  .finally(()=>{
+    enviando = false;
+    btn.disabled = false;
+    btn.innerText = "📲 ENVIAR A COCINA";
+  });
+}
+
+// Envío opcional por WhatsApp (no reemplaza el envío a cocina, es un extra
+// para pedidos de Delivery / Para Llevar donde quieras avisar al cliente)
+function enviarWhatsapp(){
+
+  if(pedido.length === 0){
+    alert("Agrega al menos un producto");
+    return;
+  }
+
+  let txt = "🔥 PEDIDO GO POLLOS RHOSSE\n\n";
+  txt += "Mesa: " + mesaConMesero() + "\n";
+  txt += "Pago: " + tipoPago + "\n\n";
+
+  agrupar().forEach(g=>{
+    txt += "- " + g.cant + "x " + g.n + " (" + (g.cant*g.p) + " Bs)\n";
+  });
+
+  txt += "\nTOTAL: " + total + " Bs";
+
+  window.open("https://wa.me/59172685867?text=" + encodeURIComponent(txt));
+}
+
+// ================= CAJA DEL DÍA (compartida, guardada en el Google Sheet) =================
 function verCaja(){
-let caja = JSON.parse(localStorage.getItem("caja")||"[]");
 
-let totalDia=0, ef=0, qr=0;
+  const btn = document.querySelector('.caja');
+  const textoOriginal = btn.innerText;
+  btn.innerText = "Cargando...";
+  btn.disabled = true;
 
-caja.forEach(v=>{
-totalDia+=v.total;
-if(v.tipo==="Efectivo") ef+=v.total;
-else qr+=v.total;
-});
-
-alert("📊 CAJA\nTotal: "+totalDia+" Bs\nEfectivo: "+ef+"\nQR: "+qr);
+  fetch(API + "?accion=caja")
+  .then(r => r.json())
+  .then(data=>{
+    if(!data.ok){
+      alert("❌ No se pudo leer la caja");
+      return;
+    }
+    alert(
+      "📊 CAJA DE HOY (" + data.fecha + ")\n" +
+      "Todos los dispositivos\n\n" +
+      "Total: " + data.total + " Bs\n" +
+      "Efectivo: " + data.efectivo + " Bs\n" +
+      "QR: " + data.qr + " Bs\n" +
+      "Pedidos: " + data.pedidos
+    );
+  })
+  .catch(err=>{
+    console.error(err);
+    alert("❌ Sin conexión — no se pudo consultar la caja. Revisa internet e intenta de nuevo.");
+  })
+  .finally(()=>{
+    btn.innerText = textoOriginal;
+    btn.disabled = false;
+  });
 }
 
+// ================= RESET =================
 function resetear(){
-pedido=[];
-total=0;
-render();
-document.getElementById("cambio").innerText="💵 Cambio: 0 Bs";
-document.getElementById("montoManual").value="";
-document.getElementById("tipoPago").value="Efectivo";
-document.getElementById("qrBox").style.display="none";
+  pedido = [];
+  total = 0;
+  render();
+  document.getElementById("montoManual").value = "";
+  elegirPago("Efectivo");
 }
+
+// ================= ARRANQUE =================
+render();
 
 </script>
 
