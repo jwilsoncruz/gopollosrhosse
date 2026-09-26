@@ -196,6 +196,13 @@ header{
 
 .precio{ font-weight:bold; margin:8px 0; }
 
+.agotado-txt{
+ color:#d50000;
+ font-weight:bold;
+ font-size:12px;
+ margin-bottom:6px;
+}
+
 .boton{
  background:#ff6f00;
  color:white;
@@ -236,6 +243,14 @@ header{
  padding:6px 10px;
  border-radius:6px;
  cursor:pointer;
+}
+
+/* ---------- PANEL ADMIN ---------- */
+#panelAdmin{
+  max-height:85vh;
+  overflow-y:auto;
+  width:92vw;
+  max-width:380px;
 }
 </style>
 </head>
@@ -385,19 +400,8 @@ function actualizarEstadoRemoto(valor){
 }
 
 const params = new URLSearchParams(window.location.search);
-
-// Normalmente el QR trae ?mesa=1. Pero si algún QR ya impreso quedó con el
-// formato viejo sin nombre de parámetro (ej: ?=mesa1), igual se rescata el
-// valor tomando el primer parámetro que traiga la URL.
-let mesaRaw = params.get("mesa");
-if(!mesaRaw){
-  for(const [clave, valor] of params.entries()){
-    if(clave !== "admin" && valor){ mesaRaw = valor; break; }
-  }
-}
-
 // Solo letras, números, guion y espacio (evita meter código por la URL)
-const mesaQR = (mesaRaw || "").replace(/[^\w\- ]/g, "").slice(0, 10);
+const mesaQR = (params.get("mesa") || "").replace(/[^\w\- ]/g, "").slice(0, 10);
 
 // ACTIVAR PANEL ADMIN POR URL (?admin=1)
 if(params.get("admin") === "1"){
@@ -580,26 +584,64 @@ const productos = [
 
 ];
 
+// ================= FOTOS Y STOCK COMPARTIDOS (gestionados desde el POS) =================
+// La gestión de fotos y stock se hace en el panel Admin del POS
+// ("Go Pollos Rhosse PRO"). Esta página solo LEE lo que ya está
+// guardado en el servidor, para que todos los clientes vean lo mismo.
+let fotosServidor = {};
+let stockServidor = {};
+
+function fotoDe(p){
+  return fotosServidor[p.nombre] || p.img;
+}
+
 function crearProducto(p){
   const div = document.createElement("div");
   div.className = "card";
 
+  const tieneStock = Object.prototype.hasOwnProperty.call(stockServidor, p.nombre);
+  const agotado = tieneStock && Number(stockServidor[p.nombre]) <= 0;
+
   div.innerHTML = `
-<img src="${p.img}" alt="${p.nombre}" loading="lazy">
+<img src="${fotoDe(p)}" alt="${p.nombre}" loading="lazy" data-producto="${p.nombre}">
 <h3>${p.nombre}</h3>
 <div class="precio">Bs ${p.precio}</div>
-<button class="boton">Agregar</button>
+${agotado ? '<div class="agotado-txt">Agotado por hoy</div>' : ''}
+<button class="boton" ${agotado ? "disabled" : ""}>${agotado ? "Agotado" : "Agregar"}</button>
 `;
 
-  div.querySelector("button").addEventListener("click", ()=>agregar(p.nombre, p.precio));
+  if(!agotado){
+    div.querySelector("button").addEventListener("click", ()=>agregar(p.nombre, p.precio));
+  }
   return div;
 }
 
 function cargarProductos(){
+  document.querySelectorAll(".grid").forEach(g => g.innerHTML = "");
   productos.forEach(p=>{
     const cont = document.getElementById(p.categoria);
     if(cont) cont.appendChild(crearProducto(p));
   });
+}
+
+// Consulta fotos y stock en el mismo backend de pedidos (el que usa el
+// POS), y vuelve a dibujar el menú si algo cambió.
+async function cargarFotosYStock(){
+  try{
+    const [rFotos, rStock] = await Promise.all([
+      fetch(API + "?accion=fotos"),
+      fetch(API + "?accion=stock")
+    ]);
+    const dFotos = await rFotos.json();
+    const dStock = await rStock.json();
+
+    if(dFotos.ok) fotosServidor = dFotos.fotos || {};
+    if(dStock.ok) stockServidor = dStock.stock || {};
+
+    cargarProductos();
+  }catch(e){
+    console.error("No se pudo leer fotos/stock del servidor", e);
+  }
 }
 
 // ================= CARRITO =================
@@ -1034,14 +1076,9 @@ function enviarPedido(){
     if(data.ok){
 
       let texto = "🍗 Pedido Go Pollos Rhosse\n\n";
-      if(data.numero){
-        texto += "🔖 N° de pedido: #" + data.numero + "\n";
-      }
-      texto += "Tipo: " + mesa + "\n\n" + detalle + "\nTotal Bs " + total;
+      texto += "Tipo: " + tipoPedido + "\n\n" + detalle + "\nTotal Bs " + total;
 
-      // Se usa api.whatsapp.com directo (en vez de wa.me) porque el
-      // redireccionador de wa.me a veces corrompe emojis como 🍗 o 🔖.
-      window.open("https://api.whatsapp.com/send?phone=59172685867&text=" + encodeURIComponent(texto));
+      window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
 
       carrito = [];
       actualizarCarrito();
@@ -1122,10 +1159,12 @@ contadorLenia();
 actualizarPollos();
 actualizarMarquesina();
 actualizarMenuPorHora();
+cargarFotosYStock();
 
 setInterval(contadorLenia, 1000);
 setInterval(actualizarEstado, 10000);
 setInterval(actualizarMarquesina, 5000);
+setInterval(cargarFotosYStock, 15000);
 
 if(USAR_CONTROL_REMOTO){
   setTimeout(()=>{
