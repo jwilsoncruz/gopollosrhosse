@@ -52,6 +52,14 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
 .btnFull{position:fixed;bottom:14px;left:14px;z-index:70;background:var(--dorado);color:#111;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;opacity:.85;}
 
+.ticker{width:100%;height:46px;background:linear-gradient(90deg,var(--dorado-fuerte),var(--dorado));display:flex;align-items:center;overflow:hidden;position:relative;box-sizing:border-box;}
+.ticker .tickBadge{flex:0 0 auto;background:var(--rojo);color:white;font-weight:900;font-size:14px;padding:0 16px;height:100%;display:flex;align-items:center;white-space:nowrap;letter-spacing:1px;z-index:2;box-shadow:4px 0 10px rgba(0,0,0,.4);}
+.ticker .tickBadge span.punto{display:inline-block;width:8px;height:8px;border-radius:50%;background:white;margin-right:6px;animation:parpadeo 1s infinite;}
+.ticker .tickPista{display:flex;white-space:nowrap;animation:mover linear infinite;}
+.ticker .tickPista .grupo{display:flex;}
+.ticker .tickPista span.item{padding:0 40px;font-size:19px;font-weight:bold;color:#1a1200;}
+@keyframes mover{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
 .adminFondo{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:90;overflow:auto;padding:20px;box-sizing:border-box;}
 .adminFondo.abierto{display:flex;}
 .adminCaja{background:#1a1a1a;border:2px solid var(--dorado);border-radius:14px;padding:22px;width:min(560px,92vw);text-align:left;}
@@ -108,6 +116,11 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
   </div>
 </div>
 
+<div class="ticker" id="ticker">
+  <div class="tickBadge"><span class="punto"></span>PROMOS</div>
+  <div class="tickPista" id="tickPista"></div>
+</div>
+
 <div class="panel">
   <div class="columna">
     <div class="titulo">👨‍🍳 PREPARANDO</div>
@@ -146,6 +159,12 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
     <h3>Duración por defecto de cada imagen</h3>
     <label>Segundos<input type="text" id="cfgDuracion" placeholder="6"></label>
+
+    <h3>Marquesina (texto tipo noticiero)</h3>
+    <p>Un mensaje por línea, se muestran en fila y en bucle continuo.</p>
+    <textarea id="cajaTicker" style="height:80px" placeholder="🔥 Combo familiar Bs 120 con delivery gratis
+📍 Av. Principal esq. 2do Anillo
+🕒 Abierto de 11:00 a 22:00"></textarea>
 
     <h3>Imágenes del carrusel</h3>
     <p>Un link por línea, con este formato (deja vacío lo que no uses):<br>
@@ -292,6 +311,24 @@ function iniciarCarrusel(){
   actualizarQR();
 }
 
+/* ===================== MARQUESINA ===================== */
+const LS_TICK = "gp_ticker_msgs";
+function leerTicker(){
+  try{ return JSON.parse(localStorage.getItem(LS_TICK)) || []; }catch(e){ return []; }
+}
+function construirTicker(){
+  const pista=document.getElementById("tickPista");
+  const mensajes=leerTicker();
+  const cont=document.getElementById("ticker");
+  if(mensajes.length===0){ cont.style.display="none"; pista.innerHTML=""; return; }
+  cont.style.display="flex";
+  const html = mensajes.map(m=>"<span class='item'>"+m+"</span>").join("");
+  pista.innerHTML = "<div class='grupo'>"+html+"</div><div class='grupo'>"+html+"</div>";
+  const largoTexto = mensajes.join(" ").length;
+  const duracion = Math.max(14, largoTexto*0.28);
+  pista.style.animationDuration = duracion+"s";
+}
+
 /* ===================== QR ===================== */
 function actualizarQR(){
   const box=document.getElementById("qrBox");
@@ -373,6 +410,7 @@ function abrirAdmin(){
   const guardado=leerImagenes();
   const texto=guardado.map(o=>[o.url,o.texto,o.precio,o.segundos||"",o.horario==="todo"?"":o.horario,o.dias==="todos"?"":o.dias].join("|").replace(/\|+$/,"")).join("\n");
   document.getElementById("cajaLinks").value=texto;
+  document.getElementById("cajaTicker").value = leerTicker().join("\n");
   document.getElementById("adminFondo").classList.add("abierto");
 }
 function cerrarAdmin(){ document.getElementById("adminFondo").classList.remove("abierto"); }
@@ -388,8 +426,11 @@ function guardarAdmin(){
   localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
   const lista = parsearLineas(document.getElementById("cajaLinks").value);
   localStorage.setItem(LS_IMG, JSON.stringify(lista));
+  const mensajesTicker = document.getElementById("cajaTicker").value.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
+  localStorage.setItem(LS_TICK, JSON.stringify(mensajesTicker));
   cerrarAdmin();
   iniciarCarrusel();
+  construirTicker();
   actualizarClima();
   revisarCerrado();
 }
@@ -397,6 +438,7 @@ document.getElementById("engrane").addEventListener("click", abrirAdmin);
 
 actualizarReloj();
 iniciarCarrusel();
+construirTicker();
 actualizarClima();
 revisarCerrado();
 
