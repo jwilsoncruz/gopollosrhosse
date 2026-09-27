@@ -18,8 +18,8 @@ body{margin:0;background:var(--negro);font-family:Arial;color:white;text-align:c
 h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
 .carousel{width:100%;height:45vh;background:#000;position:relative;overflow:hidden;border-bottom:3px solid var(--dorado);box-sizing:border-box;}
-.carousel .capa{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.3s ease, transform 8s ease;transform:scale(1);}
-.carousel .capa.activa{opacity:1;transform:scale(1.06);}
+.carousel .capa{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;opacity:0;transition:opacity 1.3s ease;}
+.carousel .capa.activa{opacity:1;}
 
 .carousel .vacio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#888;font-size:18px;padding:20px;box-sizing:border-box;}
 
