@@ -51,6 +51,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 .cerradoOverlay p{color:#ccc;font-size:22px;margin:0;}
 
 .btnFull{position:fixed;bottom:14px;left:14px;z-index:70;background:var(--dorado);color:#111;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;opacity:.85;}
+.btnMusica{position:fixed;bottom:14px;left:170px;z-index:70;background:var(--rojo);color:white;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;opacity:.85;}
 
 .ticker{width:100%;height:46px;background:linear-gradient(90deg,var(--dorado-fuerte),var(--dorado));display:flex;align-items:center;overflow:hidden;position:relative;box-sizing:border-box;}
 .ticker .tickBadge{flex:0 0 auto;background:var(--rojo);color:white;font-weight:900;font-size:14px;padding:0 16px;height:100%;display:flex;align-items:center;white-space:nowrap;letter-spacing:1px;z-index:2;box-shadow:4px 0 10px rgba(0,0,0,.4);}
@@ -134,6 +135,8 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
 <div id="flash" class="flash"></div>
 <button class="btnFull" id="btnFull">⛶ Pantalla completa</button>
+<button class="btnMusica" id="btnMusica">🔇 Música</button>
+<audio id="audioFondo" preload="auto"></audio>
 
 <div class="cerradoOverlay" id="cerradoOverlay">
   <h2>🍗 Go Pollos Rhosse</h2>
@@ -159,6 +162,12 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
     <h3>Duración por defecto de cada imagen</h3>
     <label>Segundos<input type="text" id="cfgDuracion" placeholder="6"></label>
+
+    <h3>Música de fondo (opcional)</h3>
+    <p>Un link directo a mp3 por línea (se reproducen en bucle, en orden). El primer toque en pantalla activa el sonido, por restricciones del navegador.</p>
+    <label>Volumen (0-100)<input type="text" id="cfgVolumen" placeholder="45"></label>
+    <textarea id="cajaMusica" style="height:80px" placeholder="https://misitio.com/musica1.mp3
+https://misitio.com/musica2.mp3"></textarea>
 
     <h3>Marquesina (texto tipo noticiero)</h3>
     <p>Un mensaje por línea, se muestran en fila y en bucle continuo.</p>
@@ -311,6 +320,46 @@ function iniciarCarrusel(){
   actualizarQR();
 }
 
+/* ===================== MÚSICA DE FONDO ===================== */
+const LS_MUSIC = "gp_music_list";
+const audioFondo = document.getElementById("audioFondo");
+let playlist = [];
+let musIdx = 0;
+
+function leerMusica(){
+  try{ return JSON.parse(localStorage.getItem(LS_MUSIC)) || []; }catch(e){ return []; }
+}
+
+function construirMusica(){
+  playlist = leerMusica();
+  musIdx = 0;
+  audioFondo.volume = cfg.volumen ? Math.min(100,Math.max(0,parseFloat(cfg.volumen)))/100 : 0.45;
+  if(playlist.length>0){ audioFondo.src = playlist[0]; document.getElementById("btnMusica").style.display="block"; }
+  else document.getElementById("btnMusica").style.display="none";
+}
+
+audioFondo.addEventListener("ended", ()=>{
+  if(playlist.length===0) return;
+  musIdx = (musIdx+1) % playlist.length;
+  audioFondo.src = playlist[musIdx];
+  audioFondo.play().catch(()=>{});
+});
+
+function activarMusica(){
+  if(playlist.length===0) return;
+  audioFondo.muted = false;
+  audioFondo.play().catch(()=>{});
+  document.getElementById("btnMusica").textContent = "🔊 Música";
+}
+
+document.getElementById("btnMusica").addEventListener("click", ()=>{
+  if(audioFondo.paused){ activarMusica(); }
+  else{
+    audioFondo.muted = !audioFondo.muted;
+    document.getElementById("btnMusica").textContent = audioFondo.muted ? "🔇 Música" : "🔊 Música";
+  }
+});
+
 /* ===================== MARQUESINA ===================== */
 const LS_TICK = "gp_ticker_msgs";
 function leerTicker(){
@@ -378,6 +427,7 @@ function revisarCerrado(){
   else{
     document.getElementById("cerradoMsg").textContent = "Cerrado por ahora — Abrimos hoy/mañana a las "+cfg.apertura;
     overlay.classList.add("abierto");
+    audioFondo.pause();
   }
 }
 setInterval(revisarCerrado, 30000);
@@ -392,6 +442,7 @@ function pedirFullscreen(){
 btnFull.addEventListener("click", pedirFullscreen);
 document.addEventListener("click", function primerClic(){
   pedirFullscreen();
+  activarMusica();
   document.removeEventListener("click", primerClic);
 }, {once:true});
 document.addEventListener("fullscreenchange", ()=>{
@@ -406,6 +457,8 @@ function abrirAdmin(){
   document.getElementById("cfgWhatsapp").value=cfg.whatsapp||"";
   document.getElementById("cfgCoords").value=cfg.coords||"";
   document.getElementById("cfgDuracion").value=cfg.duracion||DEF_SEG;
+  document.getElementById("cfgVolumen").value=cfg.volumen||45;
+  document.getElementById("cajaMusica").value = leerMusica().join("\n");
 
   const guardado=leerImagenes();
   const texto=guardado.map(o=>[o.url,o.texto,o.precio,o.segundos||"",o.horario==="todo"?"":o.horario,o.dias==="todos"?"":o.dias].join("|").replace(/\|+$/,"")).join("\n");
@@ -421,9 +474,12 @@ function guardarAdmin(){
     cierre: document.getElementById("cfgCierre").value.trim(),
     whatsapp: document.getElementById("cfgWhatsapp").value.trim(),
     coords: document.getElementById("cfgCoords").value.trim(),
-    duracion: document.getElementById("cfgDuracion").value.trim()
+    duracion: document.getElementById("cfgDuracion").value.trim(),
+    volumen: document.getElementById("cfgVolumen").value.trim()
   };
   localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
+  const musica = document.getElementById("cajaMusica").value.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
+  localStorage.setItem(LS_MUSIC, JSON.stringify(musica));
   const lista = parsearLineas(document.getElementById("cajaLinks").value);
   localStorage.setItem(LS_IMG, JSON.stringify(lista));
   const mensajesTicker = document.getElementById("cajaTicker").value.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
@@ -431,6 +487,7 @@ function guardarAdmin(){
   cerrarAdmin();
   iniciarCarrusel();
   construirTicker();
+  construirMusica();
   actualizarClima();
   revisarCerrado();
 }
@@ -439,6 +496,7 @@ document.getElementById("engrane").addEventListener("click", abrirAdmin);
 actualizarReloj();
 iniciarCarrusel();
 construirTicker();
+construirMusica();
 actualizarClima();
 revisarCerrado();
 
