@@ -352,6 +352,10 @@ function activarMusica(){
   document.getElementById("btnMusica").textContent = "🔊 Música";
 }
 
+function volumenBase(){ return cfg.volumen ? Math.min(100,Math.max(0,parseFloat(cfg.volumen)))/100 : 0.45; }
+function agacharMusica(){ if(!audioFondo.paused) audioFondo.volume = volumenBase()*0.15; }
+function restaurarMusica(){ if(!audioFondo.paused) audioFondo.volume = volumenBase(); }
+
 document.getElementById("btnMusica").addEventListener("click", ()=>{
   if(audioFondo.paused){ activarMusica(); }
   else{
@@ -528,7 +532,11 @@ function cargar(){
       document.getElementById("listo").innerHTML = listo || "Esperando...";
       nuevosListos.forEach(n=>{
         if(!ultimosListos.includes(n)){
-          document.getElementById("campana").play();
+          agacharMusica();
+          const campanaAudio = document.getElementById("campana");
+          campanaAudio.play();
+          campanaAudio.onended = restaurarMusica;
+          setTimeout(restaurarMusica, 5000); // respaldo por si 'ended' no dispara
           let flash=document.getElementById("flash");
           flash.classList.add("activo");
           setTimeout(()=>{ flash.classList.remove("activo"); },600);
