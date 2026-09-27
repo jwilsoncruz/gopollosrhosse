@@ -14,252 +14,74 @@
   --negro:#0b0b0b;
 }
 
-body{
-margin:0;
-background:var(--negro);
-font-family:Arial;
-color:white;
-text-align:center;
-}
+body{margin:0;background:var(--negro);font-family:Arial;color:white;text-align:center;}
+h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
-h1{
-margin:10px;
-color:var(--dorado);
-letter-spacing:1px;
-}
+.carousel{width:100%;height:45vh;background:#000;position:relative;overflow:hidden;border-bottom:3px solid var(--dorado);box-sizing:border-box;}
+.carousel .capa{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.3s ease, transform 8s ease;transform:scale(1);}
+.carousel .capa.activa{opacity:1;transform:scale(1.06);}
 
-/* ===== CARRUSEL (reemplaza al video) ===== */
+.carousel .vacio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#888;font-size:18px;padding:20px;box-sizing:border-box;}
 
-.carousel{
-width:100%;
-height:45vh;
-background:#000;
-position:relative;
-overflow:hidden;
-border-bottom:3px solid var(--dorado);
-box-sizing:border-box;
-}
+.franja{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;background:linear-gradient(0deg,rgba(0,0,0,.75),rgba(0,0,0,0));text-align:left;font-size:22px;font-weight:bold;color:var(--dorado);opacity:0;transition:opacity 1s ease;z-index:3;}
+.franja.activa{opacity:1;}
 
-.carousel .capa{
-position:absolute;
-inset:0;
-width:100%;
-height:100%;
-object-fit:cover;
-opacity:0;
-transition:opacity 1.3s ease, transform 6s ease;
-transform:scale(1);
-}
+.precioTag{position:absolute;top:14px;left:14px;background:var(--rojo);color:white;font-size:34px;font-weight:900;padding:6px 18px;border-radius:10px;border:3px solid white;box-shadow:0 4px 10px rgba(0,0,0,.5);opacity:0;transition:opacity 1s ease;z-index:4;}
+.precioTag.activa{opacity:1;}
 
-.carousel .capa.activa{
-opacity:1;
-transform:scale(1.06);
-}
+.qrBox{position:absolute;bottom:14px;right:14px;background:white;padding:6px;border-radius:8px;text-align:center;z-index:4;box-shadow:0 3px 10px rgba(0,0,0,.5);}
+.qrBox img{display:block;width:70px;height:70px;}
+.qrBox span{display:block;color:#111;font-size:10px;font-weight:bold;margin-top:2px;}
 
-.carousel .vacio{
-position:absolute;
-inset:0;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-gap:10px;
-color:#888;
-font-size:18px;
-padding:20px;
-box-sizing:border-box;
-}
-
-.carousel .franja{
-position:absolute;
-left:0;right:0;bottom:0;
-padding:14px 16px;
-background:linear-gradient(0deg,rgba(0,0,0,.75),rgba(0,0,0,0));
-text-align:left;
-font-size:22px;
-font-weight:bold;
-color:var(--dorado);
-opacity:0;
-transition:opacity 1s ease;
-}
-
-.carousel .franja.activa{opacity:1;}
-
-.dots{
-position:absolute;
-bottom:10px;
-right:16px;
-display:flex;
-gap:6px;
-z-index:5;
-}
-
-.dots span{
-width:9px;height:9px;border-radius:50%;
-background:rgba(255,255,255,.35);
-}
-
+.dots{position:absolute;bottom:10px;left:14px;display:flex;gap:6px;z-index:5;}
+.dots span{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);}
 .dots span.on{background:var(--dorado);}
 
-.engrane{
-position:absolute;
-top:10px;
-right:14px;
-font-size:20px;
-opacity:.35;
-cursor:pointer;
-z-index:6;
-user-select:none;
-}
-
+.engrane{position:absolute;top:10px;right:14px;font-size:20px;opacity:.35;cursor:pointer;z-index:6;user-select:none;}
 .engrane:hover{opacity:1;}
 
-/* ===== ADMIN ===== */
+.relojBox{position:absolute;top:10px;left:14px;text-align:left;z-index:6;background:rgba(0,0,0,.4);padding:6px 10px;border-radius:8px;}
+.relojBox .hora{font-size:20px;font-weight:bold;color:var(--dorado);}
+.relojBox .fecha{font-size:11px;color:#ccc;text-transform:capitalize;}
+.relojBox .clima{font-size:12px;color:#fff;margin-top:2px;}
 
-.adminFondo{
-position:fixed;inset:0;
-background:rgba(0,0,0,.85);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:50;
-}
+.cerradoOverlay{position:fixed;inset:0;background:var(--negro);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:80;text-align:center;padding:20px;}
+.cerradoOverlay.abierto{display:flex;}
+.cerradoOverlay h2{color:var(--dorado);font-size:42px;margin:0;}
+.cerradoOverlay p{color:#ccc;font-size:22px;margin:0;}
 
+.btnFull{position:fixed;bottom:14px;left:14px;z-index:70;background:var(--dorado);color:#111;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;opacity:.85;}
+
+.adminFondo{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:90;overflow:auto;padding:20px;box-sizing:border-box;}
 .adminFondo.abierto{display:flex;}
-
-.adminCaja{
-background:#1a1a1a;
-border:2px solid var(--dorado);
-border-radius:14px;
-padding:22px;
-width:min(520px,90vw);
-text-align:left;
-}
-
-.adminCaja h2{
-margin:0 0 6px;
-color:var(--dorado);
-}
-
-.adminCaja p{
-color:#bbb;
-font-size:14px;
-margin-top:0;
-}
-
-.adminCaja textarea{
-width:100%;
-height:180px;
-background:#111;
-color:white;
-border:1px solid #444;
-border-radius:8px;
-padding:10px;
-box-sizing:border-box;
-font-family:monospace;
-font-size:13px;
-resize:vertical;
-}
-
-.adminBotones{
-display:flex;
-gap:10px;
-margin-top:14px;
-justify-content:flex-end;
-}
-
-.adminBotones button{
-border:0;
-border-radius:8px;
-padding:10px 18px;
-font-weight:bold;
-cursor:pointer;
-font-size:15px;
-}
-
+.adminCaja{background:#1a1a1a;border:2px solid var(--dorado);border-radius:14px;padding:22px;width:min(560px,92vw);text-align:left;}
+.adminCaja h2{margin:0 0 6px;color:var(--dorado);font-size:20px;}
+.adminCaja h3{margin:16px 0 4px;color:var(--dorado);font-size:15px;}
+.adminCaja p{color:#bbb;font-size:12.5px;margin:4px 0;}
+.adminCaja label{display:block;color:#ddd;font-size:12px;margin-top:8px;}
+.adminCaja input[type=text]{width:100%;background:#111;color:white;border:1px solid #444;border-radius:6px;padding:8px;box-sizing:border-box;font-size:13px;margin-top:3px;}
+.filaDoble{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.adminCaja textarea{width:100%;height:150px;background:#111;color:white;border:1px solid #444;border-radius:8px;padding:10px;box-sizing:border-box;font-family:monospace;font-size:12.5px;resize:vertical;margin-top:6px;}
+.adminBotones{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;}
+.adminBotones button{border:0;border-radius:8px;padding:10px 18px;font-weight:bold;cursor:pointer;font-size:15px;}
 .btnGuardar{background:var(--dorado);color:#111;}
 .btnCerrar{background:#333;color:white;}
 
-/* ===== PANEL DE PEDIDOS (sin cambios) ===== */
+.panel{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:20px;height:45vh;box-sizing:border-box;}
+.columna{background:#1a1a1a;border-radius:12px;padding:20px;border-top:3px solid var(--dorado-fuerte);box-sizing:border-box;}
+.titulo{font-size:28px;margin-bottom:15px;}
+.lista{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:15px;}
+.card{padding:20px 10px;border-radius:10px;font-size:28px;font-weight:bold;}
+.preparando{background:#ffd54f;color:black;}
+.listo{background:#4caf50;animation:parpadeo 1s infinite;}
+@keyframes parpadeo{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
 
-.panel{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-padding:20px;
-height:45vh;
-box-sizing:border-box;
-}
-
-.columna{
-background:#1a1a1a;
-border-radius:12px;
-padding:20px;
-border-top:3px solid var(--dorado-fuerte);
-box-sizing:border-box;
-}
-
-.titulo{
-font-size:28px;
-margin-bottom:15px;
-}
-
-.lista{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-gap:15px;
-}
-
-.card{
-padding:20px 10px;
-border-radius:10px;
-font-size:28px;
-font-weight:bold;
-}
-
-.preparando{
-background:#ffd54f;
-color:black;
-}
-
-.listo{
-background:#4caf50;
-animation:parpadeo 1s infinite;
-}
-
-@keyframes parpadeo{
-0%{transform:scale(1)}
-50%{transform:scale(1.15)}
-100%{transform:scale(1)}
-}
-
-/* flash pantalla */
-
-.flash{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:red;
-opacity:0;
-pointer-events:none;
-}
-
-.flash.activo{
-animation:flashAnim 0.6s;
-}
-
-@keyframes flashAnim{
-0%{opacity:0}
-50%{opacity:0.6}
-100%{opacity:0}
-}
+.flash{position:fixed;top:0;left:0;width:100%;height:100%;background:red;opacity:0;pointer-events:none;z-index:60;}
+.flash.activo{animation:flashAnim 0.6s;}
+@keyframes flashAnim{0%{opacity:0}50%{opacity:0.6}100%{opacity:0}}
 
 </style>
-
 </head>
-
 <body>
 
 <h1>🍗 Estado de Pedidos</h1>
@@ -267,45 +89,74 @@ animation:flashAnim 0.6s;
 <div class="carousel" id="carousel">
   <img class="capa" id="capaA">
   <img class="capa" id="capaB">
+  <div class="precioTag" id="precioTag"></div>
   <div class="franja" id="franja"></div>
+  <div class="qrBox" id="qrBox" style="display:none">
+    <img id="qrImg">
+    <span id="qrLabel">Ver menú</span>
+  </div>
   <div class="dots" id="dots"></div>
-  <div class="engrane" id="engrane" title="Administrar imágenes">⚙️</div>
+  <div class="relojBox" id="relojBox">
+    <div class="hora" id="horaTxt">--:--</div>
+    <div class="fecha" id="fechaTxt">-</div>
+    <div class="clima" id="climaTxt"></div>
+  </div>
+  <div class="engrane" id="engrane" title="Administrar">⚙️</div>
   <div class="vacio" id="vacio" style="display:none">
     <div>📢 Aún no hay imágenes cargadas</div>
-    <div>Toca el ⚙️ arriba a la derecha para agregar tus promociones (links de imágenes)</div>
+    <div>Toca el ⚙️ arriba a la derecha para agregar tus promociones</div>
   </div>
 </div>
 
 <div class="panel">
-
-<div class="columna">
-
-<div class="titulo">👨‍🍳 PREPARANDO</div>
-
-<div id="preparando" class="lista"></div>
-
-</div>
-
-<div class="columna">
-
-<div class="titulo">✅ LISTO</div>
-
-<div id="listo" class="lista"></div>
-
-</div>
-
+  <div class="columna">
+    <div class="titulo">👨‍🍳 PREPARANDO</div>
+    <div id="preparando" class="lista"></div>
+  </div>
+  <div class="columna">
+    <div class="titulo">✅ LISTO</div>
+    <div id="listo" class="lista"></div>
+  </div>
 </div>
 
 <div id="flash" class="flash"></div>
+<button class="btnFull" id="btnFull">⛶ Pantalla completa</button>
 
-<!-- ===== Panel de administración del carrusel ===== -->
+<div class="cerradoOverlay" id="cerradoOverlay">
+  <h2>🍗 Go Pollos Rhosse</h2>
+  <p id="cerradoMsg">Cerrado por ahora. ¡Te esperamos pronto!</p>
+</div>
+
 <div class="adminFondo" id="adminFondo">
   <div class="adminCaja">
-    <h2>🖼️ Imágenes del carrusel</h2>
-    <p>Un link por línea. Opcional: agrega un texto después de un "|" para mostrar un pie de foto.<br>
-    Ej: <code>https://misitio.com/promo1.jpg|2x1 en combos hoy</code></p>
-    <textarea id="cajaLinks" placeholder="https://ejemplo.com/promo1.jpg|Combo familiar
-https://ejemplo.com/promo2.jpg"></textarea>
+    <h2>⚙️ Configuración de pantalla</h2>
+
+    <h3>Horario de atención</h3>
+    <div class="filaDoble">
+      <label>Apertura (HH:MM)<input type="text" id="cfgApertura" placeholder="11:00"></label>
+      <label>Cierre (HH:MM)<input type="text" id="cfgCierre" placeholder="22:00"></label>
+    </div>
+    <p>Fuera de este horario se muestra "Cerrado" en vez de la pantalla normal. Déjalo vacío para que nunca cierre.</p>
+
+    <h3>Menú / WhatsApp (para el QR)</h3>
+    <label>Link de tu menú o WhatsApp<input type="text" id="cfgWhatsapp" placeholder="https://wa.me/59170000000"></label>
+
+    <h3>Clima (opcional)</h3>
+    <label>Coordenadas "lat,lon" de tu ciudad<input type="text" id="cfgCoords" placeholder="-14.83,-64.90"></label>
+
+    <h3>Duración por defecto de cada imagen</h3>
+    <label>Segundos<input type="text" id="cfgDuracion" placeholder="6"></label>
+
+    <h3>Imágenes del carrusel</h3>
+    <p>Un link por línea, con este formato (deja vacío lo que no uses):<br>
+    <code>link | texto | precio | segundos | horario | dias</code></p>
+    <p>
+    <b>horario:</b> todo (siempre) / almuerzo (11-15) / noche (18-23) / HH:MM-HH:MM<br>
+    <b>dias:</b> todos / semana (lun-vie) / finde (sab-dom)
+    </p>
+    <p>Ej: <code>https://mi.com/promo.jpg|Combo familiar|Bs 45|8|almuerzo|semana</code></p>
+    <textarea id="cajaLinks" placeholder="https://ejemplo.com/promo1.jpg|Combo familiar"></textarea>
+
     <div class="adminBotones">
       <button class="btnCerrar" onclick="cerrarAdmin()">Cerrar</button>
       <button class="btnGuardar" onclick="guardarAdmin()">Guardar</button>
@@ -313,212 +164,282 @@ https://ejemplo.com/promo2.jpg"></textarea>
   </div>
 </div>
 
-<audio id="campana">
-<source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg">
-</audio>
+<audio id="campana"><source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg"></audio>
 
 <script>
 
-/* =======================================================
-   CARRUSEL DE IMÁGENES (reemplaza al iframe de video)
-   - Guarda los links en localStorage de esta pantalla
-   - Panel admin simple: solo pega links, uno por línea
-   ======================================================= */
+/* ===================== CONFIG Y CARRUSEL ===================== */
 
-const LS_KEY = "gp_carousel_links";
-const SEG_MS = 6000; // segundos que dura cada imagen
+const LS_IMG = "gp_carousel_links";
+const LS_CFG = "gp_carousel_cfg";
+const DEF_SEG = 6;
 
-let imagenes = [];      // [{url, texto}]
+let imagenesTodas = [];
+let imagenesActivas = [];
 let idx = 0;
 let capaVisible = "A";
+let cfg = {};
+let timerImagen = null;
 
-function leerGuardado(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return [];
-    return JSON.parse(raw);
-  }catch(e){
-    return [];
+function leerCfg(){
+  try{ return JSON.parse(localStorage.getItem(LS_CFG)) || {}; }catch(e){ return {}; }
+}
+function leerImagenes(){
+  try{ return JSON.parse(localStorage.getItem(LS_IMG)) || []; }catch(e){ return []; }
+}
+
+function parsearLineas(txt){
+  return txt.split("\n").map(l=>l.trim()).filter(l=>l.length>0).map(l=>{
+    const p = l.split("|").map(x=>x.trim());
+    return { url:p[0]||"", texto:p[1]||"", precio:p[2]||"", segundos:p[3]?parseFloat(p[3]):null, horario:(p[4]||"todo").toLowerCase(), dias:(p[5]||"todos").toLowerCase() };
+  }).filter(o=>o.url.length>0);
+}
+
+function horaActualMin(){ const d=new Date(); return d.getHours()*60+d.getMinutes(); }
+function diaActual(){ return new Date().getDay(); } // 0=dom..6=sab
+
+function dentroHorario(rango){
+  if(!rango || rango==="todo") return true;
+  let ini,fin;
+  if(rango==="almuerzo"){ini=11*60;fin=15*60;}
+  else if(rango==="noche"){ini=18*60;fin=23*60;}
+  else{
+    const m = rango.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/);
+    if(!m) return true;
+    ini = (+m[1])*60+(+m[2]); fin = (+m[3])*60+(+m[4]);
   }
+  const ahora = horaActualMin();
+  if(ini<=fin) return ahora>=ini && ahora<=fin;
+  return ahora>=ini || ahora<=fin; // cruza medianoche
 }
 
-function parsearTexto(txt){
-  return txt.split("\n")
-    .map(l=>l.trim())
-    .filter(l=>l.length>0)
-    .map(l=>{
-      const [url, texto] = l.split("|");
-      return { url: (url||"").trim(), texto: (texto||"").trim() };
-    })
-    .filter(o=>o.url.length>0);
+function dentroDias(dias){
+  if(!dias || dias==="todos") return true;
+  const d = diaActual();
+  if(dias==="semana") return d>=1 && d<=5;
+  if(dias==="finde") return d===0 || d===6;
+  const abrevs=["dom","lun","mar","mie","jue","vie","sab"];
+  return dias.split(",").map(x=>x.trim()).includes(abrevs[d]);
 }
 
-function guardarEnStorage(lista){
-  localStorage.setItem(LS_KEY, JSON.stringify(lista));
+function filtrarActivas(){
+  imagenesActivas = imagenesTodas.filter(o=>dentroHorario(o.horario) && dentroDias(o.dias));
+  if(idx>=imagenesActivas.length) idx=0;
 }
 
 function construirDots(){
-  const cont = document.getElementById("dots");
-  cont.innerHTML = "";
-  imagenes.forEach((_,i)=>{
-    const d = document.createElement("span");
+  const cont=document.getElementById("dots");
+  cont.innerHTML="";
+  imagenesActivas.forEach((_,i)=>{
+    const d=document.createElement("span");
     if(i===idx) d.classList.add("on");
     cont.appendChild(d);
   });
 }
-
 function marcarDot(){
-  const dots = document.querySelectorAll("#dots span");
-  dots.forEach((d,i)=> d.classList.toggle("on", i===idx));
+  document.querySelectorAll("#dots span").forEach((d,i)=>d.classList.toggle("on", i===idx));
 }
 
 function mostrarImagen(i){
-  const vacio = document.getElementById("vacio");
-  if(imagenes.length === 0){
-    vacio.style.display = "flex";
+  const vacio=document.getElementById("vacio");
+  if(imagenesActivas.length===0){
+    vacio.style.display="flex";
     document.getElementById("capaA").classList.remove("activa");
     document.getElementById("capaB").classList.remove("activa");
     document.getElementById("franja").classList.remove("activa");
+    document.getElementById("precioTag").classList.remove("activa");
     return;
   }
-  vacio.style.display = "none";
-
-  const item = imagenes[i];
-  const entrante = capaVisible === "A" ? document.getElementById("capaB") : document.getElementById("capaA");
-  const saliente = capaVisible === "A" ? document.getElementById("capaA") : document.getElementById("capaB");
-
-  entrante.src = item.url;
+  vacio.style.display="none";
+  const item=imagenesActivas[i];
+  const entrante = capaVisible==="A" ? document.getElementById("capaB") : document.getElementById("capaA");
+  const saliente = capaVisible==="A" ? document.getElementById("capaA") : document.getElementById("capaB");
+  entrante.src=item.url;
   entrante.classList.add("activa");
   saliente.classList.remove("activa");
-  capaVisible = capaVisible === "A" ? "B" : "A";
+  capaVisible = capaVisible==="A" ? "B" : "A";
 
-  const franja = document.getElementById("franja");
-  if(item.texto){
-    franja.textContent = item.texto;
-    franja.classList.add("activa");
-  }else{
-    franja.classList.remove("activa");
-  }
+  const franja=document.getElementById("franja");
+  if(item.texto){ franja.textContent=item.texto; franja.classList.add("activa"); }
+  else franja.classList.remove("activa");
+
+  const precioTag=document.getElementById("precioTag");
+  if(item.precio){ precioTag.textContent=item.precio; precioTag.classList.add("activa"); }
+  else precioTag.classList.remove("activa");
 
   marcarDot();
+
+  clearTimeout(timerImagen);
+  const seg = item.segundos || (cfg.duracion?parseFloat(cfg.duracion):DEF_SEG);
+  timerImagen = setTimeout(siguienteImagen, Math.max(2,seg)*1000);
 }
 
 function siguienteImagen(){
-  if(imagenes.length === 0) return;
-  idx = (idx + 1) % imagenes.length;
+  filtrarActivas();
+  construirDots();
+  if(imagenesActivas.length===0){ mostrarImagen(0); return; }
+  idx=(idx+1)%imagenesActivas.length;
   mostrarImagen(idx);
 }
 
 function iniciarCarrusel(){
-  imagenes = leerGuardado();
-  idx = 0;
+  cfg=leerCfg();
+  imagenesTodas=leerImagenes();
+  filtrarActivas();
+  idx=0;
   construirDots();
   mostrarImagen(idx);
+  actualizarQR();
 }
 
-setInterval(siguienteImagen, SEG_MS);
+/* ===================== QR ===================== */
+function actualizarQR(){
+  const box=document.getElementById("qrBox");
+  if(cfg.whatsapp){
+    document.getElementById("qrImg").src = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data="+encodeURIComponent(cfg.whatsapp);
+    box.style.display="block";
+  } else box.style.display="none";
+}
 
-/* ===== Panel admin ===== */
+/* ===================== RELOJ Y CLIMA ===================== */
+function actualizarReloj(){
+  const d=new Date();
+  document.getElementById("horaTxt").textContent = d.toLocaleTimeString("es-BO",{hour:'2-digit',minute:'2-digit'});
+  document.getElementById("fechaTxt").textContent = d.toLocaleDateString("es-BO",{weekday:'long',day:'numeric',month:'long'});
+}
+setInterval(actualizarReloj,1000);
 
+const climaEmoji = c => (c===0?"☀️":c<=3?"⛅":c<=48?"🌫️":c<=67?"🌧️":c<=77?"❄️":c<=82?"🌦️":c>=95?"⛈️":"🌡️");
+
+function actualizarClima(){
+  if(!cfg.coords) { document.getElementById("climaTxt").textContent=""; return; }
+  const [lat,lon] = cfg.coords.split(",").map(x=>x.trim());
+  if(!lat||!lon) return;
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+    .then(r=>r.json())
+    .then(d=>{
+      const cw=d.current_weather;
+      if(cw) document.getElementById("climaTxt").textContent = climaEmoji(cw.weathercode)+" "+Math.round(cw.temperature)+"°C";
+    }).catch(()=>{});
+}
+setInterval(actualizarClima, 10*60*1000);
+
+/* ===================== MODO CERRADO ===================== */
+function minFromHHMM(s){
+  const m=(s||"").match(/^(\d{1,2}):(\d{2})$/);
+  if(!m) return null;
+  return (+m[1])*60+(+m[2]);
+}
+function revisarCerrado(){
+  const overlay=document.getElementById("cerradoOverlay");
+  if(!cfg.apertura || !cfg.cierre){ overlay.classList.remove("abierto"); return; }
+  const ini=minFromHHMM(cfg.apertura), fin=minFromHHMM(cfg.cierre);
+  if(ini===null||fin===null){ overlay.classList.remove("abierto"); return; }
+  const ahora=horaActualMin();
+  let abierto = ini<=fin ? (ahora>=ini && ahora<=fin) : (ahora>=ini || ahora<=fin);
+  if(abierto) overlay.classList.remove("abierto");
+  else{
+    document.getElementById("cerradoMsg").textContent = "Cerrado por ahora — Abrimos hoy/mañana a las "+cfg.apertura;
+    overlay.classList.add("abierto");
+  }
+}
+setInterval(revisarCerrado, 30000);
+
+/* ===================== PANTALLA COMPLETA ===================== */
+const btnFull=document.getElementById("btnFull");
+function pedirFullscreen(){
+  const el=document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if(req) req.call(el).catch(()=>{});
+}
+btnFull.addEventListener("click", pedirFullscreen);
+document.addEventListener("click", function primerClic(){
+  pedirFullscreen();
+  document.removeEventListener("click", primerClic);
+}, {once:true});
+document.addEventListener("fullscreenchange", ()=>{
+  btnFull.style.display = document.fullscreenElement ? "none" : "block";
+});
+
+/* ===================== ADMIN ===================== */
 function abrirAdmin(){
-  const guardado = leerGuardado();
-  const texto = guardado.map(o => o.texto ? (o.url+"|"+o.texto) : o.url).join("\n");
-  document.getElementById("cajaLinks").value = texto;
+  cfg=leerCfg();
+  document.getElementById("cfgApertura").value=cfg.apertura||"";
+  document.getElementById("cfgCierre").value=cfg.cierre||"";
+  document.getElementById("cfgWhatsapp").value=cfg.whatsapp||"";
+  document.getElementById("cfgCoords").value=cfg.coords||"";
+  document.getElementById("cfgDuracion").value=cfg.duracion||DEF_SEG;
+
+  const guardado=leerImagenes();
+  const texto=guardado.map(o=>[o.url,o.texto,o.precio,o.segundos||"",o.horario==="todo"?"":o.horario,o.dias==="todos"?"":o.dias].join("|").replace(/\|+$/,"")).join("\n");
+  document.getElementById("cajaLinks").value=texto;
   document.getElementById("adminFondo").classList.add("abierto");
 }
-
-function cerrarAdmin(){
-  document.getElementById("adminFondo").classList.remove("abierto");
-}
+function cerrarAdmin(){ document.getElementById("adminFondo").classList.remove("abierto"); }
 
 function guardarAdmin(){
-  const lista = parsearTexto(document.getElementById("cajaLinks").value);
-  guardarEnStorage(lista);
+  const nuevaCfg = {
+    apertura: document.getElementById("cfgApertura").value.trim(),
+    cierre: document.getElementById("cfgCierre").value.trim(),
+    whatsapp: document.getElementById("cfgWhatsapp").value.trim(),
+    coords: document.getElementById("cfgCoords").value.trim(),
+    duracion: document.getElementById("cfgDuracion").value.trim()
+  };
+  localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
+  const lista = parsearLineas(document.getElementById("cajaLinks").value);
+  localStorage.setItem(LS_IMG, JSON.stringify(lista));
   cerrarAdmin();
   iniciarCarrusel();
+  actualizarClima();
+  revisarCerrado();
 }
-
 document.getElementById("engrane").addEventListener("click", abrirAdmin);
 
+actualizarReloj();
 iniciarCarrusel();
+actualizarClima();
+revisarCerrado();
 
-/* =======================================================
-   LÓGICA DE PEDIDOS (sin cambios, funciona igual que antes)
-   ======================================================= */
+/* ===================== LÓGICA DE PEDIDOS (sin cambios) ===================== */
 
-// Misma API que usa Cocina PRO, para que ambas pantallas muestren el mismo número de pedido
 const API="https://script.google.com/macros/s/AKfycbyERJZ0DGmXU3550uXglEX9ehjwdv_dqCXKJTn_Y7vr2yhvqq0AVjUa_D-2XI6pI6Yw/exec";
-
 let ultimosListos=[];
 
-// p.numero es el contador que se reinicia cada día (columna 7 de la hoja).
-// p.fila es la fila real en la hoja, que nunca se reinicia y solo se usa
-// como respaldo para pedidos guardados antes de que existiera "numero".
 function numeroVisible(p){
-  return (p.numero !== null && p.numero !== undefined && p.numero !== "")
-    ? p.numero
-    : p.fila;
+  return (p.numero !== null && p.numero !== undefined && p.numero !== "") ? p.numero : p.fila;
 }
 
 function cargar(){
-
-fetch(API+"?accion=obtener")
-
-.then(r=>r.json())
-
-.then(pedidos=>{
-
-let preparando="";
-let listo="";
-
-let nuevosListos=[];
-
-pedidos.forEach(p=>{
-
-const numero = numeroVisible(p);
-
-if(p.estado==="Nuevo" || p.estado==="En preparacion"){
-preparando += "<div class='card preparando'>Pedido "+numero+"</div>";
+  fetch(API+"?accion=obtener")
+    .then(r=>r.json())
+    .then(pedidos=>{
+      let preparando=""; let listo=""; let nuevosListos=[];
+      pedidos.forEach(p=>{
+        const numero = numeroVisible(p);
+        if(p.estado==="Nuevo" || p.estado==="En preparacion"){
+          preparando += "<div class='card preparando'>Pedido "+numero+"</div>";
+        }
+        if(p.estado==="Listo"){
+          listo += "<div class='card listo'>Pedido "+numero+"</div>";
+          nuevosListos.push(numero);
+        }
+      });
+      document.getElementById("preparando").innerHTML = preparando || "Sin pedidos";
+      document.getElementById("listo").innerHTML = listo || "Esperando...";
+      nuevosListos.forEach(n=>{
+        if(!ultimosListos.includes(n)){
+          document.getElementById("campana").play();
+          let flash=document.getElementById("flash");
+          flash.classList.add("activo");
+          setTimeout(()=>{ flash.classList.remove("activo"); },600);
+        }
+      });
+      ultimosListos=nuevosListos;
+    });
 }
-
-if(p.estado==="Listo"){
-listo += "<div class='card listo'>Pedido "+numero+"</div>";
-nuevosListos.push(numero);
-}
-
-});
-
-document.getElementById("preparando").innerHTML = preparando || "Sin pedidos";
-document.getElementById("listo").innerHTML = listo || "Esperando...";
-
-nuevosListos.forEach(n=>{
-
-if(!ultimosListos.includes(n)){
-
-document.getElementById("campana").play();
-
-let flash=document.getElementById("flash");
-flash.classList.add("activo");
-
-setTimeout(()=>{
-flash.classList.remove("activo");
-},600);
-
-}
-
-});
-
-ultimosListos=nuevosListos;
-
-});
-
-}
-
 setInterval(cargar,3000);
-
 cargar();
 
 </script>
-
 </body>
 </html>
