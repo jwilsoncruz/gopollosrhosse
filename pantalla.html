@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🖥️Pantalla Clientes - Go Pollos Rhosse</title>
-<link rel="icon" href="pantalla.ico">
+
 <style>
 
 body{
@@ -57,9 +57,9 @@ gap:15px;
 }
 
 .card{
-padding:25px;
+padding:20px 10px;
 border-radius:10px;
-font-size:42px;
+font-size:28px;
 font-weight:bold;
 }
 
@@ -149,7 +149,7 @@ allowfullscreen>
 <script>
 
 // Misma API que usa Cocina PRO, para que ambas pantallas muestren el mismo número de pedido
-const API="https://script.google.com/macros/s/AKfycbw2m9_YSX_-11iMZCmMT24GwESuGub15Z943HcXBceA1Ez_md6eYKfINeL4wz2PDigO/exec";
+const API="https://script.google.com/macros/s/AKfycbyERJZ0DGmXU3550uXglEX9ehjwdv_dqCXKJTn_Y7vr2yhvqq0AVjUa_D-2XI6pI6Yw/exec";
 
 let ultimosListos=[];
 
@@ -160,18 +160,6 @@ function numeroVisible(p){
   return (p.numero !== null && p.numero !== undefined && p.numero !== "")
     ? p.numero
     : p.fila;
-}
-
-// ================= VOZ (anuncia "Listo") =================
-// Usa la síntesis de voz del propio navegador, no necesita internet
-// aparte ni ninguna librería. Si el navegador no la soporta, no hace nada.
-function anunciarListo(numero){
-  if(!('speechSynthesis' in window)) return;
-
-  const utterance = new SpeechSynthesisUtterance("Pedido número " + numero + ", listo");
-  utterance.lang = "es-ES";
-  utterance.rate = 0.95;
-  speechSynthesis.speak(utterance);
 }
 
 function cargar(){
@@ -210,7 +198,6 @@ nuevosListos.forEach(n=>{
 if(!ultimosListos.includes(n)){
 
 document.getElementById("campana").play();
-anunciarListo(n);
 
 let flash=document.getElementById("flash");
 flash.classList.add("activo");
