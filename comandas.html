@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Go Pollos Rhosse PRO</title>
-<link rel="icon" href="comandas.ico">
+
 <style>
 :root{
   --rojo:#d50000;
@@ -652,12 +652,27 @@ function renderMenu(){
 }
 
 // ================= STOCK Y FOTOS: leer del servidor y refrescar el menú =================
+let avisoScriptViejoMostrado = false;
+
 function cargarStockYFotos(){
   Promise.all([
-    fetch(API + "?accion=stock").then(r=>r.json()),
-    fetch(API + "?accion=fotos").then(r=>r.json())
+    fetch(API + "?accion=stock").then(r=>r.text()),
+    fetch(API + "?accion=fotos").then(r=>r.text())
   ])
-  .then(([dStock, dFotos])=>{
+  .then(([txtStock, txtFotos])=>{
+    let dStock, dFotos;
+    try{
+      dStock = JSON.parse(txtStock);
+      dFotos = JSON.parse(txtFotos);
+    }catch(e){
+      // El Apps Script viejo responde texto plano ("API Activa") para
+      // acciones que no reconoce, en vez de JSON con stock/fotos.
+      if(!avisoScriptViejoMostrado){
+        avisoScriptViejoMostrado = true;
+        alert("⚠️ El Apps Script todavía no tiene el stock/fotos actualizados. El stock y las fotos no van a funcionar hasta que vuelvas a pegar el código actualizado y hagas \"Nueva versión\" en Implementar.");
+      }
+      return;
+    }
     if(dStock.ok) stockActual = dStock.stock || {};
     if(dFotos.ok) fotosActuales = dFotos.fotos || {};
     renderMenu();
@@ -826,6 +841,26 @@ function enviarComanda(){
     return;
   }
 
+  // Calcula cuánto de este pedido es QR y cuánto es efectivo, según el
+  // método elegido. Esto es lo que la caja realmente necesita — "pago"
+  // por sí solo es solo una etiqueta, no alcanza para sumar bien.
+  let montoQR = 0;
+  let montoEfectivo = 0;
+
+  if(tipoPago === "QR"){
+    montoQR = total;
+  }else if(tipoPago === "Mixto"){
+    montoQR = Math.max(0, Math.min(total, parseFloat(document.getElementById("montoQRMixto").value || 0)));
+    montoEfectivo = total - montoQR;
+
+    if(montoQR <= 0 || montoQR >= total){
+      alert("En pago Mixto, el monto de QR debe ser mayor a 0 y menor al total. Si todo fue QR o todo fue efectivo, usa esa opción en vez de Mixto.");
+      return;
+    }
+  }else{
+    montoEfectivo = total;
+  }
+
   enviando = true;
   const btn = document.getElementById("btnEnviar");
   btn.disabled = true;
@@ -840,7 +875,9 @@ function enviarComanda(){
       "&mesa=" + encodeURIComponent(mesaConMesero()) +
       "&detalle=" + encodeURIComponent(construirDetalle()) +
       "&total=" + total +
-      "&pago=" + encodeURIComponent(tipoPago)
+      "&pago=" + encodeURIComponent(tipoPago) +
+      "&montoQR=" + montoQR +
+      "&montoEfectivo=" + montoEfectivo
   })
   .then(res => res.json())
   .then(data => {
@@ -1121,7 +1158,11 @@ function guardarFotoEnServidor(nombre, valor, idSeguro, elEstado){
   })
   .then(r => r.json())
   .then(data=>{
-    if(data.ok){
+    // Un Apps Script VIEJO (sin la parte de fotos) también responde
+    // {ok:true}, pero sin la clave "fotos" — porque en realidad esa
+    // petición cayó en la función de "pedido nuevo", no en la de fotos.
+    // Si pasa eso, la foto NUNCA se guardó de verdad aunque parezca que sí.
+    if(data.ok && Object.prototype.hasOwnProperty.call(data, "fotos")){
       fotosActuales[nombre] = valor;
       const preview = document.getElementById("previewPOS_" + idSeguro);
       if(preview) preview.src = valor;
@@ -1129,7 +1170,7 @@ function guardarFotoEnServidor(nombre, valor, idSeguro, elEstado){
       renderMenu();
     }else{
       if(elEstado) elEstado.textContent = "";
-      alert("❌ No se pudo guardar la foto");
+      alert("⚠️ El servidor respondió pero no reconoció esta acción. Es casi seguro que el Apps Script todavía no tiene la parte de fotos — vuelve a pegar el código actualizado y haz \"Nueva versión\" en Implementar. La foto NO se guardó.");
     }
   })
   .catch(err=>{
