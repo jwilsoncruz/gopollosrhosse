@@ -14,7 +14,7 @@
   "name": "Go Pollos Rhosse",
   "image": "https://jwilsoncruz.github.io/gopollosrhosse/logo.png",
   "url": "https://jwilsoncruz.github.io/gopollosrhosse/",
-  "telephone": "+59168972863",
+  "telephone": "+59172685867",
 
   "address": {
     "@type": "PostalAddress",
@@ -360,7 +360,7 @@ let pollosDisponibles = 4;     // pollos que hay hoy (actualizar a mano o desde 
 const USAR_CONTROL_REMOTO = true;
 const INTERVALO_CONFIG = 30000; // cada cuántos ms se consulta la hoja (30 segundos)
 
-const API = "https://script.google.com/macros/s/AKfycbw2m9_YSX_-11iMZCmMT24GwESuGub15Z943HcXBceA1Ez_md6eYKfINeL4wz2PDigO/exec";        // pedidos
+const API = "https://script.google.com/macros/s/AKfycbyERJZ0DGmXU3550uXglEX9ehjwdv_dqCXKJTn_Y7vr2yhvqq0AVjUa_D-2XI6pI6Yw/exec";        // pedidos
 const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec"; // configuración
 
 // ================= ESTADO =================
@@ -1078,7 +1078,7 @@ function enviarPedido(){
       let texto = "🍗 Pedido Go Pollos Rhosse\n\n";
       texto += "Tipo: " + tipoPedido + "\n\n" + detalle + "\nTotal Bs " + total;
 
-      window.open("https://wa.me/59168972863?text=" + encodeURIComponent(texto));
+      window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
 
       carrito = [];
       actualizarCarrito();
