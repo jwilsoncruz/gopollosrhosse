@@ -157,6 +157,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
     </div>
     <p>Fuera de este horario se muestra "Cerrado" en vez de la pantalla normal. Déjalo vacío para que nunca cierre.</p>
     <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgForzar" style="width:auto;margin:0;"> Forzar abierto siempre (ignorar el horario)</label>
+    <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgSeguir" style="width:auto;margin:0;"> Seguir el "Forzar apertura/cierre" de la página principal</label>
 
     <h3>Menú / WhatsApp (para el QR)</h3>
     <label>Link de tu menú o WhatsApp<input type="text" id="cfgWhatsapp" placeholder="https://wa.me/59170000000"></label>
@@ -208,12 +209,15 @@ https://misitio.com/musica2.mp3"></textarea>
 const LS_IMG = "gp_carousel_links";
 const LS_CFG = "gp_carousel_cfg";
 const DEF_SEG = 6;
+// Misma hoja de configuración que usa la página principal (campo "estado": abierto / cerrado / vacío)
+const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec";
 
 let imagenesTodas = [];
 let imagenesActivas = [];
 let idx = 0;
 let capaVisible = "A";
 let cfg = {};
+let estadoRemoto = null; // "abierto" | "cerrado" | null, leído de la página principal
 let hayActivos = false; // hay pedidos preparando/listos en este momento
 let timerImagen = null;
 
@@ -440,7 +444,17 @@ function forzarAbiertoHoy(){
 function revisarCerrado(){
   const overlay=document.getElementById("cerradoOverlay");
   // Nunca mostrar "Cerrado" si: se forzó abierto, se forzó por hoy, o todavía hay pedidos en curso
-  if(cfg.forzarAbierto==="1" || cfg.forzarFecha===hoyClave() || hayActivos){ overlay.classList.remove("abierto"); return; }
+  if(hayActivos || cfg.forzarAbierto==="1" || cfg.forzarFecha===hoyClave()){ overlay.classList.remove("abierto"); return; }
+  // Seguir el interruptor "Forzar apertura / cierre" de la página principal
+  if(cfg.seguirPrincipal !== "0"){
+    if(estadoRemoto === "abierto"){ overlay.classList.remove("abierto"); return; }
+    if(estadoRemoto === "cerrado"){
+      document.getElementById("cerradoMsg").textContent = "Local cerrado temporalmente — ¡Vuelve pronto!";
+      overlay.classList.add("abierto");
+      audioFondo.pause();
+      return;
+    }
+  }
   if(!cfg.apertura || !cfg.cierre){ overlay.classList.remove("abierto"); return; }
   const ini=minFromHHMM(cfg.apertura), fin=minFromHHMM(cfg.cierre);
   if(ini===null||fin===null){ overlay.classList.remove("abierto"); return; }
@@ -454,6 +468,18 @@ function revisarCerrado(){
   }
 }
 setInterval(revisarCerrado, 30000);
+
+function cargarEstadoRemoto(){
+  fetch(API_CONFIG)
+    .then(r=>r.json())
+    .then(d=>{
+      estadoRemoto = (d && (d.estado === "abierto" || d.estado === "cerrado")) ? d.estado : null;
+      revisarCerrado();
+    })
+    .catch(()=>{ /* sin internet: se queda con el último estado conocido */ });
+}
+cargarEstadoRemoto();
+setInterval(cargarEstadoRemoto, 30000);
 
 /* ===================== PANTALLA COMPLETA ===================== */
 const btnFull=document.getElementById("btnFull");
@@ -483,6 +509,7 @@ function abrirAdmin(){
   document.getElementById("cfgVolumen").value=cfg.volumen||45;
   document.getElementById("cfgHora").checked = cfg.anunciarHora !== "0";
   document.getElementById("cfgForzar").checked = cfg.forzarAbierto === "1";
+  document.getElementById("cfgSeguir").checked = cfg.seguirPrincipal !== "0";
   document.getElementById("cajaMusica").value = leerMusica().join("\n");
 
   const guardado=leerImagenes();
@@ -503,6 +530,7 @@ function guardarAdmin(){
     volumen: document.getElementById("cfgVolumen").value.trim(),
     anunciarHora: document.getElementById("cfgHora").checked ? "1" : "0",
     forzarAbierto: document.getElementById("cfgForzar").checked ? "1" : "0",
+    seguirPrincipal: document.getElementById("cfgSeguir").checked ? "1" : "0",
     forzarFecha: cfg.forzarFecha || ""
   };
   localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
