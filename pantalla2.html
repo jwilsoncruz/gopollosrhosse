@@ -26,7 +26,9 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 .franja{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;background:linear-gradient(0deg,rgba(0,0,0,.75),rgba(0,0,0,0));text-align:left;font-size:22px;font-weight:bold;color:var(--dorado);opacity:0;transition:opacity 1s ease;z-index:3;}
 .franja.activa{opacity:1;}
 
-.precioTag{position:absolute;top:54px;right:14px;background:var(--rojo);color:white;font-size:30px;font-weight:900;padding:6px 16px;border-radius:10px;border:3px solid white;box-shadow:0 4px 10px rgba(0,0,0,.5);opacity:0;transition:opacity 1s ease;z-index:4;}
+.logoFlot{position:absolute;top:38px;right:14px;width:80px;height:auto;z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.65));animation:flotar 4s ease-in-out infinite;pointer-events:none;}
+@keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.precioTag{position:absolute;top:128px;right:14px;background:var(--rojo);color:white;font-size:30px;font-weight:900;padding:6px 16px;border-radius:10px;border:3px solid white;box-shadow:0 4px 10px rgba(0,0,0,.5);opacity:0;transition:opacity 1s ease;z-index:4;}
 .precioTag.activa{opacity:1;}
 
 .qrBox{position:absolute;bottom:14px;right:14px;background:white;padding:6px;border-radius:8px;text-align:center;z-index:4;box-shadow:0 3px 10px rgba(0,0,0,.5);}
@@ -105,6 +107,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
     <img id="qrImg">
     <span id="qrLabel">Ver menú</span>
   </div>
+  <img class="logoFlot" id="logoFlot" alt="Go Pollos Rhosse" style="display:none" onerror="this.style.display='none'">
   <div class="dots" id="dots"></div>
   <div class="relojBox" id="relojBox">
     <div class="hora" id="horaTxt">--:--</div>
@@ -172,6 +175,10 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
     <h3>Menú / WhatsApp (para el QR)</h3>
     <label>Link de tu menú o WhatsApp<input type="text" id="cfgWhatsapp" placeholder="https://wa.me/59170000000"></label>
     <label>Texto debajo del QR (vacío = automático)<input type="text" id="cfgQrTexto" placeholder="Pide por WhatsApp"></label>
+
+    <h3>Logo flotante</h3>
+    <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgLogo" style="width:auto;margin:0;"> Mostrar el logo sobre el carrusel</label>
+    <label>Link del logo (vacío = usa logo.png de tu carpeta)<input type="text" id="cfgLogoUrl" placeholder="logo.png"></label>
 
     <h3>Clima (opcional)</h3>
     <label>Coordenadas "lat,lon" de tu ciudad<input type="text" id="cfgCoords" placeholder="-14.83,-64.90"></label>
@@ -341,6 +348,7 @@ function iniciarCarrusel(){
   construirDots();
   mostrarImagen(idx);
   actualizarQR();
+  actualizarLogo();
 }
 
 /* ===================== MÚSICA DE FONDO ===================== */
@@ -406,6 +414,13 @@ function construirTicker(){
 }
 
 /* ===================== QR ===================== */
+function actualizarLogo(){
+  const el = document.getElementById("logoFlot");
+  if(cfg.mostrarLogo === "0"){ el.style.display = "none"; return; }
+  el.style.display = "block";
+  el.src = cfg.logoUrl || "logo.png";
+}
+
 function actualizarQR(){
   const box=document.getElementById("qrBox");
   if(cfg.whatsapp){
@@ -540,6 +555,8 @@ function abrirAdmin(){
   document.getElementById("cfgCierre").value=cfg.cierre||"";
   document.getElementById("cfgWhatsapp").value=cfg.whatsapp||"";
   document.getElementById("cfgQrTexto").value=cfg.qrTexto||"";
+  document.getElementById("cfgLogo").checked = cfg.mostrarLogo !== "0";
+  document.getElementById("cfgLogoUrl").value = cfg.logoUrl||"";
   document.getElementById("cfgCoords").value=cfg.coords||"";
   document.getElementById("cfgDuracion").value=cfg.duracion||DEF_SEG;
   document.getElementById("cfgVolumen").value=cfg.volumen||45;
@@ -564,6 +581,8 @@ function guardarAdmin(){
     cierre: document.getElementById("cfgCierre").value.trim(),
     whatsapp: document.getElementById("cfgWhatsapp").value.trim(),
     qrTexto: document.getElementById("cfgQrTexto").value.trim(),
+    mostrarLogo: document.getElementById("cfgLogo").checked ? "1" : "0",
+    logoUrl: document.getElementById("cfgLogoUrl").value.trim(),
     coords: document.getElementById("cfgCoords").value.trim(),
     duracion: document.getElementById("cfgDuracion").value.trim(),
     volumen: document.getElementById("cfgVolumen").value.trim(),
