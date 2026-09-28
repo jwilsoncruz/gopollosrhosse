@@ -211,6 +211,13 @@ https://misitio.com/musica2.mp3"></textarea>
     <p>Ej: <code>https://mi.com/promo.jpg|Combo familiar|Bs 45|8|almuerzo|semana</code></p>
     <textarea id="cajaLinks" placeholder="https://ejemplo.com/promo1.jpg|Combo familiar"></textarea>
 
+    <h3>Pasar la configuración a otro dispositivo</h3>
+    <p>Copia aquí y pega en el celular u otra pantalla. Para que sea permanente en TODOS, pega el texto en <code>CONFIG_POR_DEFECTO</code> del archivo y súbelo a GitHub.</p>
+    <div class="adminBotones" style="justify-content:flex-start;margin-top:8px;">
+      <button class="btnCerrar" onclick="exportarConfig()">📋 Copiar configuración</button>
+      <button class="btnCerrar" onclick="importarConfig()">📥 Pegar configuración</button>
+    </div>
+
     <div class="adminBotones">
       <button class="btnCerrar" onclick="cerrarAdmin()">Cerrar</button>
       <button class="btnGuardar" onclick="guardarAdmin()">Guardar</button>
@@ -223,6 +230,12 @@ https://misitio.com/musica2.mp3"></textarea>
 <script>
 
 /* ===================== CONFIG Y CARRUSEL ===================== */
+
+// Lo que se guarda en el ⚙️ queda SOLO en ese navegador. Para que cualquier
+// dispositivo nuevo (celular, otra pantalla) muestre lo mismo, pega aquí el
+// texto que da el botón "📋 Copiar configuración" del ⚙️ y sube el archivo a GitHub.
+// Si un dispositivo ya guardó su propia configuración, esa tiene prioridad.
+const CONFIG_POR_DEFECTO = { cfg:{}, imagenes:[], musica:[], ticker:[] };
 
 const LS_IMG = "gp_carousel_links";
 const LS_CFG = "gp_carousel_cfg";
@@ -239,12 +252,15 @@ let estadoRemoto = null; // "abierto" | "cerrado" | null, leído de la página p
 let hayActivos = false; // hay pedidos preparando/listos en este momento
 let timerImagen = null;
 
-function leerCfg(){
-  try{ return JSON.parse(localStorage.getItem(LS_CFG)) || {}; }catch(e){ return {}; }
+function leerLS(clave, porDefecto){
+  try{
+    const raw = localStorage.getItem(clave);
+    if(raw !== null) return JSON.parse(raw);
+  }catch(e){}
+  return porDefecto;
 }
-function leerImagenes(){
-  try{ return JSON.parse(localStorage.getItem(LS_IMG)) || []; }catch(e){ return []; }
-}
+function leerCfg(){ return leerLS(LS_CFG, CONFIG_POR_DEFECTO.cfg) || {}; }
+function leerImagenes(){ return leerLS(LS_IMG, CONFIG_POR_DEFECTO.imagenes) || []; }
 
 function parsearLineas(txt){
   return txt.split("\n").map(l=>l.trim()).filter(l=>l.length>0).map(l=>{
@@ -357,9 +373,7 @@ const audioFondo = document.getElementById("audioFondo");
 let playlist = [];
 let musIdx = 0;
 
-function leerMusica(){
-  try{ return JSON.parse(localStorage.getItem(LS_MUSIC)) || []; }catch(e){ return []; }
-}
+function leerMusica(){ return leerLS(LS_MUSIC, CONFIG_POR_DEFECTO.musica) || []; }
 
 function construirMusica(){
   playlist = leerMusica();
@@ -397,9 +411,7 @@ document.getElementById("btnMusica").addEventListener("click", ()=>{
 
 /* ===================== MARQUESINA ===================== */
 const LS_TICK = "gp_ticker_msgs";
-function leerTicker(){
-  try{ return JSON.parse(localStorage.getItem(LS_TICK)) || []; }catch(e){ return []; }
-}
+function leerTicker(){ return leerLS(LS_TICK, CONFIG_POR_DEFECTO.ticker) || []; }
 function construirTicker(){
   const pista=document.getElementById("tickPista");
   const mensajes=leerTicker();
@@ -573,6 +585,35 @@ function abrirAdmin(){
   document.getElementById("cajaTicker").value = leerTicker().join("\n");
   document.getElementById("adminFondo").classList.add("abierto");
 }
+function exportarConfig(){
+  const c = Object.assign({}, leerCfg());
+  delete c.forzarFecha; // el "abrir hoy" no se traslada
+  const txt = JSON.stringify({ cfg:c, imagenes:leerImagenes(), musica:leerMusica(), ticker:leerTicker() });
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt)
+      .then(()=>alert("✅ Configuración copiada. Pégala en el otro dispositivo con el botón 'Pegar configuración'."))
+      .catch(()=>prompt("Copia este texto (Ctrl+C):", txt));
+  }else{
+    prompt("Copia este texto (Ctrl+C):", txt);
+  }
+}
+
+function importarConfig(){
+  const txt = prompt("Pega aquí la configuración copiada:");
+  if(!txt) return;
+  try{
+    const d = JSON.parse(txt);
+    localStorage.setItem(LS_CFG, JSON.stringify(d.cfg || {}));
+    localStorage.setItem(LS_IMG, JSON.stringify(d.imagenes || []));
+    localStorage.setItem(LS_MUSIC, JSON.stringify(d.musica || []));
+    localStorage.setItem(LS_TICK, JSON.stringify(d.ticker || []));
+    alert("✅ Configuración cargada");
+    location.reload();
+  }catch(e){
+    alert("❌ El texto no es válido. Cópialo completo otra vez.");
+  }
+}
+
 function cerrarAdmin(){ document.getElementById("adminFondo").classList.remove("abierto"); }
 
 function guardarAdmin(){
