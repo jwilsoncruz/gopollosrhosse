@@ -188,7 +188,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
     <label>Segundos<input type="text" id="cfgDuracion" placeholder="6"></label>
 
     <h3>Música de fondo (opcional)</h3>
-    <p>Un link directo a mp3 por línea (se reproducen en bucle, en orden). El primer toque en pantalla activa el sonido, por restricciones del navegador.</p>
+    <p>Un link a mp3 por línea (también sirven los links de Google Drive compartidos con "Cualquier persona con el enlace"). Se reproducen en bucle, en orden. El primer toque en pantalla activa el sonido, por restricciones del navegador.</p>
     <label>Volumen (0-100)<input type="text" id="cfgVolumen" placeholder="45"></label>
     <textarea id="cajaMusica" style="height:80px" placeholder="https://misitio.com/musica1.mp3
 https://misitio.com/musica2.mp3"></textarea>
@@ -374,7 +374,13 @@ const audioFondo = document.getElementById("audioFondo");
 let playlist = [];
 let musIdx = 0;
 
-function leerMusica(){ return leerLS(LS_MUSIC, CONFIG_POR_DEFECTO.musica) || []; }
+// Convierte un link normal de Google Drive (".../file/d/ID/view" o "...?id=ID")
+// en un link directo que el reproductor puede usar. Cualquier otro link queda igual.
+function linkDirecto(url){
+  const m = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/) || url.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([\w-]+)/);
+  return m ? "https://drive.google.com/uc?export=download&id=" + m[1] : url;
+}
+function leerMusica(){ return (leerLS(LS_MUSIC, CONFIG_POR_DEFECTO.musica) || []).map(linkDirecto); }
 
 function construirMusica(){
   playlist = leerMusica();
