@@ -50,6 +50,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 .cerradoOverlay h2{color:var(--dorado);font-size:42px;margin:0;}
 .cerradoOverlay p{color:#ccc;font-size:22px;margin:0;}
 
+.btnForzar{margin-top:14px;background:var(--dorado);color:#111;border:0;border-radius:10px;padding:14px 26px;font-weight:bold;font-size:18px;cursor:pointer;}
 .btnFull{position:fixed;bottom:14px;left:14px;z-index:70;background:var(--dorado);color:#111;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;opacity:.85;}
 .btnMusica{position:fixed;bottom:14px;left:170px;z-index:70;background:var(--rojo);color:white;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;cursor:pointer;opacity:.85;}
 
@@ -141,6 +142,8 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 <div class="cerradoOverlay" id="cerradoOverlay">
   <h2>🍗 Go Pollos Rhosse</h2>
   <p id="cerradoMsg">Cerrado por ahora. ¡Te esperamos pronto!</p>
+  <button class="btnForzar" onclick="forzarAbiertoHoy()">🔓 Abrir pantalla ahora (hoy)</button>
+  <div style="position:fixed;top:14px;right:18px;font-size:26px;opacity:.5;cursor:pointer;" onclick="abrirAdmin()" title="Configuración">⚙️</div>
 </div>
 
 <div class="adminFondo" id="adminFondo">
@@ -153,6 +156,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
       <label>Cierre (HH:MM)<input type="text" id="cfgCierre" placeholder="22:00"></label>
     </div>
     <p>Fuera de este horario se muestra "Cerrado" en vez de la pantalla normal. Déjalo vacío para que nunca cierre.</p>
+    <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgForzar" style="width:auto;margin:0;"> Forzar abierto siempre (ignorar el horario)</label>
 
     <h3>Menú / WhatsApp (para el QR)</h3>
     <label>Link de tu menú o WhatsApp<input type="text" id="cfgWhatsapp" placeholder="https://wa.me/59170000000"></label>
@@ -210,6 +214,7 @@ let imagenesActivas = [];
 let idx = 0;
 let capaVisible = "A";
 let cfg = {};
+let hayActivos = false; // hay pedidos preparando/listos en este momento
 let timerImagen = null;
 
 function leerCfg(){
@@ -423,8 +428,19 @@ function minFromHHMM(s){
   if(!m) return null;
   return (+m[1])*60+(+m[2]);
 }
+function hoyClave(){ const d=new Date(); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
+function forzarAbiertoHoy(){
+  const c=leerCfg();
+  c.forzarFecha = hoyClave();
+  localStorage.setItem(LS_CFG, JSON.stringify(c));
+  cfg=c;
+  revisarCerrado();
+  activarMusica();
+}
 function revisarCerrado(){
   const overlay=document.getElementById("cerradoOverlay");
+  // Nunca mostrar "Cerrado" si: se forzó abierto, se forzó por hoy, o todavía hay pedidos en curso
+  if(cfg.forzarAbierto==="1" || cfg.forzarFecha===hoyClave() || hayActivos){ overlay.classList.remove("abierto"); return; }
   if(!cfg.apertura || !cfg.cierre){ overlay.classList.remove("abierto"); return; }
   const ini=minFromHHMM(cfg.apertura), fin=minFromHHMM(cfg.cierre);
   if(ini===null||fin===null){ overlay.classList.remove("abierto"); return; }
@@ -466,6 +482,7 @@ function abrirAdmin(){
   document.getElementById("cfgDuracion").value=cfg.duracion||DEF_SEG;
   document.getElementById("cfgVolumen").value=cfg.volumen||45;
   document.getElementById("cfgHora").checked = cfg.anunciarHora !== "0";
+  document.getElementById("cfgForzar").checked = cfg.forzarAbierto === "1";
   document.getElementById("cajaMusica").value = leerMusica().join("\n");
 
   const guardado=leerImagenes();
@@ -484,7 +501,9 @@ function guardarAdmin(){
     coords: document.getElementById("cfgCoords").value.trim(),
     duracion: document.getElementById("cfgDuracion").value.trim(),
     volumen: document.getElementById("cfgVolumen").value.trim(),
-    anunciarHora: document.getElementById("cfgHora").checked ? "1" : "0"
+    anunciarHora: document.getElementById("cfgHora").checked ? "1" : "0",
+    forzarAbierto: document.getElementById("cfgForzar").checked ? "1" : "0",
+    forzarFecha: cfg.forzarFecha || ""
   };
   localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
   const musica = document.getElementById("cajaMusica").value.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
@@ -535,6 +554,8 @@ function cargar(){
       });
       document.getElementById("preparando").innerHTML = preparando || "Sin pedidos";
       document.getElementById("listo").innerHTML = listo || "Esperando...";
+      hayActivos = (preparando !== "" || listo !== "");
+      revisarCerrado();
       let hayNuevos=false;
       nuevosListos.forEach(n=>{
         if(!ultimosListos.includes(n)){
@@ -583,7 +604,7 @@ function sonarYHablar(){
 let ultimaHoraCantada = "";
 // Cómo se PRONUNCIA el nombre (no cómo se escribe). Si la voz lo dice raro,
 // cambia solo este texto por otra escritura fonética: "Rous", "Rrous", "Rouse"...
-const NOMBRE_HABLADO = "Gou Pollos Rous";
+const NOMBRE_HABLADO = "Go Pollos Rous";
 const NUM_HORAS = ["doce","una","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once"];
 
 function textoHora(d){
