@@ -156,6 +156,16 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
       <label>Cierre (HH:MM)<input type="text" id="cfgCierre" placeholder="22:00"></label>
     </div>
     <p>Fuera de este horario se muestra "Cerrado" en vez de la pantalla normal. Déjalo vacío para que nunca cierre.</p>
+    <div style="margin-top:10px;color:#ddd;font-size:12px;">Días cerrados (la pantalla muestra "Cerrado" todo el día):</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 4px;font-size:13px;color:#fff;">
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="1">Lun</label>
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="2">Mar</label>
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="3">Mié</label>
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="4">Jue</label>
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="5">Vie</label>
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="6">Sáb</label>
+      <label style="display:flex;align-items:center;gap:4px;margin:0;"><input type="checkbox" class="chkDia" value="0">Dom</label>
+    </div>
     <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgForzar" style="width:auto;margin:0;"> Forzar abierto siempre (ignorar el horario)</label>
     <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgSeguir" style="width:auto;margin:0;"> Seguir el "Forzar apertura/cierre" de la página principal</label>
 
@@ -435,6 +445,20 @@ function minFromHHMM(s){
   if(!m) return null;
   return (+m[1])*60+(+m[2]);
 }
+const NOMBRES_DIA = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+// Si nunca se configuró, por defecto cierra sábado (6) y domingo (0)
+function diasCerradosCfg(){
+  if(cfg.diasCerrados === undefined) return [0,6];
+  return String(cfg.diasCerrados).split(",").filter(x=>x!=="").map(Number);
+}
+function proximoDiaAbierto(){
+  const cerrados = diasCerradosCfg();
+  for(let i=1;i<=7;i++){
+    const d = (new Date().getDay()+i)%7;
+    if(!cerrados.includes(d)) return NOMBRES_DIA[d];
+  }
+  return null;
+}
 function hoyClave(){ const d=new Date(); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
 function forzarAbiertoHoy(){
   const c=leerCfg();
@@ -457,6 +481,14 @@ function revisarCerrado(){
       audioFondo.pause();
       return;
     }
+  }
+  // Día cerrado (por ejemplo sábado y domingo)
+  if(diasCerradosCfg().includes(new Date().getDay())){
+    const prox = proximoDiaAbierto();
+    document.getElementById("cerradoMsg").textContent = "Hoy no atendemos" + (prox ? " — Abrimos el " + prox + (cfg.apertura ? " a las " + cfg.apertura : "") : "");
+    overlay.classList.add("abierto");
+    audioFondo.pause();
+    return;
   }
   if(!cfg.apertura || !cfg.cierre){ overlay.classList.remove("abierto"); return; }
   const ini=minFromHHMM(cfg.apertura), fin=minFromHHMM(cfg.cierre);
@@ -514,6 +546,8 @@ function abrirAdmin(){
   document.getElementById("cfgHora").checked = cfg.anunciarHora !== "0";
   document.getElementById("cfgForzar").checked = cfg.forzarAbierto === "1";
   document.getElementById("cfgSeguir").checked = cfg.seguirPrincipal !== "0";
+  const cerr = diasCerradosCfg();
+  document.querySelectorAll(".chkDia").forEach(c=>{ c.checked = cerr.includes(Number(c.value)); });
   document.getElementById("cajaMusica").value = leerMusica().join("\n");
 
   const guardado=leerImagenes();
@@ -536,6 +570,7 @@ function guardarAdmin(){
     anunciarHora: document.getElementById("cfgHora").checked ? "1" : "0",
     forzarAbierto: document.getElementById("cfgForzar").checked ? "1" : "0",
     seguirPrincipal: document.getElementById("cfgSeguir").checked ? "1" : "0",
+    diasCerrados: Array.from(document.querySelectorAll(".chkDia")).filter(c=>c.checked).map(c=>c.value).join(","),
     forzarFecha: cfg.forzarFecha || ""
   };
   localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
