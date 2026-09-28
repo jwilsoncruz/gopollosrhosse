@@ -524,7 +524,14 @@ function revisarCerrado(){
   let abierto = ini<=fin ? (ahora>=ini && ahora<=fin) : (ahora>=ini || ahora<=fin);
   if(abierto) overlay.classList.remove("abierto");
   else{
-    document.getElementById("cerradoMsg").textContent = "Cerrado por ahora — Abrimos hoy/mañana a las "+cfg.apertura;
+    // Antes de abrir -> "hoy". Después de cerrar -> "mañana" (o el próximo día que abre, ej. "el lunes")
+    let cuando = "hoy";
+    if(ahora >= ini){
+      const prox = proximoDiaAbierto();
+      const manana = NOMBRES_DIA[(new Date().getDay()+1)%7];
+      cuando = (!prox || prox === manana) ? "mañana" : "el " + prox;
+    }
+    document.getElementById("cerradoMsg").textContent = "Cerrado por ahora — Abrimos " + cuando + " a las " + cfg.apertura;
     overlay.classList.add("abierto");
     audioFondo.pause();
   }
