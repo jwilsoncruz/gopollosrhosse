@@ -169,6 +169,9 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
     <textarea id="cajaMusica" style="height:80px" placeholder="https://misitio.com/musica1.mp3
 https://misitio.com/musica2.mp3"></textarea>
 
+    <h3>Anuncio de la hora</h3>
+    <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="cfgHora" style="width:auto;margin:0;"> Cantar la hora cada 15 minutos (:00, :15, :30, :45)</label>
+
     <h3>Marquesina (texto tipo noticiero)</h3>
     <p>Un mensaje por línea, se muestran en fila y en bucle continuo.</p>
     <textarea id="cajaTicker" style="height:80px" placeholder="🔥 Combo familiar Bs 120 con delivery gratis
@@ -462,6 +465,7 @@ function abrirAdmin(){
   document.getElementById("cfgCoords").value=cfg.coords||"";
   document.getElementById("cfgDuracion").value=cfg.duracion||DEF_SEG;
   document.getElementById("cfgVolumen").value=cfg.volumen||45;
+  document.getElementById("cfgHora").checked = cfg.anunciarHora !== "0";
   document.getElementById("cajaMusica").value = leerMusica().join("\n");
 
   const guardado=leerImagenes();
@@ -479,7 +483,8 @@ function guardarAdmin(){
     whatsapp: document.getElementById("cfgWhatsapp").value.trim(),
     coords: document.getElementById("cfgCoords").value.trim(),
     duracion: document.getElementById("cfgDuracion").value.trim(),
-    volumen: document.getElementById("cfgVolumen").value.trim()
+    volumen: document.getElementById("cfgVolumen").value.trim(),
+    anunciarHora: document.getElementById("cfgHora").checked ? "1" : "0"
   };
   localStorage.setItem(LS_CFG, JSON.stringify(nuevaCfg));
   const musica = document.getElementById("cajaMusica").value.split("\n").map(l=>l.trim()).filter(l=>l.length>0);
@@ -573,6 +578,54 @@ function sonarYHablar(){
   if(r && r.catch) r.catch(()=>hablarCola());
   setTimeout(hablarCola, 6000); // respaldo si la campana no termina
 }
+
+/* ===== Anuncio de la hora cada 15 min (estilo radio) ===== */
+let ultimaHoraCantada = "";
+// Cómo se PRONUNCIA el nombre (no cómo se escribe). Si la voz lo dice raro,
+// cambia solo este texto por otra escritura fonética: "Rous", "Rrous", "Rouse"...
+const NOMBRE_HABLADO = "Go Pollos Rous";
+const NUM_HORAS = ["doce","una","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once"];
+
+function textoHora(d){
+  const h = d.getHours(), m = d.getMinutes();
+  const hd = (m === 45) ? (h + 1) % 24 : h;   // "menos cuarto" se dice con la hora siguiente
+  const h12 = hd % 12 || 12;
+  const periodo = (h === 0 && m === 0) ? "de la medianoche"
+                : (h === 12 && m === 0) ? "del mediodía"
+                : h < 6 ? "de la madrugada"
+                : h < 12 ? "de la mañana"
+                : h < 19 ? "de la tarde" : "de la noche";
+  let frase = (h12 === 1) ? "Es la una" : "Son las " + NUM_HORAS[h12 % 12];
+  if(m === 0) frase += " en punto";
+  else if(m === 15) frase += " y cuarto";
+  else if(m === 30) frase += " y media";
+  else if(m === 45) frase += " menos cuarto";
+  return NOMBRE_HABLADO + " te da la hora. " + frase + " " + periodo + ".";
+}
+
+function revisarHoraCantada(){
+  if(cfg.anunciarHora === "0") return;
+  if(!("speechSynthesis" in window)) return;
+  if(document.getElementById("cerradoOverlay").classList.contains("abierto")) return;
+  const d = new Date();
+  const m = d.getMinutes();
+  if(![0,15,30,45].includes(m) || d.getSeconds() > 20) return;
+  const clave = d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate()+"-"+d.getHours()+"-"+m;
+  if(clave === ultimaHoraCantada) return;
+  ultimaHoraCantada = clave;
+
+  agacharMusica();
+  const voz = speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith("es"));
+  const u = new SpeechSynthesisUtterance(textoHora(d));
+  u.lang = voz ? voz.lang : "es-ES";
+  if(voz) u.voice = voz;
+  u.rate = 0.9;
+  u.volume = 1;
+  u.onend = ()=>{ setTimeout(()=>{ if(!speechSynthesis.speaking && !speechSynthesis.pending) restaurarMusica(); }, 300); };
+  speechSynthesis.speak(u);
+}
+setInterval(revisarHoraCantada, 5000);
+
 if("speechSynthesis" in window){ speechSynthesis.getVoices(); }
 setInterval(cargar,3000);
 cargar();
