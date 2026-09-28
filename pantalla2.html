@@ -530,21 +530,50 @@ function cargar(){
       });
       document.getElementById("preparando").innerHTML = preparando || "Sin pedidos";
       document.getElementById("listo").innerHTML = listo || "Esperando...";
+      let hayNuevos=false;
       nuevosListos.forEach(n=>{
         if(!ultimosListos.includes(n)){
           agacharMusica();
-          const campanaAudio = document.getElementById("campana");
-          campanaAudio.play();
-          campanaAudio.onended = restaurarMusica;
-          setTimeout(restaurarMusica, 5000); // respaldo por si 'ended' no dispara
+          colaVoz.push(n);
+          hayNuevos = true;
           let flash=document.getElementById("flash");
           flash.classList.add("activo");
           setTimeout(()=>{ flash.classList.remove("activo"); },600);
         }
       });
       ultimosListos=nuevosListos;
+      if(hayNuevos) sonarYHablar();
     });
 }
+
+/* ===== Anuncio por voz: campana + "Pedido X, listo" ===== */
+let colaVoz=[];
+function hablarCola(){
+  if(colaVoz.length===0){
+    if(!("speechSynthesis" in window) || !speechSynthesis.speaking) restaurarMusica();
+    return;
+  }
+  if(!("speechSynthesis" in window)){ colaVoz=[]; restaurarMusica(); return; }
+  const voz = speechSynthesis.getVoices().find(v=>v.lang.toLowerCase().startsWith("es"));
+  const lista = colaVoz.splice(0);
+  lista.forEach((n,i)=>{
+    const u = new SpeechSynthesisUtterance("Pedido "+n+", listo");
+    u.lang = voz ? voz.lang : "es-ES";
+    if(voz) u.voice = voz;
+    u.rate = 0.9;
+    u.volume = 1;
+    if(i===lista.length-1) u.onend = restaurarMusica;
+    speechSynthesis.speak(u);
+  });
+}
+function sonarYHablar(){
+  const c = document.getElementById("campana");
+  c.onended = hablarCola;
+  const r = c.play();
+  if(r && r.catch) r.catch(()=>hablarCola());
+  setTimeout(hablarCola, 6000); // respaldo si la campana no termina
+}
+if("speechSynthesis" in window){ speechSynthesis.getVoices(); }
 setInterval(cargar,3000);
 cargar();
 
