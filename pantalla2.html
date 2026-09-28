@@ -62,9 +62,9 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 .ticker .tickPista span.item{padding:0 40px;font-size:19px;font-weight:bold;color:#1a1200;}
 @keyframes mover{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-.adminFondo{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:90;overflow:auto;padding:20px;box-sizing:border-box;}
+.adminFondo{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:flex-start;justify-content:center;z-index:90;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:20px;box-sizing:border-box;}
 .adminFondo.abierto{display:flex;}
-.adminCaja{background:#1a1a1a;border:2px solid var(--dorado);border-radius:14px;padding:22px;width:min(560px,92vw);text-align:left;}
+.adminCaja{background:#1a1a1a;border:2px solid var(--dorado);border-radius:14px;padding:22px;width:min(560px,92vw);text-align:left;margin:auto;}
 .adminCaja h2{margin:0 0 6px;color:var(--dorado);font-size:20px;}
 .adminCaja h3{margin:16px 0 4px;color:var(--dorado);font-size:15px;}
 .adminCaja p{color:#bbb;font-size:12.5px;margin:4px 0;}
