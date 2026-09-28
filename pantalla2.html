@@ -31,7 +31,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
 .qrBox{position:absolute;bottom:14px;right:14px;background:white;padding:6px;border-radius:8px;text-align:center;z-index:4;box-shadow:0 3px 10px rgba(0,0,0,.5);}
 .qrBox img{display:block;width:70px;height:70px;}
-.qrBox span{display:block;color:#111;font-size:10px;font-weight:bold;margin-top:2px;}
+.qrBox span{display:block;color:#111;font-size:10px;font-weight:bold;margin-top:2px;line-height:1.15;max-width:78px;margin-left:auto;margin-right:auto;}
 
 .dots{position:absolute;bottom:10px;left:14px;display:flex;gap:6px;z-index:5;}
 .dots span{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);}
@@ -161,6 +161,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 
     <h3>Menú / WhatsApp (para el QR)</h3>
     <label>Link de tu menú o WhatsApp<input type="text" id="cfgWhatsapp" placeholder="https://wa.me/59170000000"></label>
+    <label>Texto debajo del QR (vacío = automático)<input type="text" id="cfgQrTexto" placeholder="Pide por WhatsApp"></label>
 
     <h3>Clima (opcional)</h3>
     <label>Coordenadas "lat,lon" de tu ciudad<input type="text" id="cfgCoords" placeholder="-14.83,-64.90"></label>
@@ -398,6 +399,8 @@ function construirTicker(){
 function actualizarQR(){
   const box=document.getElementById("qrBox");
   if(cfg.whatsapp){
+    const auto = /wa\.me|whatsapp/i.test(cfg.whatsapp) ? "Pide por WhatsApp" : "Ver menú";
+    document.getElementById("qrLabel").textContent = cfg.qrTexto || auto;
     document.getElementById("qrImg").src = "https://api.qrserver.com/v1/create-qr-code/?size=140x140&data="+encodeURIComponent(cfg.whatsapp);
     box.style.display="block";
   } else box.style.display="none";
@@ -504,6 +507,7 @@ function abrirAdmin(){
   document.getElementById("cfgApertura").value=cfg.apertura||"";
   document.getElementById("cfgCierre").value=cfg.cierre||"";
   document.getElementById("cfgWhatsapp").value=cfg.whatsapp||"";
+  document.getElementById("cfgQrTexto").value=cfg.qrTexto||"";
   document.getElementById("cfgCoords").value=cfg.coords||"";
   document.getElementById("cfgDuracion").value=cfg.duracion||DEF_SEG;
   document.getElementById("cfgVolumen").value=cfg.volumen||45;
@@ -525,6 +529,7 @@ function guardarAdmin(){
     apertura: document.getElementById("cfgApertura").value.trim(),
     cierre: document.getElementById("cfgCierre").value.trim(),
     whatsapp: document.getElementById("cfgWhatsapp").value.trim(),
+    qrTexto: document.getElementById("cfgQrTexto").value.trim(),
     coords: document.getElementById("cfgCoords").value.trim(),
     duracion: document.getElementById("cfgDuracion").value.trim(),
     volumen: document.getElementById("cfgVolumen").value.trim(),
