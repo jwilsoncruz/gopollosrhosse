@@ -145,6 +145,7 @@ h1{margin:10px;color:var(--dorado);letter-spacing:1px;}
 <div class="cerradoOverlay" id="cerradoOverlay">
   <h2>🍗 Go Pollos Rhosse</h2>
   <p id="cerradoMsg">Cerrado por ahora. ¡Te esperamos pronto!</p>
+  <div id="cuentaRegresiva" style="font-size:56px;font-weight:bold;color:var(--dorado);letter-spacing:3px;font-variant-numeric:tabular-nums;"></div>
   <button class="btnForzar" onclick="forzarAbiertoHoy()">🔓 Abrir pantalla ahora (hoy)</button>
   <div style="position:fixed;top:14px;right:18px;font-size:26px;opacity:.5;cursor:pointer;" onclick="abrirAdmin()" title="Configuración">⚙️</div>
 </div>
@@ -486,6 +487,40 @@ function proximoDiaAbierto(){
   }
   return null;
 }
+let mostrarCuenta = false;
+
+// Próxima fecha/hora de apertura, respetando los días cerrados
+function proximaApertura(){
+  const ini = minFromHHMM(cfg.apertura);
+  if(ini === null) return null;
+  const cerrados = diasCerradosCfg();
+  for(let i=0;i<=7;i++){
+    const d = new Date();
+    d.setDate(d.getDate()+i);
+    if(cerrados.includes(d.getDay())) continue;
+    d.setHours(Math.floor(ini/60), ini%60, 0, 0);
+    if(d.getTime() > Date.now()) return d;
+  }
+  return null;
+}
+
+function tickCuenta(){
+  const overlay = document.getElementById("cerradoOverlay");
+  const box = document.getElementById("cuentaRegresiva");
+  if(!overlay.classList.contains("abierto") || !mostrarCuenta){ box.textContent = ""; return; }
+  const t = proximaApertura();
+  if(!t){ box.textContent = ""; return; }
+  const ms = t.getTime() - Date.now();
+  if(ms <= 0){ box.textContent = ""; revisarCerrado(); return; }
+  const dias = Math.floor(ms/86400000);
+  const h = Math.floor((ms%86400000)/3600000);
+  const m = Math.floor((ms%3600000)/60000);
+  const sg = Math.floor((ms%60000)/1000);
+  const hms = String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(sg).padStart(2,"0");
+  box.textContent = "⏳ Abrimos en " + (dias>0 ? dias+(dias===1?" día ":" días ") : "") + hms;
+}
+setInterval(tickCuenta, 1000);
+
 function hoyClave(){ const d=new Date(); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
 function forzarAbiertoHoy(){
   const c=leerCfg();
@@ -503,6 +538,7 @@ function revisarCerrado(){
   if(cfg.seguirPrincipal !== "0"){
     if(estadoRemoto === "abierto"){ overlay.classList.remove("abierto"); return; }
     if(estadoRemoto === "cerrado"){
+      mostrarCuenta = false;
       document.getElementById("cerradoMsg").textContent = "Local cerrado temporalmente — ¡Vuelve pronto!";
       overlay.classList.add("abierto");
       audioFondo.pause();
@@ -512,6 +548,7 @@ function revisarCerrado(){
   // Día cerrado (por ejemplo sábado y domingo)
   if(diasCerradosCfg().includes(new Date().getDay())){
     const prox = proximoDiaAbierto();
+    mostrarCuenta = true;
     document.getElementById("cerradoMsg").textContent = "Hoy no atendemos" + (prox ? " — Abrimos el " + prox + (cfg.apertura ? " a las " + cfg.apertura : "") : "");
     overlay.classList.add("abierto");
     audioFondo.pause();
@@ -531,6 +568,7 @@ function revisarCerrado(){
       const manana = NOMBRES_DIA[(new Date().getDay()+1)%7];
       cuando = (!prox || prox === manana) ? "mañana" : "el " + prox;
     }
+    mostrarCuenta = true;
     document.getElementById("cerradoMsg").textContent = "Cerrado por ahora — Abrimos " + cuando + " a las " + cfg.apertura;
     overlay.classList.add("abierto");
     audioFondo.pause();
