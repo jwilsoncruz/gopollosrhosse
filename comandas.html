@@ -26,7 +26,7 @@ body{
   background:var(--bg);
   color:#fff;
   margin:0;
-  padding:0 0 110px 0;
+  padding:0 0 200px 0;
   text-align:center;
 }
 
@@ -69,7 +69,8 @@ body{
 }
 
 #topbar .cambioLinea{
-  font-size:13px;
+  font-size:16px;
+  font-weight:bold;
   color:var(--texto-sec);
 }
 
@@ -803,13 +804,21 @@ function actualizarCambio(modo){
   }
 }
 
+// Baja la pantalla hasta el cuadro de vuelto para que no quede
+// escondido detrás de la barra inferior en el celular.
+function mostrarVuelto(){
+  document.getElementById("vueltoPanel").scrollIntoView({ behavior:"smooth", block:"center" });
+}
+
 function pagar(monto){
   actualizarCambio(monto);
+  mostrarVuelto();
 }
 
 function pagarManual(){
   const monto = parseFloat(document.getElementById("montoManual").value || 0);
   actualizarCambio(monto);
+  mostrarVuelto();
 }
 
 // ================= ENVIAR A COCINA (integración con el ecosistema) =================
