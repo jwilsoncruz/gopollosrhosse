@@ -180,7 +180,9 @@
 
 <!-- REGISTRO -->
 <div id="pantalla1">
-  <h1>WiFi gratis y premios<br>cada vez que vienes</h1>
+ 📶 WiFi GRATIS
+🎁 Raspa y gana premios
+🍗 Acumula visitas y recibe comida GRATIS
   <div class="oferta">📶 Conéctate gratis y raspa tu premio<br>🎁 Válido en compras desde Bs 20</div>
 
   <label class="campo" for="nombre">Tu nombre</label>
@@ -197,6 +199,17 @@
 
   <div class="error" id="errorRegistro"></div>
   <button id="btnContinuar">📲 Conectarme</button>
+</div>
+<div class="panel">
+<h3>🍗 Menú Rápido</h3>
+
+Pollo Entero Bs130<br>
+Medio Pollo Bs65<br>
+Cuarto Bs27<br>
+Hamburguesa Bs25<br>
+Salchipapa Bs15<br>
+Gaseosa 2L Bs13
+
 </div>
 
 <!-- WIFI -->
@@ -502,7 +515,7 @@ function pintarStamps(contenedor, etiqueta, totalSellos){
   }
   etiqueta.textContent = enCiclo === 10
     ? "¡Completaste tu tarjeta de fidelidad! 🎉"
-    : `${enCiclo}/10 sellos para tu combo especial`;
+    : `${enCiclo}/10 visitas para ganar tu premio especial`;
 }
 
 // ---------- IR A RASPAR ----------
@@ -682,7 +695,7 @@ btnPremio.addEventListener("click", () => {
 
 // ---------- INVITAR A UN AMIGO ----------
 btnCompartir.addEventListener("click", () => {
-  const msg = `🍗 ¡Oye! En Pollos Rhosse te conectas al WiFi gratis y raspas un premio en cada visita. Diles que te invitó ${cliente.nombre} 😉`;
+  const msg = `🍗 🍗 ¡Oye! En Go Pollos Rhosse tienes WiFi GRATIS y premios en cada visita. Diles que te invitó ${cliente.nombre} 😉`;
   const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
   if(navigator.share){
     navigator.share({text: msg}).catch(() => window.open(url));
