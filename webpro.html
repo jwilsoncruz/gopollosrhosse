@@ -330,6 +330,9 @@ header{
 /* Oculta una categoría cuando se elige otra (no interfiere con el horario) */
 .oculto-filtro{ display:none !important; }
 
+/* Oculta Desayuno/Merienda cuando no son visibles o están fuera de horario */
+.oculto-categoria{ display:none !important; }
+
 #avisoCategoria{
  display:none;
  margin-top:20px;
@@ -456,6 +459,16 @@ let pollosDisponibles = 4;     // pollos que hay hoy (actualizar a mano o desde 
 const USAR_CONTROL_REMOTO = true;
 const INTERVALO_CONFIG = 30000; // cada cuántos ms se consulta la hoja (30 segundos)
 
+// ---------- CATEGORÍAS NUEVAS: DESAYUNO Y MERIENDA ----------
+// visible: true  -> la categoría se muestra (solo dentro de su horario)
+// visible: false -> la categoría queda INVISIBLE para los clientes
+// agotado: true  -> toda la categoría aparece como "Agotado"
+// desde / hasta  -> horario en que se muestra y se puede pedir (formato "HH:MM")
+const CATEGORIAS_CONFIG = {
+  desayuno: { visible: false, agotado: false, desde: "06:00", hasta: "10:00" },
+  merienda: { visible: false, agotado: false, desde: "15:00", hasta: "18:00" }
+};
+
 const API = "https://script.google.com/macros/s/AKfycbyERJZ0DGmXU3550uXglEX9ehjwdv_dqCXKJTn_Y7vr2yhvqq0AVjUa_D-2XI6pI6Yw/exec";        // pedidos
 const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec"; // configuración
 
@@ -496,6 +509,9 @@ function actualizarEstadoRemoto(valor){
 }
 
 const params = new URLSearchParams(window.location.search);
+// Vista previa para ti: agrega ?preview=1 al link y verás Desayuno y Merienda
+// aunque estén invisibles o fuera de horario (los botones seguirán bloqueados fuera de horario)
+const PREVIEW = params.get("preview") === "1";
 // Solo letras, números, guion y espacio (evita meter código por la URL)
 const mesaQR = (params.get("mesa") || "").replace(/[^\w\- ]/g, "").slice(0, 10);
 
@@ -574,7 +590,9 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 <!-- NUEVO: botones para elegir la categoría -->
 <div class="nav-categorias" id="navCategorias" role="group" aria-label="Categorías del menú">
 <button type="button" class="chip activo" data-cat="todo" aria-pressed="true" onclick="filtrarCategoria('todo')">🍽 Todo</button>
+<button type="button" class="chip oculto-categoria" data-cat="desayuno" aria-pressed="false" onclick="filtrarCategoria('desayuno')">🍳 Desayuno</button>
 <button type="button" class="chip" data-cat="almuerzo" aria-pressed="false" onclick="filtrarCategoria('almuerzo')">🍗 Almuerzo</button>
+<button type="button" class="chip oculto-categoria" data-cat="merienda" aria-pressed="false" onclick="filtrarCategoria('merienda')">🥐 Merienda</button>
 <button type="button" class="chip" data-cat="cena" aria-pressed="false" onclick="filtrarCategoria('cena')">🌙 Cena</button>
 <button type="button" class="chip" data-cat="bebidas" aria-pressed="false" onclick="filtrarCategoria('bebidas')">🥤 Bebidas</button>
 <button type="button" class="chip" data-cat="extras" aria-pressed="false" onclick="filtrarCategoria('extras')">🍔 Extras</button>
@@ -582,8 +600,14 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 
 <div id="avisoCategoria"></div>
 
+<h2 class="categoria oculto-categoria" id="categoria-desayuno">🍳 Desayuno</h2>
+<div id="desayuno" class="grid oculto-categoria"></div>
+
 <h2 class="categoria" id="categoria-almuerzo">🍗Almuerzo</h2>
 <div id="almuerzo" class="grid"></div>
+
+<h2 class="categoria oculto-categoria" id="categoria-merienda">🥐 Merienda</h2>
+<div id="merienda" class="grid oculto-categoria"></div>
 
 <h2 class="categoria" id="categoria-cena">🍗Cena</h2>
 <div id="cena" class="grid"></div>
@@ -649,6 +673,14 @@ document.getElementById("logoLocal").addEventListener("click", ()=>{
 
 // ================= PRODUCTOS =================
 const productos = [
+// ---- DESAYUNO (EJEMPLOS: cambia nombres y precios por los tuyos) ----
+// Opciones por platillo:  visible:false -> lo oculta  |  agotado:true -> lo marca "Agotado"
+// Tip: evita escribir la palabra "Pollo" con mayúscula en estos nombres (el contador de pollos la usa)
+{categoria:"desayuno", nombre:"Café con Leche", precio:8, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Api con Pastel", precio:10, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Sándwich de Huevo", precio:12, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Pan con Chicharrón", precio:15, img:"menu.jpg"},
+
 {categoria:"almuerzo", nombre:"Pollo Eco Pierna", precio:15, img:"pierna.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Contra", precio:15, img:"contra.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Ala", precio:17, img:"ala.jpg"},
@@ -684,6 +716,12 @@ const productos = [
 {categoria:"bebidas", nombre:"Limonada Mediana", precio:5, img:"limonada_mediana.jpg"},
 {categoria:"bebidas", nombre:"Refresco Vaso", precio:3, img:"limonada_vaso.jpg"},
 
+// ---- MERIENDA (EJEMPLOS: cambia nombres y precios por los tuyos) ----
+{categoria:"merienda", nombre:"Salteña", precio:7, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Cuñapé", precio:5, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Pastel de Queso", precio:6, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Jugo Natural", precio:6, img:"menu.jpg"},
+
 {categoria:"extras", nombre:"Extra Platano", precio:7, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:7, img:"extra_papas.jpeg"},
 {categoria:"extras", nombre:"Extra Arroz", precio:7, img:"extra_arroz.jpg"},
@@ -692,6 +730,72 @@ const productos = [
 
 ];
 
+// ================= VISIBLE / AGOTADO / HORARIO DE CATEGORÍAS (NUEVO) =================
+// Además de lo que escribas aquí, la hoja CONFIG puede mandar dos listas opcionales
+// (nombres separados por coma): "ocultos" y "agotados". Sirven para categorías o platillos.
+function listaRemota(clave){
+  if(!remoto || !remoto[clave]) return [];
+  return String(remoto[clave]).split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+}
+
+function aMinutos(hhmm){
+  const partes = String(hhmm).split(":");
+  return (parseInt(partes[0], 10) || 0) * 60 + (parseInt(partes[1], 10) || 0);
+}
+
+// ¿La hora actual está dentro del horario de la categoría?
+function enHorarioCategoria(cat){
+  const cfg = CATEGORIAS_CONFIG[cat];
+  if(!cfg || !cfg.desde) return true;
+  const ahora = new Date();
+  const t = ahora.getHours() * 60 + ahora.getMinutes();
+  return t >= aMinutos(cfg.desde) && t < aMinutos(cfg.hasta);
+}
+
+function categoriaVisible(cat){
+  if(PREVIEW) return true;
+  const cfg = CATEGORIAS_CONFIG[cat];
+  if(cfg && cfg.visible === false) return false;
+  return !listaRemota("ocultos").includes(cat);
+}
+
+// Visible y dentro de su horario
+function categoriaMostrable(cat){
+  if(!categoriaVisible(cat)) return false;
+  if(PREVIEW) return true;
+  return enHorarioCategoria(cat);
+}
+
+function productoVisible(p){
+  if(p.visible === false) return false;
+  return !listaRemota("ocultos").includes(p.nombre.toLowerCase());
+}
+
+function productoAgotadoManual(p){
+  if(p.agotado === true) return true;
+  const cfg = CATEGORIAS_CONFIG[p.categoria];
+  if(cfg && cfg.agotado === true) return true;
+  const ag = listaRemota("agotados");
+  return ag.includes(p.nombre.toLowerCase()) || ag.includes(p.categoria);
+}
+
+// ¿Se puede pedir de esta categoría ahora mismo?
+// Desayuno y merienda dependen de su propio horario; el resto, del horario del local.
+function abiertoParaCategoria(cat){
+  if(cat === "desayuno" || cat === "merienda"){
+    const forzado = estadoForzado();
+    if(forzado === "cerrado") return false;
+    if(cerradoTodoElDia(new Date()) && forzado !== "abierto") return false;
+    return categoriaMostrable(cat) && enHorarioCategoria(cat);
+  }
+  return localAbierto();
+}
+
+// ¿Hay algo disponible para pedir ahora? (local abierto, o desayuno/merienda en su horario)
+function hayAlgoAbierto(){
+  return localAbierto() || abiertoParaCategoria("desayuno") || abiertoParaCategoria("merienda");
+}
+
 // ================= FOTOS Y STOCK COMPARTIDOS (gestionados desde el POS) =================
 // La gestión de fotos y stock se hace en el panel Admin del POS
 // ("Go Pollos Rhosse PRO"). Esta página solo LEE lo que ya está
@@ -699,6 +803,7 @@ const productos = [
 let fotosServidor = {};
 let stockServidor = {};
 let firmaFotosStock = "";   // para saber si algo cambió y evitar redibujar el menú sin necesidad
+let firmaRemota = "";       // igual, para la lista de ocultos/agotados que venga de la hoja
 
 function fotoDe(p){
   return fotosServidor[p.nombre] || p.img;
@@ -709,18 +814,18 @@ function crearProducto(p){
   div.className = "card";
 
   const tieneStock = Object.prototype.hasOwnProperty.call(stockServidor, p.nombre);
-  const agotado = tieneStock && Number(stockServidor[p.nombre]) <= 0;
+  const agotado = productoAgotadoManual(p) || (tieneStock && Number(stockServidor[p.nombre]) <= 0);
 
   div.innerHTML = `
 <img src="${fotoDe(p)}" alt="${p.nombre}" loading="lazy" data-producto="${p.nombre}">
 <h3>${p.nombre}</h3>
 <div class="precio">Bs ${p.precio}</div>
 ${agotado ? '<div class="agotado-txt">Agotado por hoy</div>' : ''}
-<button class="boton" ${agotado ? 'disabled data-agotado="1"' : ""}>${agotado ? "Agotado" : "Agregar"}</button>
+<button class="boton" data-cat="${p.categoria}" ${agotado ? 'disabled data-agotado="1"' : ""}>${agotado ? "Agotado" : "Agregar"}</button>
 `;
 
   if(!agotado){
-    div.querySelector("button").addEventListener("click", ()=>agregar(p.nombre, p.precio));
+    div.querySelector("button").addEventListener("click", ()=>agregar(p.nombre, p.precio, p.categoria));
   }
   return div;
 }
@@ -728,6 +833,7 @@ ${agotado ? '<div class="agotado-txt">Agotado por hoy</div>' : ''}
 function cargarProductos(){
   document.querySelectorAll(".grid").forEach(g => g.innerHTML = "");
   productos.forEach(p=>{
+    if(!productoVisible(p)) return;
     const cont = document.getElementById(p.categoria);
     if(cont) cont.appendChild(crearProducto(p));
   });
@@ -760,7 +866,7 @@ async function cargarFotosYStock(){
 }
 
 // ================= CATEGORÍAS (NUEVO) =================
-const CATEGORIAS = ["almuerzo", "cena", "bebidas", "extras"];
+const CATEGORIAS = ["desayuno", "almuerzo", "merienda", "cena", "bebidas", "extras"];
 let categoriaActiva = "todo";
 
 function filtrarCategoria(cat){
@@ -807,8 +913,8 @@ function aplicarFiltroCategoria(){
 }
 
 // ================= CARRITO =================
-function agregar(nombre, precio){
-  carrito.push({nombre, precio});
+function agregar(nombre, precio, categoria){
+  carrito.push({nombre, precio, categoria});
 
   if(nombre.includes("Pollo")){
     pollosDisponibles = Math.max(0, pollosDisponibles - 1);
@@ -912,6 +1018,12 @@ function actualizarMarquesina(){
     return;
   }
 
+  // 🍳 Desayunos (antes de que abra el resto del local)
+  if(abiertoParaCategoria("desayuno") && !localAbierto()){
+    ponerMarquesina("🍳 DESAYUNOS DISPONIBLES HASTA LAS 10:00 AM — ☕ Haz tu pedido ahora >>> Pollos a la leña desde las 11:00 🔥");
+    return;
+  }
+
   // 🍗 Pollos agotados
   if(pollosDisponibles <= 0){
     ponerMarquesina("🍗 POLLOS AGOTADOS POR HOY — Gracias Trinidad por la preferencia - volvemos mañana🔥");
@@ -938,8 +1050,9 @@ function actualizarMarquesina(){
 // Habilita o deshabilita los botones según si el local está abierto.
 // Los productos agotados quedan siempre deshabilitados.
 function aplicarEstadoBotones(){
-  const abierto = localAbierto();
   document.querySelectorAll(".boton").forEach(b=>{
+    const cat = b.dataset.cat;
+    const abierto = cat ? abiertoParaCategoria(cat) : hayAlgoAbierto();
     b.disabled = !abierto || b.dataset.agotado === "1";
   });
 }
@@ -962,6 +1075,11 @@ function actualizarEstado(){
     estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
     estado.style.color = "red";
     if(logo) logo.style.filter = "grayscale(100%)";
+  }
+  else if(abiertoParaCategoria("desayuno")){
+    estado.innerHTML = "🍳 Atendiendo desayunos";
+    estado.style.color = "lightgreen";
+    if(logo) logo.style.filter = "none";
   }
   else{
     estado.innerHTML = "🔴 Cerrado";
@@ -1072,7 +1190,7 @@ function contadorLenia(){
 
 // ================= MENÚ SEGÚN LA HORA =================
 // Almuerzo: 11:00 a 14:30 | Cena: 14:30 a 22:30
-function actualizarMenuPorHora(){
+function actualizarMenuBase(){
   const ahora = new Date();
   const tiempo = ahora.getHours() * 60 + ahora.getMinutes();
 
@@ -1124,14 +1242,18 @@ function actualizarMenuPorHora(){
 
   if(tiempo < inicioAlmuerzo){
     ocultarTodo();
-    if(estado) estado.innerHTML = "🔴 Cerrado — Abrimos desde las 11:00 AM";
+    if(estado) estado.innerHTML = abiertoParaCategoria("desayuno")
+      ? "🍳 Desayunos disponibles hasta las 10:00 AM"
+      : "🔴 Cerrado — Abrimos desde las 11:00 AM";
     return;
   }
 
   if(tiempo >= inicioAlmuerzo && tiempo < ventaAlmuerzo){
     ocultarTodo();
     if(tituloAlmuerzo) tituloAlmuerzo.style.display = "block";
-    if(estado) estado.innerHTML = "⏳ Preparando almuerzo — pedidos desde las 11:00";
+    if(estado) estado.innerHTML = abiertoParaCategoria("desayuno")
+      ? "🍳 Desayunos hasta las 10:00 AM — almuerzo desde las 11:00"
+      : "⏳ Preparando almuerzo — pedidos desde las 11:00";
     return;
   }
 
@@ -1156,6 +1278,30 @@ function actualizarMenuPorHora(){
     if(estado) estado.innerHTML = "🔴 Cerrado — volvemos mañana 🍗";
     return;
   }
+}
+
+// Muestra u oculta Desayuno y Merienda según su visibilidad y su horario
+function actualizarCategoriasHorario(){
+  const cerradoForzado = estadoForzado() === "cerrado" && !PREVIEW;
+  ["desayuno", "merienda"].forEach(cat=>{
+    const mostrar = !cerradoForzado && categoriaMostrable(cat);
+    const titulo = document.getElementById("categoria-" + cat);
+    const grid = document.getElementById(cat);
+    const chip = document.querySelector('#navCategorias .chip[data-cat="' + cat + '"]');
+    [titulo, grid, chip].forEach(el=>{
+      if(el) el.classList.toggle("oculto-categoria", !mostrar);
+    });
+    if(!mostrar && categoriaActiva === cat){
+      categoriaActiva = "todo";
+      aplicarFiltroCategoria();
+    }
+  });
+}
+
+// Mantiene el mismo nombre de siempre: menú de almuerzo/cena + desayuno/merienda
+function actualizarMenuPorHora(){
+  actualizarMenuBase();
+  actualizarCategoriasHorario();
 }
 
 // ================= CONTROL REMOTO (GOOGLE SHEETS) =================
@@ -1183,6 +1329,13 @@ async function cargarConfig(){
       return;
     }
 
+    // Si la hoja cambió la lista de ocultos/agotados, se redibuja el menú
+    const fr = String(data.ocultos || "") + "|" + String(data.agotados || "");
+    if(fr !== firmaRemota){
+      firmaRemota = fr;
+      cargarProductos();
+    }
+
     // 🍗 POLLOS (solo si la hoja manda un número válido)
     const n = parseInt(data.pollos, 10);
     if(!isNaN(n)) pollosDisponibles = Math.max(0, n);
@@ -1204,13 +1357,20 @@ function enviarPedido(){
 
   if(enviando) return;
 
-  if(!localAbierto()){
+  if(!hayAlgoAbierto()){
     alert("🔴 El restaurante está cerrado");
     return;
   }
 
   if(carrito.length === 0){
     alert("Agrega al menos un producto");
+    return;
+  }
+
+  // Si algún producto del carrito ya salió de su horario, se avisa antes de enviar
+  const fueraHorario = carrito.find(p => p.categoria && !abiertoParaCategoria(p.categoria));
+  if(fueraHorario){
+    alert("⏰ " + fueraHorario.nombre + " ya no está disponible en este horario. Quítalo del carrito para continuar.");
     return;
   }
 
@@ -1367,6 +1527,7 @@ setInterval(actualizarEstado, 10000);
 setInterval(actualizarMarquesina, 5000);
 setInterval(cargarFotosYStock, 15000);
 setInterval(aplicarFiltroCategoria, 5000);
+setInterval(actualizarMenuPorHora, 30000);   // para que Desayuno/Merienda aparezcan y se oculten solos
 
 // El carrusel no se mueve solo si el dispositivo tiene activado "reducir movimiento"
 if(!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)){
