@@ -603,16 +603,19 @@ button{
 <div class="fila-selects">
   <select id="mesero">
     <option>Dafne</option>
-    <option>Mauricio</option>
-    <option>Padme</option>
-    <option>Karen</option>
     <option>Wilson</option>
+    <option>Padme</option>
+    <option>Alfredo</option>
+    <option>Pitu</option>
     <option>Raquel</option>
   </select>
 
   <select id="mesa">
     <option>Mesa 1</option>
     <option>Mesa 2</option>
+    <option>Mesa 3</option>
+    <option>Mesa 4</option>
+    <option>Mesa 5</option>
     <option>Para Llevar</option>
     <option>Delivery</option>
   </select>
@@ -706,7 +709,7 @@ let enviando = false;
 
 // PIN simple para entrar al modo admin del POS. No es seguridad real,
 // solo evita que cualquiera que agarre el celular toque el stock.
-const ADMIN_PIN = "1234";
+const ADMIN_PIN = "0940";
 
 // ================= CATEGORÍAS DEL POS (NUEVO) =================
 // visible: true  -> aparece el botón de la categoría
@@ -728,10 +731,10 @@ function tituloCat(c){ return c.icono + " " + c.nombre; }
 // cámbialo también en la página web.
 const PRODUCTOS_POS = [
   // ---- DESAYUNO (EJEMPLOS: los mismos de la página web; cámbialos por los tuyos) ----
-  { categoria:"desayuno", nombre:"Café con Leche",            precio:8,   clase:"desayuno" },
-  { categoria:"desayuno", nombre:"Api con Pastel",            precio:10,  clase:"desayuno" },
-  { categoria:"desayuno", nombre:"Sándwich de Huevo",         precio:12,  clase:"desayuno" },
-  { categoria:"desayuno", nombre:"Pan con Chicharrón",        precio:15,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Masaco con Bife",            precio:10,   clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Salteña",            precio:8,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Tostada",         precio:12,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Hotdoc",        precio:12,  clase:"desayuno" },
 
   // ---- ALMUERZO ----
   { categoria:"almuerzo", nombre:"Pollo Entero",              precio:130, clase:"entero" },
@@ -766,10 +769,10 @@ const PRODUCTOS_POS = [
   { categoria:"cena", nombre:"Salchipollo",                   precio:15,  clase:"plato" },
 
   // ---- BEBIDAS ----
-  { categoria:"bebidas", nombre:"Gaseosa 2L",                 precio:13,  clase:"bebida" },
-  { categoria:"bebidas", nombre:"600ml Coca-Cola Popular",    precio:7,   clase:"bebida" },
-  { categoria:"bebidas", nombre:"350ml Fanta Popular",        precio:7,   clase:"bebida" },
-  { categoria:"bebidas", nombre:"350ml Sprite Popular",       precio:7,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"Gaseosa 2L",                 precio:15,  clase:"bebida" },
+  { categoria:"bebidas", nombre:"600ml Coca-Cola Popular",    precio:10,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"350ml Fanta Popular",        precio:10,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"350ml Sprite Popular",       precio:10,   clase:"bebida" },
   { categoria:"bebidas", nombre:"190ml Mini Coca-Cola",       precio:3,   clase:"bebida" },
   { categoria:"bebidas", nombre:"190ml Mini fanta",           precio:3,   clase:"bebida" },
   { categoria:"bebidas", nombre:"Limonada Mediana",           precio:5,   clase:"bebida" },
