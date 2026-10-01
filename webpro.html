@@ -728,7 +728,7 @@ style="border:0;border-radius:15px;">
 // y se guardan en la hoja de Google; la hoja manda sobre estos valores.
 
 // 🔒 PIN DEL PANEL ADMIN  -> CÁMBIALO por uno tuyo (solo números, 4 a 8 dígitos)
-const ADMIN_PIN = "1234";
+const ADMIN_PIN = "0940";
 
 let diasCerrados = [0];        // 0 = domingo, 1 = lunes ... 6 = sábado
 let fechasCerrado = [];        // días sueltos cerrados, formato "AAAA-MM-DD" (ej: "2026-12-25")
@@ -759,8 +759,8 @@ const INTERVALO_CONFIG = 30000; // cada cuántos ms se consulta la hoja (30 segu
 // agotado: true  -> toda la categoría aparece como "Agotado"
 // desde / hasta  -> horario en que se muestra y se puede pedir (formato "HH:MM")
 const CATEGORIAS_CONFIG = {
-  desayuno: { visible: false, agotado: false, desde: "06:00", hasta: "10:00" },
-  merienda: { visible: false, agotado: false, desde: "15:00", hasta: "18:00" }
+  desayuno: { visible: true, agotado: false, desde: "06:00", hasta: "10:00" },
+  merienda: { visible: true, agotado: false, desde: "15:00", hasta: "18:00" }
 };
 
 const API = "https://script.google.com/macros/s/AKfycbyERJZ0DGmXU3550uXglEX9ehjwdv_dqCXKJTn_Y7vr2yhvqq0AVjUa_D-2XI6pI6Yw/exec";        // pedidos
@@ -960,10 +960,10 @@ document.getElementById("logoLocal").addEventListener("click", ()=>{
 const productos = [
 // ---- DESAYUNO (EJEMPLOS: cambia nombres y precios por los tuyos) ----
 // Tip: evita escribir la palabra "Pollo" con mayúscula en estos nombres (el contador de pollos la usa)
-{categoria:"desayuno", nombre:"Café con Leche", precio:8, img:"menu.jpg"},
-{categoria:"desayuno", nombre:"Api con Pastel", precio:10, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Masaco con Bife", precio:10, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Salteña", precio:8, img:"menu.jpg"},
 {categoria:"desayuno", nombre:"Sándwich de Huevo", precio:12, img:"menu.jpg"},
-{categoria:"desayuno", nombre:"Pan con Chicharrón", precio:15, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Tostada", precio:12, img:"menu.jpg"},
 
 {categoria:"almuerzo", nombre:"Pollo Eco Pierna", precio:15, img:"pierna.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Contra", precio:15, img:"contra.jpg"},
@@ -1003,7 +1003,7 @@ const productos = [
 // ---- MERIENDA (EJEMPLOS: cambia nombres y precios por los tuyos) ----
 {categoria:"merienda", nombre:"Salteña", precio:7, img:"menu.jpg"},
 {categoria:"merienda", nombre:"Cuñapé", precio:5, img:"menu.jpg"},
-{categoria:"merienda", nombre:"Pastel de Queso", precio:6, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Camba Muerto", precio:7, img:"menu.jpg"},
 {categoria:"merienda", nombre:"Jugo Natural", precio:6, img:"menu.jpg"},
 
 {categoria:"extras", nombre:"Extra Platano", precio:7, img:"extra_platano.jpg"},
