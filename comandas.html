@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Go Pollos Rhosse PRO</title>
 <link rel="icon" href="comandas.ico">
 <style>
@@ -18,6 +18,7 @@
   --borde:#3a3a3a;
   --texto-sec:#bdbdbd;
   --topbar-h:58px;
+  --floating-h:170px;
 }
 
 *{ box-sizing:border-box; }
@@ -27,8 +28,9 @@ body{
   background:var(--bg);
   color:#fff;
   margin:0;
-  padding:0 0 200px 0;
+  padding:0 0 calc(var(--floating-h) + 24px) 0;
   text-align:center;
+  -webkit-text-size-adjust:100%;
 }
 
 .contenedor{
@@ -43,11 +45,16 @@ body{
   top:0;
   z-index:1000;
   background:#000;
-  padding:8px 12px 10px 12px;
+  padding:8px 12px 8px 12px;
+  border-bottom:2px solid var(--rojo);
+}
+
+.topbar-fila{
+  max-width:480px;
+  margin:0 auto;
   display:flex;
   align-items:center;
   gap:10px;
-  border-bottom:2px solid var(--rojo);
 }
 
 #topbar img{
@@ -132,41 +139,42 @@ h3.subtitulo{
 select, input{
   width:100%;
   padding:12px;
-  font-size:15px;
+  font-size:16px;
   border-radius:8px;
   border:1px solid var(--borde);
   background:var(--card2);
   color:#fff;
 }
 
-/* ---------- BOTONES DE CATEGORÍA (NUEVO) ---------- */
+/* ---------- BOTONES DE CATEGORÍA (dentro de la barra superior, siempre visibles) ---------- */
 #tabsCategorias{
-  position:sticky;
-  top:var(--topbar-h);
-  z-index:900;
-  display:flex;
-  gap:6px;
-  overflow-x:auto;
-  background:var(--bg);
-  margin:12px -12px 0 -12px;
-  padding:8px 12px;
-  border-bottom:1px solid var(--borde);
-  scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:1fr;
+  gap:4px;
+  max-width:480px;
+  margin:8px auto 0 auto;
 }
 
-#tabsCategorias::-webkit-scrollbar{ display:none; }
-
 .tab-cat{
-  flex:0 0 auto;
+  position:relative;
   width:auto;
-  padding:10px 14px;
-  border-radius:999px;
+  min-width:0;
+  padding:6px 0;
+  border-radius:10px;
   background:var(--card2);
   border:2px solid var(--borde);
   color:var(--texto-sec);
-  font-size:13px;
+  font-size:10px;
+  line-height:1.15;
+  white-space:nowrap;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
 }
+
+.tab-cat .ico{ font-size:18px; line-height:1; }
 
 .tab-cat.activo{
   border-color:var(--dorado);
@@ -175,13 +183,16 @@ select, input{
 }
 
 .tab-cat .cuenta{
-  display:inline-block;
+  position:absolute;
+  top:-7px;
+  right:-3px;
+  min-width:17px;
+  padding:0 5px;
+  border-radius:9px;
   background:var(--rojo);
   color:#fff;
-  border-radius:10px;
-  padding:1px 7px;
-  font-size:11px;
-  margin-left:6px;
+  font-size:10px;
+  line-height:17px;
 }
 
 /* ---------- MENÚ ---------- */
@@ -192,7 +203,7 @@ select, input{
 }
 
 #menuGrid{
-  scroll-margin-top:calc(var(--topbar-h) + 64px);
+  scroll-margin-top:calc(var(--topbar-h) + 8px);
 }
 
 button{
@@ -208,6 +219,11 @@ button{
 }
 
 button:active{ transform:scale(0.97); }
+
+button{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
 
 .entero{ background:var(--rojo); }
 .cuarto{ background:var(--naranja); }
@@ -543,17 +559,41 @@ button:active{ transform:scale(0.97); }
   background:var(--rojo);
   margin-top:16px;
 }
+
+/* ---------- AJUSTES PARA CELULAR ---------- */
+@media (max-width:480px){
+  #topbar{ padding:6px 8px 6px 8px; }
+  #topbar img{ width:32px; height:32px; }
+  #topbar .totalLinea{ font-size:17px; }
+  #topbar .cambioLinea{ font-size:14px; }
+  .contenedor{ padding:0 8px; }
+  h2.titulo{ font-size:17px; margin:10px 0 2px 0; }
+  h3.subtitulo{ margin:14px 0 6px 0; }
+  .grid button{ padding:6px 6px; font-size:13px; }
+  .floating{ padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px)) 8px; }
+  .floating-grid button{ padding:12px 4px; }
+  .fila-secundaria{ margin-top:6px; }
+  .fila-secundaria button{ padding:9px 4px; }
+}
+
+@media (max-width:350px){
+  .tab-cat{ font-size:9px; }
+}
 </style>
 </head>
 
 <body>
 
 <div id="topbar">
-  <img src="logo.png" alt="Go Pollos Rhosse">
-  <div class="info">
-    <div class="totalLinea" id="totalTop">Total: 0 Bs</div>
-    <div class="cambioLinea" id="cambio">Cambio: 0 Bs</div>
+  <div class="topbar-fila">
+    <img src="logo.png" alt="Go Pollos Rhosse">
+    <div class="info">
+      <div class="totalLinea" id="totalTop">Total: 0 Bs</div>
+      <div class="cambioLinea" id="cambio">Cambio: 0 Bs</div>
+    </div>
   </div>
+  <!-- Botones de categoría: siempre visibles arriba -->
+  <div id="tabsCategorias" role="group" aria-label="Categorías del menú"></div>
 </div>
 
 <div class="contenedor">
@@ -563,26 +603,20 @@ button:active{ transform:scale(0.97); }
 <div class="fila-selects">
   <select id="mesero">
     <option>Dafne</option>
-    <option>Wilson</option>
+    <option>Mauricio</option>
     <option>Padme</option>
     <option>Karen</option>
-    <option>Alfredo</option>
-    <option>Pitu</option>
+    <option>Wilson</option>
+    <option>Raquel</option>
   </select>
 
   <select id="mesa">
     <option>Mesa 1</option>
     <option>Mesa 2</option>
-    <option>Mesa 3</option>
-    <option>Mesa 4</option>
-    <option>Mesa 5</option>
     <option>Para Llevar</option>
     <option>Delivery</option>
   </select>
 </div>
-
-<!-- NUEVO: botones para elegir la categoría del menú -->
-<div id="tabsCategorias" role="group" aria-label="Categorías del menú"></div>
 
 <h3 class="subtitulo">🍗 Menú</h3>
 <div class="grid" id="menuGrid"></div>
@@ -672,19 +706,21 @@ let enviando = false;
 
 // PIN simple para entrar al modo admin del POS. No es seguridad real,
 // solo evita que cualquiera que agarre el celular toque el stock.
-const ADMIN_PIN = "0940";
+const ADMIN_PIN = "1234";
 
 // ================= CATEGORÍAS DEL POS (NUEVO) =================
 // visible: true  -> aparece el botón de la categoría
 // visible: false -> la categoría queda oculta (actívala cuando tengas tus platillos)
 const CATEGORIAS_POS = [
-  { id:"desayuno", titulo:"🍳 Desayuno", visible:true },
-  { id:"almuerzo", titulo:"🍗 Almuerzo", visible:true },
-  { id:"merienda", titulo:"🥐 Merienda", visible:true },
-  { id:"cena",     titulo:"🌙 Cena",     visible:true },
-  { id:"bebidas",  titulo:"🥤 Bebidas",  visible:true },
-  { id:"extras",   titulo:"➕ Extras",   visible:true }
+  { id:"desayuno", icono:"🍳", nombre:"Desayuno", visible:true },
+  { id:"almuerzo", icono:"🍗", nombre:"Almuerzo", visible:true },
+  { id:"merienda", icono:"🥐", nombre:"Merienda", visible:true },
+  { id:"cena",     icono:"🌙", nombre:"Cena",     visible:true },
+  { id:"bebidas",  icono:"🥤", nombre:"Bebidas",  visible:true },
+  { id:"extras",   icono:"➕", nombre:"Extras",   visible:true }
 ];
+
+function tituloCat(c){ return c.icono + " " + c.nombre; }
 
 // ================= MENÚ (datos) =================
 // IMPORTANTE: los nombres son los MISMOS que usa la página web, porque el
@@ -692,9 +728,9 @@ const CATEGORIAS_POS = [
 // cámbialo también en la página web.
 const PRODUCTOS_POS = [
   // ---- DESAYUNO (EJEMPLOS: los mismos de la página web; cámbialos por los tuyos) ----
-  { categoria:"desayuno", nombre:"Masaco con Bife",            precio:10,   clase:"desayuno" },
-  { categoria:"desayuno", nombre:"Cuñape",            precio:3,  clase:"desayuno" },
-  { categoria:"desayuno", nombre:"Sándwich de Huevo",         precio:10,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Café con Leche",            precio:8,   clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Api con Pastel",            precio:10,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Sándwich de Huevo",         precio:12,  clase:"desayuno" },
   { categoria:"desayuno", nombre:"Pan con Chicharrón",        precio:15,  clase:"desayuno" },
 
   // ---- ALMUERZO ----
@@ -787,11 +823,16 @@ function renderTabs(){
   let html = "";
 
   visibles.forEach(c=>{
+    const activa = c.id === categoriaActiva;
     const n = cuentas[c.id] || 0;
-    html += `<button type="button" class="tab-cat${c.id === categoriaActiva ? " activo" : ""}" onclick="elegirCategoria('${c.id}')">${c.titulo}${n ? `<span class="cuenta">${n}</span>` : ""}</button>`;
+    html += `<button type="button" class="tab-cat${activa ? " activo" : ""}" aria-pressed="${activa}" onclick="elegirCategoria('${c.id}')">` +
+            `<span class="ico">${c.icono}</span><span class="lbl">${c.nombre}</span>` +
+            (n ? `<span class="cuenta">${n}</span>` : "") +
+            `</button>`;
   });
 
   cont.innerHTML = html;
+  ajustarAlturaTopbar();
 }
 
 function elegirCategoria(id){
@@ -803,8 +844,7 @@ function elegirCategoria(id){
   // cerca del pago), lo subimos para que vea los platillos de la categoría
   const grid = document.getElementById("menuGrid");
   const topbar = document.getElementById("topbar");
-  const tabs = document.getElementById("tabsCategorias");
-  const limite = (topbar ? topbar.offsetHeight : 0) + (tabs ? tabs.offsetHeight : 0);
+  const limite = topbar ? topbar.offsetHeight : 0;
   const r = grid.getBoundingClientRect();
   if(r.top < limite || r.top > window.innerHeight * 0.8){
     grid.scrollIntoView({ behavior:"smooth", block:"start" });
@@ -815,6 +855,8 @@ function elegirCategoria(id){
 function ajustarAlturaTopbar(){
   const t = document.getElementById("topbar");
   if(t) document.documentElement.style.setProperty("--topbar-h", t.offsetHeight + "px");
+  const f = document.querySelector(".floating");
+  if(f) document.documentElement.style.setProperty("--floating-h", f.offsetHeight + "px");
 }
 
 // ================= RENDER DEL MENÚ (con foto y stock si aplica) =================
@@ -1140,6 +1182,8 @@ function verCaja(){
   fetch(API + "?accion=caja")
   .then(r => r.text())
   .then(txt=>{
+    btn.innerText = textoOriginal;
+    btn.disabled = false;
     let data;
     try{
       data = JSON.parse(txt);
@@ -1169,6 +1213,10 @@ function verCaja(){
     if(sinClasificar !== 0){
       msg += "\n\n⚠️ Hay " + sinClasificar + " Bs sin clasificar como efectivo o QR " +
              "(por ejemplo, pedidos que llegaron desde la página web, que no traen método de pago).";
+    }
+    // Ayuda para revisar: si hoy no hay pedidos, muestra la última fecha que ve la hoja
+    if((Number(data.pedidos) || 0) === 0 && data.ultimaFecha){
+      msg += "\n\nℹ️ Último pedido registrado en la hoja: " + data.ultimaFecha;
     }
     alert(msg);
   })
@@ -1231,7 +1279,7 @@ function construirStockAdmin(){
   let html = "";
 
   gruposAdmin().forEach(({ cat, productos })=>{
-    html += `<div class="grupo-admin">${cat.titulo}${cat.visible ? "" : " (oculta)"}</div>`;
+    html += `<div class="grupo-admin">${tituloCat(cat)}${cat.visible ? "" : " (oculta)"}</div>`;
 
     productos.forEach(p=>{
       const idSeguro = idSeguroDe(p.nombre);
@@ -1289,7 +1337,7 @@ function construirFotosAdminPOS(){
   let html = "";
 
   gruposAdmin().forEach(({ cat, productos })=>{
-    html += `<div class="grupo-admin">${cat.titulo}${cat.visible ? "" : " (oculta)"}</div>`;
+    html += `<div class="grupo-admin">${tituloCat(cat)}${cat.visible ? "" : " (oculta)"}</div>`;
 
     productos.forEach(p=>{
       const idSeguro = idSeguroDe(p.nombre);
