@@ -17,6 +17,7 @@
   --card2:#262626;
   --borde:#3a3a3a;
   --texto-sec:#bdbdbd;
+  --topbar-h:58px;
 }
 
 *{ box-sizing:border-box; }
@@ -138,11 +139,60 @@ select, input{
   color:#fff;
 }
 
+/* ---------- BOTONES DE CATEGORÍA (NUEVO) ---------- */
+#tabsCategorias{
+  position:sticky;
+  top:var(--topbar-h);
+  z-index:900;
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  background:var(--bg);
+  margin:12px -12px 0 -12px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--borde);
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+
+#tabsCategorias::-webkit-scrollbar{ display:none; }
+
+.tab-cat{
+  flex:0 0 auto;
+  width:auto;
+  padding:10px 14px;
+  border-radius:999px;
+  background:var(--card2);
+  border:2px solid var(--borde);
+  color:var(--texto-sec);
+  font-size:13px;
+}
+
+.tab-cat.activo{
+  border-color:var(--dorado);
+  color:var(--dorado);
+  background:#2a2410;
+}
+
+.tab-cat .cuenta{
+  display:inline-block;
+  background:var(--rojo);
+  color:#fff;
+  border-radius:10px;
+  padding:1px 7px;
+  font-size:11px;
+  margin-left:6px;
+}
+
 /* ---------- MENÚ ---------- */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
+}
+
+#menuGrid{
+  scroll-margin-top:calc(var(--topbar-h) + 64px);
 }
 
 button{
@@ -164,6 +214,10 @@ button:active{ transform:scale(0.97); }
 .economico{ background:#00897b; }
 .tiktok{ background:#8d6e63; }
 .extra{ background:#5e35b1; }
+.plato{ background:#ad1457; }
+.bebida{ background:#1565c0; }
+.desayuno{ background:#ef6c00; }
+.merienda{ background:#00838f; }
 
 /* ---------- CARRITO ---------- */
 #detalle{
@@ -403,6 +457,14 @@ button:active{ transform:scale(0.97); }
   margin:18px 0 8px 0;
 }
 
+.grupo-admin{
+  text-align:left;
+  color:var(--dorado);
+  font-size:13px;
+  font-weight:bold;
+  margin:14px 0 4px 0;
+}
+
 .stock-item{
   display:flex;
   align-items:center;
@@ -516,6 +578,9 @@ button:active{ transform:scale(0.97); }
   </select>
 </div>
 
+<!-- NUEVO: botones para elegir la categoría del menú -->
+<div id="tabsCategorias" role="group" aria-label="Categorías del menú"></div>
+
 <h3 class="subtitulo">🍗 Menú</h3>
 <div class="grid" id="menuGrid"></div>
 
@@ -606,29 +671,155 @@ let enviando = false;
 // solo evita que cualquiera que agarre el celular toque el stock.
 const ADMIN_PIN = "1234";
 
+// ================= CATEGORÍAS DEL POS (NUEVO) =================
+// visible: true  -> aparece el botón de la categoría
+// visible: false -> la categoría queda oculta (actívala cuando tengas tus platillos)
+const CATEGORIAS_POS = [
+  { id:"desayuno", titulo:"🍳 Desayuno", visible:true },
+  { id:"almuerzo", titulo:"🍗 Almuerzo", visible:true },
+  { id:"merienda", titulo:"🥐 Merienda", visible:true },
+  { id:"cena",     titulo:"🌙 Cena",     visible:true },
+  { id:"bebidas",  titulo:"🥤 Bebidas",  visible:true },
+  { id:"extras",   titulo:"➕ Extras",   visible:true }
+];
+
 // ================= MENÚ (datos) =================
+// IMPORTANTE: los nombres son los MISMOS que usa la página web, porque el
+// stock y las fotos se comparten por nombre. Si cambias un nombre aquí,
+// cámbialo también en la página web.
 const PRODUCTOS_POS = [
-  { nombre:"Pollo Entero",   precio:130, clase:"entero" },
-  { nombre:"Medio Pollo",    precio:65,  clase:"entero" },
-  { nombre:"Pierna+Contra",  precio:30,  clase:"cuarto" },
-  { nombre:"Ala+Pecho",      precio:30,  clase:"cuarto" },
-  { nombre:"Pecho",          precio:17,  clase:"economico" },
-  { nombre:"Ala",            precio:17,  clase:"economico" },
-  { nombre:"Pierna Tiktok",  precio:15,  clase:"tiktok" },
-  { nombre:"Contra Tiktok",  precio:15,  clase:"tiktok" },
-  { nombre:"Arroz",          precio:7,   clase:"extra" },
-  { nombre:"Papas",          precio:7,   clase:"extra" }
+  // ---- DESAYUNO (EJEMPLOS: los mismos de la página web; cámbialos por los tuyos) ----
+  { categoria:"desayuno", nombre:"Café con Leche",            precio:8,   clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Api con Pastel",            precio:10,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Sándwich de Huevo",         precio:12,  clase:"desayuno" },
+  { categoria:"desayuno", nombre:"Pan con Chicharrón",        precio:15,  clase:"desayuno" },
+
+  // ---- ALMUERZO ----
+  { categoria:"almuerzo", nombre:"Pollo Entero",              precio:130, clase:"entero" },
+  { categoria:"almuerzo", nombre:"Medio Pollo",               precio:65,  clase:"entero" },
+  { categoria:"almuerzo", nombre:"Cuarto Pollo AlaPecho",     precio:30,  clase:"cuarto" },
+  { categoria:"almuerzo", nombre:"Cuarto Pollo PiernaContra", precio:30,  clase:"cuarto" },
+  { categoria:"almuerzo", nombre:"Pollo Eco Pecho",           precio:17,  clase:"economico" },
+  { categoria:"almuerzo", nombre:"Pollo Eco Ala",             precio:17,  clase:"economico" },
+  { categoria:"almuerzo", nombre:"Pollo Eco Pierna",          precio:15,  clase:"tiktok" },
+  { categoria:"almuerzo", nombre:"Pollo Eco Contra",          precio:15,  clase:"tiktok" },
+  { categoria:"almuerzo", nombre:"Hamburguesa",               precio:12,  clase:"plato" },
+  { categoria:"almuerzo", nombre:"Salchipapa",                precio:15,  clase:"plato" },
+  { categoria:"almuerzo", nombre:"Salchipollo",               precio:15,  clase:"plato" },
+
+  // ---- MERIENDA (EJEMPLOS: los mismos de la página web; cámbialos por los tuyos) ----
+  { categoria:"merienda", nombre:"Salteña",                   precio:7,   clase:"merienda" },
+  { categoria:"merienda", nombre:"Cuñapé",                    precio:5,   clase:"merienda" },
+  { categoria:"merienda", nombre:"Pastel de Queso",           precio:6,   clase:"merienda" },
+  { categoria:"merienda", nombre:"Jugo Natural",              precio:6,   clase:"merienda" },
+
+  // ---- CENA ----
+  { categoria:"cena", nombre:"Pollo Entero",                  precio:130, clase:"entero" },
+  { categoria:"cena", nombre:"Medio Pollo",                   precio:65,  clase:"entero" },
+  { categoria:"cena", nombre:"Cuarto Pollo AlaPecho",         precio:30,  clase:"cuarto" },
+  { categoria:"cena", nombre:"Cuarto Pollo PiernaContra",     precio:30,  clase:"cuarto" },
+  { categoria:"cena", nombre:"Pollo Eco Pecho",               precio:17,  clase:"economico" },
+  { categoria:"cena", nombre:"Pollo Eco Ala",                 precio:17,  clase:"economico" },
+  { categoria:"cena", nombre:"Pollo Eco Pierna",              precio:15,  clase:"tiktok" },
+  { categoria:"cena", nombre:"Pollo Eco Contra",              precio:15,  clase:"tiktok" },
+  { categoria:"cena", nombre:"Hamburguesa",                   precio:25,  clase:"plato" },
+  { categoria:"cena", nombre:"Salchipapa",                    precio:15,  clase:"plato" },
+  { categoria:"cena", nombre:"Salchipollo",                   precio:15,  clase:"plato" },
+
+  // ---- BEBIDAS ----
+  { categoria:"bebidas", nombre:"Gaseosa 2L",                 precio:13,  clase:"bebida" },
+  { categoria:"bebidas", nombre:"600ml Coca-Cola Popular",    precio:7,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"350ml Fanta Popular",        precio:7,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"350ml Sprite Popular",       precio:7,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"190ml Mini Coca-Cola",       precio:3,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"190ml Mini fanta",           precio:3,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"Limonada Mediana",           precio:5,   clase:"bebida" },
+  { categoria:"bebidas", nombre:"Refresco Vaso",              precio:3,   clase:"bebida" },
+
+  // ---- EXTRAS ----
+  { categoria:"extras", nombre:"Extra Platano",               precio:7,   clase:"extra" },
+  { categoria:"extras", nombre:"Extra Papas",                 precio:7,   clase:"extra" },
+  { categoria:"extras", nombre:"Extra Arroz",                 precio:7,   clase:"extra" }
 ];
 
 let stockActual = {}; // { "Pollo Entero": 5, ... } — solo trae los productos que el admin controla
 let fotosActuales = {}; // { "Pollo Entero": "https://..." o "data:image/jpeg;..." } — sincronizadas con todos
+
+// ================= CATEGORÍAS: BOTONES Y FILTRO (NUEVO) =================
+// Al abrir el POS, muestra la categoría que toca según la hora
+function categoriaPorHora(){
+  const ahora = new Date();
+  const t = ahora.getHours() * 60 + ahora.getMinutes();
+  if(t < 10 * 60) return "desayuno";
+  if(t < 14 * 60 + 30) return "almuerzo";
+  return "cena";
+}
+
+let categoriaActiva = categoriaPorHora();
+
+function categoriasVisibles(){
+  return CATEGORIAS_POS.filter(c => c.visible);
+}
+
+// Cuántas unidades del pedido actual hay en cada categoría (para el numerito del botón)
+function cuentaPorCategoria(){
+  const cuentas = {};
+  pedido.forEach(x=>{
+    const k = x.c;
+    if(k) cuentas[k] = (cuentas[k] || 0) + 1;
+  });
+  return cuentas;
+}
+
+function renderTabs(){
+  const cont = document.getElementById("tabsCategorias");
+  const visibles = categoriasVisibles();
+
+  // Si la categoría activa quedó oculta, vuelve a la primera visible
+  if(visibles.length && !visibles.some(c => c.id === categoriaActiva)){
+    categoriaActiva = visibles[0].id;
+  }
+
+  const cuentas = cuentaPorCategoria();
+  let html = "";
+
+  visibles.forEach(c=>{
+    const n = cuentas[c.id] || 0;
+    html += `<button type="button" class="tab-cat${c.id === categoriaActiva ? " activo" : ""}" onclick="elegirCategoria('${c.id}')">${c.titulo}${n ? `<span class="cuenta">${n}</span>` : ""}</button>`;
+  });
+
+  cont.innerHTML = html;
+}
+
+function elegirCategoria(id){
+  categoriaActiva = id;
+  renderTabs();
+  renderMenu();
+
+  // Si el menú quedó fuera de vista (por ejemplo el mesero estaba abajo,
+  // cerca del pago), lo subimos para que vea los platillos de la categoría
+  const grid = document.getElementById("menuGrid");
+  const topbar = document.getElementById("topbar");
+  const tabs = document.getElementById("tabsCategorias");
+  const limite = (topbar ? topbar.offsetHeight : 0) + (tabs ? tabs.offsetHeight : 0);
+  const r = grid.getBoundingClientRect();
+  if(r.top < limite || r.top > window.innerHeight * 0.8){
+    grid.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+}
+
+// La barra de categorías se pega justo debajo de la barra superior
+function ajustarAlturaTopbar(){
+  const t = document.getElementById("topbar");
+  if(t) document.documentElement.style.setProperty("--topbar-h", t.offsetHeight + "px");
+}
 
 // ================= RENDER DEL MENÚ (con foto y stock si aplica) =================
 function renderMenu(){
   const cont = document.getElementById("menuGrid");
   let html = "";
 
-  PRODUCTOS_POS.forEach(p=>{
+  PRODUCTOS_POS.filter(p => p.categoria === categoriaActiva).forEach(p=>{
     const tieneStock = Object.prototype.hasOwnProperty.call(stockActual, p.nombre);
     const cantidad = tieneStock ? Number(stockActual[p.nombre]) || 0 : null;
     const agotado = tieneStock && cantidad <= 0;
@@ -644,7 +835,7 @@ function renderMenu(){
     html += `
       <button class="${p.clase}${agotado ? " agotado" : ""}"
         ${agotado ? "disabled" : ""}
-        onclick="add('${p.nombre.replace(/'/g,"\\'")}',${p.precio})">
+        onclick="add('${p.nombre.replace(/'/g,"\\'")}',${p.precio},'${p.categoria}')">
         ${badge}${foto}${p.nombre}<br>${p.precio} Bs
       </button>`;
   });
@@ -682,25 +873,29 @@ function cargarStockYFotos(){
 }
 
 // ================= CARRITO =================
-function add(n, p){
-  pedido.push({ n, p });
+function add(n, p, c){
+  pedido.push({ n, p, c });
   total += p;
   render();
 }
 
-function quitarUno(nombre){
-  const i = pedido.findIndex(x => x.n === nombre);
+// Quita una unidad de ese producto con ese precio (primero de la categoría que estás viendo)
+function quitarUno(nombre, precio){
+  let i = pedido.findIndex(x => x.n === nombre && x.p === precio && x.c === categoriaActiva);
+  if(i === -1) i = pedido.findIndex(x => x.n === nombre && x.p === precio);
   if(i === -1) return;
   total -= pedido[i].p;
   pedido.splice(i, 1);
   render();
 }
 
+// Junta las unidades iguales (mismo nombre y mismo precio) en una sola línea
 function agrupar(){
   const grupos = {};
   pedido.forEach(x=>{
-    if(!grupos[x.n]) grupos[x.n] = { n:x.n, p:x.p, cant:0 };
-    grupos[x.n].cant++;
+    const clave = x.n + "|" + x.p;
+    if(!grupos[clave]) grupos[clave] = { n:x.n, p:x.p, cant:0 };
+    grupos[clave].cant++;
   });
   return Object.values(grupos);
 }
@@ -717,7 +912,7 @@ function render(){
         <div class="item-carrito">
           <div class="nombre">${g.cant}x ${g.n}</div>
           <div class="subtotal">${g.cant * g.p} Bs</div>
-          <button class="quitar" onclick="quitarUno('${g.n.replace(/'/g,"\\'")}')">✕</button>
+          <button class="quitar" onclick="quitarUno('${g.n.replace(/'/g,"\\'")}',${g.p})">✕</button>
         </div>`;
     });
     document.getElementById("detalle").innerHTML = html;
@@ -725,6 +920,7 @@ function render(){
 
   document.getElementById("totalTop").innerText = "Total: " + total + " Bs";
   document.getElementById("totalText").innerText = "Total: " + total + " Bs";
+  renderTabs();   // actualiza el numerito de cada categoría
   actualizarCambio(null);
 }
 
@@ -939,20 +1135,39 @@ function verCaja(){
   btn.disabled = true;
 
   fetch(API + "?accion=caja")
-  .then(r => r.json())
-  .then(data=>{
-    if(!data.ok){
-      alert("❌ No se pudo leer la caja");
+  .then(r => r.text())
+  .then(txt=>{
+    let data;
+    try{
+      data = JSON.parse(txt);
+    }catch(e){
+      // Un Apps Script viejo responde texto plano ("API Activa") en vez de los datos de la caja
+      alert("⚠️ El servidor respondió, pero no con los datos de la caja. Es casi seguro que el Apps Script todavía no tiene la parte de caja actualizada — vuelve a pegar el código y haz \"Nueva versión\" en Implementar.");
       return;
     }
-    alert(
-      "📊 CAJA DE HOY (" + data.fecha + ")\n" +
+    if(!data.ok){
+      alert("❌ No se pudo leer la caja" + (data.error ? ": " + data.error : ""));
+      return;
+    }
+
+    const totalCaja = Number(data.total) || 0;
+    const efectivoCaja = Number(data.efectivo) || 0;
+    const qrCaja = Number(data.qr) || 0;
+    const sinClasificar = totalCaja - efectivoCaja - qrCaja;
+
+    let msg =
+      "📊 CAJA DE HOY (" + (data.fecha || "") + ")\n" +
       "Todos los dispositivos\n\n" +
-      "Total: " + data.total + " Bs\n" +
-      "Efectivo: " + data.efectivo + " Bs\n" +
-      "QR: " + data.qr + " Bs\n" +
-      "Pedidos: " + data.pedidos
-    );
+      "Total: " + totalCaja + " Bs\n" +
+      "Efectivo: " + efectivoCaja + " Bs\n" +
+      "QR: " + qrCaja + " Bs\n" +
+      "Pedidos: " + (data.pedidos || 0);
+
+    if(sinClasificar !== 0){
+      msg += "\n\n⚠️ Hay " + sinClasificar + " Bs sin clasificar como efectivo o QR " +
+             "(por ejemplo, pedidos que llegaron desde la página web, que no traen método de pago).";
+    }
+    alert(msg);
   })
   .catch(err=>{
     console.error(err);
@@ -990,6 +1205,19 @@ function cerrarAdminPOS(){
   document.getElementById("panelAdminPOS").style.display = "none";
 }
 
+// Almuerzo y Cena comparten productos (y su stock, que va por nombre):
+// en el admin cada producto se lista una sola vez
+function gruposAdmin(){
+  const vistos = new Set();
+  const grupos = [];
+  CATEGORIAS_POS.forEach(cat=>{
+    const productos = PRODUCTOS_POS.filter(p => p.categoria === cat.id && !vistos.has(p.nombre));
+    productos.forEach(p => vistos.add(p.nombre));
+    if(productos.length) grupos.push({ cat, productos });
+  });
+  return grupos;
+}
+
 function idSeguroDe(nombre){
   return nombre.replace(/[^a-zA-Z0-9]/g, "_");
 }
@@ -999,17 +1227,21 @@ function construirStockAdmin(){
   const cont = document.getElementById("stockAdmin");
   let html = "";
 
-  PRODUCTOS_POS.forEach(p=>{
-    const idSeguro = idSeguroDe(p.nombre);
-    const valorActual = Object.prototype.hasOwnProperty.call(stockActual, p.nombre)
-      ? stockActual[p.nombre]
-      : "";
+  gruposAdmin().forEach(({ cat, productos })=>{
+    html += `<div class="grupo-admin">${cat.titulo}${cat.visible ? "" : " (oculta)"}</div>`;
 
-    html += `
+    productos.forEach(p=>{
+      const idSeguro = idSeguroDe(p.nombre);
+      const valorActual = Object.prototype.hasOwnProperty.call(stockActual, p.nombre)
+        ? stockActual[p.nombre]
+        : "";
+
+      html += `
       <div class="stock-item">
         <div class="nombre-stock">${p.nombre}</div>
         <input type="number" min="0" id="stock_${idSeguro}" value="${valorActual}" placeholder="sin límite">
       </div>`;
+    });
   });
 
   cont.innerHTML = html;
@@ -1053,11 +1285,14 @@ function construirFotosAdminPOS(){
   const cont = document.getElementById("fotosAdminPOS");
   let html = "";
 
-  PRODUCTOS_POS.forEach(p=>{
-    const idSeguro = idSeguroDe(p.nombre);
-    const fotoActual = fotosActuales[p.nombre] || "";
+  gruposAdmin().forEach(({ cat, productos })=>{
+    html += `<div class="grupo-admin">${cat.titulo}${cat.visible ? "" : " (oculta)"}</div>`;
 
-    html += `
+    productos.forEach(p=>{
+      const idSeguro = idSeguroDe(p.nombre);
+      const fotoActual = fotosActuales[p.nombre] || "";
+
+      html += `
       <div class="foto-item-pos">
         <img id="previewPOS_${idSeguro}" src="${fotoActual}" alt="">
         <div class="campos-foto">
@@ -1071,6 +1306,7 @@ function construirFotosAdminPOS(){
           <div id="estadoFoto_${idSeguro}" style="font-size:11px;color:var(--texto-sec);"></div>
         </div>
       </div>`;
+    });
   });
 
   cont.innerHTML = html;
@@ -1190,6 +1426,9 @@ function guardarFotoEnServidor(nombre, valor, idSeguro, elEstado){
 }
 
 // ================= ARRANQUE =================
+ajustarAlturaTopbar();
+window.addEventListener("resize", ajustarAlturaTopbar);
+window.addEventListener("load", ajustarAlturaTopbar);
 renderMenu();
 render();
 cargarStockYFotos();
