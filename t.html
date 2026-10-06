@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Aplicaciones - Wilson Cruz</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#1a1a1a,#2b0b00);
+color:#fff;
+min-height:100vh;
+}
+
+header{
+text-align:center;
+padding:30px 20px;
+background:rgba(0,0,0,.35);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.logo{
+width:120px;
+height:120px;
+object-fit:contain;
+background:white;
+border-radius:50%;
+padding:8px;
+box-shadow:0 0 25px rgba(255,153,0,.5);
+}
+
+h1{
+margin-top:15px;
+font-size:2rem;
+color:#ffcc80;
+}
+
+.subtitle{
+color:#ddd;
+margin-top:8px;
+}
+
+.search{
+max-width:700px;
+margin:25px auto;
+padding:0 20px;
+}
+
+.search input{
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+font-size:16px;
+outline:none;
+}
+
+.section{
+padding:30px 20px;
+}
+
+.section h2{
+margin-bottom:20px;
+color:#ffcc80;
+border-left:5px solid #ff6f00;
+padding-left:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+gap:20px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.1);
+border-radius:18px;
+padding:20px;
+transition:.3s;
+backdrop-filter:blur(6px);
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 10px 25px rgba(255,153,0,.25);
+}
+
+.icon{
+font-size:40px;
+margin-bottom:10px;
+}
+
+.card h3{
+margin-bottom:8px;
+}
+
+.card p{
+font-size:14px;
+color:#ccc;
+margin-bottom:15px;
+}
+
+.buttons{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.btn{
+flex:1;
+text-align:center;
+padding:10px;
+border-radius:10px;
+text-decoration:none;
+font-weight:600;
+cursor:pointer;
+}
+
+.open{
+background:#ff6f00;
+color:white;
+}
+
+.copy{
+background:#333;
+color:white;
+}
+
+footer{
+text-align:center;
+padding:30px;
+color:#aaa;
+}
+
+.counter{
+margin-top:10px;
+color:#ffcc80;
+font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<header>
+
+<img src="https://jwilsoncruz.github.io/gopollosrhosse/logo.png" class="logo">
+
+<h1>Portal de Aplicaciones</h1>
+
+<div class="subtitle">
+Wilson Cruz · Consultor de Marketing Digital y Desarrollo Web
+</div>
+
+<div class="counter">
+Total de aplicaciones: 27
+</div>
+
+</header>
+
+<div class="search">
+<input type="text" id="search" placeholder="Buscar aplicación...">
+</div>
+
+<div id="content"></div>
+
+<footer>
+© 2026 Wilson Cruz · Todos los proyectos en un solo lugar
+</footer>
+
+<script>
+
+const data = [
+
+{
+cat:"🍗 Go Pollos Rhosse",
+items:[
+["Inicio","🏠","Página principal","https://jwilsoncruz.github.io/gopollosrhosse/index.html"],
+["Reservas","📅","Sistema de reservas","https://jwilsoncruz.github.io/gopollosrhosse/Reservas.html"],
+["Cocina","👨‍🍳","Panel de cocina","https://jwilsoncruz.github.io/gopollosrhosse/cocina.html"],
+["Botones Cocina","🎛️","Botones físicos","https://jwilsoncruz.github.io/gopollosrhosse/cocinabotonesfisicos.html"],
+["Comandas","📝","Gestión de comandas","https://jwilsoncruz.github.io/gopollosrhosse/comandas.html"],
+["Control","📊","Panel de control","https://jwilsoncruz.github.io/gopollosrhosse/control.html"],
+["Cumples","🎂","Cumpleaños","https://jwilsoncruz.github.io/gopollosrhosse/cumples.html"],
+["Invitación","💌","Invitación digital","https://jwilsoncruz.github.io/gopollosrhosse/invitacion.html"],
+["Pantalla","📺","Pantalla pedidos","https://jwilsoncruz.github.io/gopollosrhosse/pantalla.html"],
+["Pantalla 2","🖥️","Pantalla secundaria","https://jwilsoncruz.github.io/gopollosrhosse/pantalla2.html"],
+["Pedidos","🛒","Sistema pedidos","https://jwilsoncruz.github.io/gopollosrhosse/pedidos.html"],
+["Pollos GV2","🍗","Versión GV2","https://jwilsoncruz.github.io/gopollosrhosse/pollosGv2.html"],
+["Pronósticos","📈","Pronósticos de venta","https://jwilsoncruz.github.io/gopollosrhosse/pronosticos.html"],
+["Radio","🎵","Radio YouTube","https://jwilsoncruz.github.io/gopollosrhosse/radio_youtube_ok.html"],
+["Stock","📦","Control de stock","https://jwilsoncruz.github.io/gopollosrhosse/stockcomandas.html"],
+["Web Pro","🌐","Sitio profesional","https://jwilsoncruz.github.io/gopollosrhosse/webpro.html"]
+]
+},
+
+{
+cat:"📶 WiFi Marketing",
+items:[
+["WiFi","📶","Portal WiFi","https://jwilsoncruz.github.io/gopollosrhosse/wifi.html"],
+["WiFi Premium","🚀","Portal Premium","https://jwilsoncruz.github.io/gopollosrhosse/wifipremium.html"],
+["WiFi Pro","⭐","Portal Pro","https://jwilsoncruz.github.io/gopollosrhosse/wifipro.html"],
+["Demo Fidelización","🎯","Captura de clientes","https://jwilsoncruz.github.io/DemoWifiFidelizacion"],
+["WiFi General","📡","Proyecto WiFi","https://jwilsoncruz.github.io/wifi"]
+]
+},
+
+{
+cat:"📈 SEO y Captación",
+items:[
+["Pollo Cerca","📍","SEO Local","https://jwilsoncruz.github.io/gopollosrhosse/pollo-cerca.html"],
+["Delivery Trinidad","🛵","SEO Delivery","https://jwilsoncruz.github.io/gopollosrhosse/delivery-trinidad.html"]
+]
+},
+
+{
+cat:"🎁 Promociones",
+items:[
+["Promo Go Pollos","🎉","Promociones","https://jwilsoncruz.github.io/promo-go-pollos"]
+]
+},
+
+{
+cat:"🚕 Otros Proyectos",
+items:[
+["Memorial QR","🪦","Memorial digital","https://jwilsoncruz.github.io/memorial-qr"],
+["Stylos Smith","✂️","Proyecto Stylos Smith","https://jwilsoncruz.github.io/Stylos-Smith-Study"],
+["Ferretería","🔩","Demo ferretería","https://jwilsoncruz.github.io/webferreteria"],
+["MiTaxi","🚕","Aplicación de taxis","https://jwilsoncruz.github.io/MiTaxi"],
+["Movie Narco Héroe","🎬","Proyecto multimedia","https://jwilsoncruz.github.io/MovieNarcoHeroe"]
+]
+}
+
+];
+
+function copyLink(url){
+navigator.clipboard.writeText(url);
+alert("Enlace copiado");
+}
+
+function render(filter=""){
+const content=document.getElementById("content");
+content.innerHTML="";
+
+data.forEach(section=>{
+
+let html="";
+
+section.items.forEach(item=>{
+
+if(
+item[0].toLowerCase().includes(filter.toLowerCase()) ||
+item[2].toLowerCase().includes(filter.toLowerCase())
+){
+
+html+=`
+<div class="card">
+<div class="icon">${item[1]}</div>
+<h3>${item[0]}</h3>
+<p>${item[2]}</p>
+<div class="buttons">
+<a class="btn open" target="_blank" href="${item[3]}">Abrir</a>
+<button class="btn copy" onclick="copyLink('${item[3]}')">Copiar</button>
+</div>
+</div>`;
+}
+
+});
+
+if(html!=""){
+content.innerHTML+=`
+<div class="section">
+<h2>${section.cat}</h2>
+<div class="grid">
+${html}
+</div>
+</div>`;
+}
+
+});
+
+}
+
+render();
+
+document.getElementById("search").addEventListener("keyup",e=>{
+render(e.target.value);
+});
+
+</script>
+
+</body>
+</html>
