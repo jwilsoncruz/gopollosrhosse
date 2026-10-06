@@ -1,0 +1,3639 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Go Pollos Rhosse · WiFi Gratis · Próxima Apertura</title>
+
+<meta name="description"
+content="WiFi gratis de Go Pollos Rhosse. Regístrate, raspa y gana premios y recibe promociones de nuestra próxima apertura.">
+
+<link rel="icon" href="wifi.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link
+href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#120705;
+  --bg2:#1d0b06;
+  --panel:#28150d;
+  --panel2:#1c0d08;
+
+  --red:#c6281d;
+  --red2:#e84624;
+
+  --orange:#ff6f00;
+  --gold:#ffca28;
+  --gold2:#f3a712;
+
+  --cream:#fff4df;
+  --text:#f8ead8;
+  --muted:#c9b6a3;
+
+  --green:#35bd68;
+
+  --line:rgba(255,202,40,.25);
+
+  --radius:18px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  padding:0 0 35px;
+
+  min-height:100vh;
+
+  color:var(--text);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(255,111,0,.30),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 0% 35%,
+      rgba(198,40,29,.18),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      #180805 0%,
+      #0e0302 100%
+    );
+}
+
+body::before{
+  content:"";
+
+  position:fixed;
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:.025;
+
+  background-image:
+    radial-gradient(
+      #fff 1px,
+      transparent 1px
+    );
+
+  background-size:18px 18px;
+}
+
+.app{
+  width:100%;
+  max-width:450px;
+
+  margin:auto;
+
+  padding:0 16px;
+
+  position:relative;
+  z-index:1;
+}
+
+/* ==============================
+   LOGO
+============================== */
+
+.marca{
+  text-align:center;
+
+  padding:18px 0 5px;
+}
+
+.marca img{
+  width:155px;
+  max-width:70vw;
+
+  filter:
+    drop-shadow(
+      0 8px 18px
+      rgba(0,0,0,.55)
+    );
+}
+
+
+/* ==============================
+   WIFI BADGE
+============================== */
+
+.wifiBadge{
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:7px;
+
+  width:max-content;
+  max-width:100%;
+
+  margin:7px auto 9px;
+
+  padding:7px 14px;
+
+  border-radius:50px;
+
+  color:#251000;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffca28,
+      #ff9800
+    );
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-weight:800;
+
+  font-size:14px;
+
+  box-shadow:
+    0 5px 18px
+    rgba(255,152,0,.20);
+}
+
+
+/* ==============================
+   TITULOS
+============================== */
+
+h1,
+h2,
+h3{
+  font-family:"Baloo 2",sans-serif;
+}
+
+h1{
+  margin:6px 0 4px;
+
+  text-align:center;
+
+  font-size:
+    clamp(
+      30px,
+      8vw,
+      42px
+    );
+
+  line-height:1;
+
+  font-weight:800;
+}
+
+.tituloNaranja{
+  color:var(--orange);
+}
+
+.subtitulo{
+  margin:8px 0 5px;
+
+  text-align:center;
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-size:20px;
+
+  font-weight:700;
+
+  color:#ffd180;
+}
+
+.descripcion{
+  margin:0 auto;
+
+  max-width:390px;
+
+  text-align:center;
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.5;
+}
+
+
+/* ==============================
+   BANNER GASOLINA / PASO
+============================== */
+
+.pasoBanner{
+
+  margin:16px 0 12px;
+
+  padding:14px 15px;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(198,40,29,.95),
+      rgba(255,111,0,.92)
+    );
+
+  box-shadow:
+    0 10px 30px
+    rgba(0,0,0,.28);
+}
+
+.pasoBanner strong{
+  display:block;
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-size:19px;
+
+  color:#fff;
+}
+
+.pasoBanner span{
+  display:block;
+
+  margin-top:3px;
+
+  font-size:13px;
+
+  line-height:1.4;
+
+  color:#fff1df;
+}
+
+
+/* ==============================
+   CONTADOR
+============================== */
+
+.countdown{
+
+  margin:13px 0;
+
+  padding:13px 10px;
+
+  border-radius:18px;
+
+  border:1px solid var(--line);
+
+  background:
+    rgba(255,255,255,.035);
+}
+
+.countdownTitulo{
+
+  text-align:center;
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-weight:700;
+
+  color:#ffd180;
+
+  font-size:13px;
+
+  margin-bottom:9px;
+}
+
+.contador{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(4,1fr);
+
+  gap:6px;
+}
+
+.numero{
+
+  padding:8px 3px;
+
+  text-align:center;
+
+  border-radius:12px;
+
+  background:
+    rgba(0,0,0,.25);
+
+  border:1px solid
+    rgba(255,202,40,.13);
+}
+
+.numero strong{
+
+  display:block;
+
+  color:var(--gold);
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-size:24px;
+
+  line-height:1;
+}
+
+.numero small{
+
+  display:block;
+
+  margin-top:3px;
+
+  color:#a99583;
+
+  font-size:9px;
+
+  text-transform:uppercase;
+}
+
+
+/* ==============================
+   PANELES
+============================== */
+
+.panel{
+
+  margin:14px 0;
+
+  padding:18px;
+
+  border-radius:var(--radius);
+
+  border:1px solid var(--line);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(47,24,14,.96),
+      rgba(27,10,6,.98)
+    );
+
+  box-shadow:
+    0 10px 30px
+    rgba(0,0,0,.18);
+}
+
+
+/* ==============================
+   BENEFICIOS
+============================== */
+
+.beneficios{
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:7px;
+
+  margin:13px 0;
+}
+
+.beneficio{
+
+  padding:10px 5px;
+
+  text-align:center;
+
+  border-radius:13px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  border:1px solid
+    rgba(255,202,40,.10);
+}
+
+.beneficio .icono{
+
+  font-size:24px;
+
+  display:block;
+
+  margin-bottom:3px;
+}
+
+.beneficio strong{
+
+  display:block;
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-size:12px;
+
+  color:#fff;
+}
+
+
+/* ==============================
+   OFERTA
+============================== */
+
+.oferta{
+
+  margin:13px 0;
+
+  padding:13px 15px;
+
+  border-radius:15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--red2),
+      #b51f16
+    );
+
+  color:#fff;
+
+  font-size:14px;
+
+  line-height:1.4;
+}
+
+
+/* ==============================
+   FORMULARIO
+============================== */
+
+label.campo{
+
+  display:block;
+
+  margin:12px 0 6px;
+
+  color:var(--muted);
+
+  font-size:13px;
+}
+
+input{
+
+  width:100%;
+
+  padding:13px 14px;
+
+  border-radius:11px;
+
+  border:1px solid var(--line);
+
+  background:var(--panel2);
+
+  color:var(--cream);
+
+  font-size:16px;
+
+  outline:none;
+}
+
+input::placeholder{
+  color:#806e5e;
+}
+
+input:focus{
+
+  border-color:var(--gold);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(255,202,40,.10);
+}
+
+.checkbox{
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:9px;
+
+  margin-top:13px;
+
+  color:#aa9886;
+
+  font-size:12px;
+
+  line-height:1.4;
+}
+
+.checkbox input{
+
+  width:17px;
+  height:17px;
+
+  margin-top:1px;
+
+  flex:none;
+
+  accent-color:var(--orange);
+}
+
+.checkbox strong{
+  color:#fff;
+}
+
+.error{
+
+  min-height:18px;
+
+  margin-top:7px;
+
+  color:#ff9e8a;
+
+  font-size:13px;
+
+  text-align:center;
+}
+
+
+/* ==============================
+   BOTONES
+============================== */
+
+button,
+.btn{
+
+  width:100%;
+
+  padding:15px;
+
+  margin-top:12px;
+
+  border:none;
+
+  border-radius:12px;
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-weight:800;
+
+  font-size:17px;
+
+  cursor:pointer;
+
+  color:#241608;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--gold),
+      #ff9800
+    );
+
+  box-shadow:
+    0 4px 0 #bd7100;
+
+  transition:
+    transform .05s ease;
+}
+
+button:active{
+
+  transform:
+    translateY(3px);
+
+  box-shadow:
+    0 1px 0 #bd7100;
+}
+
+button.secundario{
+
+  background:transparent;
+
+  color:var(--gold);
+
+  border:1px solid var(--line);
+
+  box-shadow:none;
+}
+
+button.verde{
+
+  background:var(--green);
+
+  box-shadow:
+    0 4px 0 #277c45;
+
+  color:#082113;
+}
+
+button.hidden,
+.hidden{
+  display:none !important;
+}
+
+
+/* ==============================
+   WIFI
+============================== */
+
+.clave{
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-size:25px;
+
+  font-weight:800;
+
+  color:var(--gold);
+
+  letter-spacing:1px;
+
+  word-break:break-all;
+
+  text-align:center;
+}
+
+.saludo{
+
+  color:var(--muted);
+
+  text-align:center;
+
+  margin-top:-3px;
+}
+
+
+/* ==============================
+   SELLOS
+============================== */
+
+.stamps{
+
+  display:flex;
+
+  flex-wrap:wrap;
+
+  justify-content:center;
+
+  gap:6px;
+
+  margin:13px 0 4px;
+}
+
+.stamp{
+
+  width:27px;
+  height:27px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  border-radius:50%;
+
+  font-size:12px;
+
+  background:var(--panel2);
+
+  border:1px solid var(--line);
+}
+
+.stamp.lleno{
+
+  background:var(--gold);
+
+  border-color:var(--gold);
+}
+
+.stamps-label{
+
+  text-align:center;
+
+  color:var(--muted);
+
+  font-size:13px;
+}
+
+
+/* ==============================
+   RASPADITO
+============================== */
+
+.raspa-wrap{
+  text-align:center;
+}
+
+.raspa-wrap h1{
+  font-size:25px;
+}
+
+.pista{
+
+  margin-top:-3px;
+
+  color:var(--muted);
+
+  font-size:13px;
+}
+
+canvas{
+
+  display:block;
+
+  width:300px;
+  height:150px;
+
+  max-width:100%;
+
+  margin:18px auto 6px;
+
+  border-radius:13px;
+
+  touch-action:none;
+
+  box-shadow:
+    0 0 0 1px var(--line);
+}
+
+.codigo{
+
+  margin-top:9px;
+
+  padding:10px;
+
+  border-radius:10px;
+
+  border:1px dashed var(--gold);
+
+  background:var(--panel2);
+
+  font-family:"Baloo 2",sans-serif;
+
+  font-size:19px;
+
+  font-weight:700;
+
+  letter-spacing:1px;
+}
+
+.badge-cumple{
+
+  margin-bottom:10px;
+
+  padding:12px;
+
+  border-radius:15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7a3ff2,
+      #c94fd8
+    );
+
+  font-size:14px;
+}
+
+
+/* ==============================
+   APERTURA
+============================== */
+
+.apertura{
+
+  padding:16px;
+
+  margin-top:15px;
+
+  border-radius:18px;
+
+  border:1px solid
+    rgba(255,202,40,.18);
+
+  text-align:center;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255,111,0,.13),
+      transparent 65%
+    );
+}
+
+.apertura h3{
+
+  margin:0 0 5px;
+
+  font-size:22px;
+
+  color:var(--gold);
+}
+
+.apertura p{
+
+  margin:0;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.5;
+}
+
+
+/* ==============================
+   FOOTER
+============================== */
+
+.footer{
+
+  margin-top:22px;
+
+  padding-bottom:12px;
+
+  text-align:center;
+
+  color:#685649;
+
+  font-size:11px;
+
+  line-height:1.5;
+}
+
+.footer strong{
+  color:#8b7564;
+}
+
+
+/* ==============================
+   ACCESIBILIDAD
+============================== */
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible{
+
+  outline:3px solid var(--gold);
+
+  outline-offset:2px;
+}
+
+@media(max-width:360px){
+
+  .app{
+    padding:0 12px;
+  }
+
+  .beneficios{
+    grid-template-columns:1fr;
+  }
+
+  .beneficio{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-align:left;
+    padding:8px 10px;
+  }
+
+  .beneficio .icono{
+    margin:0;
+  }
+
+  .beneficio strong{
+    font-size:13px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+
+  *{
+    scroll-behavior:auto !important;
+    transition:none !important;
+    animation:none !important;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- =========================================
+     LOGO
+========================================= -->
+
+<div class="marca">
+
+  <img
+    src="logo.png"
+    alt="Go Pollos Rhosse"
+  >
+
+</div>
+
+
+<!-- =========================================
+     WIFI GRATIS
+========================================= -->
+
+<div class="wifiBadge">
+
+  📶 WIFI GRATIS
+
+</div>
+
+
+<h1>
+
+  Go Pollos
+
+  <span class="tituloNaranja">
+    Rhosse
+  </span>
+
+</h1>
+
+
+<div class="subtitulo">
+
+  🍗 Pollos a la leña · Trinidad
+
+</div>
+
+
+<p class="descripcion">
+
+  Mientras preparamos nuestra gran apertura,
+  disfruta de <strong>WiFi gratis</strong> y participa
+  en nuestros premios.
+
+</p>
+
+
+<!-- =========================================
+     PERSONAS DE PASO / GASOLINA
+========================================= -->
+
+<div class="pasoBanner">
+
+  <strong>
+    ⛽ ¿Estás cargando gasolina o pasando por aquí?
+  </strong>
+
+  <span>
+    Conéctate gratis al WiFi de Go Pollos Rhosse
+    mientras haces tu parada.
+  </span>
+
+</div>
+
+
+<!-- =========================================
+     CONTADOR
+========================================= -->
+
+<div class="countdown">
+
+  <div class="countdownTitulo">
+
+    🔥 PRÓXIMA APERTURA
+
+  </div>
+
+  <div class="contador">
+
+    <div class="numero">
+
+      <strong id="dias">
+        --
+      </strong>
+
+      <small>
+        Días
+      </small>
+
+    </div>
+
+
+    <div class="numero">
+
+      <strong id="horas">
+        --
+      </strong>
+
+      <small>
+        Horas
+      </small>
+
+    </div>
+
+
+    <div class="numero">
+
+      <strong id="minutos">
+        --
+      </strong>
+
+      <small>
+        Min
+      </small>
+
+    </div>
+
+
+    <div class="numero">
+
+      <strong id="segundos">
+        --
+      </strong>
+
+      <small>
+        Seg
+      </small>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================
+     BENEFICIOS
+========================================= -->
+
+<div class="beneficios">
+
+  <div class="beneficio">
+
+    <span class="icono">
+      📶
+    </span>
+
+    <strong>
+      WiFi GRATIS
+    </strong>
+
+  </div>
+
+
+  <div class="beneficio">
+
+    <span class="icono">
+      🎁
+    </span>
+
+    <strong>
+      Raspa y gana
+    </strong>
+
+  </div>
+
+
+  <div class="beneficio">
+
+    <span class="icono">
+      🍗
+    </span>
+
+    <strong>
+      Premios
+    </strong>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================
+     REGISTRO
+========================================= -->
+
+<div id="pantalla1" class="panel">
+
+  <h2 style="margin:0;text-align:center;font-size:25px;">
+
+    📲 Conéctate y participa
+
+  </h2>
+
+
+  <p style="
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    margin:5px 0 12px;
+  ">
+
+    Registra tus datos una sola vez
+    para obtener tu acceso WiFi y tu
+    oportunidad de raspar.
+
+  </p>
+
+
+  <div class="oferta">
+
+    🎁 <strong>Además:</strong>
+
+    recibe avisos y promociones especiales
+    cuando llegue la inauguración.
+
+  </div>
+
+
+  <label
+    class="campo"
+    for="nombre"
+  >
+    Tu nombre
+  </label>
+
+
+  <input
+    type="text"
+    id="nombre"
+    placeholder="Ej: María Flores"
+    autocomplete="name"
+    maxlength="80"
+  >
+
+
+  <label
+    class="campo"
+    for="telefono"
+  >
+    Tu WhatsApp
+  </label>
+
+
+  <input
+    type="tel"
+    id="telefono"
+    placeholder="Ej: 68972863"
+    inputmode="numeric"
+    autocomplete="tel"
+    maxlength="15"
+  >
+
+
+  <label
+    class="campo"
+    for="fecha"
+  >
+    Fecha de nacimiento
+    <span style="color:#756355;">
+      (opcional)
+    </span>
+  </label>
+
+
+  <input
+    type="date"
+    id="fecha"
+  >
+
+
+  <label
+    class="campo"
+    for="invito"
+  >
+    ¿Quién te invitó?
+    <span style="color:#756355;">
+      (opcional)
+    </span>
+  </label>
+
+
+  <input
+    type="text"
+    id="invito"
+    placeholder="Nombre de tu amigo/a"
+    maxlength="80"
+  >
+
+
+  <!-- CONSENTIMIENTO -->
+
+  <div class="checkbox">
+
+    <input
+      type="checkbox"
+      id="acepto"
+    >
+
+    <label
+      for="acepto"
+      style="margin:0;"
+    >
+
+      Acepto recibir por WhatsApp
+      promociones, novedades y avisos
+      de Go Pollos Rhosse.
+
+    </label>
+
+  </div>
+
+
+  <div
+    class="error"
+    id="errorRegistro"
+    aria-live="polite"
+  ></div>
+
+
+  <button id="btnContinuar">
+
+    📲 CONECTARME AL WIFI
+
+  </button>
+
+
+  <p style="
+    color:#756355;
+    font-size:11px;
+    text-align:center;
+    margin:9px 0 0;
+  ">
+
+    Tu información será utilizada para
+    gestionar el WiFi, premios y promociones
+    de Go Pollos Rhosse.
+
+  </p>
+
+</div>
+
+
+<!-- =========================================
+     MENU / EXPECTATIVA
+========================================= -->
+
+<div class="panel">
+
+  <h3 style="
+    margin:0 0 8px;
+    font-size:21px;
+  ">
+
+    🍗 Próximamente
+
+  </h3>
+
+
+  <p style="
+    color:var(--muted);
+    font-size:13px;
+    margin:0;
+  ">
+
+    Estamos preparando nuestros
+    <strong style="color:#fff;">
+      pollos a la leña
+    </strong>
+    y nuestros acompañamientos para
+    recibirte muy pronto.
+
+  </p>
+
+
+  <div style="
+    margin-top:10px;
+    color:#ffd180;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+  ">
+
+    🔥 ¡Sé de los primeros en probarlos!
+
+  </div>
+
+</div>
+
+
+<!-- =========================================
+     WIFI
+========================================= -->
+
+<div
+  class="panel hidden"
+  id="pantalla2"
+>
+
+  <h2 style="
+    font-size:24px;
+    margin:0;
+    text-align:center;
+  ">
+
+    ✅ ¡WiFi listo!
+
+  </h2>
+
+
+  <p
+    class="saludo"
+    id="saludo"
+  ></p>
+
+
+  <p style="
+    text-align:center;
+    font-size:13px;
+  ">
+
+    📡 Red WiFi:
+
+    <br>
+
+    <strong>
+      WiFi Go Pollo´s Rhosse
+    </strong>
+
+  </p>
+
+
+  <div class="oferta">
+
+    📶 <strong>
+      Tu clave WiFi
+    </strong>
+
+
+    <div
+      class="clave"
+      id="clave"
+    ></div>
+
+  </div>
+
+
+  <button
+    class="secundario"
+    id="btnCopiarClave"
+  >
+
+    📋 COPIAR CLAVE
+
+  </button>
+
+
+  <div
+    class="stamps-label"
+    id="stampsLabel"
+  ></div>
+
+
+  <div
+    class="stamps"
+    id="stamps"
+  ></div>
+
+
+  <button id="btnSeguir">
+
+    🎁 RASPAR MI PREMIO
+
+  </button>
+
+
+  <a
+    href="#"
+    class="cambiar"
+    id="linkCambiar"
+    style="
+      display:block;
+      text-align:center;
+      margin-top:15px;
+      color:var(--muted);
+      font-size:12px;
+    "
+  >
+
+    ¿No eres tú? Cambiar datos
+
+  </a>
+
+</div>
+
+
+<!-- =========================================
+     YA JUGÓ
+========================================= -->
+
+<div
+  class="panel hidden"
+  id="yaJugaste"
+>
+
+  <h2 style="
+    font-size:24px;
+    margin:0;
+    text-align:center;
+  ">
+
+    🎁 ¡Ya raspaste hoy!
+
+  </h2>
+
+
+  <p
+    id="mensajeVuelve"
+    style="
+      text-align:center;
+      color:var(--muted);
+    "
+  >
+
+    Vuelve mañana por tu próximo
+    raspadito.
+
+  </p>
+
+
+  <div
+    class="stamps-label"
+    id="stampsLabel2"
+  ></div>
+
+
+  <div
+    class="stamps"
+    id="stamps2"
+  ></div>
+
+
+  <div class="oferta">
+
+    🍗 <strong>
+      ¡La apertura está cada vez más cerca!
+    </strong>
+
+    <br>
+
+    Te avisaremos por WhatsApp cuando
+    podamos recibirte.
+
+  </div>
+
+
+  <a
+    href="#"
+    class="cambiar"
+    id="linkCambiar2"
+    style="
+      display:block;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+    "
+  >
+
+    ¿No eres tú? Cambiar datos
+
+  </a>
+
+</div>
+
+
+<!-- =========================================
+     RASPADITO
+========================================= -->
+
+<div
+  class="panel hidden raspa-wrap"
+  id="raspa"
+>
+
+  <div
+    class="badge-cumple hidden"
+    id="badgeCumple"
+  >
+
+    🎂 ¡Feliz cumpleaños!
+    Tenemos algo especial para ti.
+
+  </div>
+
+
+  <h2>
+
+    🎁 Raspa y gana
+
+  </h2>
+
+
+  <p class="pista">
+
+    Desliza el dedo sobre el recuadro
+    hasta descubrir tu premio.
+
+  </p>
+
+
+  <canvas
+    id="canvas"
+    width="300"
+    height="150"
+    aria-label="Tarjeta para raspar y revelar tu premio"
+  ></canvas>
+
+
+  <div
+    class="oferta hidden"
+    id="premioBox"
+  >
+
+    🎉 Tu premio
+
+
+    <div
+      class="clave"
+      id="premioTexto"
+    ></div>
+
+
+    <p style="
+      color:#ffe6b3;
+      margin-bottom:0;
+      font-size:12px;
+    ">
+
+      ⚠️ Los premios se podrán utilizar
+      cuando Go Pollos Rhosse esté atendiendo.
+
+    </p>
+
+  </div>
+
+
+  <div
+    class="codigo hidden"
+    id="codigoBox"
+  ></div>
+
+
+  <button
+    id="btnPremio"
+    class="hidden"
+  >
+
+    🎁 GUARDAR MI PREMIO
+
+  </button>
+
+
+  <button
+    id="btnCompartir"
+    class="secundario hidden"
+  >
+
+    📤 INVITAR A UN AMIGO
+
+  </button>
+
+
+  <button
+    id="segundaBtn"
+    class="hidden"
+  >
+
+    🎁 SEGUNDA OPORTUNIDAD
+
+  </button>
+
+</div>
+
+
+<!-- =========================================
+     MENSAJE DE APERTURA
+========================================= -->
+
+<div class="apertura">
+
+  <h3>
+
+    🍗 La leña ya está calentando...
+
+  </h3>
+
+
+  <p>
+
+    Todavía estamos preparando todo.
+    Mientras tanto, puedes usar nuestro
+    WiFi gratis, participar en los premios
+    y registrarte para recibir las promociones
+    de inauguración.
+
+  </p>
+
+</div>
+
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
+<div class="footer">
+
+  <strong>
+    Go Pollos Rhosse
+  </strong>
+
+  <br>
+
+  Pollos a la leña · Trinidad, Beni
+
+  <br>
+
+  WhatsApp:
+
+  <strong>
+    68972863
+  </strong>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN PRINCIPAL
+========================================================= */
+
+
+/*
+  GOOGLE APPS SCRIPT
+  Se conserva tu URL actual.
+*/
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbzKUhFIjw-41T7W9ZunKtlU_clWWZxyfFvEEfjsLvm9LgU7K1NCK1TL3foHzfQl51_lIg/exec";
+
+
+/*
+  WHATSAPP OFICIAL
+*/
+
+const WHATSAPP =
+"59168972863";
+
+
+/*
+  FECHA DE APERTURA
+
+  CAMBIA SOLO ESTA FECHA.
+
+  Ejemplo:
+  15 de octubre de 2026 a las 19:00
+
+  sería:
+
+  2026-10-15T19:00:00-04:00
+*/
+
+const FECHA_APERTURA =
+"2026-10-15T19:00:00-04:00";
+
+
+/*
+  MODO ACTUAL
+
+  false = todavía cerrado
+  true  = ya está abierto
+
+  Mientras estés en preapertura:
+*/
+
+const POLLERIA_ABIERTA =
+false;
+
+
+/*
+  CLAVE LOCAL
+*/
+
+const STORAGE_KEY =
+"prc_cliente_v3";
+
+
+/* =========================================================
+   GOOGLE SHEETS
+========================================================= */
+
+function enviarAAppsScript(datos){
+
+  if(!APPS_SCRIPT_URL){
+    return;
+  }
+
+  try{
+
+    fetch(
+      APPS_SCRIPT_URL,
+      {
+        method:"POST",
+
+        mode:"no-cors",
+
+        headers:{
+          "Content-Type":
+          "text/plain;charset=utf-8"
+        },
+
+        body:
+        JSON.stringify(datos)
+      }
+    );
+
+  }catch(e){
+
+    console.warn(
+      "Apps Script no disponible:",
+      e
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   FECHA LOCAL
+========================================================= */
+
+function hoyStr(){
+
+  const d =
+  new Date();
+
+  return (
+
+    d.getFullYear() +
+    "-" +
+    String(
+      d.getMonth()+1
+    ).padStart(2,"0") +
+    "-" +
+    String(
+      d.getDate()
+    ).padStart(2,"0")
+
+  );
+
+}
+
+
+/* =========================================================
+   CLIENTE
+========================================================= */
+
+function cargarCliente(){
+
+  try{
+
+    const raw =
+    localStorage.getItem(
+      STORAGE_KEY
+    );
+
+    return raw
+      ? JSON.parse(raw)
+      : null;
+
+  }catch(e){
+
+    return null;
+
+  }
+
+}
+
+
+function guardarCliente(cliente){
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(cliente)
+    );
+
+  }catch(e){
+
+    console.warn(
+      "No se pudo guardar el cliente."
+    );
+
+  }
+
+}
+
+
+function jugoHoy(cliente){
+
+  return (
+    Array.isArray(
+      cliente.visitas
+    ) &&
+    cliente.visitas.includes(
+      hoyStr()
+    )
+  );
+
+}
+
+
+function totalSellos(cliente){
+
+  return (
+    (cliente.bono || 0) +
+    (cliente.visitas?.length || 0)
+  );
+
+}
+
+
+function esCumpleHoy(cliente){
+
+  if(!cliente.nacimiento){
+    return false;
+  }
+
+  return (
+    cliente.nacimiento.slice(5) ===
+    hoyStr().slice(5)
+  );
+
+}
+
+
+/* =========================================================
+   SELECTORES
+========================================================= */
+
+const pantalla1 =
+document.getElementById(
+  "pantalla1"
+);
+
+const pantalla2 =
+document.getElementById(
+  "pantalla2"
+);
+
+const yaJugasteDiv =
+document.getElementById(
+  "yaJugaste"
+);
+
+const raspaDiv =
+document.getElementById(
+  "raspa"
+);
+
+const nombreInput =
+document.getElementById(
+  "nombre"
+);
+
+const telefonoInput =
+document.getElementById(
+  "telefono"
+);
+
+const fechaInput =
+document.getElementById(
+  "fecha"
+);
+
+const invitoInput =
+document.getElementById(
+  "invito"
+);
+
+const aceptoInput =
+document.getElementById(
+  "acepto"
+);
+
+const errorRegistro =
+document.getElementById(
+  "errorRegistro"
+);
+
+const saludo =
+document.getElementById(
+  "saludo"
+);
+
+const claveDiv =
+document.getElementById(
+  "clave"
+);
+
+const canvas =
+document.getElementById(
+  "canvas"
+);
+
+const ctx =
+canvas.getContext("2d");
+
+const badgeCumple =
+document.getElementById(
+  "badgeCumple"
+);
+
+const premioBox =
+document.getElementById(
+  "premioBox"
+);
+
+const premioTexto =
+document.getElementById(
+  "premioTexto"
+);
+
+const codigoBox =
+document.getElementById(
+  "codigoBox"
+);
+
+const btnPremio =
+document.getElementById(
+  "btnPremio"
+);
+
+const btnCompartir =
+document.getElementById(
+  "btnCompartir"
+);
+
+const segundaBtn =
+document.getElementById(
+  "segundaBtn"
+);
+
+const btnContinuar =
+document.getElementById(
+  "btnContinuar"
+);
+
+const btnSeguir =
+document.getElementById(
+  "btnSeguir"
+);
+
+const btnCopiarClave =
+document.getElementById(
+  "btnCopiarClave"
+);
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+let cliente = null;
+
+let intento = 1;
+
+let premioActual = null;
+
+let premioForzado = null;
+
+let raspando = false;
+
+let raspadoTotal = 0;
+
+let yaRevelo = false;
+
+
+/* =========================================================
+   PREMIOS
+========================================================= */
+
+function elegirPremio(tabla){
+
+  const r =
+  Math.random();
+
+  let acumulado = 0;
+
+  for(
+    const opcion of tabla
+  ){
+
+    acumulado +=
+    opcion.peso;
+
+    if(
+      r < acumulado
+    ){
+
+      return opcion;
+
+    }
+
+  }
+
+  return tabla[
+    tabla.length - 1
+  ];
+
+}
+
+
+/*
+  Premios conservados de tu sistema actual.
+*/
+
+const PREMIOS_INTENTO_1 = [
+
+  {
+    peso:.35,
+    label:"❌ Sigue intentando",
+    codigo:"NONE"
+  },
+
+  {
+    peso:.25,
+    label:"🥤 Bebida GRATIS",
+    codigo:"SODA"
+  },
+
+  {
+    peso:.20,
+    label:"🍟 Papas 50% OFF",
+    codigo:"PAPA"
+  },
+
+  {
+    peso:.12,
+    label:"🍗 Presa extra GRATIS",
+    codigo:"PRES"
+  },
+
+  {
+    peso:.08,
+    label:"🎉 Postre GRATIS",
+    codigo:"POST"
+  }
+
+];
+
+
+const PREMIOS_INTENTO_2 = [
+
+  {
+    peso:.25,
+    label:"❌ Sigue intentando",
+    codigo:"NONE"
+  },
+
+  {
+    peso:.30,
+    label:"🥤 Bebida GRATIS",
+    codigo:"SODA"
+  },
+
+  {
+    peso:.30,
+    label:"🍟 Papas 50% OFF",
+    codigo:"PAPA"
+  },
+
+  {
+    peso:.15,
+    label:"🍗 Presa extra GRATIS",
+    codigo:"PRES"
+  }
+
+];
+
+
+/* =========================================================
+   CLAVE WIFI
+========================================================= */
+
+function generarClave(){
+
+  const hoy =
+  new Date();
+
+  const domingo =
+  new Date(hoy);
+
+  domingo.setDate(
+    hoy.getDate() -
+    hoy.getDay()
+  );
+
+  return (
+    "POLLOSRHOSSE" +
+    domingo.getDate()
+  );
+
+}
+
+
+/* =========================================================
+   CODIGO PREMIO
+========================================================= */
+
+function generarCodigo(
+  codigoPremio
+){
+
+  const hoy =
+  new Date();
+
+  const mmdd =
+    String(
+      hoy.getMonth()+1
+    ).padStart(2,"0") +
+
+    String(
+      hoy.getDate()
+    ).padStart(2,"0");
+
+
+  const ult4 =
+    (
+      cliente.telefono ||
+      "0000"
+    )
+    .replace(/\D/g,"")
+    .slice(-4)
+    .padStart(4,"0");
+
+
+  return (
+    `PR-${mmdd}-${ult4}-${codigoPremio}`
+  );
+
+}
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  init
+);
+
+
+function init(){
+
+  setupCanvasResolution();
+
+  cliente =
+  cargarCliente();
+
+
+  actualizarContador();
+
+
+  if(
+    cliente &&
+    jugoHoy(cliente)
+  ){
+
+    mostrarYaJugaste();
+
+  }
+
+  else if(cliente){
+
+    mostrarWifi();
+
+  }
+
+}
+
+
+/* =========================================================
+   REGISTRO
+========================================================= */
+
+btnContinuar.addEventListener(
+  "click",
+  registrar
+);
+
+
+function registrar(){
+
+  const nombre =
+  nombreInput.value.trim();
+
+
+  const telefonoLimpio =
+  telefonoInput.value
+  .replace(/\D/g,"");
+
+
+  const fecha =
+  fechaInput.value;
+
+
+  const invito =
+  invitoInput.value.trim();
+
+
+  if(
+    nombre.length < 2
+  ){
+
+    errorRegistro.textContent =
+      "Escribe tu nombre.";
+
+    nombreInput.focus();
+
+    return;
+
+  }
+
+
+  if(
+    telefonoLimpio.length < 7 ||
+    telefonoLimpio.length > 8
+  ){
+
+    errorRegistro.textContent =
+      "Ingresa un WhatsApp válido de Bolivia.";
+
+    telefonoInput.focus();
+
+    return;
+
+  }
+
+
+  if(
+    !aceptoInput.checked
+  ){
+
+    errorRegistro.textContent =
+      "Acepta recibir promociones para continuar.";
+
+    return;
+
+  }
+
+
+  errorRegistro.textContent =
+    "";
+
+
+  cliente = {
+
+    nombre:
+    nombre,
+
+    telefono:
+    telefonoLimpio,
+
+    nacimiento:
+    fecha || "",
+
+    invito:
+    invito,
+
+    visitas:
+    [],
+
+    /*
+      2 sellos de cortesía
+      por registrarse.
+    */
+
+    bono:
+    2,
+
+    creado:
+    hoyStr()
+
+  };
+
+
+  guardarCliente(
+    cliente
+  );
+
+
+  /*
+    REGISTRO
+  */
+
+  enviarAAppsScript({
+
+    tipo:
+    "registro",
+
+    nombre:
+    cliente.nombre,
+
+    telefono:
+    cliente.telefono,
+
+    nacimiento:
+    cliente.nacimiento,
+
+    invito:
+    cliente.invito,
+
+    consentimiento:
+    true,
+
+    fuente:
+    "WiFi Go Pollos Rhosse",
+
+    etapa:
+    "preapertura"
+
+  });
+
+
+  pantalla1.classList.add(
+    "hidden"
+  );
+
+
+  mostrarWifi();
+
+}
+
+
+/* =========================================================
+   WIFI
+========================================================= */
+
+function mostrarWifi(){
+
+  saludo.textContent =
+    `Hola, ${cliente.nombre} 👋`;
+
+
+  claveDiv.textContent =
+    generarClave();
+
+
+  pintarStamps(
+
+    document.getElementById(
+      "stamps"
+    ),
+
+    document.getElementById(
+      "stampsLabel"
+    ),
+
+    totalSellos(
+      cliente
+    )
+
+  );
+
+
+  pantalla1.classList.add(
+    "hidden"
+  );
+
+  yaJugasteDiv.classList.add(
+    "hidden"
+  );
+
+  raspaDiv.classList.add(
+    "hidden"
+  );
+
+  pantalla2.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   COPIAR CLAVE
+========================================================= */
+
+btnCopiarClave.addEventListener(
+  "click",
+  function(){
+
+    copiarTexto(
+      claveDiv.textContent,
+      "Clave WiFi copiada ✅"
+    );
+
+  }
+);
+
+
+function copiarTexto(
+  texto,
+  mensajeOk
+){
+
+  if(
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
+
+    navigator.clipboard.writeText(
+      texto
+    )
+    .then(
+      () => alert(mensajeOk),
+      () => alert(texto)
+    );
+
+  }
+
+  else{
+
+    alert(texto);
+
+  }
+
+}
+
+
+/* =========================================================
+   YA JUGÓ
+========================================================= */
+
+function mostrarYaJugaste(){
+
+  pintarStamps(
+
+    document.getElementById(
+      "stamps2"
+    ),
+
+    document.getElementById(
+      "stampsLabel2"
+    ),
+
+    totalSellos(
+      cliente
+    )
+
+  );
+
+
+  pantalla1.classList.add(
+    "hidden"
+  );
+
+  pantalla2.classList.add(
+    "hidden"
+  );
+
+  raspaDiv.classList.add(
+    "hidden"
+  );
+
+  yaJugasteDiv.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   CAMBIAR DATOS
+========================================================= */
+
+document
+.getElementById("linkCambiar")
+.addEventListener(
+  "click",
+  cambiarDatos
+);
+
+
+document
+.getElementById("linkCambiar2")
+.addEventListener(
+  "click",
+  cambiarDatos
+);
+
+
+function cambiarDatos(e){
+
+  e.preventDefault();
+
+
+  if(
+    confirm(
+      "Esto borrará los datos guardados en este teléfono. ¿Continuar?"
+    )
+  ){
+
+    localStorage.removeItem(
+      STORAGE_KEY
+    );
+
+    location.reload();
+
+  }
+
+}
+
+
+/* =========================================================
+   SELLOS
+========================================================= */
+
+function pintarStamps(
+  contenedor,
+  etiqueta,
+  total
+){
+
+  const enCiclo =
+    total > 0 &&
+    total % 10 === 0
+      ? 10
+      : total % 10;
+
+
+  contenedor.innerHTML =
+    "";
+
+
+  for(
+    let i=1;
+    i<=10;
+    i++
+  ){
+
+    const s =
+    document.createElement(
+      "div"
+    );
+
+
+    s.className =
+      "stamp" +
+      (
+        i <= enCiclo
+          ? " lleno"
+          : ""
+      );
+
+
+    s.textContent =
+      i <= enCiclo
+        ? "🍗"
+        : "☆";
+
+
+    contenedor.appendChild(
+      s
+    );
+
+  }
+
+
+  etiqueta.textContent =
+    enCiclo === 10
+
+      ? "¡Completaste tu tarjeta de fidelidad! 🎉"
+
+      : `${enCiclo}/10 visitas para ganar tu premio especial`;
+
+}
+
+
+/* =========================================================
+   IR A RASPAR
+========================================================= */
+
+btnSeguir.addEventListener(
+  "click",
+  pasarARaspa
+);
+
+
+function pasarARaspa(){
+
+  const yaConteoHoy =
+    cliente.visitas.includes(
+      hoyStr()
+    );
+
+
+  if(
+    !yaConteoHoy
+  ){
+
+    cliente.visitas.push(
+      hoyStr()
+    );
+
+  }
+
+
+  guardarCliente(
+    cliente
+  );
+
+
+  const total =
+    totalSellos(
+      cliente
+    );
+
+
+  const esHito =
+    total > 0 &&
+    total % 10 === 0;
+
+
+  const cumple =
+    esCumpleHoy(
+      cliente
+    );
+
+
+  badgeCumple.classList.toggle(
+    "hidden",
+    !cumple
+  );
+
+
+  if(cumple){
+
+    premioForzado = {
+
+      label:
+      "🎂 Postre de cumpleaños GRATIS",
+
+      codigo:
+      "CUMPLE"
+
+    };
+
+  }
+
+  else if(esHito){
+
+    premioForzado = {
+
+      label:
+      "🎉 Premio fidelidad: 1 Económico Pollo a la leña GRATIS",
+
+      codigo:
+      "FIDEL10"
+
+    };
+
+  }
+
+  else{
+
+    premioForzado =
+      null;
+
+  }
+
+
+  intento =
+    1;
+
+
+  pantalla2.classList.add(
+    "hidden"
+  );
+
+
+  raspaDiv.classList.remove(
+    "hidden"
+  );
+
+
+  iniciarRaspa();
+
+}
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+function setupCanvasResolution(){
+
+  const dpr =
+    window.devicePixelRatio ||
+    1;
+
+
+  const w =
+    300;
+
+  const h =
+    150;
+
+
+  canvas.style.width =
+    w + "px";
+
+  canvas.style.height =
+    h + "px";
+
+
+  canvas.width =
+    w * dpr;
+
+  canvas.height =
+    h * dpr;
+
+
+  ctx.setTransform(
+    dpr,
+    0,
+    0,
+    dpr,
+    0,
+    0
+  );
+
+}
+
+
+/* =========================================================
+   INICIAR RASPA
+========================================================= */
+
+function iniciarRaspa(){
+
+  raspadoTotal =
+    0;
+
+  yaRevelo =
+    false;
+
+
+  const opcion =
+    premioForzado
+
+      ? premioForzado
+
+      : (
+
+          intento === 1
+
+            ? elegirPremio(
+                PREMIOS_INTENTO_1
+              )
+
+            : elegirPremio(
+                PREMIOS_INTENTO_2
+              )
+
+        );
+
+
+  premioActual =
+    opcion;
+
+
+  premioBox.classList.add(
+    "hidden"
+  );
+
+  codigoBox.classList.add(
+    "hidden"
+  );
+
+  btnPremio.classList.add(
+    "hidden"
+  );
+
+  btnCompartir.classList.add(
+    "hidden"
+  );
+
+  segundaBtn.classList.add(
+    "hidden"
+  );
+
+
+  dibujarFoil();
+
+
+  ctx.globalCompositeOperation =
+    "destination-out";
+
+}
+
+
+/* =========================================================
+   FOIL
+========================================================= */
+
+function dibujarFoil(){
+
+  ctx.globalCompositeOperation =
+    "source-over";
+
+
+  const grad =
+    ctx.createLinearGradient(
+      0,
+      0,
+      300,
+      150
+    );
+
+
+  grad.addColorStop(
+    0,
+    "#d8d8d8"
+  );
+
+  grad.addColorStop(
+    .5,
+    "#bfbfbf"
+  );
+
+  grad.addColorStop(
+    1,
+    "#d8d8d8"
+  );
+
+
+  ctx.fillStyle =
+    grad;
+
+
+  ctx.fillRect(
+    0,
+    0,
+    300,
+    150
+  );
+
+
+  ctx.strokeStyle =
+    "rgba(255,255,255,.35)";
+
+
+  ctx.lineWidth =
+    2;
+
+
+  for(
+    let x=-150;
+    x<300;
+    x+=14
+  ){
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      x,
+      0
+    );
+
+    ctx.lineTo(
+      x+150,
+      150
+    );
+
+    ctx.stroke();
+
+  }
+
+
+  ctx.fillStyle =
+    "#5a4a3a";
+
+
+  ctx.font =
+    "700 18px 'Baloo 2', Arial";
+
+
+  ctx.textAlign =
+    "center";
+
+
+  ctx.fillText(
+    "🎁 RASPA AQUÍ 🎁",
+    150,
+    80
+  );
+
+
+  ctx.textAlign =
+    "left";
+
+}
+
+
+/* =========================================================
+   EVENTOS RASPADO
+========================================================= */
+
+canvas.addEventListener(
+  "mousedown",
+  () => raspando = true
+);
+
+
+window.addEventListener(
+  "mouseup",
+  () => raspando = false
+);
+
+
+canvas.addEventListener(
+  "mousemove",
+  raspar
+);
+
+
+canvas.addEventListener(
+  "touchstart",
+  function(e){
+
+    raspando =
+      true;
+
+    rasparTouch(e);
+
+  },
+  {
+    passive:false
+  }
+);
+
+
+canvas.addEventListener(
+  "touchend",
+  () =>
+    raspando = false
+);
+
+
+canvas.addEventListener(
+  "touchmove",
+  rasparTouch,
+  {
+    passive:false
+  }
+);
+
+
+function raspar(e){
+
+  if(
+    !raspando ||
+    yaRevelo
+  ){
+
+    return;
+
+  }
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    e.offsetX,
+    e.offsetY,
+    15,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fill();
+
+
+  raspadoTotal++;
+
+
+  if(
+    raspadoTotal > 40
+  ){
+
+    mostrarPremio();
+
+  }
+
+}
+
+
+function rasparTouch(e){
+
+  e.preventDefault();
+
+
+  if(
+    !raspando ||
+    yaRevelo
+  ){
+
+    return;
+
+  }
+
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  const x =
+    e.touches[0].clientX -
+    rect.left;
+
+
+  const y =
+    e.touches[0].clientY -
+    rect.top;
+
+
+  ctx.beginPath();
+
+
+  ctx.arc(
+    x,
+    y,
+    15,
+    0,
+    Math.PI*2
+  );
+
+
+  ctx.fill();
+
+
+  raspadoTotal++;
+
+
+  if(
+    raspadoTotal > 40
+  ){
+
+    mostrarPremio();
+
+  }
+
+}
+
+
+/* =========================================================
+   MOSTRAR PREMIO
+========================================================= */
+
+function mostrarPremio(){
+
+  yaRevelo =
+    true;
+
+
+  premioTexto.textContent =
+    premioActual.label;
+
+
+  premioBox.classList.remove(
+    "hidden"
+  );
+
+
+  const perdio =
+    premioActual.codigo ===
+    "NONE";
+
+
+  let codigo =
+    "";
+
+
+  if(!perdio){
+
+    codigo =
+      generarCodigo(
+        premioActual.codigo
+      );
+
+  }
+
+
+  /*
+    Guardamos el premio también
+    en localStorage para que el
+    cliente lo conserve.
+  */
+
+  cliente.premio =
+  premioActual.label;
+
+  cliente.codigoPremio =
+  codigo;
+
+  cliente.fechaPremio =
+  hoyStr();
+
+
+  guardarCliente(
+    cliente
+  );
+
+
+  enviarAAppsScript({
+
+    tipo:
+    "premio",
+
+    nombre:
+    cliente.nombre,
+
+    telefono:
+    cliente.telefono,
+
+    intento:
+    intento,
+
+    premio:
+    premioActual.label,
+
+    codigo:
+    codigo,
+
+    etapa:
+    "preapertura"
+
+  });
+
+
+  if(
+    perdio &&
+    intento === 1
+  ){
+
+    segundaBtn.classList.remove(
+      "hidden"
+    );
+
+    return;
+
+  }
+
+
+  if(
+    perdio &&
+    intento === 2
+  ){
+
+    btnPremio.textContent =
+      POLLERIA_ABIERTA
+
+        ? "🍗 Ver menú y pedir"
+
+        : "📲 Avisarme de la apertura";
+
+
+    btnPremio.classList.remove(
+      "hidden"
+    );
+
+
+    return;
+
+  }
+
+
+  codigoBox.textContent =
+    "Código de premio: " +
+    codigo;
+
+
+  codigoBox.dataset.codigo =
+    codigo;
+
+
+  codigoBox.classList.remove(
+    "hidden"
+  );
+
+
+  btnPremio.textContent =
+    POLLERIA_ABIERTA
+
+      ? "🎁 Usar mi premio por WhatsApp"
+
+      : "📲 Guardar premio y avisarme";
+
+
+  btnPremio.classList.remove(
+    "hidden"
+  );
+
+
+  btnCompartir.classList.remove(
+    "hidden"
+  );
+
+}
+
+
+/* =========================================================
+   SEGUNDA OPORTUNIDAD
+========================================================= */
+
+segundaBtn.addEventListener(
+  "click",
+  function(){
+
+    intento =
+      2;
+
+    premioForzado =
+      null;
+
+    iniciarRaspa();
+
+  }
+);
+
+
+/* =========================================================
+   CODIGO COPIABLE
+========================================================= */
+
+codigoBox.addEventListener(
+  "click",
+  function(){
+
+    if(
+      codigoBox.dataset.codigo
+    ){
+
+      copiarTexto(
+        codigoBox.dataset.codigo,
+        "Código copiado ✅"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   BOTON PREMIO
+========================================================= */
+
+btnPremio.addEventListener(
+  "click",
+  function(){
+
+    const perdio =
+      premioActual.codigo ===
+      "NONE";
+
+
+    if(
+      !POLLERIA_ABIERTA
+    ){
+
+      const msg =
+`🔥 Go Pollos Rhosse
+
+Hola, soy ${cliente.nombre}.
+
+🎁 Mi premio:
+${premioActual.label}
+
+🔑 Código:
+${codigoBox.dataset.codigo || "Sin código"}
+
+📲 Quiero que me avisen cuando sea la apertura.`;
+
+
+      window.open(
+        `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+      );
+
+
+      return;
+
+    }
+
+
+    const codigo =
+      codigoBox.dataset.codigo ||
+      "";
+
+
+    const msg =
+      perdio
+
+        ? `Hola 🍗
+Soy ${cliente.nombre}
+
+👉 Quiero hacer un pedido.`
+
+        : `Hola 🍗
+Soy ${cliente.nombre}
+
+🎁 Me salió:
+${premioActual.label}
+
+🔑 Código:
+${codigo}
+
+👉 Quiero usar mi premio.`;
+
+
+
+    window.open(
+      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,
+      "_blank"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INVITAR AMIGO
+========================================================= */
+
+btnCompartir.addEventListener(
+  "click",
+  function(){
+
+    const msg =
+`📶 WIFI GRATIS + 🎁 PREMIOS
+
+Estoy usando el WiFi de Go Pollos Rhosse.
+
+Además están preparando su próxima apertura 🍗🔥
+
+Regístrate tú también:
+
+https://jwilsoncruz.github.io/gopollosrhosse/wifipremium.html`;
+
+
+    const url =
+      `https://wa.me/?text=${encodeURIComponent(msg)}`;
+
+
+    if(
+      navigator.share
+    ){
+
+      navigator.share({
+
+        title:
+        "Go Pollos Rhosse",
+
+        text:
+        msg
+
+      })
+      .catch(
+        () =>
+        window.open(
+          url,
+          "_blank"
+        )
+      );
+
+    }
+
+    else{
+
+      window.open(
+        url,
+        "_blank"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   CONTADOR DE APERTURA
+========================================================= */
+
+function actualizarContador(){
+
+  const destino =
+    new Date(
+      FECHA_APERTURA
+    );
+
+
+  const ahora =
+    new Date();
+
+
+  let diferencia =
+    destino.getTime() -
+    ahora.getTime();
+
+
+  if(
+    POLLERIA_ABIERTA ||
+    diferencia <= 0
+  ){
+
+    document.getElementById(
+      "dias"
+    ).textContent =
+      "🎉";
+
+
+    document.getElementById(
+      "horas"
+    ).textContent =
+      "YA";
+
+
+    document.getElementById(
+      "minutos"
+    ).textContent =
+      "ABRIMOS";
+
+
+    document.getElementById(
+      "segundos"
+    ).textContent =
+      "🍗";
+
+
+    return;
+
+  }
+
+
+  const totalSegundos =
+    Math.floor(
+      diferencia / 1000
+    );
+
+
+  const dias =
+    Math.floor(
+      totalSegundos /
+      86400
+    );
+
+
+  const horas =
+    Math.floor(
+      (
+        totalSegundos %
+        86400
+      ) / 3600
+    );
+
+
+  const minutos =
+    Math.floor(
+      (
+        totalSegundos %
+        3600
+      ) / 60
+    );
+
+
+  const segundos =
+    totalSegundos %
+    60;
+
+
+  document.getElementById(
+    "dias"
+  ).textContent =
+    dias;
+
+
+  document.getElementById(
+    "horas"
+  ).textContent =
+    String(
+      horas
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  document.getElementById(
+    "minutos"
+  ).textContent =
+    String(
+      minutos
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  document.getElementById(
+    "segundos"
+  ).textContent =
+    String(
+      segundos
+    ).padStart(
+      2,
+      "0"
+    );
+
+}
+
+
+actualizarContador();
+
+
+setInterval(
+  actualizarContador,
+  1000
+);
+
+
+/* =========================================================
+   ENTER
+========================================================= */
+
+nombreInput.addEventListener(
+  "keydown",
+  function(e){
+
+    if(
+      e.key === "Enter"
+    ){
+
+      telefonoInput.focus();
+
+    }
+
+  }
+);
+
+
+telefonoInput.addEventListener(
+  "keydown",
+  function(e){
+
+    if(
+      e.key === "Enter"
+    ){
+
+      registrar();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
+```
