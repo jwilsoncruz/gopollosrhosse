@@ -151,6 +151,40 @@ header{
  padding:20px 10px;
  background:var(--color-header);
  color:white;
+ position:relative;
+ overflow:hidden;
+ isolation:isolate;
+}
+
+/* ---------- CARRUSEL DE FONDO DE LA PORTADA ---------- */
+.portada-bg{
+ position:absolute;
+ inset:0;
+ z-index:-1;
+ background:#2b0b00;
+}
+
+.portada-slide{
+ position:absolute;
+ inset:0;
+ background-size:cover;
+ background-position:center;
+ opacity:0;
+ transition:opacity 1.2s ease;
+}
+
+.portada-slide.activa{ opacity:1; }
+
+/* capa oscura para que el texto y el logo se lean sobre las fotos */
+.portada-bg::after{
+ content:"";
+ position:absolute;
+ inset:0;
+ background:linear-gradient(180deg,rgba(43,11,0,0.55),rgba(43,11,0,0.80));
+}
+
+@media (prefers-reduced-motion: reduce){
+ .portada-slide{ transition:none; }
 }
 
 .logo{
@@ -170,7 +204,7 @@ header{
 .categoria{
  margin-top:35px;
  font-size:22px;
- color:var(--color-texto-claro);
+ color:var(--color-secundario);
 }
 
 .grid{
@@ -233,6 +267,11 @@ header{
  padding:15px;
 }
 
+#resumen{
+ max-height:20vh;
+ overflow-y:auto;
+}
+
 .total{ font-weight:bold; font-size:18px; }
 
 .estado-btn{
@@ -240,17 +279,260 @@ header{
  background:#d50000;
  color:white;
  border:none;
- padding:6px 10px;
+ padding:8px 12px;
  border-radius:6px;
  cursor:pointer;
 }
 
-/* ---------- PANEL ADMIN ---------- */
+/* ---------- BOTONES DE CATEGORÍA ---------- */
+.nav-categorias{
+ position:sticky;
+ top:0;
+ z-index:50;
+ display:flex;
+ gap:8px;
+ overflow-x:auto;
+ background:white;
+ margin:-20px -20px 0 -20px;
+ padding:12px 14px;
+ border-radius:20px 20px 0 0;
+ box-shadow:0 3px 8px rgba(0,0,0,0.10);
+ -webkit-overflow-scrolling:touch;
+ scrollbar-width:none;
+}
+
+.nav-categorias::-webkit-scrollbar{ display:none; }
+
+.chip{
+ flex:0 0 auto;
+ border:2px solid var(--color-marquesina1);
+ background:white;
+ color:#bf360c;
+ font-weight:bold;
+ font-size:14px;
+ padding:8px 14px;
+ border-radius:999px;
+ cursor:pointer;
+}
+
+.chip.activo{
+ background:var(--color-marquesina1);
+ color:white;
+}
+
+.chip:focus-visible{
+ outline:3px solid #1976d2;
+ outline-offset:2px;
+}
+
+.oculto-filtro{ display:none !important; }
+.oculto-categoria{ display:none !important; }
+
+#avisoCategoria{
+ display:none;
+ margin-top:20px;
+ padding:12px;
+ background:#fff3e0;
+ color:#bf360c;
+ border-radius:10px;
+ text-align:center;
+ font-weight:bold;
+}
+
+/* ================= PANEL ADMIN ================= */
+#adminFondo{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,0.65);
+ z-index:9998;
+}
+
+#pinModal{
+ display:none;
+ position:fixed;
+ top:50%;
+ left:50%;
+ transform:translate(-50%,-50%);
+ width:86vw;
+ max-width:320px;
+ background:white;
+ border-radius:16px;
+ padding:22px;
+ text-align:center;
+ z-index:10000;
+ box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+#pinModal input{
+ width:100%;
+ box-sizing:border-box;
+ font-size:22px;
+ text-align:center;
+ padding:10px;
+ border:2px solid #ccc;
+ border-radius:10px;
+ letter-spacing:6px;
+}
+
+#pinError{ color:#d50000; font-size:13px; min-height:18px; margin:8px 0; }
+
 #panelAdmin{
-  max-height:85vh;
-  overflow-y:auto;
-  width:92vw;
-  max-width:380px;
+ display:none;
+ flex-direction:column;
+ position:fixed;
+ top:50%;
+ left:50%;
+ transform:translate(-50%,-50%);
+ width:94vw;
+ max-width:540px;
+ height:88vh;
+ background:white;
+ border-radius:16px;
+ box-shadow:0 10px 30px rgba(0,0,0,0.5);
+ z-index:9999;
+ overflow:hidden;
+ text-align:left;
+ color:#222;
+}
+
+.adm-cab{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ padding:12px 16px;
+ background:#d84315;
+ color:white;
+ font-size:18px;
+}
+
+.adm-cab button{
+ background:transparent;
+ border:none;
+ color:white;
+ font-size:22px;
+ cursor:pointer;
+}
+
+.adm-tabs{
+ display:flex;
+ gap:6px;
+ overflow-x:auto;
+ padding:8px 10px;
+ background:#fbe9e7;
+ scrollbar-width:none;
+}
+
+.adm-tabs::-webkit-scrollbar{ display:none; }
+
+.adm-tab{
+ flex:0 0 auto;
+ border:2px solid #ff6f00;
+ background:white;
+ color:#bf360c;
+ font-weight:bold;
+ padding:7px 12px;
+ border-radius:999px;
+ cursor:pointer;
+ font-size:13px;
+}
+
+.adm-tab.activa{ background:#ff6f00; color:white; }
+
+.adm-cuerpo{
+ flex:1;
+ overflow-y:auto;
+ padding:14px 16px;
+}
+
+.adm-sec{ display:none; }
+.adm-sec.activa{ display:block; }
+
+.adm-sec h3{ margin:14px 0 6px 0; font-size:16px; color:#bf360c; }
+.adm-sec h3:first-child{ margin-top:0; }
+
+.adm-ayuda{ font-size:12px; color:#666; margin:4px 0 8px 0; }
+
+.adm-sec label{ font-size:14px; }
+
+.adm-sec input[type=number],
+.adm-sec input[type=text],
+.adm-sec input[type=time],
+.adm-sec input[type=date],
+.adm-sec textarea{
+ box-sizing:border-box;
+ padding:8px;
+ border:2px solid #ddd;
+ border-radius:8px;
+ font-size:15px;
+ max-width:100%;
+}
+
+.adm-sec textarea{ width:100%; min-height:80px; font-family:inherit; }
+
+.adm-fila{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ padding:8px 0;
+ border-bottom:1px solid #eee;
+ flex-wrap:wrap;
+}
+
+.adm-fila.adm-col{ flex-direction:column; align-items:flex-start; }
+.adm-linea{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+.adm-nombre{ flex:1 1 140px; font-size:14px; }
+.adm-nombre small{ color:#888; }
+
+.adm-btn{
+ background:#1976d2;
+ color:white;
+ border:none;
+ padding:9px 14px;
+ border-radius:8px;
+ cursor:pointer;
+ font-weight:bold;
+ margin:4px 4px 4px 0;
+}
+
+.adm-btn.verde{ background:#00a152; }
+.adm-btn.rojo{ background:#d50000; }
+.adm-btn.gris{ background:#757575; }
+
+.adm-estado{
+ font-size:13px;
+ color:#555;
+ background:#f5f5f5;
+ padding:8px;
+ border-radius:8px;
+ margin:8px 0;
+}
+
+.adm-chip-fecha{
+ display:inline-block;
+ background:#ffe0b2;
+ border-radius:999px;
+ padding:4px 10px;
+ margin:3px 4px 3px 0;
+ font-size:13px;
+}
+
+.adm-chip-fecha button{
+ border:none;
+ background:transparent;
+ cursor:pointer;
+ color:#d50000;
+ font-weight:bold;
+}
+
+#admMsg{
+ display:none;
+ padding:10px 14px;
+ font-size:14px;
+ font-weight:bold;
+ text-align:center;
+ color:white;
 }
 </style>
 </head>
@@ -263,41 +545,138 @@ header{
 
 <div id="app"></div>
 
-<!-- PANEL ADMIN OCULTO -->
-<div id="panelAdmin" style="
-display:none;
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
-z-index:9999;
-text-align:center;
-">
+<!-- ================= MODO ADMIN (fuera de #app para que funcione aun en mantenimiento) ================= -->
+<div id="adminFondo" onclick="cerrarPanel()"></div>
 
-<h2>⚙ Panel Admin</h2>
+<!-- Ventana del PIN -->
+<div id="pinModal">
+  <h3>🔒 Acceso admin</h3>
+  <input type="password" id="pinInput" inputmode="numeric" autocomplete="off" placeholder="PIN">
+  <div id="pinError"></div>
+  <button class="adm-btn verde" onclick="verificarPin()">Entrar</button>
+  <button class="adm-btn gris" onclick="cerrarPin()">Cancelar</button>
+</div>
 
-<button onclick="agotado()" class="estado-btn">🍗 Pollos Agotados</button><br><br>
+<!-- Panel admin -->
+<div id="panelAdmin" role="dialog" aria-label="Panel de administración">
+  <div class="adm-cab">
+    <strong>⚙ Panel Admin</strong>
+    <button onclick="cerrarPanel()" aria-label="Cerrar">✖</button>
+  </div>
 
-<button onclick="reiniciarPollos()" class="estado-btn">♻ Reiniciar Pollos</button><br><br>
+  <div class="adm-tabs" id="admTabs">
+    <button class="adm-tab activa" data-tab="local" onclick="cambiarTab('local')">🏪 Local</button>
+    <button class="adm-tab" data-tab="pollos" onclick="cambiarTab('pollos')">🍗 Pollos</button>
+    <button class="adm-tab" data-tab="mensaje" onclick="cambiarTab('mensaje')">📢 Mensaje</button>
+    <button class="adm-tab" data-tab="horarios" onclick="cambiarTab('horarios')">⏰ Horarios</button>
+    <button class="adm-tab" data-tab="menu" onclick="cambiarTab('menu')">🍽 Menú</button>
+    <button class="adm-tab" data-tab="otros" onclick="cambiarTab('otros')">⚙ Otros</button>
+  </div>
 
-<hr>
+  <div class="adm-cuerpo">
 
-<button onclick="forzarApertura()" class="estado-btn" style="background:#00c853;">🟢 Forzar Apertura</button><br><br>
+    <!-- ===== LOCAL ===== -->
+    <section class="adm-sec activa" data-tab="local">
+      <h3>Abrir / cerrar el local</h3>
+      <p class="adm-ayuda">Forzar manda sobre el horario. Se guarda en la hoja y lo ven todos los clientes.</p>
+      <button onclick="forzarApertura()" class="adm-btn verde">🟢 Forzar Apertura</button>
+      <button onclick="forzarCierre()" class="adm-btn rojo">🔴 Forzar Cierre</button>
+      <button onclick="modoAutomatico()" class="adm-btn">🔄 Modo Automático</button>
+      <div id="estadoForzadoTexto" class="adm-estado"></div>
 
-<button onclick="forzarCierre()" class="estado-btn" style="background:#d50000;">🔴 Forzar Cierre</button><br><br>
+      <h3>🔧 Mantenimiento</h3>
+      <p class="adm-ayuda">Los clientes verán una pantalla de "En mantenimiento" con el texto de la pestaña Mensaje. Este panel sigue funcionando para que puedas desactivarlo (entra con ?admin=1).</p>
+      <button onclick="mantenimiento('si')" class="adm-btn rojo">Activar mantenimiento</button>
+      <button onclick="mantenimiento('no')" class="adm-btn verde">Desactivar mantenimiento</button>
+    </section>
 
-<button onclick="modoAutomatico()" class="estado-btn" style="background:#1976d2;">🔄 Modo Automático (horario normal)</button><br><br>
+    <!-- ===== POLLOS ===== -->
+    <section class="adm-sec" data-tab="pollos">
+      <h3>Pollos disponibles hoy</h3>
+      <div class="adm-fila">
+        <label for="admPollos">Quedan</label>
+        <input type="number" id="admPollos" min="0" step="1" style="width:100px;">
+      </div>
+      <div class="adm-fila">
+        <label for="admTotalPollos">Total con que empieza el día</label>
+        <input type="number" id="admTotalPollos" min="1" step="1" style="width:100px;">
+      </div>
+      <button onclick="guardarPollos()" class="adm-btn verde">💾 Guardar pollos</button>
+      <br>
+      <button onclick="agotado()" class="adm-btn rojo">🍗 Pollos Agotados</button>
+      <button onclick="reiniciarPollos()" class="adm-btn">♻ Reiniciar (al total)</button>
+    </section>
 
-<div id="estadoForzadoTexto" style="font-size:13px;color:#555;margin-bottom:10px;"></div>
+    <!-- ===== MENSAJE ===== -->
+    <section class="adm-sec" data-tab="mensaje">
+      <h3>Mensaje de la marquesina</h3>
+      <p class="adm-ayuda">Si escribes algo aquí, reemplaza los mensajes automáticos de la franja naranja. Déjalo vacío para volver a los automáticos. También se usa como texto en la pantalla de mantenimiento.</p>
+      <textarea id="admMensaje" maxlength="300" placeholder="Ej: Hoy promoción de cuartos Bs 28 🔥"></textarea>
+      <button onclick="guardarMensaje()" class="adm-btn verde">💾 Guardar mensaje</button>
+      <button onclick="quitarMensaje()" class="adm-btn gris">Quitar mensaje</button>
+    </section>
 
-<hr>
+    <!-- ===== HORARIOS ===== -->
+    <section class="adm-sec" data-tab="horarios">
+      <h3>Horas del día</h3>
+      <div class="adm-fila"><label for="admApertura">Abre el local (botones activos)</label><input type="time" id="admApertura"></div>
+      <div class="adm-fila"><label for="admCierre">Cierra el local</label><input type="time" id="admCierre"></div>
+      <div class="adm-fila"><label for="admLenia">Prendemos la leña (cuenta regresiva)</label><input type="time" id="admLenia"></div>
+      <div class="adm-fila"><label for="admVenta">Empieza la venta del almuerzo</label><input type="time" id="admVenta"></div>
+      <div class="adm-fila"><label for="admFinAlmuerzo">Termina almuerzo / empieza cena</label><input type="time" id="admFinAlmuerzo"></div>
 
-<button onclick="cerrarPanel()" class="estado-btn">❌ Cerrar</button>
+      <h3>Días cerrados cada semana</h3>
+      <div id="admDias" class="adm-linea">
+        <label><input type="checkbox" value="1"> Lun</label>
+        <label><input type="checkbox" value="2"> Mar</label>
+        <label><input type="checkbox" value="3"> Mié</label>
+        <label><input type="checkbox" value="4"> Jue</label>
+        <label><input type="checkbox" value="5"> Vie</label>
+        <label><input type="checkbox" value="6"> Sáb</label>
+        <label><input type="checkbox" value="0"> Dom</label>
+      </div>
 
+      <h3>Fechas sueltas cerradas</h3>
+      <p class="adm-ayuda">Feriados, vacaciones, etc.</p>
+      <input type="date" id="admFechaNueva">
+      <button onclick="agregarFecha()" class="adm-btn">➕ Agregar</button>
+      <div id="admFechas"></div>
+
+      <br>
+      <button onclick="guardarHorarios()" class="adm-btn verde">💾 Guardar horarios</button>
+    </section>
+
+    <!-- ===== MENÚ ===== -->
+    <section class="adm-sec" data-tab="menu">
+      <h3>Categorías</h3>
+      <p class="adm-ayuda">"Visible" y los horarios aplican a Desayuno y Merienda. "Agotada" marca toda la categoría como agotada.</p>
+      <div id="admCategorias"></div>
+
+      <h3>Productos</h3>
+      <p class="adm-ayuda">Ocultar = el cliente no lo ve. Agotado = se ve pero no se puede pedir. Si un producto está en almuerzo y cena, el cambio aplica a los dos.</p>
+      <div id="admProductos"></div>
+
+      <br>
+      <button onclick="guardarMenu()" class="adm-btn verde">💾 Guardar menú</button>
+    </section>
+
+    <!-- ===== OTROS ===== -->
+    <section class="adm-sec" data-tab="otros">
+      <h3>Delivery y contacto</h3>
+      <div class="adm-fila"><label for="admDelivery">Precio del delivery (Bs)</label><input type="number" id="admDelivery" min="0" step="1" style="width:100px;"></div>
+      <div class="adm-fila"><label for="admWhatsapp">WhatsApp para pedidos (con código de país)</label><input type="text" id="admWhatsapp" inputmode="numeric" placeholder="59172685867" style="width:170px;"></div>
+      <button onclick="guardarOtros()" class="adm-btn verde">💾 Guardar</button>
+
+      <h3>Herramientas</h3>
+      <button onclick="verComoCliente()" class="adm-btn">👁 Ver menú completo (preview)</button>
+      <button onclick="sincronizarAhora()" class="adm-btn">🔄 Leer la hoja ahora</button>
+      <button onclick="restablecerAjustes()" class="adm-btn rojo">⚠ Restablecer horarios y ajustes</button>
+      <p class="adm-ayuda">Restablecer borra lo guardado en la hoja para horarios, días cerrados, delivery, WhatsApp y categorías, y vuelve a los valores que están escritos en el código.</p>
+    </section>
+
+  </div>
+
+  <div id="admMsg"></div>
 </div>
 
 <!-- REDES SOCIALES -->
@@ -345,20 +724,44 @@ style="border:0;border-radius:15px;">
 
 <script>
 // ================= CONFIGURACIÓN DEL LOCAL =================
-const diasCerrados = [0];      // 0 = domingo, 1 = lunes ... 6 = sábado
-const fechasCerrado = [];      // días sueltos cerrados, formato "AAAA-MM-DD" (ej: "2026-12-25")
+// Estos son los valores "de fábrica". Desde el Panel Admin puedes cambiarlos
+// y se guardan en la hoja de Google; la hoja manda sobre estos valores.
 
-const aperturaHora = 10;
-const aperturaMin = 0;
-const cierreHora = 22;
-const cierreMin = 30;
+// 🔒 PIN DEL PANEL ADMIN  -> CÁMBIALO por uno tuyo (solo números, 4 a 8 dígitos)
+const ADMIN_PIN = "0940";
 
-const totalPollos = 5;
-let pollosDisponibles = 4;     // pollos que hay hoy (actualizar a mano o desde Google Sheets)
+let diasCerrados = [0];        // 0 = domingo, 1 = lunes ... 6 = sábado
+let fechasCerrado = [];        // días sueltos cerrados, formato "AAAA-MM-DD" (ej: "2026-12-25")
+
+let aperturaHora = 10;
+let aperturaMin = 0;
+let cierreHora = 22;
+let cierreMin = 30;
+
+// Horas del menú (en minutos desde las 00:00)
+let leniaMin = 9 * 60;            // 09:00 se prende la leña
+let ventaMin = 11 * 60;           // 11:00 empieza la venta del almuerzo
+let finAlmuerzoMin = 14 * 60 + 30; // 14:30 termina almuerzo y empieza cena
+
+let totalPollos = 5;
+let pollosDisponibles = 4;     // pollos que hay hoy (se controla desde el Panel Admin)
+
+let precioDelivery = 5;        // Bs, aparece en la marquesina
+let whatsapp = "59172685867";  // número que recibe los pedidos
 
 // Poner en false para que la página NO lea la configuración de Google Sheets
 const USAR_CONTROL_REMOTO = true;
 const INTERVALO_CONFIG = 30000; // cada cuántos ms se consulta la hoja (30 segundos)
+
+// ---------- CATEGORÍAS: DESAYUNO Y MERIENDA ----------
+// visible: true  -> la categoría se muestra (solo dentro de su horario)
+// visible: false -> la categoría queda INVISIBLE para los clientes
+// agotado: true  -> toda la categoría aparece como "Agotado"
+// desde / hasta  -> horario en que se muestra y se puede pedir (formato "HH:MM")
+const CATEGORIAS_CONFIG = {
+  desayuno: { visible: true, agotado: false, desde: "06:00", hasta: "10:00" },
+  merienda: { visible: true, agotado: false, desde: "15:00", hasta: "18:00" }
+};
 
 const API = "https://script.google.com/macros/s/AKfycbyERJZ0DGmXU3550uXglEX9ehjwdv_dqCXKJTn_Y7vr2yhvqq0AVjUa_D-2XI6pI6Yw/exec";        // pedidos
 const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3YtOqYZZTT3briZyP3sj8NI4QpE-9a5hxvPAm9BmtU7WMtM3ghA/exec"; // configuración
@@ -366,62 +769,57 @@ const API_CONFIG = "https://script.google.com/macros/s/AKfycbzhqgkwkpOllpKHJBf3Y
 // ================= ESTADO =================
 let carrito = [];
 let remoto = null;          // última configuración recibida de Google Sheets
+let ajustesActuales = {};   // ajustes avanzados guardados en la hoja (clave "ajustes")
 let enMantenimiento = false;
 let enviando = false;
 
 // Forzado manual local desde el panel admin:
-// null = automático (respeta horario y Google Sheets)
-// "abierto" = fuerza el local a ABIERTO sin importar la hora
-// "cerrado" = fuerza el local a CERRADO sin importar la hora
+// null = automático, "abierto" o "cerrado"
 let forzarEstado = null;
 
-// Combina el forzado hecho en ESTE navegador (forzarEstado) con el
-// estado guardado en la hoja de cálculo (remoto.estado). El forzado
-// local manda primero (respuesta inmediata al tocar el botón); si no
-// hay forzado local, se usa lo que diga la hoja, para que otros
-// dispositivos (celulares de clientes, otra compu, etc.) también
-// respeten el cierre/apertura forzados desde el panel admin.
 function estadoForzado(){
   if(forzarEstado === "abierto" || forzarEstado === "cerrado") return forzarEstado;
   if(remoto && (remoto.estado === "abierto" || remoto.estado === "cerrado")) return remoto.estado;
   return null;
 }
 
-// Guarda el estado forzado (o "" para modo automático) en la hoja CONFIG,
-// usando el mismo formato {tipo, valor} que espera tu Apps Script.
-function actualizarEstadoRemoto(valor){
-  return fetch(API_CONFIG, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ tipo: "estado", valor: valor })
-  }).catch(err=>{
-    console.error("No se pudo guardar el estado en la hoja", err);
-  });
+// Envía UN valor a la hoja CONFIG con el formato {tipo, valor}.
+// "clave" lleva el PIN por si algún día quieres que el Apps Script lo verifique.
+async function guardarRemoto(tipo, valor){
+  try{
+    await fetch(API_CONFIG, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ tipo: tipo, valor: valor, clave: ADMIN_PIN })
+    });
+    return true;
+  }catch(err){
+    console.error("No se pudo guardar '" + tipo + "' en la hoja", err);
+    return false;
+  }
 }
 
 const params = new URLSearchParams(window.location.search);
+// Vista previa: agrega ?preview=1 al link y verás Desayuno y Merienda aunque estén ocultos
+const PREVIEW = params.get("preview") === "1";
 // Solo letras, números, guion y espacio (evita meter código por la URL)
 const mesaQR = (params.get("mesa") || "").replace(/[^\w\- ]/g, "").slice(0, 10);
 
-// ACTIVAR PANEL ADMIN POR URL (?admin=1)
-if(params.get("admin") === "1"){
-  document.getElementById("panelAdmin").style.display = "block";
-}
-
-// ================= FECHAS =================
-// Fecha local en formato AAAA-MM-DD (toISOString usa hora UTC y fallaba de noche)
+// ================= FECHAS Y HORAS =================
 function fechaISO(d){
   return d.getFullYear() + "-" +
     String(d.getMonth() + 1).padStart(2, "0") + "-" +
     String(d.getDate()).padStart(2, "0");
 }
 
+function pad(n){ return String(n).padStart(2, "0"); }
+function minAHHMM(min){ return pad(Math.floor(min / 60)) + ":" + pad(min % 60); }
+
 function cerradoTodoElDia(d){
   return diasCerrados.includes(d.getDay()) || fechasCerrado.includes(fechaISO(d));
 }
 
 function localAbierto(){
-  // El forzado manual (de este navegador o desde la hoja) tiene prioridad máxima
   const forzado = estadoForzado();
   if(forzado === "abierto") return true;
   if(forzado === "cerrado") return false;
@@ -439,6 +837,7 @@ function localAbierto(){
 // ================= PÁGINA (MODO CLIENTE) =================
 document.getElementById("app").innerHTML = `
 <header>
+<div class="portada-bg" id="portadaBg" aria-hidden="true"></div>
 <div style="background:#FAED27; color:#FF0000; padding:8px; font-weight:bold; border-radius:20px; display:inline-block; margin-bottom:10px;">
     <a href="https://maps.app.goo.gl/iLtaCcWtiTKKQ4c3A" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;"> NUEVA UBICACION </a>
 </div>
@@ -473,8 +872,27 @@ style="background:var(--color-secundario);color:white;padding:15px;border-radius
 </header>
 
 <div class="container">
+
+<div class="nav-categorias" id="navCategorias" role="group" aria-label="Categorías del menú">
+<button type="button" class="chip activo" data-cat="todo" aria-pressed="true" onclick="filtrarCategoria('todo')">🍽 Todo</button>
+<button type="button" class="chip oculto-categoria" data-cat="desayuno" aria-pressed="false" onclick="filtrarCategoria('desayuno')">🍳 Desayuno</button>
+<button type="button" class="chip" data-cat="almuerzo" aria-pressed="false" onclick="filtrarCategoria('almuerzo')">🍗 Almuerzo</button>
+<button type="button" class="chip oculto-categoria" data-cat="merienda" aria-pressed="false" onclick="filtrarCategoria('merienda')">🥐 Merienda</button>
+<button type="button" class="chip" data-cat="cena" aria-pressed="false" onclick="filtrarCategoria('cena')">🌙 Cena</button>
+<button type="button" class="chip" data-cat="bebidas" aria-pressed="false" onclick="filtrarCategoria('bebidas')">🥤 Bebidas</button>
+<button type="button" class="chip" data-cat="extras" aria-pressed="false" onclick="filtrarCategoria('extras')">🍔 Extras</button>
+</div>
+
+<div id="avisoCategoria"></div>
+
+<h2 class="categoria oculto-categoria" id="categoria-desayuno">🍳 Desayuno</h2>
+<div id="desayuno" class="grid oculto-categoria"></div>
+
 <h2 class="categoria" id="categoria-almuerzo">🍗Almuerzo</h2>
 <div id="almuerzo" class="grid"></div>
+
+<h2 class="categoria oculto-categoria" id="categoria-merienda">🥐 Merienda</h2>
+<div id="merienda" class="grid oculto-categoria"></div>
 
 <h2 class="categoria" id="categoria-cena">🍗Cena</h2>
 <div id="cena" class="grid"></div>
@@ -527,19 +945,26 @@ if(mesaQR){
   document.querySelector("header").appendChild(h2);
 }
 
-// ACTIVAR PANEL ADMIN POR 5 CLICS EN EL LOGO
+// ACTIVAR PANEL ADMIN POR 5 CLICS EN EL LOGO (pide PIN)
 let clicksAdmin = 0;
 document.getElementById("logoLocal").addEventListener("click", ()=>{
   clicksAdmin++;
   if(clicksAdmin >= 5){
-    document.getElementById("panelAdmin").style.display = "block";
     clicksAdmin = 0;
+    abrirAdmin();
   }
   setTimeout(()=>{ clicksAdmin = 0; }, 2000);
 });
 
 // ================= PRODUCTOS =================
 const productos = [
+// ---- DESAYUNO (EJEMPLOS: cambia nombres y precios por los tuyos) ----
+// Tip: evita escribir la palabra "Pollo" con mayúscula en estos nombres (el contador de pollos la usa)
+{categoria:"desayuno", nombre:"Masaco con Bife", precio:10, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Salteña", precio:8, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Sándwich de Huevo", precio:12, img:"menu.jpg"},
+{categoria:"desayuno", nombre:"Tostada", precio:12, img:"menu.jpg"},
+
 {categoria:"almuerzo", nombre:"Pollo Eco Pierna", precio:15, img:"pierna.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Contra", precio:15, img:"contra.jpg"},
 {categoria:"almuerzo", nombre:"Pollo Eco Ala", precio:17, img:"ala.jpg"},
@@ -575,6 +1000,12 @@ const productos = [
 {categoria:"bebidas", nombre:"Limonada Mediana", precio:5, img:"limonada_mediana.jpg"},
 {categoria:"bebidas", nombre:"Refresco Vaso", precio:3, img:"limonada_vaso.jpg"},
 
+// ---- MERIENDA (EJEMPLOS: cambia nombres y precios por los tuyos) ----
+{categoria:"merienda", nombre:"Salteña", precio:7, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Cuñapé", precio:5, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Camba Muerto", precio:7, img:"menu.jpg"},
+{categoria:"merienda", nombre:"Jugo Natural", precio:6, img:"menu.jpg"},
+
 {categoria:"extras", nombre:"Extra Platano", precio:7, img:"extra_platano.jpg"},
 {categoria:"extras", nombre:"Extra Papas", precio:7, img:"extra_papas.jpeg"},
 {categoria:"extras", nombre:"Extra Arroz", precio:7, img:"extra_arroz.jpg"},
@@ -583,12 +1014,72 @@ const productos = [
 
 ];
 
+// ================= VISIBLE / AGOTADO / HORARIO DE CATEGORÍAS =================
+// La hoja CONFIG manda dos listas (nombres separados por coma): "ocultos" y "agotados".
+// Sirven para categorías o platillos. Se editan desde el Panel Admin > Menú.
+function listaRemota(clave){
+  if(!remoto || !remoto[clave]) return [];
+  return String(remoto[clave]).split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+}
+
+function aMinutos(hhmm){
+  const partes = String(hhmm).split(":");
+  return (parseInt(partes[0], 10) || 0) * 60 + (parseInt(partes[1], 10) || 0);
+}
+
+function enHorarioCategoria(cat){
+  const cfg = CATEGORIAS_CONFIG[cat];
+  if(!cfg || !cfg.desde) return true;
+  const ahora = new Date();
+  const t = ahora.getHours() * 60 + ahora.getMinutes();
+  return t >= aMinutos(cfg.desde) && t < aMinutos(cfg.hasta);
+}
+
+function categoriaVisible(cat){
+  if(PREVIEW) return true;
+  const cfg = CATEGORIAS_CONFIG[cat];
+  if(cfg && cfg.visible === false) return false;
+  return !listaRemota("ocultos").includes(cat);
+}
+
+function categoriaMostrable(cat){
+  if(!categoriaVisible(cat)) return false;
+  if(PREVIEW) return true;
+  return enHorarioCategoria(cat);
+}
+
+function productoVisible(p){
+  if(p.visible === false) return false;
+  return !listaRemota("ocultos").includes(p.nombre.toLowerCase());
+}
+
+function productoAgotadoManual(p){
+  if(p.agotado === true) return true;
+  const cfg = CATEGORIAS_CONFIG[p.categoria];
+  if(cfg && cfg.agotado === true) return true;
+  const ag = listaRemota("agotados");
+  return ag.includes(p.nombre.toLowerCase()) || ag.includes(p.categoria);
+}
+
+function abiertoParaCategoria(cat){
+  if(cat === "desayuno" || cat === "merienda"){
+    const forzado = estadoForzado();
+    if(forzado === "cerrado") return false;
+    if(cerradoTodoElDia(new Date()) && forzado !== "abierto") return false;
+    return categoriaMostrable(cat) && enHorarioCategoria(cat);
+  }
+  return localAbierto();
+}
+
+function hayAlgoAbierto(){
+  return localAbierto() || abiertoParaCategoria("desayuno") || abiertoParaCategoria("merienda");
+}
+
 // ================= FOTOS Y STOCK COMPARTIDOS (gestionados desde el POS) =================
-// La gestión de fotos y stock se hace en el panel Admin del POS
-// ("Go Pollos Rhosse PRO"). Esta página solo LEE lo que ya está
-// guardado en el servidor, para que todos los clientes vean lo mismo.
 let fotosServidor = {};
 let stockServidor = {};
+let firmaFotosStock = "";
+let firmaRemota = "";
 
 function fotoDe(p){
   return fotosServidor[p.nombre] || p.img;
@@ -599,18 +1090,18 @@ function crearProducto(p){
   div.className = "card";
 
   const tieneStock = Object.prototype.hasOwnProperty.call(stockServidor, p.nombre);
-  const agotado = tieneStock && Number(stockServidor[p.nombre]) <= 0;
+  const agotado = productoAgotadoManual(p) || (tieneStock && Number(stockServidor[p.nombre]) <= 0);
 
   div.innerHTML = `
 <img src="${fotoDe(p)}" alt="${p.nombre}" loading="lazy" data-producto="${p.nombre}">
 <h3>${p.nombre}</h3>
 <div class="precio">Bs ${p.precio}</div>
 ${agotado ? '<div class="agotado-txt">Agotado por hoy</div>' : ''}
-<button class="boton" ${agotado ? "disabled" : ""}>${agotado ? "Agotado" : "Agregar"}</button>
+<button class="boton" data-cat="${p.categoria}" ${agotado ? 'disabled data-agotado="1"' : ""}>${agotado ? "Agotado" : "Agregar"}</button>
 `;
 
   if(!agotado){
-    div.querySelector("button").addEventListener("click", ()=>agregar(p.nombre, p.precio));
+    div.querySelector("button").addEventListener("click", ()=>agregar(p.nombre, p.precio, p.categoria));
   }
   return div;
 }
@@ -618,13 +1109,13 @@ ${agotado ? '<div class="agotado-txt">Agotado por hoy</div>' : ''}
 function cargarProductos(){
   document.querySelectorAll(".grid").forEach(g => g.innerHTML = "");
   productos.forEach(p=>{
+    if(!productoVisible(p)) return;
     const cont = document.getElementById(p.categoria);
     if(cont) cont.appendChild(crearProducto(p));
   });
+  aplicarEstadoBotones();
 }
 
-// Consulta fotos y stock en el mismo backend de pedidos (el que usa el
-// POS), y vuelve a dibujar el menú si algo cambió.
 async function cargarFotosYStock(){
   try{
     const [rFotos, rStock] = await Promise.all([
@@ -637,15 +1128,64 @@ async function cargarFotosYStock(){
     if(dFotos.ok) fotosServidor = dFotos.fotos || {};
     if(dStock.ok) stockServidor = dStock.stock || {};
 
-    cargarProductos();
+    const firma = JSON.stringify([fotosServidor, stockServidor]);
+    if(firma !== firmaFotosStock){
+      firmaFotosStock = firma;
+      cargarProductos();
+    }
   }catch(e){
     console.error("No se pudo leer fotos/stock del servidor", e);
   }
 }
 
+// ================= CATEGORÍAS =================
+const CATEGORIAS = ["desayuno", "almuerzo", "merienda", "cena", "bebidas", "extras"];
+let categoriaActiva = "todo";
+
+function filtrarCategoria(cat){
+  categoriaActiva = cat;
+  aplicarFiltroCategoria();
+
+  const cont = document.querySelector(".container");
+  if(cont && window.scrollY > cont.offsetTop){
+    window.scrollTo({ top: cont.offsetTop - 10, behavior: "smooth" });
+  }
+}
+
+function aplicarFiltroCategoria(){
+  CATEGORIAS.forEach(c=>{
+    const ocultar = categoriaActiva !== "todo" && categoriaActiva !== c;
+    const titulo = document.getElementById("categoria-" + c);
+    const grid = document.getElementById(c);
+    if(titulo) titulo.classList.toggle("oculto-filtro", ocultar);
+    if(grid) grid.classList.toggle("oculto-filtro", ocultar);
+  });
+
+  document.querySelectorAll("#navCategorias .chip").forEach(b=>{
+    const activo = b.dataset.cat === categoriaActiva;
+    b.classList.toggle("activo", activo);
+    b.setAttribute("aria-pressed", activo ? "true" : "false");
+  });
+
+  const aviso = document.getElementById("avisoCategoria");
+  if(aviso){
+    let msg = "";
+    if(categoriaActiva === "almuerzo" || categoriaActiva === "cena"){
+      const grid = document.getElementById(categoriaActiva);
+      if(grid && grid.style.display === "none"){
+        msg = categoriaActiva === "almuerzo"
+          ? "🍗 El menú de almuerzo está disponible de " + minAHHMM(ventaMin) + " a " + minAHHMM(finAlmuerzoMin) + "."
+          : "🌙 El menú de cena está disponible desde las " + minAHHMM(finAlmuerzoMin) + ".";
+      }
+    }
+    aviso.textContent = msg;
+    aviso.style.display = msg ? "block" : "none";
+  }
+}
+
 // ================= CARRITO =================
-function agregar(nombre, precio){
-  carrito.push({nombre, precio});
+function agregar(nombre, precio, categoria){
+  carrito.push({nombre, precio, categoria});
 
   if(nombre.includes("Pollo")){
     pollosDisponibles = Math.max(0, pollosDisponibles - 1);
@@ -661,7 +1201,6 @@ function eliminarProducto(i){
 
   carrito.splice(i, 1);
 
-  // Si quitas un pollo del carrito, se devuelve al contador
   if(p.nombre.includes("Pollo")){
     pollosDisponibles = Math.min(totalPollos, pollosDisponibles + 1);
     actualizarPollos();
@@ -701,11 +1240,11 @@ function actualizarPollos(){
     texto.innerHTML = "🍗 POLLOS AGOTADOS POR HOY";
   }
   else if(pollosDisponibles == 1){
-    barra.style.background = "#ffab00"; // amarillo
+    barra.style.background = "#ffab00";
     texto.innerHTML = "⚠️ ¡Último pollo disponible!";
   }
   else if(pollosDisponibles <= 2){
-    barra.style.background = "#d50000"; // crítico (rojo)
+    barra.style.background = "#d50000";
     texto.innerHTML = "🔥 ¡Quedan solo " + pollosDisponibles + " pollos!";
   }
   else{
@@ -723,83 +1262,94 @@ function ponerMarquesina(texto){
 }
 
 function actualizarMarquesina(){
-  // Mensaje enviado desde Google Sheets (tiene prioridad)
   if(remoto && remoto.mensaje){
     ponerMarquesina(remoto.mensaje);
     return;
   }
 
   const forzado = estadoForzado();
+  const deliveryTxt = "🚚 Delivery solo " + precioDelivery + " Bs";
 
-  // 🟢 Forzado ABIERTO (local o desde la hoja)
   if(forzado === "abierto"){
-    ponerMarquesina("🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥");
+    ponerMarquesina("🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO — " + deliveryTxt + " — Haz tu pedido ahora 🔥");
     return;
   }
 
-  // 🔴 Forzado CERRADO (local o desde la hoja)
   if(forzado === "cerrado"){
     ponerMarquesina("🔴 Local cerrado temporalmente — Vuelve pronto 🔥 >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<<");
     return;
   }
 
-  // 🔴 Día cerrado
   if(cerradoTodoElDia(new Date())){
     ponerMarquesina("🔴 Hoy el Restaurante está Cerrado Servicio de Mantenimiento — Nos vemos mañana >>>NUEVA UBICACION EN ZONA PEDRO IGNACIO MUIBA FINAL<<<< 🔥Pronto de  Almuerzo su pollito a la leña");
     return;
   }
 
-  // 🍗 Pollos agotados
+  if(abiertoParaCategoria("desayuno") && !localAbierto()){
+    ponerMarquesina("🍳 DESAYUNOS DISPONIBLES HASTA LAS " + CATEGORIAS_CONFIG.desayuno.hasta + " — ☕ Haz tu pedido ahora >>> Pollos a la leña desde las " + minAHHMM(ventaMin) + " 🔥");
+    return;
+  }
+
   if(pollosDisponibles <= 0){
     ponerMarquesina("🍗 POLLOS AGOTADOS POR HOY — Gracias Trinidad por la preferencia - volvemos mañana🔥");
     return;
   }
 
-  // ⚠️ Pocos pollos
   if(pollosDisponibles <= 2){
     ponerMarquesina("⚠️ ¡QUEDAN SOLO " + pollosDisponibles + " POLLOS A LA LEÑA! — Haz tu pedido 🍗");
     return;
   }
 
-  // 🟢 Abierto
   if(localAbierto()){
-    ponerMarquesina("🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO 10:00AM — 🚚 Delivery solo 5 Bs — Haz tu pedido ahora 🔥");
+    ponerMarquesina("🍗 RECIBIENDO RESERVAS/PEDIDOS >>> POLLOS A LA LEÑA SALIENDO " + pad(aperturaHora) + ":" + pad(aperturaMin) + " — " + deliveryTxt + " — Haz tu pedido ahora 🔥");
     return;
   }
 
-  // 🔥 Próxima apertura
-  ponerMarquesina("👨‍👧‍👦 ESTAMOS ATENDIENDO DESDE LAS 11:00 PM — ZONA BARRIO PEDRO IGNACIO MUIBA >>>>Pollos a la Leña 🔥 Delivery solo 5 Bs >>> Los BOTONES SE HABILITARÁN a las 10am para realizar las reservas programadas");
+  // (antes decía "11:00 PM": ahora usa la hora real de apertura, en la mañana)
+  ponerMarquesina("👨‍👧‍👦 ESTAMOS ATENDIENDO DESDE LAS " + pad(aperturaHora) + ":" + pad(aperturaMin) + " — ZONA BARRIO PEDRO IGNACIO MUIBA >>>>Pollos a la Leña 🔥 " + deliveryTxt + " >>> Los BOTONES SE HABILITARÁN a las " + pad(aperturaHora) + ":" + pad(aperturaMin) + " para realizar las reservas programadas");
 }
 
 // ================= ESTADO DEL LOCAL =================
+function aplicarEstadoBotones(){
+  document.querySelectorAll(".boton").forEach(b=>{
+    const cat = b.dataset.cat;
+    const abierto = cat ? abiertoParaCategoria(cat) : hayAlgoAbierto();
+    b.disabled = !abierto || b.dataset.agotado === "1";
+  });
+}
+
 function actualizarEstado(){
   const estado = document.getElementById("estadoLocal");
   const logo = document.getElementById("logoLocal");
 
-  if(!estado) return;
-
   const forzado = estadoForzado();
-  const abierto = localAbierto();
 
-  if(abierto){
-    estado.innerHTML = (forzado === "abierto") ? "🟢 Abierto (forzado manualmente)" : "🟢 Estamos atendiendo";
-    estado.style.color = "lightgreen";
-    if(logo) logo.style.filter = "none";
-  }
-  else if(forzado === "cerrado"){
-    estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
-    estado.style.color = "red";
-    if(logo) logo.style.filter = "grayscale(100%)";
-  }
-  else{
-    estado.innerHTML = "🔴 Cerrado";
-    estado.style.color = "yellow";
-    if(logo) logo.style.filter = "grayscale(100%)";
-  }
+  if(estado){
+    const abierto = localAbierto();
 
-  document.querySelectorAll(".boton").forEach(b=>{
-    b.disabled = !abierto;
-  });
+    if(abierto){
+      estado.innerHTML = (forzado === "abierto") ? "🟢 Abierto (forzado manualmente)" : "🟢 Estamos atendiendo";
+      estado.style.color = "lightgreen";
+      if(logo) logo.style.filter = "none";
+    }
+    else if(forzado === "cerrado"){
+      estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
+      estado.style.color = "red";
+      if(logo) logo.style.filter = "grayscale(100%)";
+    }
+    else if(abiertoParaCategoria("desayuno")){
+      estado.innerHTML = "🍳 Atendiendo desayunos";
+      estado.style.color = "lightgreen";
+      if(logo) logo.style.filter = "none";
+    }
+    else{
+      estado.innerHTML = "🔴 Cerrado";
+      estado.style.color = "yellow";
+      if(logo) logo.style.filter = "grayscale(100%)";
+    }
+
+    aplicarEstadoBotones();
+  }
 
   // Texto informativo dentro del panel admin
   const textoForzado = document.getElementById("estadoForzadoTexto");
@@ -830,7 +1380,6 @@ function contadorLenia(){
 
   if(!estado || !tiempo) return;
 
-  // El forzado (local o desde la hoja) tiene prioridad sobre cualquier otra lógica de horario
   const forzadoLenia = estadoForzado();
 
   if(forzadoLenia === "abierto"){
@@ -854,13 +1403,13 @@ function contadorLenia(){
   }
 
   const prender = new Date();
-  prender.setHours(9, 0, 0, 0);
+  prender.setHours(Math.floor(leniaMin / 60), leniaMin % 60, 0, 0);
 
   const abrir = new Date();
-  abrir.setHours(11, 0, 0, 0);
+  abrir.setHours(Math.floor(ventaMin / 60), ventaMin % 60, 0, 0);
 
   const cerrar = new Date();
-  cerrar.setHours(22, 30, 0, 0);
+  cerrar.setHours(cierreHora, cierreMin, 0, 0);
 
   if(localAbierto()){
     estado.innerHTML = "🟢 Estamos atendiendo";
@@ -871,11 +1420,12 @@ function contadorLenia(){
   if(ahora >= cerrar){
     estado.innerHTML = "🔴 Restaurante cerrado";
 
-    // buscar el próximo día abierto
     const proximo = new Date();
     proximo.setDate(ahora.getDate() + 1);
-    while(cerradoTodoElDia(proximo)){
+    let guardia = 0;
+    while(cerradoTodoElDia(proximo) && guardia < 60){
       proximo.setDate(proximo.getDate() + 1);
+      guardia++;
     }
 
     const diaTexto = proximo.toLocaleDateString("es-ES", { weekday: "long" });
@@ -895,23 +1445,22 @@ function contadorLenia(){
     return;
   }
 
-  // Cerrado por el sistema (Google Sheets) en pleno horario
   estado.innerHTML = "🔴 Cerrado";
   tiempo.innerHTML = "Volvemos pronto 🔥";
 }
 
 // ================= MENÚ SEGÚN LA HORA =================
-// Almuerzo: 11:00 a 14:30 | Cena: 14:30 a 22:30
-function actualizarMenuPorHora(){
+// Almuerzo: venta desde ventaMin hasta finAlmuerzoMin | Cena: hasta la hora de cierre
+function actualizarMenuBase(){
   const ahora = new Date();
   const tiempo = ahora.getHours() * 60 + ahora.getMinutes();
 
-  const inicioAlmuerzo = 9 * 60;
-  const ventaAlmuerzo = 11 * 60;
-  const finAlmuerzo = 14 * 60 + 30;
+  const inicioAlmuerzo = leniaMin;
+  const ventaAlmuerzo = ventaMin;
+  const finAlmuerzo = finAlmuerzoMin;
 
-  const inicioCena = 14 * 60 + 30;
-  const finCena = 22 * 60 + 30;
+  const inicioCena = finAlmuerzoMin;
+  const finCena = cierreHora * 60 + cierreMin;
 
   const tituloAlmuerzo = document.getElementById("categoria-almuerzo");
   const almuerzo = document.getElementById("almuerzo");
@@ -930,15 +1479,12 @@ function actualizarMenuPorHora(){
 
   const forzadoMenu = estadoForzado();
 
-  // 🔴 Forzado CERRADO (local o desde la hoja): ocultar todos los menús
   if(forzadoMenu === "cerrado"){
     ocultarTodo();
     if(estado) estado.innerHTML = "🔴 Cerrado (forzado manualmente)";
     return;
   }
 
-  // 🟢 Forzado ABIERTO (local o desde la hoja): mostrar el menú que corresponda a la hora
-  // (o almuerzo si el forzado se usa fuera del horario habitual)
   if(forzadoMenu === "abierto"){
     ocultarTodo();
     if(tiempo < finAlmuerzo){
@@ -954,14 +1500,18 @@ function actualizarMenuPorHora(){
 
   if(tiempo < inicioAlmuerzo){
     ocultarTodo();
-    if(estado) estado.innerHTML = "🔴 Cerrado — Abrimos desde las 11:00 AM";
+    if(estado) estado.innerHTML = abiertoParaCategoria("desayuno")
+      ? "🍳 Desayunos disponibles hasta las " + CATEGORIAS_CONFIG.desayuno.hasta
+      : "🔴 Cerrado — Abrimos desde las " + minAHHMM(ventaMin);
     return;
   }
 
   if(tiempo >= inicioAlmuerzo && tiempo < ventaAlmuerzo){
     ocultarTodo();
     if(tituloAlmuerzo) tituloAlmuerzo.style.display = "block";
-    if(estado) estado.innerHTML = "⏳ Preparando almuerzo — pedidos desde las 11:00";
+    if(estado) estado.innerHTML = abiertoParaCategoria("desayuno")
+      ? "🍳 Desayunos hasta las " + CATEGORIAS_CONFIG.desayuno.hasta + " — almuerzo desde las " + minAHHMM(ventaMin)
+      : "⏳ Preparando almuerzo — pedidos desde las " + minAHHMM(ventaMin);
     return;
   }
 
@@ -988,6 +1538,93 @@ function actualizarMenuPorHora(){
   }
 }
 
+function actualizarCategoriasHorario(){
+  const cerradoForzado = estadoForzado() === "cerrado" && !PREVIEW;
+  ["desayuno", "merienda"].forEach(cat=>{
+    const mostrar = !cerradoForzado && categoriaMostrable(cat);
+    const titulo = document.getElementById("categoria-" + cat);
+    const grid = document.getElementById(cat);
+    const chip = document.querySelector('#navCategorias .chip[data-cat="' + cat + '"]');
+    [titulo, grid, chip].forEach(el=>{
+      if(el) el.classList.toggle("oculto-categoria", !mostrar);
+    });
+    if(!mostrar && categoriaActiva === cat){
+      categoriaActiva = "todo";
+      aplicarFiltroCategoria();
+    }
+  });
+}
+
+function actualizarMenuPorHora(){
+  actualizarMenuBase();
+  actualizarCategoriasHorario();
+}
+
+// Redibuja toda la página con los valores actuales (se usa después de cambios del admin)
+function refrescarTodo(){
+  actualizarPollos();
+  actualizarEstado();
+  actualizarMarquesina();
+  contadorLenia();
+  cargarProductos();
+  actualizarMenuPorHora();
+  aplicarFiltroCategoria();
+}
+
+// ================= AJUSTES AVANZADOS (vienen de la hoja, clave "ajustes") =================
+function leerAjustes(d){
+  let a = d && d.ajustes;
+  if(typeof a === "string"){
+    try{ a = JSON.parse(a); }catch(e){ a = null; }
+  }
+  return (a && typeof a === "object") ? a : {};
+}
+
+function aplicarAjustes(a){
+  if(!a || typeof a !== "object") return;
+
+  const hm = s => {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(String(s || ""));
+    return m ? [parseInt(m[1], 10), parseInt(m[2], 10)] : null;
+  };
+  let t;
+
+  if((t = hm(a.apertura))){ aperturaHora = t[0]; aperturaMin = t[1]; }
+  if((t = hm(a.cierre))){ cierreHora = t[0]; cierreMin = t[1]; }
+  if((t = hm(a.lenia))) leniaMin = t[0] * 60 + t[1];
+  if((t = hm(a.venta))) ventaMin = t[0] * 60 + t[1];
+  if((t = hm(a.finAlmuerzo))) finAlmuerzoMin = t[0] * 60 + t[1];
+
+  if(Array.isArray(a.diasCerrados)){
+    diasCerrados = a.diasCerrados.map(Number).filter(n => n >= 0 && n <= 6);
+  }
+  if(Array.isArray(a.fechasCerrado)){
+    fechasCerrado = a.fechasCerrado.map(String);
+  }
+
+  if(a.totalPollos !== undefined && a.totalPollos !== "" && Number(a.totalPollos) > 0){
+    totalPollos = Math.floor(Number(a.totalPollos));
+  }
+  if(a.delivery !== undefined && a.delivery !== "" && !isNaN(Number(a.delivery)) && Number(a.delivery) >= 0){
+    precioDelivery = Number(a.delivery);
+  }
+  if(a.whatsapp){
+    const n = String(a.whatsapp).replace(/\D/g, "");
+    if(n.length >= 8) whatsapp = n;
+  }
+
+  if(a.categorias && typeof a.categorias === "object"){
+    ["desayuno", "merienda"].forEach(c=>{
+      const x = a.categorias[c];
+      const cfg = CATEGORIAS_CONFIG[c];
+      if(!x || !cfg) return;
+      if(typeof x.visible === "boolean") cfg.visible = x.visible;
+      if(hm(x.desde)) cfg.desde = x.desde;
+      if(hm(x.hasta)) cfg.hasta = x.hasta;
+    });
+  }
+}
+
 // ================= CONTROL REMOTO (GOOGLE SHEETS) =================
 async function cargarConfig(){
   try{
@@ -1007,10 +1644,19 @@ async function cargarConfig(){
       return;
     }
 
-    // Si estaba en mantenimiento y ya terminó, recargar la página completa
     if(enMantenimiento){
       location.reload();
       return;
+    }
+
+    // Ajustes avanzados guardados desde el Panel Admin
+    ajustesActuales = leerAjustes(data);
+    aplicarAjustes(ajustesActuales);
+
+    const fr = String(data.ocultos || "") + "|" + String(data.agotados || "");
+    if(fr !== firmaRemota){
+      firmaRemota = fr;
+      cargarProductos();
     }
 
     // 🍗 POLLOS (solo si la hoja manda un número válido)
@@ -1022,6 +1668,7 @@ async function cargarConfig(){
     actualizarMarquesina();
     contadorLenia();
     actualizarMenuPorHora();
+    aplicarFiltroCategoria();
 
   }catch(e){
     console.error("Error conectando con Google Sheets", e);
@@ -1033,13 +1680,19 @@ function enviarPedido(){
 
   if(enviando) return;
 
-  if(!localAbierto()){
+  if(!hayAlgoAbierto()){
     alert("🔴 El restaurante está cerrado");
     return;
   }
 
   if(carrito.length === 0){
     alert("Agrega al menos un producto");
+    return;
+  }
+
+  const fueraHorario = carrito.find(p => p.categoria && !abiertoParaCategoria(p.categoria));
+  if(fueraHorario){
+    alert("⏰ " + fueraHorario.nombre + " ya no está disponible en este horario. Quítalo del carrito para continuar.");
     return;
   }
 
@@ -1077,7 +1730,7 @@ function enviarPedido(){
       let texto = "🍗 Pedido Go Pollos Rhosse\n\n";
       texto += "Tipo: " + tipoPedido + "\n\n" + detalle + "\nTotal Bs " + total;
 
-      window.open("https://wa.me/59172685867?text=" + encodeURIComponent(texto));
+      window.open("https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(texto));
 
       carrito = [];
       actualizarCarrito();
@@ -1099,71 +1752,486 @@ function enviarPedido(){
 
 }
 
-// ================= PANEL ADMIN =================
+// =====================================================================
+// ====================== MODO ADMIN ===================================
+// =====================================================================
+let intentosPin = 0;
+let bloqueoPinHasta = 0;
+let tabActual = "local";
+let admFechas = [];
+
+function adminDesbloqueado(){
+  try{ return sessionStorage.getItem("adminOk") === "1"; }catch(e){ return false; }
+}
+
+function abrirAdmin(){
+  if(adminDesbloqueado()) mostrarPanel();
+  else mostrarPin();
+}
+
+// ---------- PIN ----------
+function mostrarPin(){
+  document.getElementById("adminFondo").style.display = "block";
+  document.getElementById("pinModal").style.display = "block";
+  document.getElementById("pinError").textContent = "";
+  const inp = document.getElementById("pinInput");
+  inp.value = "";
+  setTimeout(()=>inp.focus(), 50);
+}
+
+function cerrarPin(){
+  document.getElementById("pinModal").style.display = "none";
+  document.getElementById("adminFondo").style.display = "none";
+}
+
+function verificarPin(){
+  const err = document.getElementById("pinError");
+  const ahora = Date.now();
+
+  if(ahora < bloqueoPinHasta){
+    err.textContent = "Demasiados intentos. Espera " + Math.ceil((bloqueoPinHasta - ahora) / 1000) + " s.";
+    return;
+  }
+
+  const inp = document.getElementById("pinInput");
+  if(inp.value === ADMIN_PIN){
+    intentosPin = 0;
+    try{ sessionStorage.setItem("adminOk", "1"); }catch(e){}
+    document.getElementById("pinModal").style.display = "none";
+    mostrarPanel();
+  }else{
+    intentosPin++;
+    inp.value = "";
+    if(intentosPin >= 5){
+      bloqueoPinHasta = Date.now() + 60000;
+      intentosPin = 0;
+      err.textContent = "Demasiados intentos. Espera 60 s.";
+    }else{
+      err.textContent = "PIN incorrecto";
+    }
+  }
+}
+
+document.getElementById("pinInput").addEventListener("keydown", e=>{
+  if(e.key === "Enter") verificarPin();
+});
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){
+    cerrarPin();
+    cerrarPanel();
+  }
+});
+
+// ---------- PANEL ----------
+function mostrarPanel(){
+  document.getElementById("adminFondo").style.display = "block";
+  document.getElementById("panelAdmin").style.display = "flex";
+  admCargarValores();
+  admConstruirMenu();
+  cambiarTab(tabActual);
+  actualizarEstado();
+}
+
 function cerrarPanel(){
   document.getElementById("panelAdmin").style.display = "none";
+  document.getElementById("pinModal").style.display = "none";
+  document.getElementById("adminFondo").style.display = "none";
+}
+
+function cambiarTab(nombre){
+  tabActual = nombre;
+  document.querySelectorAll("#admTabs .adm-tab").forEach(b=>{
+    b.classList.toggle("activa", b.dataset.tab === nombre);
+  });
+  document.querySelectorAll(".adm-sec").forEach(s=>{
+    s.classList.toggle("activa", s.dataset.tab === nombre);
+  });
+}
+
+let admMsgTimer = null;
+function admToast(texto, ok){
+  const m = document.getElementById("admMsg");
+  if(!m) return;
+  m.textContent = texto;
+  m.style.background = ok === false ? "#d50000" : "#00a152";
+  m.style.display = "block";
+  clearTimeout(admMsgTimer);
+  admMsgTimer = setTimeout(()=>{ m.style.display = "none"; }, 4000);
+}
+
+function admVal(id){
+  const el = document.getElementById(id);
+  return el ? el.value : "";
+}
+
+// Rellena todos los campos del panel con los valores actuales
+function admCargarValores(){
+  const set = (id, v)=>{ const el = document.getElementById(id); if(el) el.value = v; };
+
+  set("admPollos", pollosDisponibles);
+  set("admTotalPollos", totalPollos);
+  set("admMensaje", (remoto && remoto.mensaje) ? remoto.mensaje : "");
+
+  set("admApertura", pad(aperturaHora) + ":" + pad(aperturaMin));
+  set("admCierre", pad(cierreHora) + ":" + pad(cierreMin));
+  set("admLenia", minAHHMM(leniaMin));
+  set("admVenta", minAHHMM(ventaMin));
+  set("admFinAlmuerzo", minAHHMM(finAlmuerzoMin));
+
+  document.querySelectorAll("#admDias input").forEach(c=>{
+    c.checked = diasCerrados.includes(Number(c.value));
+  });
+
+  admFechas = fechasCerrado.slice();
+  admPintarFechas();
+
+  set("admDelivery", precioDelivery);
+  set("admWhatsapp", whatsapp);
+}
+
+// Después de guardar algo, se vuelve a leer la hoja para confirmar que quedó guardado
+function confirmarConLaHoja(){
+  setTimeout(cargarConfig, 2500);
+}
+
+// ---------- LOCAL: abrir / cerrar ----------
+function setEstadoLocal(valor, textoToast){
+  forzarEstado = valor || null;
+  if(!remoto) remoto = {};
+  remoto.estado = valor || "";
+  refrescarTodo();
+  guardarRemoto("estado", valor || "").then(ok=>{
+    admToast(ok ? textoToast : "No se pudo guardar en la hoja (solo cambió en este navegador)", ok);
+    if(ok) confirmarConLaHoja();
+  });
+}
+
+function forzarApertura(){ setEstadoLocal("abierto", "🟢 Local forzado a ABIERTO"); }
+function forzarCierre(){ setEstadoLocal("cerrado", "🔴 Local forzado a CERRADO"); }
+function modoAutomatico(){ setEstadoLocal(null, "🔄 Modo automático (horario normal)"); }
+
+async function mantenimiento(valor){
+  if(valor === "si" && !confirm("Los clientes verán la pantalla 'En mantenimiento'. ¿Continuar?")) return;
+  const ok = await guardarRemoto("mantenimiento", valor);
+  admToast(ok ? (valor === "si" ? "🔧 Mantenimiento ACTIVADO" : "✅ Mantenimiento desactivado") : "No se pudo guardar en la hoja", ok);
+  if(ok) confirmarConLaHoja();
+}
+
+// ---------- POLLOS ----------
+async function guardarPollos(){
+  const n = parseInt(admVal("admPollos"), 10);
+  const t = parseInt(admVal("admTotalPollos"), 10);
+  if(isNaN(n) || n < 0){ admToast("Escribe cuántos pollos quedan (0 o más)", false); return; }
+  if(isNaN(t) || t < 1){ admToast("El total debe ser 1 o más", false); return; }
+
+  totalPollos = t;
+  pollosDisponibles = Math.min(n, 9999);
+  ajustesActuales = Object.assign({}, ajustesActuales, { totalPollos: t });
+  if(!remoto) remoto = {};
+  remoto.pollos = pollosDisponibles;
+  remoto.ajustes = JSON.stringify(ajustesActuales);
+  actualizarPollos();
+
+  const ok1 = await guardarRemoto("pollos", pollosDisponibles);
+  const ok2 = await guardarRemoto("ajustes", JSON.stringify(ajustesActuales));
+  admToast(ok1 && ok2 ? "💾 Pollos guardados" : "No se pudo guardar todo en la hoja", ok1 && ok2);
+  if(ok1 && ok2) confirmarConLaHoja();
 }
 
 function agotado(){
-  pollosDisponibles = 0;
-  actualizarPollos();
-  alert("Pollos agotados por hoy");
+  document.getElementById("admPollos").value = 0;
+  guardarPollos();
 }
 
 function reiniciarPollos(){
-  pollosDisponibles = totalPollos;
-  actualizarPollos();
-  alert("Pollos reiniciados");
+  const t = parseInt(admVal("admTotalPollos"), 10) || totalPollos;
+  document.getElementById("admPollos").value = t;
+  guardarPollos();
 }
 
-// Fuerza el local a ABIERTO sin importar el horario configurado,
-// y lo guarda en la hoja para que se refleje en todos los dispositivos
-function forzarApertura(){
-  forzarEstado = "abierto";
-  actualizarEstado();
+// ---------- MENSAJE ----------
+async function guardarMensaje(){
+  const texto = admVal("admMensaje").trim();
+  if(!remoto) remoto = {};
+  remoto.mensaje = texto;
   actualizarMarquesina();
-  contadorLenia();
-  actualizarMenuPorHora();
-  actualizarEstadoRemoto("abierto");
-  alert("🟢 Local forzado a ABIERTO (guardando en la hoja...)");
+  const ok = await guardarRemoto("mensaje", texto);
+  admToast(ok ? (texto ? "💾 Mensaje guardado" : "Mensaje quitado") : "No se pudo guardar en la hoja", ok);
+  if(ok) confirmarConLaHoja();
 }
 
-// Fuerza el local a CERRADO sin importar el horario configurado,
-// y lo guarda en la hoja para que se refleje en todos los dispositivos
-function forzarCierre(){
-  forzarEstado = "cerrado";
-  actualizarEstado();
-  actualizarMarquesina();
-  contadorLenia();
-  actualizarMenuPorHora();
-  actualizarEstadoRemoto("cerrado");
-  alert("🔴 Local forzado a CERRADO (guardando en la hoja...)");
+function quitarMensaje(){
+  document.getElementById("admMensaje").value = "";
+  guardarMensaje();
 }
 
-// Vuelve al horario automático normal, en este navegador y en la hoja
-function modoAutomatico(){
-  forzarEstado = null;
-  actualizarEstado();
-  actualizarMarquesina();
-  contadorLenia();
-  actualizarMenuPorHora();
-  actualizarEstadoRemoto("");
-  alert("🔄 Local en modo automático (guardando en la hoja...)");
+// ---------- AJUSTES AVANZADOS (horarios, delivery, etc.) ----------
+// Une los cambios con lo que ya había, los aplica YA en la página y los manda a la hoja
+async function guardarAjustes(parcial){
+  ajustesActuales = Object.assign({}, ajustesActuales, parcial);
+  aplicarAjustes(parcial);
+  if(!remoto) remoto = {};
+  remoto.ajustes = JSON.stringify(ajustesActuales);
+  refrescarTodo();
+  return guardarRemoto("ajustes", JSON.stringify(ajustesActuales));
+}
+
+// ---------- HORARIOS ----------
+function admPintarFechas(){
+  const cont = document.getElementById("admFechas");
+  if(!cont) return;
+  cont.innerHTML = "";
+  admFechas.slice().sort().forEach(f=>{
+    const s = document.createElement("span");
+    s.className = "adm-chip-fecha";
+    s.appendChild(document.createTextNode(f + " "));
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = "✖";
+    b.setAttribute("aria-label", "Quitar " + f);
+    b.addEventListener("click", ()=>{
+      admFechas = admFechas.filter(x => x !== f);
+      admPintarFechas();
+    });
+    s.appendChild(b);
+    cont.appendChild(s);
+  });
+  if(!admFechas.length) cont.textContent = "No hay fechas sueltas cerradas.";
+}
+
+function agregarFecha(){
+  const v = admVal("admFechaNueva");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v)){ admToast("Elige una fecha", false); return; }
+  if(!admFechas.includes(v)) admFechas.push(v);
+  document.getElementById("admFechaNueva").value = "";
+  admPintarFechas();
+}
+
+async function guardarHorarios(){
+  const horas = {
+    apertura: admVal("admApertura"),
+    cierre: admVal("admCierre"),
+    lenia: admVal("admLenia"),
+    venta: admVal("admVenta"),
+    finAlmuerzo: admVal("admFinAlmuerzo")
+  };
+
+  for(const k in horas){
+    if(!/^\d{1,2}:\d{2}$/.test(horas[k])){ admToast("Falta completar una hora (" + k + ")", false); return; }
+  }
+
+  const m = k => aMinutos(horas[k]);
+  if(!(m("lenia") < m("venta") && m("venta") < m("finAlmuerzo") && m("finAlmuerzo") < m("cierre"))){
+    admToast("El orden debe ser: leña < venta almuerzo < fin almuerzo < cierre", false);
+    return;
+  }
+
+  const dias = [...document.querySelectorAll("#admDias input:checked")].map(c => Number(c.value));
+  const ok = await guardarAjustes(Object.assign({}, horas, { diasCerrados: dias, fechasCerrado: admFechas.slice() }));
+  admToast(ok ? "💾 Horarios guardados" : "No se pudo guardar en la hoja", ok);
+  if(ok) confirmarConLaHoja();
+}
+
+// ---------- MENÚ: categorías y productos ----------
+function admConstruirMenu(){
+  const ocu = listaRemota("ocultos");
+  const ago = listaRemota("agotados");
+
+  // ---- categorías ----
+  const etiquetas = {
+    desayuno:"🍳 Desayuno", almuerzo:"🍗 Almuerzo", merienda:"🥐 Merienda",
+    cena:"🌙 Cena", bebidas:"🥤 Bebidas", extras:"🍔 Extras"
+  };
+  const contCat = document.getElementById("admCategorias");
+  contCat.innerHTML = "";
+
+  CATEGORIAS.forEach(c=>{
+    const esHorario = (c === "desayuno" || c === "merienda");
+    const cfg = CATEGORIAS_CONFIG[c];
+    const fila = document.createElement("div");
+    fila.className = "adm-fila adm-col";
+
+    let html = "<strong>" + etiquetas[c] + "</strong><div class='adm-linea'>";
+    if(esHorario){
+      const vis = cfg.visible !== false && !ocu.includes(c);
+      html += "<label><input type='checkbox' id='admVis-" + c + "'" + (vis ? " checked" : "") + "> Visible</label>";
+    }
+    html += "<label><input type='checkbox' id='admAgo-" + c + "'" + (ago.includes(c) ? " checked" : "") + "> Agotada</label>";
+    if(esHorario){
+      html += "<label>Desde <input type='time' id='admDesde-" + c + "' value='" + cfg.desde + "'></label>";
+      html += "<label>Hasta <input type='time' id='admHasta-" + c + "' value='" + cfg.hasta + "'></label>";
+    }
+    html += "</div>";
+
+    fila.innerHTML = html;
+    contCat.appendChild(fila);
+  });
+
+  // ---- productos (nombres únicos) ----
+  const porNombre = {};
+  productos.forEach(p=>{
+    if(!porNombre[p.nombre]) porNombre[p.nombre] = [];
+    porNombre[p.nombre].push(p.categoria);
+  });
+
+  const lista = document.getElementById("admProductos");
+  lista.innerHTML = "";
+
+  Object.keys(porNombre).forEach(nombre=>{
+    const fila = document.createElement("div");
+    fila.className = "adm-fila";
+    fila.dataset.nombre = nombre;
+
+    const span = document.createElement("span");
+    span.className = "adm-nombre";
+    span.textContent = nombre;
+    const small = document.createElement("small");
+    small.textContent = " (" + porNombre[nombre].join(", ") + ")";
+    span.appendChild(small);
+
+    const l1 = document.createElement("label");
+    l1.innerHTML = "<input type='checkbox' class='chk-ocultar'> Ocultar";
+    l1.querySelector("input").checked = ocu.includes(nombre.toLowerCase());
+
+    const l2 = document.createElement("label");
+    l2.innerHTML = "<input type='checkbox' class='chk-agotar'> Agotado";
+    l2.querySelector("input").checked = ago.includes(nombre.toLowerCase());
+
+    fila.appendChild(span);
+    fila.appendChild(l1);
+    fila.appendChild(l2);
+    lista.appendChild(fila);
+  });
+}
+
+async function guardarMenu(){
+  const nombres = [...new Set(productos.map(p => p.nombre.toLowerCase()))];
+  const catsOcultables = ["desayuno", "merienda"];
+
+  const ocu = [];
+  const ago = [];
+
+  document.querySelectorAll("#admProductos .adm-fila").forEach(f=>{
+    const n = f.dataset.nombre.toLowerCase();
+    if(f.querySelector(".chk-ocultar").checked) ocu.push(n);
+    if(f.querySelector(".chk-agotar").checked) ago.push(n);
+  });
+
+  const categorias = {};
+  catsOcultables.forEach(c=>{
+    const vis = document.getElementById("admVis-" + c).checked;
+    const desde = admVal("admDesde-" + c);
+    const hasta = admVal("admHasta-" + c);
+    if(!desde || !hasta){ categorias.error = true; return; }
+    categorias[c] = { visible: vis, desde: desde, hasta: hasta };
+    if(!vis) ocu.push(c);
+  });
+  if(categorias.error){ admToast("Completa el horario de Desayuno y Merienda", false); return; }
+
+  CATEGORIAS.forEach(c=>{
+    if(document.getElementById("admAgo-" + c).checked) ago.push(c);
+  });
+
+  // Se conservan los textos de la hoja que este panel no maneja
+  const conservar = (clave, gestionados) => listaRemota(clave).filter(x => !gestionados.includes(x));
+  const nuevoOcu = conservar("ocultos", nombres.concat(catsOcultables)).concat(ocu);
+  const nuevoAgo = conservar("agotados", nombres.concat(CATEGORIAS)).concat(ago);
+
+  if(!remoto) remoto = {};
+  remoto.ocultos = nuevoOcu.join(",");
+  remoto.agotados = nuevoAgo.join(",");
+  firmaRemota = remoto.ocultos + "|" + remoto.agotados;
+
+  const ok3 = await guardarAjustes({ categorias: categorias });   // también redibuja todo
+  const ok1 = await guardarRemoto("ocultos", remoto.ocultos);
+  const ok2 = await guardarRemoto("agotados", remoto.agotados);
+
+  const ok = ok1 && ok2 && ok3;
+  admToast(ok ? "💾 Menú guardado" : "No se pudo guardar todo en la hoja", ok);
+  if(ok) confirmarConLaHoja();
+}
+
+// ---------- OTROS ----------
+async function guardarOtros(){
+  const d = parseFloat(admVal("admDelivery"));
+  const w = admVal("admWhatsapp").replace(/\D/g, "");
+
+  if(isNaN(d) || d < 0){ admToast("Escribe el precio del delivery", false); return; }
+  if(w.length < 8){ admToast("El WhatsApp debe llevar código de país, ej: 59172685867", false); return; }
+
+  const ok = await guardarAjustes({ delivery: d, whatsapp: w });
+  admToast(ok ? "💾 Guardado" : "No se pudo guardar en la hoja", ok);
+  if(ok) confirmarConLaHoja();
+}
+
+function verComoCliente(){
+  window.open(location.pathname + "?preview=1", "_blank");
+}
+
+async function sincronizarAhora(){
+  await cargarConfig();
+  admCargarValores();
+  admConstruirMenu();
+  admToast("🔄 Leído desde la hoja");
+}
+
+async function restablecerAjustes(){
+  if(!confirm("Se borrarán los horarios, días cerrados, delivery, WhatsApp y categorías guardados en la hoja y se recargará la página con los valores del código. ¿Seguro?")) return;
+  const ok = await guardarRemoto("ajustes", "");
+  admToast(ok ? "Ajustes restablecidos. Recargando..." : "No se pudo guardar en la hoja", ok);
+  if(ok) setTimeout(()=>location.reload(), 1500);
+}
+
+// ================= CARRUSEL DE LA PORTADA =================
+const FOTOS_PORTADA = ["entero.jpg", "medio.jpg", "cuartoala.jpg", "cuartopierna.jpg", "pierna.jpg", "contra.jpg"];
+const SEGUNDOS_PORTADA = 4;
+let slidePortada = 0;
+
+function iniciarPortada(){
+  const bg = document.getElementById("portadaBg");
+  if(!bg) return;
+  bg.innerHTML = "";
+  FOTOS_PORTADA.forEach((f, i)=>{
+    const s = document.createElement("div");
+    s.className = "portada-slide" + (i === 0 ? " activa" : "");
+    s.style.backgroundImage = 'url("' + f + '")';
+    bg.appendChild(s);
+  });
+}
+
+function siguientePortada(){
+  const slides = document.querySelectorAll("#portadaBg .portada-slide");
+  if(slides.length < 2) return;
+  slides[slidePortada].classList.remove("activa");
+  slidePortada = (slidePortada + 1) % slides.length;
+  slides[slidePortada].classList.add("activa");
 }
 
 // ================= ARRANQUE =================
+iniciarPortada();
 cargarProductos();
 actualizarEstado();
 contadorLenia();
 actualizarPollos();
 actualizarMarquesina();
 actualizarMenuPorHora();
+aplicarFiltroCategoria();
 cargarFotosYStock();
+
+// Panel admin por URL (?admin=1): pide el PIN
+if(params.get("admin") === "1") abrirAdmin();
 
 setInterval(contadorLenia, 1000);
 setInterval(actualizarEstado, 10000);
 setInterval(actualizarMarquesina, 5000);
 setInterval(cargarFotosYStock, 15000);
+setInterval(aplicarFiltroCategoria, 5000);
+setInterval(actualizarMenuPorHora, 30000);
+
+if(!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)){
+  setInterval(siguientePortada, SEGUNDOS_PORTADA * 1000);
+}
 
 if(USAR_CONTROL_REMOTO){
   setTimeout(()=>{
