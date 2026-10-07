@@ -339,6 +339,41 @@ header{
  font-weight:bold;
 }
 
+/* ---------- CUENTA REGRESIVA DE EVENTO ---------- */
+#cuentaEvento{
+ margin-top:15px;
+ padding:14px 10px;
+ border-radius:14px;
+ background:linear-gradient(135deg,#ff6f00,#ffca28);
+ color:#4a0000;
+ text-align:center;
+ box-shadow:0 4px 14px rgba(0,0,0,0.35);
+}
+#cuentaEvento .ce-titulo{ font-size:18px; font-weight:bold; margin-bottom:4px; }
+#cuentaEvento .ce-fecha{ font-size:13px; margin-bottom:8px; text-transform:capitalize; }
+#cuentaEvento .ce-cajas{ display:flex; justify-content:center; gap:8px; }
+#cuentaEvento .ce-caja{
+ background:rgba(255,255,255,0.85);
+ border-radius:10px;
+ padding:8px 6px;
+ min-width:58px;
+}
+#cuentaEvento .ce-caja b{ display:block; font-size:24px; line-height:1.1; }
+#cuentaEvento .ce-caja small{ font-size:11px; }
+#cuentaEvento .ce-final{ font-size:20px; font-weight:bold; }
+#cuentaEvento .ce-btn{
+ display:inline-block;
+ margin-top:12px;
+ padding:10px 18px;
+ background:#d50000;
+ color:white;
+ font-weight:bold;
+ font-size:15px;
+ text-decoration:none;
+ border-radius:999px;
+ box-shadow:0 3px 8px rgba(0,0,0,0.3);
+}
+
 /* ================= PANEL ADMIN ================= */
 #adminFondo{
  display:none;
@@ -570,6 +605,7 @@ header{
     <button class="adm-tab" data-tab="mensaje" onclick="cambiarTab('mensaje')">📢 Mensaje</button>
     <button class="adm-tab" data-tab="horarios" onclick="cambiarTab('horarios')">⏰ Horarios</button>
     <button class="adm-tab" data-tab="menu" onclick="cambiarTab('menu')">🍽 Menú</button>
+    <button class="adm-tab" data-tab="cuenta" onclick="cambiarTab('cuenta')">⏳ Cuenta</button>
     <button class="adm-tab" data-tab="otros" onclick="cambiarTab('otros')">⚙ Otros</button>
   </div>
 
@@ -660,6 +696,28 @@ header{
       <button onclick="guardarMenu()" class="adm-btn verde">💾 Guardar menú</button>
     </section>
 
+    <!-- ===== CUENTA REGRESIVA ===== -->
+    <section class="adm-sec" data-tab="cuenta">
+      <h3>⏳ Cuenta regresiva de evento</h3>
+      <p class="adm-ayuda">Sirve para aperturas, promociones, feriados, campañas... Cambia los datos y guarda; se actualiza en todos los clientes.</p>
+
+      <div class="adm-fila"><label><input type="checkbox" id="admCuentaActiva"> Mostrar cuenta regresiva</label></div>
+      <div class="adm-fila adm-col"><label for="admCuentaTitulo">Título</label><input type="text" id="admCuentaTitulo" maxlength="80" style="width:100%;" placeholder="🎉 GRAN APERTURA"></div>
+      <div class="adm-fila"><label for="admCuentaFecha">Fecha</label><input type="date" id="admCuentaFecha"></div>
+      <div class="adm-fila"><label for="admCuentaHora">Hora (Bolivia)</label><input type="time" id="admCuentaHora"></div>
+      <div class="adm-fila adm-col"><label for="admCuentaFinal">Mensaje cuando llegue la hora</label><input type="text" id="admCuentaFinal" maxlength="120" style="width:100%;" placeholder="🔥 ¡Ya abrimos! Haz tu pedido"></div>
+      <div class="adm-fila"><label for="admCuentaHorasFinal">Horas que se muestra el mensaje final</label><input type="number" id="admCuentaHorasFinal" min="0" step="1" style="width:80px;"></div>
+      <div class="adm-fila"><label><input type="checkbox" id="admCuentaMarq"> Mostrar también en la franja naranja</label></div>
+
+      <h3>📝 Botón de registro (primeros clientes)</h3>
+      <p class="adm-ayuda">Texto del botón (déjalo vacío para NO mostrar botón). El enlace puede ser tu página de Apertura. Si dejas el enlace vacío, el botón abre WhatsApp con un mensaje de registro.</p>
+      <div class="adm-fila adm-col"><label for="admCuentaBoton">Texto del botón</label><input type="text" id="admCuentaBoton" maxlength="60" style="width:100%;" placeholder="📝 Regístrate como primer cliente"></div>
+      <div class="adm-fila adm-col"><label for="admCuentaEnlace">Enlace (https://... o Apertura.html)</label><input type="text" id="admCuentaEnlace" maxlength="300" style="width:100%;" placeholder="https://jwilsoncruz.github.io/gopollosrhosse/Apertura"></div>
+
+      <button onclick="guardarCuenta()" class="adm-btn verde">💾 Guardar cuenta regresiva</button>
+      <button onclick="apagarCuenta()" class="adm-btn rojo">⏹ Ocultar</button>
+    </section>
+
     <!-- ===== OTROS ===== -->
     <section class="adm-sec" data-tab="otros">
       <h3>Delivery y contacto</h3>
@@ -671,7 +729,7 @@ header{
       <button onclick="verComoCliente()" class="adm-btn">👁 Ver menú completo (preview)</button>
       <button onclick="sincronizarAhora()" class="adm-btn">🔄 Leer la hoja ahora</button>
       <button onclick="restablecerAjustes()" class="adm-btn rojo">⚠ Restablecer horarios y ajustes</button>
-      <p class="adm-ayuda">Restablecer borra lo guardado en la hoja para horarios, días cerrados, delivery, WhatsApp y categorías, y vuelve a los valores que están escritos en el código.</p>
+      <p class="adm-ayuda">Restablecer borra lo guardado en la hoja para horarios, días cerrados, delivery, WhatsApp, categorías y cuenta regresiva, y vuelve a los valores que están escritos en el código.</p>
     </section>
 
   </div>
@@ -748,6 +806,22 @@ let pollosDisponibles = 4;     // pollos que hay hoy (se controla desde el Panel
 
 let precioDelivery = 5;        // Bs, aparece en la marquesina
 let whatsapp = "59172685867";  // número que recibe los pedidos
+
+// ---------- CUENTA REGRESIVA DE EVENTO / CAMPAÑA ----------
+// Se puede cambiar desde el Panel Admin > ⏳ Cuenta (lo que guardes allí manda sobre esto).
+// Hora de Bolivia (UTC-4). horasFinal = cuántas horas se muestra el mensaje final antes de ocultarse.
+// textoBoton vacío = sin botón. enlace vacío = el botón abre WhatsApp con un mensaje de registro.
+const CUENTA_CONFIG = {
+  activa: true,
+  titulo: "🎉 GRAN APERTURA",
+  fecha: "2026-10-12",
+  hora: "20:00",
+  textoFinal: "🔥 ¡Ya abrimos! Haz tu pedido",
+  horasFinal: 6,
+  marquesina: true,   // también muestra el aviso en la franja naranja
+  textoBoton: "📝 Regístrate como primer cliente",
+  enlace: "https://jwilsoncruz.github.io/gopollosrhosse/Apertura"
+};
 
 // Poner en false para que la página NO lea la configuración de Google Sheets
 const USAR_CONTROL_REMOTO = true;
@@ -855,6 +929,8 @@ en Trinidad-Beni-Bolivia🇧🇴
 </p>
 
 <div id="estadoLocal"></div>
+
+<div id="cuentaEvento" style="display:none"></div>
 
 <div id="contadorPollos"
 style="background:var(--color-secundario);color:white;padding:15px;border-radius:12px;margin-top:15px;text-align:center;font-weight:bold;">
@@ -1267,6 +1343,15 @@ function actualizarMarquesina(){
     return;
   }
 
+  // ⏳ Cuenta regresiva de evento (si está activa y con marquesina)
+  const ce = cuentaEstado();
+  if(ce && CUENTA_CONFIG.marquesina){
+    ponerMarquesina(ce.fase === "antes"
+      ? "⏳ " + CUENTA_CONFIG.titulo + " — " + cuentaFechaTexto(ce.obj) + " >>> ¡No te lo pierdas! 🔥"
+      : CUENTA_CONFIG.textoFinal);
+    return;
+  }
+
   const forzado = estadoForzado();
   const deliveryTxt = "🚚 Delivery solo " + precioDelivery + " Bs";
 
@@ -1362,6 +1447,85 @@ function actualizarEstado(){
       textoForzado.textContent = "Estado actual: Automático (horario normal)";
     }
   }
+}
+
+// ================= CUENTA REGRESIVA DE EVENTO =================
+function cuentaFechaObjetivo(){
+  const c = CUENTA_CONFIG;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(c.fecha) || !/^\d{1,2}:\d{2}$/.test(c.hora)) return null;
+  const h = c.hora.length === 4 ? "0" + c.hora : c.hora;
+  const d = new Date(c.fecha + "T" + h + ":00-04:00");   // hora de Bolivia
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function cuentaEstado(){
+  if(!CUENTA_CONFIG.activa) return null;
+  const obj = cuentaFechaObjetivo();
+  if(!obj) return null;
+  const ms = obj - new Date();
+  if(ms > 0) return { fase: "antes", ms: ms, obj: obj };
+  if(-ms < (Number(CUENTA_CONFIG.horasFinal) || 0) * 3600000) return { fase: "ya", obj: obj };
+  return null;
+}
+
+function cuentaFechaTexto(d){
+  try{
+    return d.toLocaleString("es-BO", {
+      weekday:"long", day:"numeric", month:"long",
+      hour:"2-digit", minute:"2-digit", timeZone:"America/La_Paz"
+    });
+  }catch(e){ return CUENTA_CONFIG.fecha + " " + CUENTA_CONFIG.hora; }
+}
+
+function escHTML(t){
+  return String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+// Enlace permitido: https://..., http://... o un archivo .html de la misma carpeta (ej: Apertura.html)
+function enlaceValido(s){
+  return /^(https?:\/\/\S+|[\w\-\/\.]+\.html)$/i.test(String(s || "").trim());
+}
+
+// Enlace del botón de registro: el configurado, o WhatsApp si está vacío
+function cuentaEnlaceBoton(){
+  const e = String(CUENTA_CONFIG.enlace || "").trim();
+  if(e && enlaceValido(e)) return e;
+  const msg = "Hola, quiero registrarme como uno de los primeros clientes: " + CUENTA_CONFIG.titulo;
+  return "https://wa.me/" + whatsapp + "?text=" + encodeURIComponent(msg);
+}
+
+function actualizarCuenta(){
+  const box = document.getElementById("cuentaEvento");
+  if(!box) return;
+
+  const e = cuentaEstado();
+  if(!e){ box.style.display = "none"; return; }
+
+  box.style.display = "block";
+
+  if(e.fase === "ya"){
+    box.innerHTML = '<div class="ce-titulo">' + escHTML(CUENTA_CONFIG.titulo) + '</div>' +
+                    '<div class="ce-final">' + escHTML(CUENTA_CONFIG.textoFinal) + '</div>';
+    return;
+  }
+
+  const ms = e.ms;
+  const dias = Math.floor(ms / 86400000);
+  const hrs  = Math.floor((ms % 86400000) / 3600000);
+  const min  = Math.floor((ms % 3600000) / 60000);
+  const seg  = Math.floor((ms % 60000) / 1000);
+  const caja = (n, t) => '<div class="ce-caja"><b>' + pad(n) + '</b><small>' + t + '</small></div>';
+
+  const textoBtn = String(CUENTA_CONFIG.textoBoton || "").trim();
+  const boton = textoBtn
+    ? '<a class="ce-btn" href="' + escHTML(cuentaEnlaceBoton()) + '" target="_blank" rel="noopener">' + escHTML(textoBtn) + '</a>'
+    : '';
+
+  box.innerHTML =
+    '<div class="ce-titulo">' + escHTML(CUENTA_CONFIG.titulo) + '</div>' +
+    '<div class="ce-fecha">📅 ' + escHTML(cuentaFechaTexto(e.obj)) + '</div>' +
+    '<div class="ce-cajas">' + caja(dias, "días") + caja(hrs, "horas") + caja(min, "min") + caja(seg, "seg") + '</div>' +
+    boton;
 }
 
 // ================= CONTADOR DE LA LEÑA =================
@@ -1569,6 +1733,7 @@ function refrescarTodo(){
   cargarProductos();
   actualizarMenuPorHora();
   aplicarFiltroCategoria();
+  actualizarCuenta();
 }
 
 // ================= AJUSTES AVANZADOS (vienen de la hoja, clave "ajustes") =================
@@ -1611,6 +1776,20 @@ function aplicarAjustes(a){
   if(a.whatsapp){
     const n = String(a.whatsapp).replace(/\D/g, "");
     if(n.length >= 8) whatsapp = n;
+  }
+
+  // ⏳ Cuenta regresiva de evento
+  if(a.cuenta && typeof a.cuenta === "object"){
+    const x = a.cuenta;
+    if(typeof x.activa === "boolean") CUENTA_CONFIG.activa = x.activa;
+    if(typeof x.titulo === "string") CUENTA_CONFIG.titulo = x.titulo.slice(0, 80);
+    if(/^\d{4}-\d{2}-\d{2}$/.test(String(x.fecha || ""))) CUENTA_CONFIG.fecha = x.fecha;
+    if(hm(x.hora)) CUENTA_CONFIG.hora = x.hora;
+    if(typeof x.textoFinal === "string") CUENTA_CONFIG.textoFinal = x.textoFinal.slice(0, 120);
+    if(x.horasFinal !== undefined && !isNaN(Number(x.horasFinal)) && Number(x.horasFinal) >= 0) CUENTA_CONFIG.horasFinal = Number(x.horasFinal);
+    if(typeof x.marquesina === "boolean") CUENTA_CONFIG.marquesina = x.marquesina;
+    if(typeof x.textoBoton === "string") CUENTA_CONFIG.textoBoton = x.textoBoton.slice(0, 60);
+    if(typeof x.enlace === "string") CUENTA_CONFIG.enlace = x.enlace.slice(0, 300);
   }
 
   if(a.categorias && typeof a.categorias === "object"){
@@ -1669,6 +1848,7 @@ async function cargarConfig(){
     contadorLenia();
     actualizarMenuPorHora();
     aplicarFiltroCategoria();
+    actualizarCuenta();
 
   }catch(e){
     console.error("Error conectando con Google Sheets", e);
@@ -1888,6 +2068,18 @@ function admCargarValores(){
 
   set("admDelivery", precioDelivery);
   set("admWhatsapp", whatsapp);
+
+  // ⏳ Cuenta regresiva
+  const cc = CUENTA_CONFIG;
+  document.getElementById("admCuentaActiva").checked = !!cc.activa;
+  set("admCuentaTitulo", cc.titulo);
+  set("admCuentaFecha", cc.fecha);
+  set("admCuentaHora", cc.hora.length === 4 ? "0" + cc.hora : cc.hora);
+  set("admCuentaFinal", cc.textoFinal);
+  set("admCuentaHorasFinal", cc.horasFinal);
+  document.getElementById("admCuentaMarq").checked = !!cc.marquesina;
+  set("admCuentaBoton", cc.textoBoton || "");
+  set("admCuentaEnlace", cc.enlace || "");
 }
 
 // Después de guardar algo, se vuelve a leer la hoja para confirmar que quedó guardado
@@ -2152,6 +2344,36 @@ async function guardarMenu(){
   if(ok) confirmarConLaHoja();
 }
 
+// ---------- CUENTA REGRESIVA ----------
+async function guardarCuenta(){
+  const c = {
+    activa: document.getElementById("admCuentaActiva").checked,
+    titulo: admVal("admCuentaTitulo").trim(),
+    fecha: admVal("admCuentaFecha"),
+    hora: admVal("admCuentaHora"),
+    textoFinal: admVal("admCuentaFinal").trim(),
+    horasFinal: parseInt(admVal("admCuentaHorasFinal"), 10),
+    marquesina: document.getElementById("admCuentaMarq").checked,
+    textoBoton: admVal("admCuentaBoton").trim(),
+    enlace: admVal("admCuentaEnlace").trim()
+  };
+
+  if(!c.titulo){ admToast("Escribe un título", false); return; }
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(c.fecha)){ admToast("Elige la fecha", false); return; }
+  if(!/^\d{1,2}:\d{2}$/.test(c.hora)){ admToast("Elige la hora", false); return; }
+  if(c.enlace && !enlaceValido(c.enlace)){ admToast("El enlace debe empezar con https:// o terminar en .html", false); return; }
+  if(isNaN(c.horasFinal) || c.horasFinal < 0) c.horasFinal = 6;
+
+  const ok = await guardarAjustes({ cuenta: c });
+  admToast(ok ? "💾 Cuenta regresiva guardada" : "No se pudo guardar en la hoja", ok);
+  if(ok) confirmarConLaHoja();
+}
+
+function apagarCuenta(){
+  document.getElementById("admCuentaActiva").checked = false;
+  guardarCuenta();
+}
+
 // ---------- OTROS ----------
 async function guardarOtros(){
   const d = parseFloat(admVal("admDelivery"));
@@ -2177,7 +2399,7 @@ async function sincronizarAhora(){
 }
 
 async function restablecerAjustes(){
-  if(!confirm("Se borrarán los horarios, días cerrados, delivery, WhatsApp y categorías guardados en la hoja y se recargará la página con los valores del código. ¿Seguro?")) return;
+  if(!confirm("Se borrarán los horarios, días cerrados, delivery, WhatsApp, categorías y cuenta regresiva guardados en la hoja y se recargará la página con los valores del código. ¿Seguro?")) return;
   const ok = await guardarRemoto("ajustes", "");
   admToast(ok ? "Ajustes restablecidos. Recargando..." : "No se pudo guardar en la hoja", ok);
   if(ok) setTimeout(()=>location.reload(), 1500);
@@ -2218,11 +2440,13 @@ actualizarMarquesina();
 actualizarMenuPorHora();
 aplicarFiltroCategoria();
 cargarFotosYStock();
+actualizarCuenta();
 
 // Panel admin por URL (?admin=1): pide el PIN
 if(params.get("admin") === "1") abrirAdmin();
 
 setInterval(contadorLenia, 1000);
+setInterval(actualizarCuenta, 1000);
 setInterval(actualizarEstado, 10000);
 setInterval(actualizarMarquesina, 5000);
 setInterval(cargarFotosYStock, 15000);
