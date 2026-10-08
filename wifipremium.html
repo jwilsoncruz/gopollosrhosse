@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="wifi.ico">
 <style>
+  /* ---------- ANCHO ADAPTABLE ---------- */
+  :root{ --max:420px; }                                   /* celular */
+  @media (min-width:700px){  :root{ --max:620px;  } }     /* tablet */
+  @media (min-width:1000px){ :root{ --max:1040px; } }     /* PC */
+
   :root{
     --bg:#1c130d;
     --panel:#2a1c13;
@@ -24,6 +29,7 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  img{max-width:100%;height:auto;}
   body{
     background:
       radial-gradient(circle at 15% 0%, #3a2716 0%, transparent 45%),
@@ -35,7 +41,7 @@
     justify-content:center;
     padding-bottom:32px;
   }
-  .app{width:100%;max-width:420px;padding:0 18px;}
+  .app{width:100%;max-width:var(--max);padding:0 18px;}
 
   .marca{
     text-align:center;
@@ -46,6 +52,7 @@
     letter-spacing:.3px;
     color:var(--amber);
   }
+  .marca img{width:140px;}
 
   h1{
     font-family:'Baloo 2',sans-serif;
@@ -56,6 +63,8 @@
     color:var(--cream);
   }
   p{line-height:1.5;}
+
+  .intro{text-align:center;line-height:1.6;}
 
   .panel{
     background:var(--panel);
@@ -139,9 +148,12 @@
   canvas{
     display:block;
     margin:18px auto 6px;
+    width:100%;
+    max-width:360px;
+    aspect-ratio:2 / 1;
+    height:auto;
     border-radius:12px;
     touch-action:none;
-    max-width:100%;
     box-shadow:0 0 0 1px var(--line);
   }
   .raspa-wrap{text-align:center;}
@@ -157,6 +169,7 @@
     border-radius:10px;
     padding:10px;
     margin-top:8px;
+    word-break:break-all;
   }
   .cambiar{
     display:block;text-align:center;margin-top:16px;
@@ -168,8 +181,39 @@
     padding:12px 16px;margin-bottom:10px;font-size:14px;
   }
 
+  .menu-rapido h3{margin-top:0;color:var(--amber);font-family:'Baloo 2',sans-serif;}
+  .menu-rapido .item{
+    display:flex;justify-content:space-between;gap:10px;
+    padding:8px 0;border-bottom:1px dashed var(--line);
+    font-size:15px;
+  }
+  .menu-rapido .item:last-child{border-bottom:none;}
+  .menu-rapido .precio{color:var(--amber);font-weight:bold;white-space:nowrap;}
+
   @media (prefers-reduced-motion: reduce){
     button{transition:none;}
+  }
+
+  /* ---------- TABLET ---------- */
+  @media (min-width:700px){
+    .marca img{width:170px;}
+    h1{font-size:32px;}
+    .app{padding:0 24px;}
+  }
+
+  /* ---------- PC: flujo a la izquierda, menú a la derecha ---------- */
+  .layout{display:block;}
+  @media (min-width:1000px){
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.3fr) minmax(300px,1fr);
+      gap:24px;
+      align-items:start;
+    }
+    .col-menu{position:sticky;top:16px;}
+    .col-menu .panel{margin-top:14px;}
+    .marca img{width:190px;}
+    .panel{padding:24px;}
   }
 </style>
 </head>
@@ -177,14 +221,20 @@
 <body>
 <div class="app">
 <div class="marca">
-<img src="logo.png" alt="Go Pollos Rhosse" style="width:140px">
+  <img src="logo.png" alt="Go Pollos Rhosse">
 </div>
+
+<div class="layout">
+
+<div class="col-main">
 
 <!-- REGISTRO -->
 <div id="pantalla1">
- 📶 WiFi GRATIS
-🎁 Raspa y gana premios
-🍗 Acumula visitas y recibe comida GRATIS
+  <div class="intro">
+    📶 WiFi GRATIS<br>
+    🎁 Raspa y gana premios<br>
+    🍗 Acumula visitas y recibe comida GRATIS
+  </div>
   <div class="oferta">📶 Conéctate gratis y raspa tu premio<br>🎁 Válido en compras desde Bs 20</div>
 
   <label class="campo" for="nombre">Tu nombre</label>
@@ -202,27 +252,15 @@
   <div class="error" id="errorRegistro"></div>
   <button id="btnContinuar">📲 Conectarme</button>
 </div>
-<div class="panel">
-<h3>🍗 Menú Rápido</h3>
-
-Medio Pollo Bs65<br>
-Cuarto Bs27<br>
-Hamburguesa Bs20<br>
-Salchipapa Bs15<br>
-Mini CocaCola Bs3<br>
-Economico Pollo a la Leña Bs17<br>
-Gaseosa 2L Bs15
-
-</div>
 
 <!-- WIFI -->
 <div class="panel hidden" id="pantalla2">
   <h1 style="font-size:22px;margin-top:0;">✅ Ya estás conectado</h1>
   <p class="saludo" id="saludo"></p>
-<p style="text-align:center">
-📡 Red WiFi:
-<b>WiFi Go Pollo´s Rhosse</b>
-</p>
+  <p style="text-align:center">
+    📡 Red WiFi:
+    <b>WiFi Go Pollo´s Rhosse</b>
+  </p>
   <div class="oferta">
     📶 Tu clave WiFi
     <div class="clave" id="clave"></div>
@@ -252,7 +290,7 @@ Gaseosa 2L Bs15
 <div class="panel hidden raspa-wrap" id="raspa">
   <div class="badge-cumple hidden" id="badgeCumple">🎂 ¡Feliz cumpleaños! Tenemos algo especial para ti.</div>
   <h1 style="font-size:22px;margin-top:0;">🎁 Raspa y gana</h1>
-  <p class="pista">Desliza el dedo sobre el recuadro</p>
+  <p class="pista">Desliza el dedo (o el mouse) sobre el recuadro</p>
 
   <canvas id="canvas" width="300" height="150" aria-label="Tarjeta para raspar y revelar tu premio"></canvas>
 
@@ -269,11 +307,27 @@ Gaseosa 2L Bs15
   <button id="segundaBtn" class="hidden">🎁 Segunda oportunidad</button>
 </div>
 
+</div><!-- /col-main -->
+
+<div class="col-menu">
+  <div class="panel menu-rapido">
+    <h3>🍗 Menú Rápido</h3>
+    <div class="item"><span>Medio Pollo</span><span class="precio">Bs 65</span></div>
+    <div class="item"><span>Cuarto</span><span class="precio">Bs 27</span></div>
+    <div class="item"><span>Hamburguesa</span><span class="precio">Bs 20</span></div>
+    <div class="item"><span>Salchipapa</span><span class="precio">Bs 15</span></div>
+    <div class="item"><span>Mini CocaCola</span><span class="precio">Bs 3</span></div>
+    <div class="item"><span>Económico Pollo a la Leña</span><span class="precio">Bs 17</span></div>
+    <div class="item"><span>Gaseosa 2L</span><span class="precio">Bs 15</span></div>
+  </div>
+</div>
+
+</div><!-- /layout -->
+
 </div>
 
 <script>
 // ---------- CONEXIÓN A GOOGLE SHEETS (Apps Script) ----------
-// Pega aquí la URL que termina en /exec cuando la tengas.
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzKUhFIjw-41T7W9ZunKtlU_clWWZxyfFvEEfjsLvm9LgU7K1NCK1TL3foHzfQl51_lIg/exec";
 
 function enviarAAppsScript(datos){
@@ -409,8 +463,6 @@ function init(){
     mostrarYaJugaste();
   } else if(cliente){
     mostrarWifi();
-  } else {
-    // pantalla1 ya es visible por defecto
   }
 }
 
@@ -553,13 +605,12 @@ function pasarARaspa(){
 }
 
 // ---------- LÓGICA DE RASPADO ----------
+// El canvas se dibuja siempre en un espacio lógico de 300x150; el tamaño
+// visible lo controla el CSS (se adapta a celular, tablet y PC).
 function setupCanvasResolution(){
   const dpr = window.devicePixelRatio || 1;
-  const w = 300, h = 150;
-  canvas.style.width = w + "px";
-  canvas.style.height = h + "px";
-  canvas.width = w * dpr;
-  canvas.height = h * dpr;
+  canvas.width = 300 * dpr;
+  canvas.height = 150 * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
@@ -609,7 +660,7 @@ function dibujarFoil(){
   ctx.textAlign = "left";
 }
 
-canvas.addEventListener("mousedown", () => raspando = true);
+canvas.addEventListener("mousedown", (e) => { raspando = true; raspar(e); });
 window.addEventListener("mouseup", () => raspando = false);
 canvas.addEventListener("mousemove", raspar);
 
@@ -617,26 +668,28 @@ canvas.addEventListener("touchstart", (e) => { raspando = true; rasparTouch(e); 
 canvas.addEventListener("touchend", () => raspando = false);
 canvas.addEventListener("touchmove", rasparTouch, {passive:false});
 
-function raspar(e){
-  if(!raspando || yaRevelo) return;
-  ctx.beginPath();
-  ctx.arc(e.offsetX, e.offsetY, 15, 0, Math.PI*2);
-  ctx.fill();
-  raspadoTotal++;
-  if(raspadoTotal > 40) mostrarPremio();
-}
-
-function rasparTouch(e){
-  e.preventDefault();
-  if(!raspando || yaRevelo) return;
+// Convierte una posición en pantalla a coordenadas lógicas (300x150),
+// para que raspar funcione igual sin importar el tamaño visible del canvas.
+function rasparEn(clientX, clientY){
   const rect = canvas.getBoundingClientRect();
-  const x = e.touches[0].clientX - rect.left;
-  const y = e.touches[0].clientY - rect.top;
+  const x = (clientX - rect.left) * (300 / rect.width);
+  const y = (clientY - rect.top) * (150 / rect.height);
   ctx.beginPath();
   ctx.arc(x, y, 15, 0, Math.PI*2);
   ctx.fill();
   raspadoTotal++;
   if(raspadoTotal > 40) mostrarPremio();
+}
+
+function raspar(e){
+  if(!raspando || yaRevelo) return;
+  rasparEn(e.clientX, e.clientY);
+}
+
+function rasparTouch(e){
+  e.preventDefault();
+  if(!raspando || yaRevelo) return;
+  rasparEn(e.touches[0].clientX, e.touches[0].clientY);
 }
 
 function mostrarPremio(){
