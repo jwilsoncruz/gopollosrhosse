@@ -6,6 +6,14 @@
 <title>Go Pollos Rhosse PRO</title>
 <link rel="icon" href="comandas.ico">
 <style>
+/* ---------- ANCHO ADAPTABLE ---------- */
+:root{ --max:480px; }                                   /* celular */
+@media (min-width:700px){  :root{ --max:760px;  } }     /* tablet */
+@media (min-width:1100px){ :root{ --max:1240px; } }     /* PC */
+
+img{ max-width:100%; }
+#qrBox img{ max-width:100%; height:auto; }
+
 :root{
   --rojo:#d50000;
   --vino:#4b0000;
@@ -34,7 +42,7 @@ body{
 }
 
 .contenedor{
-  max-width:480px;
+  max-width:var(--max);
   margin:0 auto;
   padding:0 12px;
 }
@@ -50,7 +58,7 @@ body{
 }
 
 .topbar-fila{
-  max-width:480px;
+  max-width:var(--max);
   margin:0 auto;
   display:flex;
   align-items:center;
@@ -146,13 +154,13 @@ select, input{
   color:#fff;
 }
 
-/* ---------- BOTONES DE CATEGORÍA (dentro de la barra superior, siempre visibles) ---------- */
+/* ---------- BOTONES DE CATEGORÍA ---------- */
 #tabsCategorias{
   display:grid;
   grid-auto-flow:column;
   grid-auto-columns:1fr;
   gap:4px;
-  max-width:480px;
+  max-width:var(--max);
   margin:8px auto 0 auto;
 }
 
@@ -198,7 +206,7 @@ select, input{
 /* ---------- MENÚ ---------- */
 .grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(auto-fill,minmax(135px,1fr));
   gap:8px;
 }
 
@@ -377,7 +385,7 @@ button{
 }
 
 .floating-grid{
-  max-width:480px;
+  max-width:var(--max);
   margin:0 auto;
   display:grid;
   grid-template-columns:2fr 1fr 1fr;
@@ -391,7 +399,7 @@ button{
 .reset{ background:var(--rojo); font-size:12px; }
 
 .fila-secundaria{
-  max-width:480px;
+  max-width:var(--max);
   margin:8px auto 0 auto;
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -453,7 +461,7 @@ button{
 }
 
 #panelAdminPOS .caja-admin{
-  max-width:460px;
+  max-width:min(640px,100%);
   margin:0 auto;
   background:#1c1c1c;
   border-radius:14px;
@@ -579,6 +587,37 @@ button{
 @media (max-width:350px){
   .tab-cat{ font-size:9px; }
 }
+
+/* ---------- DISEÑO EN DOS COLUMNAS (PC / TABLET GRANDE) ---------- */
+.layout{ display:block; }
+
+@media (min-width:900px){
+  .layout{
+    display:grid;
+    grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);
+    gap:20px;
+    align-items:start;
+  }
+  .col-pedido{
+    position:sticky;
+    top:calc(var(--topbar-h) + 12px);
+    max-height:calc(100vh - var(--topbar-h) - var(--floating-h) - 24px);
+    overflow-y:auto;
+    padding-right:4px;
+  }
+  .grid{ grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); }
+  button{ font-size:15px; }
+  .tab-cat{ font-size:13px; padding:10px 0; }
+  .tab-cat .ico{ font-size:24px; }
+  #topbar .totalLinea{ font-size:22px; }
+  #topbar .cambioLinea{ font-size:18px; }
+  .grid button img.foto-btn{ height:80px; }
+}
+
+/* Celular en horizontal: barra inferior más compacta */
+@media (max-height:480px) and (orientation:landscape){
+  .fila-secundaria{ display:none; }
+}
 </style>
 </head>
 
@@ -592,7 +631,6 @@ button{
       <div class="cambioLinea" id="cambio">Cambio: 0 Bs</div>
     </div>
   </div>
-  <!-- Botones de categoría: siempre visibles arriba -->
   <div id="tabsCategorias" role="group" aria-label="Categorías del menú"></div>
 </div>
 
@@ -621,48 +659,56 @@ button{
   </select>
 </div>
 
-<h3 class="subtitulo">🍗 Menú</h3>
-<div class="grid" id="menuGrid"></div>
+<div class="layout">
 
-<h3 class="subtitulo">🛒 Pedido actual</h3>
-<div id="detalle"><div class="vacio">Sin pedidos</div></div>
-<div class="total" id="totalText">Total: 0 Bs</div>
+  <div class="col-menu">
+    <h3 class="subtitulo">🍗 Menú</h3>
+    <div class="grid" id="menuGrid"></div>
+  </div>
 
-<h3 class="subtitulo">💳 Pago</h3>
+  <div class="col-pedido">
+    <h3 class="subtitulo">🛒 Pedido actual</h3>
+    <div id="detalle"><div class="vacio">Sin pedidos</div></div>
+    <div class="total" id="totalText">Total: 0 Bs</div>
 
-<div class="metodos-pago">
-  <button type="button" class="metodo-btn activo" id="btnEfectivo" onclick="elegirPago('Efectivo')">💵 Efectivo</button>
-  <button type="button" class="metodo-btn" id="btnQR" onclick="elegirPago('QR')">📲 QR</button>
-  <button type="button" class="metodo-btn" id="btnMixto" onclick="elegirPago('Mixto')">🔀 Mixto</button>
-</div>
+    <h3 class="subtitulo">💳 Pago</h3>
 
-<div id="qrBox">
-  <div>Escanea para pagar</div>
-  <img src="https://jwilsoncruz.github.io/gopollosrhosse/qr%20bg.jpeg" width="180" height="180">
-</div>
+    <div class="metodos-pago">
+      <button type="button" class="metodo-btn activo" id="btnEfectivo" onclick="elegirPago('Efectivo')">💵 Efectivo</button>
+      <button type="button" class="metodo-btn" id="btnQR" onclick="elegirPago('QR')">📲 QR</button>
+      <button type="button" class="metodo-btn" id="btnMixto" onclick="elegirPago('Mixto')">🔀 Mixto</button>
+    </div>
 
-<div id="mixtoBox">
-  <label for="montoQRMixto">¿Cuánto paga por QR?</label>
-  <input type="number" id="montoQRMixto" placeholder="Ej. 80" oninput="actualizarRestanteMixto()">
-  <div id="restanteMixto">Cubrir con efectivo: Bs 0</div>
-</div>
+    <div id="qrBox">
+      <div>Escanea para pagar</div>
+      <img src="https://jwilsoncruz.github.io/gopollosrhosse/qr%20bg.jpeg" width="180" height="180">
+    </div>
 
-<div class="montos-rapidos" id="montosRapidos">
-  <button type="button" onclick="pagar(20)">20</button>
-  <button type="button" onclick="pagar(50)">50</button>
-  <button type="button" onclick="pagar(100)">100</button>
-  <button type="button" onclick="pagar(200)">200</button>
-</div>
+    <div id="mixtoBox">
+      <label for="montoQRMixto">¿Cuánto paga por QR?</label>
+      <input type="number" id="montoQRMixto" placeholder="Ej. 80" oninput="actualizarRestanteMixto()">
+      <div id="restanteMixto">Cubrir con efectivo: Bs 0</div>
+    </div>
 
-<div class="fila-monto" id="filaMontoManual">
-  <input type="number" id="montoManual" placeholder="Otro monto recibido">
-  <button type="button" onclick="pagarManual()">OK</button>
-</div>
+    <div class="montos-rapidos" id="montosRapidos">
+      <button type="button" onclick="pagar(20)">20</button>
+      <button type="button" onclick="pagar(50)">50</button>
+      <button type="button" onclick="pagar(100)">100</button>
+      <button type="button" onclick="pagar(200)">200</button>
+    </div>
 
-<div class="vuelto-panel" id="vueltoPanel">
-  <div class="etiqueta">Vuelto a entregar</div>
-  <div class="monto" id="vueltoMonto">— Bs</div>
-</div>
+    <div class="fila-monto" id="filaMontoManual">
+      <input type="number" id="montoManual" placeholder="Otro monto recibido">
+      <button type="button" onclick="pagarManual()">OK</button>
+    </div>
+
+    <div class="vuelto-panel" id="vueltoPanel">
+      <div class="etiqueta">Vuelto a entregar</div>
+      <div class="monto" id="vueltoMonto">— Bs</div>
+    </div>
+  </div>
+
+</div><!-- /layout -->
 
 </div><!-- /contenedor -->
 
@@ -711,9 +757,9 @@ let enviando = false;
 // solo evita que cualquiera que agarre el celular toque el stock.
 const ADMIN_PIN = "0940";
 
-// ================= CATEGORÍAS DEL POS (NUEVO) =================
+// ================= CATEGORÍAS DEL POS =================
 // visible: true  -> aparece el botón de la categoría
-// visible: false -> la categoría queda oculta (actívala cuando tengas tus platillos)
+// visible: false -> la categoría queda oculta
 const CATEGORIAS_POS = [
   { id:"desayuno", icono:"🍳", nombre:"Desayuno", visible:true },
   { id:"almuerzo", icono:"🍗", nombre:"Almuerzo", visible:true },
@@ -787,7 +833,7 @@ const PRODUCTOS_POS = [
 let stockActual = {}; // { "Pollo Entero": 5, ... } — solo trae los productos que el admin controla
 let fotosActuales = {}; // { "Pollo Entero": "https://..." o "data:image/jpeg;..." } — sincronizadas con todos
 
-// ================= CATEGORÍAS: BOTONES Y FILTRO (NUEVO) =================
+// ================= CATEGORÍAS: BOTONES Y FILTRO =================
 // Al abrir el POS, muestra la categoría que toca según la hora
 function categoriaPorHora(){
   const ahora = new Date();
@@ -843,8 +889,7 @@ function elegirCategoria(id){
   renderTabs();
   renderMenu();
 
-  // Si el menú quedó fuera de vista (por ejemplo el mesero estaba abajo,
-  // cerca del pago), lo subimos para que vea los platillos de la categoría
+  // Si el menú quedó fuera de vista, lo subimos para que vea los platillos de la categoría
   const grid = document.getElementById("menuGrid");
   const topbar = document.getElementById("topbar");
   const limite = topbar ? topbar.offsetHeight : 0;
@@ -997,8 +1042,7 @@ function elegirPago(tipo){
   }
 }
 
-// Cuánto de "Mixto" queda por cubrir en efectivo, según lo que se
-// ingresó como pagado por QR.
+// Cuánto de "Mixto" queda por cubrir en efectivo, según lo pagado por QR.
 function restanteMixto(){
   const montoQR = Math.max(0, parseFloat(document.getElementById("montoQRMixto").value || 0));
   return Math.max(0, total - montoQR);
@@ -1065,7 +1109,7 @@ function pagarManual(){
   mostrarVuelto();
 }
 
-// ================= ENVIAR A COCINA (integración con el ecosistema) =================
+// ================= ENVIAR A COCINA =================
 function construirDetalle(){
   // Una línea por unidad, en el mismo formato "Nombre Bs Precio" que usa
   // el sitio principal, para que Cocina PRO y Pantalla Clientes los agrupen igual.
@@ -1094,9 +1138,7 @@ function enviarComanda(){
     return;
   }
 
-  // Calcula cuánto de este pedido es QR y cuánto es efectivo, según el
-  // método elegido. Esto es lo que la caja realmente necesita — "pago"
-  // por sí solo es solo una etiqueta, no alcanza para sumar bien.
+  // Calcula cuánto de este pedido es QR y cuánto es efectivo.
   let montoQR = 0;
   let montoEfectivo = 0;
 
@@ -1152,8 +1194,7 @@ function enviarComanda(){
   });
 }
 
-// Envío opcional por WhatsApp (no reemplaza el envío a cocina, es un extra
-// para pedidos de Delivery / Para Llevar donde quieras avisar al cliente)
+// Envío opcional por WhatsApp (extra para pedidos de Delivery / Para Llevar)
 function enviarWhatsapp(){
 
   if(pedido.length === 0){
@@ -1174,7 +1215,7 @@ function enviarWhatsapp(){
   window.open("https://wa.me/59172685867?text=" + encodeURIComponent(txt));
 }
 
-// ================= CAJA DEL DÍA (compartida, guardada en el Google Sheet) =================
+// ================= CAJA DEL DÍA =================
 function verCaja(){
 
   const btn = document.querySelector('.caja');
@@ -1191,7 +1232,6 @@ function verCaja(){
     try{
       data = JSON.parse(txt);
     }catch(e){
-      // Un Apps Script viejo responde texto plano ("API Activa") en vez de los datos de la caja
       alert("⚠️ El servidor respondió, pero no con los datos de la caja. Es casi seguro que el Apps Script todavía no tiene la parte de caja actualizada — vuelve a pegar el código y haz \"Nueva versión\" en Implementar.");
       return;
     }
@@ -1217,7 +1257,6 @@ function verCaja(){
       msg += "\n\n⚠️ Hay " + sinClasificar + " Bs sin clasificar como efectivo o QR " +
              "(por ejemplo, pedidos que llegaron desde la página web, que no traen método de pago).";
     }
-    // Ayuda para revisar: si hoy no hay pedidos, muestra la última fecha que ve la hoja
     if((Number(data.pedidos) || 0) === 0 && data.ultimaFecha){
       msg += "\n\nℹ️ Último pedido registrado en la hoja: " + data.ultimaFecha;
     }
@@ -1367,8 +1406,7 @@ function construirFotosAdminPOS(){
 }
 
 // Reduce el tamaño de la imagen (máximo 500px de lado, JPEG comprimido)
-// para que quepa en una celda de Google Sheets y suba rápido con
-// cualquier señal.
+// para que quepa en una celda de Google Sheets y suba rápido.
 function comprimirImagen(archivo, maxDim, calidad){
   return new Promise((resolve, reject)=>{
     const lector = new FileReader();
@@ -1448,7 +1486,7 @@ function quitarFotoPOS(nombre, idSeguro){
 }
 
 // Guarda (o quita, si valor === "") la foto de un producto en el
-// Google Sheet, para que se vea igual en todos los celulares.
+// Google Sheet, para que se vea igual en todos los dispositivos.
 function guardarFotoEnServidor(nombre, valor, idSeguro, elEstado){
   fetch(API, {
     method: "POST",
@@ -1457,10 +1495,8 @@ function guardarFotoEnServidor(nombre, valor, idSeguro, elEstado){
   })
   .then(r => r.json())
   .then(data=>{
-    // Un Apps Script VIEJO (sin la parte de fotos) también responde
-    // {ok:true}, pero sin la clave "fotos" — porque en realidad esa
-    // petición cayó en la función de "pedido nuevo", no en la de fotos.
-    // Si pasa eso, la foto NUNCA se guardó de verdad aunque parezca que sí.
+    // Un Apps Script VIEJO también responde {ok:true}, pero sin la
+    // clave "fotos": en ese caso la foto NO se guardó de verdad.
     if(data.ok && Object.prototype.hasOwnProperty.call(data, "fotos")){
       fotosActuales[nombre] = valor;
       const preview = document.getElementById("previewPOS_" + idSeguro);
