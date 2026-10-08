@@ -339,6 +339,14 @@ header{
  font-weight:bold;
 }
 
+/* ---------- TEXTO DE POLLOS DISPONIBLES (debajo de la barra) ---------- */
+#textoEscasez{
+ color:#4a0000;
+ font-weight:bold;
+ font-size:15px;
+ margin-top:10px;
+}
+
 /* ---------- CUENTA REGRESIVA DE EVENTO ---------- */
 #cuentaEvento{
  margin-top:15px;
@@ -1327,6 +1335,12 @@ function actualizarPollos(){
     barra.style.background = "green";
     texto.innerHTML = "🔥 Quedan " + pollosDisponibles + " pollos a la leña";
   }
+
+  // Color del texto a juego con la barra (tonos oscuros para que se lean sobre fondo blanco)
+  if(pollosDisponibles <= 0)      texto.style.color = "#b71c1c";  // agotados: rojo oscuro
+  else if(pollosDisponibles == 1) texto.style.color = "#e65100";  // último: naranja fuerte
+  else if(pollosDisponibles <= 2) texto.style.color = "#d50000";  // pocos: rojo
+  else                            texto.style.color = "#2e7d32";  // hay varios: verde
 
   actualizarMarquesina();
 }
