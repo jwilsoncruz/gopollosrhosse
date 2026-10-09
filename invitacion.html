@@ -124,7 +124,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
   <div class="fila" style="grid-template-columns:1fr 1fr 1fr">
     <input id="fdd" type="number" min="1" max="31" inputmode="numeric" placeholder="dd">
     <input id="fmm" type="number" min="1" max="12" inputmode="numeric" placeholder="mm">
-    <input id="faa" type="number" min="26" max="99" inputmode="numeric" placeholder="aa">
+    <input id="faa" type="number" min="26" max="2100" inputmode="numeric" placeholder="año (26 o 2026)">
   </div>
   <label for="fhh">Hora</label>
   <div class="fila" style="grid-template-columns:1fr 1fr 1fr">
@@ -249,7 +249,9 @@ function fechaForm(){
   if(!dd||!mm||!aa||!hh) return "";
   if(hh<1||hh>12) return "x";
   const h24 = ($("fap").value==="AM") ? hh%12 : (hh%12)+12;
-  const d = new Date(2000+aa, mm-1, dd, h24, +$("fmi").value);
+  const anio = aa<100 ? 2000+aa : aa;
+  if(anio<2020 || anio>2100) return "x";
+  const d = new Date(anio, mm-1, dd, h24, +$("fmi").value);
   if(d.getDate()!==dd || d.getMonth()!==mm-1) return "x";
   return d.getFullYear()+"-"+pad(mm)+"-"+pad(dd)+"T"+pad(h24)+":"+$("fmi").value;
 }
