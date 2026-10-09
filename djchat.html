@@ -6,6 +6,7 @@
 <title>Mensajes en Vivo</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box}
@@ -58,6 +59,13 @@ body.screen{overflow:hidden;height:100vh;background:#000}
 #qr.q-bl{left:2vw}#qr.q-br{right:2vw}
 #qr div{margin:0 auto 6px;display:flex;justify-content:center}
 #fs{position:absolute;right:1vw;bottom:1vh;opacity:.6;font-size:.8rem;padding:6px 10px;z-index:8;transition:opacity .4s}
+#ann{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;padding:6vw;background:rgba(0,0,0,.74);backdrop-filter:blur(10px);font-size:calc(clamp(2rem,7vw,7rem)*var(--sc));font-weight:800;line-height:1.1;color:var(--tx);text-shadow:0 0 4vh var(--c2)}
+#wall{display:none;flex:1;align-self:stretch;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2vh 2vw;padding:1vh 0}
+.wc{background:color-mix(in srgb,var(--tx) 9%,transparent);border:1px solid color-mix(in srgb,var(--tx) 22%,transparent);border-radius:2.5vh;padding:2.5vh 2vw;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:pop .6s}
+.wc .wt{font-size:calc(clamp(1rem,2vw,2rem)*var(--sc));font-weight:700;line-height:1.2;word-break:break-word}
+.wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
+.wc img{max-height:14vh;border-radius:1.5vh;object-fit:cover;margin-bottom:1vh;align-self:center}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 #cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
 </style>
 </head>
@@ -74,6 +82,8 @@ var FIREBASE_CONFIG = {
   appId: "1:880537182959:web:11d03ff1c09178a92df11a"
 };
 /* ====================================== */
+/* true = el panel pide correo y contraseña (recomendado). false = sin contraseña. */
+var REQUIRE_LOGIN = true;
 
 var $app=document.getElementById('app');
 var q=new URLSearchParams(location.search);
@@ -91,7 +101,7 @@ function fixImg(u){
   return u.replace(/(dropbox\.com\/[^?]*)\?dl=0/,'$1?raw=1');
 }
 
-var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',qr:true,qrPos:'bl',confetti:true};
+var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',layout:'single',qr:true,qrPos:'bl',confetti:true};
 var PRESETS={
   fiesta:{n:'🎉 Fiesta',c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8'},
   dorado:{n:'✨ Elegante dorado',c1:'#b8860b',c2:'#f5d76e',bg:'#0b0b0b',tx:'#fff8e1',ac:'#f5d76e'},
@@ -118,7 +128,28 @@ if(!FIREBASE_CONFIG.databaseURL){
   firebase.initializeApp(FIREBASE_CONFIG);
   var db=firebase.database();
   var R=db.ref('eventos/'+EV), RM=R.child('mensajes'), RC=R.child('config');
-  ({menu:menu,enviar:enviar,panel:panel,pantalla:pantalla}[mode]||menu)();
+  ({menu:menu,enviar:enviar,panel:gate,pantalla:pantalla}[mode]||menu)();
+}
+
+/* ---------- ACCESO DJ ---------- */
+function gate(){
+  if(!REQUIRE_LOGIN){panel();return}
+  firebase.auth().onAuthStateChanged(function(u){if(u)panel();else loginView()});
+}
+function loginView(){
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🔐 Acceso DJ</h1><p class="hint">Solo el DJ puede entrar al panel.</p>'
+  +'<label>Correo</label><input id="em" type="email" autocomplete="username">'
+  +'<label>Contraseña</label><input id="pw" type="password" autocomplete="current-password">'
+  +'<button id="li" style="width:100%;margin-top:12px">Entrar</button><div id="lr"></div></div></div>';
+  var go=function(){
+    document.getElementById('lr').innerHTML='';
+    firebase.auth().signInWithEmailAndPassword(document.getElementById('em').value.trim(),document.getElementById('pw').value).catch(function(e){
+      var m=(e&&e.code==='auth/operation-not-allowed')?'Falta activar “Correo/contraseña” en Firebase → Authentication.':'Correo o contraseña incorrectos.';
+      document.getElementById('lr').innerHTML='<div class="err" style="margin-top:10px">'+m+'</div>';
+    });
+  };
+  document.getElementById('li').onclick=go;
+  document.getElementById('pw').onkeydown=function(e){if(e.key==='Enter')go()};
 }
 
 /* ---------- MENÚ ---------- */
@@ -151,7 +182,7 @@ function enviar(){
       RC.once('value').then(function(cs){
         var cc=cs.val()||{},low=(n+' '+tx).toLowerCase();
         var hit=(cc.bad||'').toLowerCase().split(',').map(function(w){return w.trim()}).filter(Boolean).some(function(w){return low.indexOf(w)>=0});
-        return RM.push({name:(n||'Un invitado').slice(0,30),text:tx.slice(0,140),ts:Date.now(),status:(cc.auto&&!hit)?'aprobado':'pendiente'});
+        return RM.push({name:(n||'Un invitado').slice(0,30),text:tx.slice(0,140),ts:Date.now(),status:'pendiente'});
       }).then(function(){
         localStorage.setItem('mev_last',Date.now());
         document.getElementById('t').value='';
@@ -177,6 +208,7 @@ var FLD=[
  ['sec','✨ Extras'],
  ['title','text','Título de la pantalla'],
  ['anim','sel','Animación',[['fade','Desvanecer'],['zoom','Zoom'],['slide','Deslizar']]],
+ ['layout','sel','Diseño de la pantalla',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
  ['qrPos','sel','Posición del QR',[['bl','Abajo izquierda'],['br','Abajo derecha']]],
  ['qr','check','Mostrar código QR'],
  ['confetti','check','Confeti con cada mensaje nuevo']
@@ -203,9 +235,13 @@ function panel(){
   +'<label style="display:flex;gap:8px;align-items:center"><input id="pa" type="checkbox"> ⏸ Pausar rotación (se queda el mensaje actual)</label>'
   +'<label>Palabras prohibidas (separadas por coma). Esos mensajes siempre piden revisión</label><input id="bw" placeholder="palabra1, palabra2">'
   +'<a class="btn pink" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
-  +'<button class="sec" id="x">Borrar todos</button></div>'
+  +'<button class="sec" id="x">Borrar todos</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
   +'<div class="card"><b>🔗 Enlace para invitados</b><input id="lk" readonly value="'+ea(link)+'" style="margin-top:8px">'
   +'<button id="cp">Copiar enlace</button><a class="btn pink" target="_blank" href="https://wa.me/?text='+encodeURIComponent('¡Deja tu mensaje de felicitación y saldrá en la pantalla grande! 🎉 '+link)+'">Compartir por WhatsApp</a></div>'
+  +'<div class="card"><b>📣 Anuncio del DJ</b><p class="hint">Sale a pantalla completa (ej: “¡Todos a la pista!”).</p><input id="at" maxlength="80" placeholder="¡Hora del vals! 💃">'
+  +'<button class="pink" id="an">Mostrar anuncio</button><button class="sec" id="ar">Quitar anuncio</button></div>'
+  +'<div class="card"><b>📦 Entrega al cliente</b><p class="hint">Descarga los mensajes del evento como recuerdo.</p>'
+  +'<button id="book">📖 Libro de recuerdos (PDF)</button><button class="sec" id="csv">📥 Excel (CSV)</button></div>'
   +'<div class="card"><details><summary>🎨 Diseño de la pantalla</summary>'
   +'<p class="hint">Los cambios se ven en vivo en la pantalla. Fotos: usa un link directo (Google Drive compartido como “cualquiera con el enlace”, GitHub, imgbb o postimages). Los links de Facebook o Instagram no funcionan.</p>'
   +'<div class="sec" style="border:0;margin-top:0">Temas listos</div><div>'
@@ -225,7 +261,46 @@ function panel(){
   });
   $('h').oninput=function(){RC.child('honoree').set(this.value)};
   $('s').onchange=function(){RC.child('secs').set(Math.max(4,+this.value||12))};
-  $('a').onchange=function(){RC.child('auto').set(this.checked)};
+  var autoDone={};
+  $('a').onchange=function(){
+    var on=this.checked;RC.child('auto').set(on);
+    if(on)RM.once('value').then(function(s){s.forEach(function(c){autoDone[c.key]=1})});
+  };
+  if(REQUIRE_LOGIN){$('so').style.display='';$('so').onclick=function(){firebase.auth().signOut().then(function(){location.reload()})}}
+  $('an').onclick=function(){var v=$('at').value.trim();if(!v)return;RC.child('ann').set({text:v.slice(0,80),ts:Date.now()})};
+  $('ar').onclick=function(){RC.child('ann').remove();$('at').value=''};
+  function getAll(cb){RM.once('value').then(function(s){var a=[];s.forEach(function(c){var v=c.val();v.id=c.key;a.push(v)});a.sort(function(x,y){return x.ts-y.ts});cb(a)})}
+  $('csv').onclick=function(){getAll(function(a){
+    var rows=[['Nombre','Mensaje','Fecha','Estado']].concat(a.map(function(m){return [m.name,m.text,new Date(m.ts).toLocaleString('es-BO'),m.status]}));
+    var csv='\ufeff'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
+    var u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),l=document.createElement('a');
+    l.href=u;l.download='mensajes-'+EV+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+  })};
+  $('book').onclick=function(){
+    var w=window.open('','_blank');if(!w){alert('Permite las ventanas emergentes para ver el libro');return}
+    RC.once('value').then(function(s){
+      var c=s.val()||{},t=theme(c);
+      getAll(function(a){
+        a=a.filter(function(m){return m.status==='aprobado'});
+        var lg=fixImg(t.logo),ph=fixImg(t.photo);
+        var h='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Libro de recuerdos</title><style>'
+        +'@page{margin:14mm}*{box-sizing:border-box}body{margin:0;font-family:'+FONTS[t.font]+';color:#222;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+        +'.cover{text-align:center;padding:40px 20px;color:#fff;background:linear-gradient(135deg,'+t.c1+','+t.c2+');border-radius:18px;margin:16px}'
+        +'.cover img.l{max-height:70px;max-width:50%;object-fit:contain;display:block;margin:0 auto 14px}'
+        +'.cover img.p{width:140px;height:140px;border-radius:50%;object-fit:cover;border:4px solid #fff;margin-bottom:12px}'
+        +'.cover h1{margin:6px 0;font-size:2.2rem}.cover p{margin:4px 0;opacity:.9}'
+        +'.m{break-inside:avoid;border:1px solid #ddd;border-left:6px solid '+t.c2+';border-radius:12px;padding:14px 16px;margin:12px 16px}'
+        +'.m .t{font-size:1.15rem;line-height:1.35}.m .f{margin-top:8px;font-weight:700;color:'+t.c1+'}.m img{max-height:180px;border-radius:10px;display:block;margin-bottom:8px}'
+        +'.np{text-align:center;margin:16px}@media print{.np{display:none}}</style></head><body>'
+        +'<div class="np"><button onclick="window.print()" style="padding:12px 18px;font-size:1rem;cursor:pointer">🖨️ Imprimir / Guardar como PDF</button></div>'
+        +'<div class="cover">'+(lg?'<img class="l" alt="" src="'+ea(lg)+'">':'')+(ph?'<img class="p" alt="" src="'+ea(ph)+'">':'')
+        +'<p>Libro de recuerdos</p><h1>'+esc(c.honoree||'Nuestro evento')+'</h1><p>'+a.length+' mensajes de cariño</p></div>'
+        +a.map(function(m){var im=fixImg(m.img);return '<div class="m">'+(im?'<img alt="" src="'+ea(im)+'">':'')+'<div class="t">“'+esc(m.text)+'”</div><div class="f">— '+esc(m.name)+'</div></div>'}).join('')
+        +'</body></html>';
+        w.document.open();w.document.write(h);w.document.close();
+      });
+    });
+  };
   $('pa').onchange=function(){RC.child('pause').set(this.checked)};
   $('bw').onchange=function(){RC.child('bad').set(this.value)};
   $('x').onclick=function(){if(confirm('¿Borrar todos los mensajes?')){RM.remove();RC.child('now').remove()}};
@@ -275,7 +350,15 @@ function panel(){
     $('ok').innerHTML=o||'<p class="hint">Aún no hay aprobados.</p>';
     $('pc').textContent=pc;$('oc').textContent=oc;
     document.title=(pc?'('+pc+') ':'')+'Panel DJ';
-    if(prevP!==null&&pc>prevP)beep();
+    if($('a').checked)all.forEach(function(m){
+      if(m.status==='pendiente'&&!autoDone[m.id]){
+        autoDone[m.id]=1;
+        var low=(m.name+' '+m.text).toLowerCase();
+        var bad=$('bw').value.toLowerCase().split(',').map(function(w){return w.trim()}).filter(Boolean).some(function(w){return low.indexOf(w)>=0});
+        if(!bad)RM.child(m.id).update({status:'aprobado'});
+      }
+    });
+    if(prevP!==null&&pc>prevP&&!$('a').checked)beep();
     prevP=pc;
   });
 
@@ -309,8 +392,8 @@ function pantalla(){
   var link=BASE+'?e='+EV+'#enviar';
   $app.innerHTML='<div id="scr"><img id="lg" alt="" style="display:none">'
   +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div></div>'
-  +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el QR y envía tu mensaje 💬</div></div></div></div>'
-  +'<div id="qr" class="q-bl"><div id="qc"></div>Escanea y felicita 🎉</div>'
+  +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el QR y envía tu mensaje 💬</div></div></div><div id="wall"></div></div>'
+  +'<div id="ann"></div><div id="qr" class="q-bl"><div id="qc"></div>Escanea y felicita 🎉</div>'
   +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
   new QRCode($('qc'),{text:link,width:160,height:160});
   $('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
@@ -319,7 +402,17 @@ function pantalla(){
   function wake(){document.body.style.cursor='';$('fs').style.opacity=.6;clearTimeout(hideT);hideT=setTimeout(function(){document.body.style.cursor='none';$('fs').style.opacity=0},3000)}
   document.onmousemove=wake;wake();
 
-  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null;
+  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastAnn=null,lastLy=null,wallPage=0;
+  function renderWall(first){
+    var list=msgs.slice().reverse();
+    if(first){list=list.filter(function(m){return m.id!==first.id});list.unshift(first)}
+    var pages=Math.max(1,Math.ceil(list.length/6));wallPage=wallPage%pages;
+    var sl=list.slice(wallPage*6,wallPage*6+6);
+    $('wall').innerHTML=sl.length?sl.map(function(m){
+      var im=fixImg(m.img);
+      return '<div class="wc">'+(im?'<img alt="" src="'+ea(im)+'" onerror="this.remove()">':'')+'<div class="wt">“'+esc(m.text)+'”</div><div class="wf">— '+esc(m.name)+'</div></div>';
+    }).join(''):'<div class="wc" style="grid-column:1/-1;grid-row:1/-1"><div class="wt">Escanea el QR y envía tu mensaje 💬</div></div>';
+  }
 
   function paint(){
     var t=theme(cfg);
@@ -333,9 +426,13 @@ function pantalla(){
     if(lg){if(l.getAttribute('src')!==lg)l.src=lg;l.style.display='';l.style.height=t.logoH+'vh';l.className='p-'+t.logoPos}else l.style.display='none';
     l.onerror=function(){this.style.display='none'};
     var qr=$('qr');qr.style.display=t.qr?'':'none';qr.className='q-'+t.qrPos;
+    var ly=(t.layout==='wall');
+    $('bub').style.display=ly?'none':'';$('wall').style.display=ly?'grid':'none';
+    if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx],false)}
   }
   function show(m,isNew){
     var t=theme(cfg),b=$('bub');
+    if(t.layout==='wall'){wallPage=0;renderWall(m);if(isNew&&t.confetti)confetti(t);clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);return}
     b.className='a-'+t.anim+' out';
     setTimeout(function(){
       var im=fixImg(m.img);
@@ -348,11 +445,17 @@ function pantalla(){
   }
   function next(){
     if(cfg.pause||!msgs.length){timer=setTimeout(next,2500);return}
+    if(theme(cfg).layout==='wall'){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
     idx=(idx+1)%msgs.length;show(msgs[idx],false);
   }
   RC.on('value',function(s){
     var first=(lastNow===null);
     cfg=s.val()||{};paint();
+    var an=cfg.ann,ae=$('ann');
+    if(an&&an.text){
+      ae.textContent=an.text;ae.style.display='flex';
+      if(an.ts!==lastAnn){lastAnn=an.ts;if(!first&&theme(cfg).confetti)confetti(theme(cfg))}
+    }else{ae.style.display='none';lastAnn=null}
     if(first){lastNow=cfg.nowTs||0;return}
     if(cfg.now&&cfg.nowTs&&cfg.nowTs!==lastNow){
       lastNow=cfg.nowTs;
