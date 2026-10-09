@@ -77,6 +77,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
   <div class="sob-e">💌</div>
   <p class="pre" id="sPara">💌 Tienes una invitación</p>
   <h2 id="sInvitado" class="hidden" style="font-family:var(--font);font-size:clamp(28px,8vw,40px);margin:6px 0 16px;word-break:break-word"></h2>
+  <p class="pre hidden" id="sPases" style="margin:-6px 0 14px"></p>
   <p class="pre" id="sPre" style="margin:0"></p>
   <h1 id="sNombre" style="margin:8px 0 22px"></h1>
   <button id="btnAbrir">✨ Abrir invitación</button>
@@ -177,8 +178,8 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
   <input id="fVest" maxlength="60" placeholder="Ej: Ven de blanco / Tema: Spiderman">
 
   <label for="fInv">Invitados (opcional): un nombre por línea</label>
-  <textarea id="fInv" rows="3" maxlength="800" placeholder="María Flores&#10;Familia Pérez&#10;Don Carlos"></textarea>
-  <p class="msg" style="font-size:12px;margin:4px 0 0;text-align:left">Si escribes nombres, se crea un link distinto para cada invitado y su sobre dirá "Invitación especial para: su nombre".</p>
+  <textarea id="fInv" rows="3" maxlength="800" placeholder="María Flores | 1&#10;Familia Pérez | 4&#10;Don Carlos"></textarea>
+  <p class="msg" style="font-size:12px;margin:4px 0 0;text-align:left">Se crea un link distinto por invitado. Para reservar lugares escribe el número después de una barra: <b>Familia Pérez | 4</b>.</p>
 
   <div class="fila">
     <div><label for="fTema">Color rápido</label>
@@ -262,6 +263,7 @@ const LOCAL = {
   nombre: "Go Pollos Rhosse",
   wa: "59168972863",   // WhatsApp del local (con código de país)
   mapa: "https://maps.app.goo.gl/PT5hqdpbLV1Ygf3z6",
+  dir: "Av. Nelson Rocha final 6 de agosto, Zona Pedro Ignacio Muiba, Trinidad, Beni",
   pin: "1234"          // PIN del panel admin (cámbialo)
 };
 
@@ -393,6 +395,8 @@ function mostrarInvitacion(c){
   const guest = (c.g||"").slice(0,40);
   if(c.v){ $("iVest").textContent = String(c.v).slice(0,60); $("iVestBox").classList.remove("hidden"); }
   if(guest) $("rNombre").value = guest;
+  const pases = Math.max(0,Math.min(30,parseInt(c.p,10)||0));
+  if(pases){ $("rPers").value = pases; $("rPers").max = pases; }
   $("btnCrearOtra").href = baseLink;
 
   const foto = urlOk(D.fo);
@@ -422,6 +426,11 @@ function mostrarInvitacion(c){
   }else{
     $("iCuando").textContent = "Fecha por confirmar · "+lugar; $("btnCal").classList.add("hidden");
   }
+  if(lugar===LOCAL.nombre && LOCAL.dir){
+    const sm = document.createElement("small");
+    sm.style.cssText = "display:block;opacity:.8;font-size:13px;margin-top:6px";
+    sm.textContent = "📍 "+LOCAL.dir; $("iCuando").appendChild(sm);
+  }
   if(+D.cd===0 || !fechaOk) $("cuenta").classList.add("hidden");
 
   if(LOCAL.mapa && lugar===LOCAL.nombre){ $("btnMapa").href = LOCAL.mapa; $("btnMapa").classList.remove("hidden"); }
@@ -433,7 +442,7 @@ function mostrarInvitacion(c){
   };
   $("btnEnviarRsvp").onclick = () => {
     const quien = $("rNombre").value.trim();
-    const pers = Math.max(1,Math.min(30,parseInt($("rPers").value,10)||1));
+    const pers = Math.max(1,Math.min(pases||30,parseInt($("rPers").value,10)||1));
     if(quien.length<2){ $("rError").textContent="Escribe tu nombre."; return; }
     $("rError").textContent="";
     const txt = "Hola 👋 Soy "+quien+".\n✅ Confirmo mi asistencia a "+TIPOS[tipo].e+" "+nombre+
@@ -454,6 +463,7 @@ function mostrarInvitacion(c){
     $("sPre").textContent = TIPOS[tipo].pre;
     $("sNombre").textContent = nombre;
     if(guest){ $("sPara").textContent = "💌 Invitación especial para:"; $("sInvitado").textContent = guest; $("sInvitado").classList.remove("hidden"); }
+    if(pases){ $("sPases").textContent = "🎟️ "+pases+(pases===1?" lugar reservado":" lugares reservados")+" para ti"; $("sPases").classList.remove("hidden"); }
     sb.classList.remove("hidden");
     $("btnAbrir").onclick = () => {
       sb.classList.add("out"); setTimeout(()=>sb.classList.add("hidden"),650);
@@ -466,7 +476,7 @@ function mostrarInvitacion(c){
 
 function cuentaRegresiva(t){
   const diff = t - Date.now();
-  if(diff<=0){ $("cuenta").classList.add("hidden"); $("finTxt").classList.remove("hidden"); return; }
+  if(diff<=0){ $("cuenta").classList.add("hidden"); $("finTxt").textContent = diff < -432e5 ? "💛 ¡Gracias por acompañarnos!" : "🎉 ¡Es hoy la fiesta!"; $("finTxt").classList.remove("hidden"); return; }
   $("cd").textContent = Math.floor(diff/864e5);
   $("ch").textContent = Math.floor(diff%864e5/36e5);
   $("cm").textContent = Math.floor(diff%36e5/6e4);
@@ -557,10 +567,13 @@ function iniciarCreador(){
     linkActual = baseLink+"?c="+enc(o);
 
     const lista = $("listaInv"); lista.textContent = "";
-    $("fInv").value.split("\n").map(x=>x.trim().slice(0,40)).filter(Boolean).slice(0,30).forEach(g=>{
-      const link = baseLink+"?c="+enc(Object.assign({},o,{g}));
+    $("fInv").value.split("\n").map(x=>x.trim()).filter(Boolean).slice(0,30).forEach(linea=>{
+      const [gn,pn] = linea.split("|"), g = gn.trim().slice(0,40), p = Math.max(0,Math.min(30,parseInt(pn,10)||0));
+      if(!g) return;
+      const extra = {g}; if(p) extra.p = p;
+      const link = baseLink+"?c="+enc(Object.assign({},o,extra));
       const row = document.createElement("div"); row.className = "linkbox"; row.style.maxHeight = "none";
-      const nm = document.createElement("b"); nm.textContent = "👤 "+g; row.appendChild(nm);
+      const nm = document.createElement("b"); nm.textContent = "👤 "+g+(p?" ("+p+" lugares)":""); row.appendChild(nm);
       const bs = document.createElement("button"); bs.textContent = "📤 Enviar a "+g;
       bs.onclick = () => window.open("https://wa.me/?text="+encodeURIComponent("Hola "+g+" 👋 "+TIPOS[d.t].e+" ¡Estás invitado! "+d.n+" te invita a celebrar.\nAbre tu invitación aquí 👇\n"+link));
       const bc = document.createElement("button"); bc.className = "sec"; bc.textContent = "📋 Copiar link";
