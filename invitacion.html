@@ -122,8 +122,18 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
     <div><label for="fEdad">Años (opcional)</label><input id="fEdad" type="number" min="1" max="120" inputmode="numeric" placeholder="Ej: 30"></div>
   </div>
 
-  <label for="fFecha">Fecha y hora</label>
-  <input id="fFecha" type="datetime-local">
+  <label for="fdd">Fecha (día / mes / año)</label>
+  <div class="fila" style="grid-template-columns:1fr 1fr 1fr">
+    <input id="fdd" type="number" min="1" max="31" inputmode="numeric" placeholder="dd">
+    <input id="fmm" type="number" min="1" max="12" inputmode="numeric" placeholder="mm">
+    <input id="faa" type="number" min="26" max="99" inputmode="numeric" placeholder="aa">
+  </div>
+  <label for="fhh">Hora</label>
+  <div class="fila" style="grid-template-columns:1fr 1fr 1fr">
+    <input id="fhh" type="number" min="1" max="12" inputmode="numeric" placeholder="hora">
+    <select id="fmi"><option>00</option><option>15</option><option>30</option><option>45</option></select>
+    <select id="fap"><option>PM</option><option>AM</option></select>
+  </div>
 
   <label for="fLugar">Lugar</label>
   <input id="fLugar" value="Go Pollos Rhosse" maxlength="60">
@@ -230,6 +240,19 @@ const baseLink = location.protocol === "file:" ? location.href.split("?")[0] : l
 function waNum(v){ const d=String(v||"").replace(/\D/g,""); return (d.length>=7&&d.length<=8) ? "591"+d : d; }
 function pad(n){ return String(n).padStart(2,"0"); }
 function fmtGcal(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00"; }
+const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+function fmtFecha(d){ return DIAS[d.getDay()]+" "+pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+pad(d.getFullYear()%100); }
+function fmtHora(d){ const h=d.getHours(); return pad(h%12||12)+":"+pad(d.getMinutes())+" "+(h<12?"AM":"PM"); }
+// Lee los campos de fecha/hora del formulario → "AAAA-MM-DDTHH:MM", "" si falta algo, "x" si no es válida
+function fechaForm(){
+  const dd=+$("fdd").value, mm=+$("fmm").value, aa=+$("faa").value, hh=+$("fhh").value;
+  if(!dd||!mm||!aa||!hh) return "";
+  if(hh<1||hh>12) return "x";
+  const h24 = ($("fap").value==="AM") ? hh%12 : (hh%12)+12;
+  const d = new Date(2000+aa, mm-1, dd, h24, +$("fmi").value);
+  if(d.getDate()!==dd || d.getMonth()!==mm-1) return "x";
+  return d.getFullYear()+"-"+pad(mm)+"-"+pad(dd)+"T"+pad(h24)+":"+$("fmi").value;
+}
 function urlOk(u){ u=(u||"").trim(); return /^https?:\/\/\S+$/i.test(u) ? u : ""; }
 function cssUrl(u){ return 'url("'+u.replace(/["'()\\\s]/g,c=>"%"+c.charCodeAt(0).toString(16))+'")'; }
 function hexRgb(h){ const n=parseInt((h||"#000000").slice(1),16)||0; return [n>>16&255,n>>8&255,n&255]; }
@@ -313,9 +336,8 @@ function mostrarInvitacion(c){
 
   const fechaOk = !isNaN(fecha.getTime());
   if(fechaOk){
-    const f = fecha.toLocaleDateString("es",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-    $("iFecha").textContent = f.charAt(0).toUpperCase()+f.slice(1);
-    $("iHora").textContent = fecha.toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});
+    $("iFecha").textContent = fmtFecha(fecha);
+    $("iHora").textContent = fmtHora(fecha);
     const fin = new Date(fecha.getTime()+3*3600*1000);
     $("btnCal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"+
       "&text="+encodeURIComponent(TIPOS[tipo].e+" "+nombre)+
@@ -381,7 +403,7 @@ function guardado(){ try{ return JSON.parse(localStorage.getItem("gpr_def")||"nu
 function datosForm(){
   return {
     t:$("fTipo").value, n:$("fNombre").value.trim(), e:$("fEdad").value.trim(),
-    f:$("fFecha").value, l:$("fLugar").value.trim(), m:$("fMsg").value.trim(),
+    f:fechaForm(), l:$("fLugar").value.trim(), m:$("fMsg").value.trim(),
     w:$("fWa").value.replace(/\D/g,"")
   };
 }
@@ -418,13 +440,12 @@ function iniciarCreador(){
     pintarAdmin(DEF); refrescar(); confeti(DEF); $("aMsg").textContent="↩️ Diseño original restaurado.";
   };
 
-  const ahora = new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
-  $("fFecha").min = ahora;
-
   $("btnGenerar").onclick = () => {
     const d = datosForm();
     if(d.n.length<2){ $("fError").textContent="Escribe el nombre del festejado."; return; }
-    if(!d.f){ $("fError").textContent="Elige la fecha y hora."; return; }
+    if(!d.f){ $("fError").textContent="Completa la fecha (dd/mm/aa) y la hora."; return; }
+    if(d.f==="x"){ $("fError").textContent="La fecha u hora no es válida."; return; }
+    if(new Date(d.f)<new Date()){ $("fError").textContent="Esa fecha ya pasó."; return; }
     if(d.w && (d.w.length<7||d.w.length>8)){ $("fError").textContent="Tu WhatsApp debe tener 7 u 8 dígitos."; return; }
     $("fError").textContent="";
 
@@ -451,7 +472,7 @@ function iniciarCreador(){
   };
   $("btnReservar").onclick = () => {
     const d = datosForm(), fecha = new Date(d.f);
-    const cuando = isNaN(fecha) ? "" : fecha.toLocaleString("es",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
+    const cuando = isNaN(fecha) ? "" : fmtFecha(fecha)+" "+fmtHora(fecha);
     const txt = "Hola 👋 Quiero reservar mesa en "+LOCAL.nombre+" para una celebración.\n"+
       TIPOS[d.t].e+" "+d.n+(d.e?" ("+d.e+" años)":"")+"\n📅 "+cuando+
       "\n👥 Personas aprox.: ___\n🔗 Mi invitación: "+linkActual;
