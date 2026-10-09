@@ -4,25 +4,27 @@
 <meta charset="UTF-8">
 <title>Invitaciones · Go Pollos Rhosse</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700;800&family=Pacifico&family=Lobster&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--c1:#ff9a00;--c2:#ff3c38;--wa:#25D366;}
-body[data-tema="noche"]{--c1:#2b2d7a;--c2:#7b3fe4;}
-body[data-tema="rosa"]{--c1:#ff6fa8;--c2:#ff9a6b;}
-body[data-tema="verde"]{--c1:#0f9b6e;--c2:#1b5e20;}
+:root{--c1:#ff9a00;--c2:#ff3c38;--wa:#25D366;--txt:#fff;--card:rgba(0,0,0,.62);--font:'Playfair Display',serif;}
 *{box-sizing:border-box;}
-body{margin:0;min-height:100vh;font-family:'Poppins',sans-serif;color:#fff;text-align:center;
+body{margin:0;min-height:100vh;font-family:'Poppins',sans-serif;color:var(--txt);text-align:center;
  background:linear-gradient(135deg,var(--c1),var(--c2)) fixed;
  display:flex;justify-content:center;align-items:flex-start;padding:24px 14px calc(24px + env(safe-area-inset-bottom,0px));overflow-x:hidden;}
-.card{width:100%;max-width:480px;background:rgba(0,0,0,.62);backdrop-filter:blur(6px);
+.card{width:100%;max-width:480px;background:var(--card);backdrop-filter:blur(6px);
  border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:28px 22px;box-shadow:0 12px 34px rgba(0,0,0,.4);
  animation:in .8s ease;position:relative;z-index:2;}
 @keyframes in{from{opacity:0;transform:translateY(14px) scale(.97);}to{opacity:1;transform:none;}}
 .emoji{font-size:54px;line-height:1;}
 .pre{margin:8px 0 0;font-size:14px;letter-spacing:2px;text-transform:uppercase;opacity:.85;}
-h1{font-family:'Playfair Display',serif;font-size:clamp(32px,9vw,46px);line-height:1.1;margin:6px 0;word-break:break-word;}
+h1{font-family:var(--font);font-size:clamp(32px,9vw,46px);line-height:1.1;margin:6px 0;word-break:break-word;}
 .edad{display:inline-block;margin:4px 0 8px;padding:4px 16px;border-radius:30px;background:rgba(255,255,255,.18);font-weight:600;}
 .msg{font-size:15px;line-height:1.55;opacity:.92;margin:10px 0;}
+.foto{display:block;margin:12px auto;width:170px;height:170px;object-fit:cover;border:3px solid rgba(255,255,255,.7);box-shadow:0 6px 18px rgba(0,0,0,.4);}
+.foto.circ{border-radius:50%;}.foto.round{border-radius:20px;}.foto.sq{border-radius:0;}
+.foto.wide{width:100%;height:auto;max-height:260px;}
+.galeria{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0;}
+.galeria img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer;}
 .datos{margin:16px 0;display:grid;gap:8px;text-align:left;}
 .dato{background:rgba(255,255,255,.1);border-radius:12px;padding:10px 14px;font-size:15px;}
 .dato b{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.7;font-weight:600;}
@@ -36,27 +38,36 @@ button,.btn{display:block;width:100%;margin-top:10px;padding:14px;border:0;borde
 .btn.link{background:none;font-weight:400;font-size:13px;text-decoration:underline;opacity:.8;}
 label{display:block;text-align:left;font-size:12px;margin:12px 0 4px;opacity:.85;}
 input,select,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.3);
- background:rgba(255,255,255,.1);color:#fff;font:16px 'Poppins',sans-serif;}
+ background:rgba(255,255,255,.1);color:var(--txt);font:16px 'Poppins',sans-serif;}
+input[type=color]{padding:2px;height:44px;cursor:pointer;}
+input[type=range]{padding:0;}
+input[type=checkbox]{width:auto;margin-right:8px;}
+.chk{display:flex;align-items:center;text-align:left;font-size:14px;margin:10px 0 0;}
 select option{color:#000;}
 input::placeholder,textarea::placeholder{color:rgba(255,255,255,.55);}
 input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.btn:focus-visible{outline:3px solid #fff;outline-offset:2px;}
 .fila{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .error{color:#ffd0c8;font-size:13px;min-height:18px;margin-top:8px;}
 .hidden{display:none !important;}
-.linkbox{margin-top:14px;padding:12px;background:rgba(255,255,255,.12);border-radius:12px;font-size:12px;word-break:break-all;text-align:left;}
-.confetti{position:fixed;top:-12px;width:8px;height:12px;pointer-events:none;z-index:1;animation:fall linear infinite;}
+.linkbox{margin-top:14px;padding:12px;background:rgba(255,255,255,.12);border-radius:12px;font-size:12px;word-break:break-all;text-align:left;max-height:90px;overflow:auto;}
+.admin{margin-top:14px;padding:14px;border:1px dashed rgba(255,255,255,.5);border-radius:14px;background:rgba(255,255,255,.06);}
+.admin h3{margin:14px 0 0;font-size:14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.25);padding-bottom:4px;}
+.admin h3:first-child{margin-top:0;}
+.confetti{position:fixed;top:-30px;width:8px;height:12px;pointer-events:none;z-index:1;animation:fall linear infinite;}
+.confetti.em{width:auto;height:auto;font-size:20px;}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg);}}
 @media (min-width:700px){.card{max-width:560px;padding:36px 34px;margin-top:20px;}.datos{grid-template-columns:1fr 1fr;}.dato.full{grid-column:1/-1;}}
 @media (prefers-reduced-motion:reduce){.card{animation:none;}.confetti{display:none;}}
 </style>
 </head>
-<body data-tema="fuego">
+<body>
 
 <!-- ================= VISTA: INVITACIÓN ================= -->
 <div class="card hidden" id="vistaInv">
   <div class="emoji" id="iEmoji">🎉</div>
-  <p class="pre" id="iPre">Estás invitado al cumpleaños de</p>
+  <p class="pre" id="iPre"></p>
   <h1 id="iNombre"></h1>
+  <img class="foto hidden" id="iFoto" alt="Foto del festejado">
   <div class="edad hidden" id="iEdad"></div>
   <p class="msg hidden" id="iMsg"></p>
 
@@ -65,6 +76,8 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
     <div class="dato"><b>🕒 Hora</b><span id="iHora"></span></div>
     <div class="dato full"><b>📍 Lugar</b><span id="iLugar"></span></div>
   </div>
+
+  <div class="galeria hidden" id="iGal"></div>
 
   <div class="cuenta" id="cuenta">
     <div><span id="cd">0</span><small>días</small></div>
@@ -119,9 +132,59 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
   <textarea id="fMsg" rows="3" maxlength="200" placeholder="Ej: ¡Los espero para celebrar juntos!"></textarea>
 
   <div class="fila">
-    <div><label for="fTema">Color</label>
+    <div><label for="fTema">Color rápido</label>
       <select id="fTema"><option value="fuego">🔥 Fuego</option><option value="noche">🌙 Noche</option><option value="rosa">🌸 Rosa</option><option value="verde">🌿 Verde</option></select></div>
     <div><label for="fWa">Tu WhatsApp (recibe confirmaciones)</label><input id="fWa" type="tel" inputmode="numeric" placeholder="Ej: 71234567"></div>
+  </div>
+
+  <button class="sec" id="btnAdmin">🔒 Panel admin (diseño avanzado)</button>
+
+  <!-- ===== PANEL ADMIN ===== -->
+  <div class="admin hidden" id="admin">
+    <h3>🎨 Colores</h3>
+    <div class="fila">
+      <div><label for="x_c1">Color 1</label><input type="color" id="x_c1"></div>
+      <div><label for="x_c2">Color 2</label><input type="color" id="x_c2"></div>
+    </div>
+    <div class="fila">
+      <div><label for="x_tx">Color del texto</label><input type="color" id="x_tx"></div>
+      <div><label for="x_cc">Color de la tarjeta</label><input type="color" id="x_cc"></div>
+    </div>
+    <label for="x_co">Opacidad de la tarjeta: <span id="v_co"></span>%</label>
+    <input type="range" id="x_co" min="0" max="100">
+    <label for="x_a">Ángulo del degradado: <span id="v_a"></span>°</label>
+    <input type="range" id="x_a" min="0" max="360">
+
+    <h3>🖼️ Fondo</h3>
+    <label for="x_bg">Tipo de fondo</label>
+    <select id="x_bg"><option value="grad">Degradado (Color 1 → 2)</option><option value="solid">Color sólido (Color 1)</option><option value="img">Imagen por link</option></select>
+    <label for="x_bu">Link de la imagen de fondo (https://…)</label>
+    <input id="x_bu" type="url" placeholder="https://ejemplo.com/fondo.jpg">
+    <label for="x_ov">Oscurecer imagen: <span id="v_ov"></span>%</label>
+    <input type="range" id="x_ov" min="0" max="90">
+
+    <h3>📸 Fotos</h3>
+    <label for="x_fo">Foto principal del festejado (link)</label>
+    <input id="x_fo" type="url" placeholder="https://ejemplo.com/foto.jpg">
+    <label for="x_fs">Forma de la foto</label>
+    <select id="x_fs"><option value="circ">Círculo</option><option value="round">Redondeada</option><option value="sq">Cuadrada</option><option value="wide">Ancha (banner)</option></select>
+    <label for="x_ga">Galería: un link por línea (máx. 6)</label>
+    <textarea id="x_ga" rows="3" placeholder="https://…/1.jpg&#10;https://…/2.jpg"></textarea>
+
+    <h3>✍️ Estilo y detalles</h3>
+    <label for="x_ft">Tipo de letra del título</label>
+    <select id="x_ft"><option>Playfair Display</option><option>Poppins</option><option>Pacifico</option><option>Lobster</option><option>Dancing Script</option></select>
+    <div class="fila">
+      <div><label for="x_ej">Emoji principal</label><input id="x_ej" maxlength="4" placeholder="🎂"></div>
+      <div><label for="x_em">Emojis de confeti</label><input id="x_em" maxlength="12" placeholder="🍗🎈🎉"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="x_cf">Mostrar confeti</label>
+    <label class="chk"><input type="checkbox" id="x_cd">Mostrar cuenta regresiva</label>
+    <label class="chk"><input type="checkbox" id="x_cn">Mostrar botón "Confirmar asistencia"</label>
+
+    <button id="btnGuardarDef">💾 Guardar como diseño predeterminado</button>
+    <button class="sec" id="btnResetDef">↩️ Restablecer diseño original</button>
+    <div class="error" id="aMsg" style="color:#c8ffd0"></div>
   </div>
 
   <div class="error" id="fError"></div>
@@ -141,7 +204,8 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 const LOCAL = {
   nombre: "Go Pollos Rhosse",
   wa: "59168972863",   // WhatsApp del local (con código de país)
-  mapa: "https://maps.app.goo.gl/PT5hqdpbLV1Ygf3z6"             // Pega aquí el link de Google Maps del local (opcional)
+  mapa: "https://maps.app.goo.gl/PT5hqdpbLV1Ygf3z6",
+  pin: "1234"          // PIN del panel admin (cámbialo)
 };
 
 const TIPOS = {
@@ -152,111 +216,140 @@ const TIPOS = {
   baby:{e:"🍼",pre:"Estás invitado al baby shower de"},
   reunion:{e:"🥂",pre:"Estás invitado a celebrar con"}
 };
+const TEMAS = {fuego:["#ff9a00","#ff3c38"],noche:["#2b2d7a","#7b3fe4"],rosa:["#ff6fa8","#ff9a6b"],verde:["#0f9b6e","#1b5e20"]};
+const FUENTES = {"Playfair Display":"'Playfair Display',serif","Poppins":"'Poppins',sans-serif","Pacifico":"'Pacifico',cursive","Lobster":"'Lobster',cursive","Dancing Script":"'Dancing Script',cursive"};
+// Valores de diseño de fábrica
+const DEF = {c1:"#ff9a00",c2:"#ff3c38",a:135,tx:"#ffffff",cc:"#000000",co:62,bg:"grad",bu:"",ov:35,
+  ft:"Playfair Display",ej:"",em:"",fo:"",fs:"circ",ga:"",cf:1,cd:1,cn:1};
+const ADM = Object.keys(DEF);
 
 const $ = id => document.getElementById(id);
 const P = new URLSearchParams(location.search);
-const base = location.origin + location.pathname;
-const esEmbed = location.protocol === "file:";
-const baseLink = esEmbed ? location.href.split("?")[0] : base;
+const baseLink = location.protocol === "file:" ? location.href.split("?")[0] : location.origin + location.pathname;
 
-function waNum(v){
-  const d = String(v||"").replace(/\D/g,"");
-  if(d.length >= 7 && d.length <= 8) return "591" + d;
-  return d;
-}
+function waNum(v){ const d=String(v||"").replace(/\D/g,""); return (d.length>=7&&d.length<=8) ? "591"+d : d; }
 function pad(n){ return String(n).padStart(2,"0"); }
-function fmtGcal(d){
-  return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00";
+function fmtGcal(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00"; }
+function urlOk(u){ u=(u||"").trim(); return /^https?:\/\/\S+$/i.test(u) ? u : ""; }
+function cssUrl(u){ return 'url("'+u.replace(/["'()\\\s]/g,c=>"%"+c.charCodeAt(0).toString(16))+'")'; }
+function hexRgb(h){ const n=parseInt((h||"#000000").slice(1),16)||0; return [n>>16&255,n>>8&255,n&255]; }
+
+// ---------- CODIFICAR / DECODIFICAR (todo el diseño va en un solo parámetro) ----------
+function enc(o){ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function dec(s){ try{ s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; return JSON.parse(decodeURIComponent(escape(atob(s)))); }catch(e){ return null; } }
+
+// ---------- APLICAR DISEÑO ----------
+function aplicar(c){
+  c = Object.assign({}, DEF, c||{});
+  const r = document.documentElement.style, [R,G,B] = hexRgb(c.cc);
+  r.setProperty("--c1",c.c1); r.setProperty("--c2",c.c2); r.setProperty("--txt",c.tx);
+  r.setProperty("--card","rgba("+R+","+G+","+B+","+(c.co/100)+")");
+  r.setProperty("--font",FUENTES[c.ft]||FUENTES["Playfair Display"]);
+  const u = urlOk(c.bu), ov = (c.ov/100);
+  document.body.style.background =
+    (c.bg==="img" && u) ? "linear-gradient(rgba(0,0,0,"+ov+"),rgba(0,0,0,"+ov+")),"+cssUrl(u)+" center/cover fixed" :
+    c.bg==="solid" ? c.c1 :
+    "linear-gradient("+c.a+"deg,"+c.c1+","+c.c2+") fixed";
 }
 
 // ---------- CONFETI ----------
-function confeti(){
-  const col = ["#fff","#ffeb3b","#4dd0e1","#f48fb1","#c5e1a5"];
+function confeti(c){
+  document.querySelectorAll(".confetti").forEach(e=>e.remove());
+  if(+c.cf===0) return;
+  const emo = Array.from((c.em||"").replace(/\s/g,"")), col=["#fff","#ffeb3b","#4dd0e1","#f48fb1","#c5e1a5"];
   for(let i=0;i<36;i++){
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.left = Math.random()*100 + "vw";
-    c.style.background = col[i % col.length];
-    c.style.animationDuration = (3 + Math.random()*4) + "s";
-    c.style.animationDelay = (-Math.random()*5) + "s";
-    document.body.appendChild(c);
+    const d = document.createElement("div");
+    d.className = "confetti";
+    d.style.left = Math.random()*100+"vw";
+    d.style.animationDuration = (3+Math.random()*4)+"s";
+    d.style.animationDelay = (-Math.random()*5)+"s";
+    if(emo.length){ d.classList.add("em"); d.textContent = emo[i%emo.length]; }
+    else d.style.background = col[i%col.length];
+    document.body.appendChild(d);
   }
 }
 
-// ---------- INVITACIÓN ----------
-function mostrarInvitacion(){
-  const tipo = TIPOS[P.get("t")] ? P.get("t") : "reunion";
-  const nombre = (P.get("n") || "").slice(0,40);
-  const fecha = new Date(P.get("f"));
-  const lugar = (P.get("l") || LOCAL.nombre).slice(0,60);
-  const wa = waNum(P.get("w")) || LOCAL.wa;
+// ---------- LEER DATOS (link nuevo o links antiguos) ----------
+function leer(){
+  if(P.get("c")){ const o = dec(P.get("c")); if(o) return o; }
+  // compatibilidad con links viejos (?t=&n=&f=...)
+  const th = TEMAS[P.get("th")] || TEMAS.fuego;
+  return {t:P.get("t"),n:P.get("n"),e:P.get("e"),f:P.get("f"),l:P.get("l"),m:P.get("m"),w:P.get("w"),c1:th[0],c2:th[1]};
+}
 
-  document.body.dataset.tema = P.get("th") || "fuego";
+// ---------- INVITACIÓN ----------
+function mostrarInvitacion(c){
+  const tipo = TIPOS[c.t] ? c.t : "reunion";
+  const nombre = (c.n||"").slice(0,40);
+  const fecha = new Date(c.f);
+  const lugar = (c.l||LOCAL.nombre).slice(0,60);
+  const wa = waNum(c.w) || LOCAL.wa;
+  const D = Object.assign({}, DEF, c);
+
+  aplicar(D);
   $("vistaCrear").classList.add("hidden");
   $("vistaInv").classList.remove("hidden");
   document.title = "Invitación · " + nombre;
 
-  $("iEmoji").textContent = TIPOS[tipo].e;
+  $("iEmoji").textContent = D.ej || TIPOS[tipo].e;
   $("iPre").textContent = TIPOS[tipo].pre;
   $("iNombre").textContent = nombre;
   $("iLugar").textContent = lugar;
   $("btnCrearOtra").href = baseLink;
 
-  const edad = parseInt(P.get("e"),10);
-  if(edad > 0 && tipo === "cumple"){ $("iEdad").textContent = "🎈 ¡Cumple " + edad + " años!"; $("iEdad").classList.remove("hidden"); }
-  const msg = (P.get("m") || "").slice(0,200);
+  const foto = urlOk(D.fo);
+  if(foto){ const im=$("iFoto"); im.src=foto; im.className="foto "+D.fs; im.onerror=()=>im.classList.add("hidden"); }
+  const gal = String(D.ga||"").split("\n").map(urlOk).filter(Boolean).slice(0,6);
+  if(gal.length){
+    gal.forEach(g=>{ const im=document.createElement("img"); im.src=g; im.alt="Foto"; im.loading="lazy";
+      im.onclick=()=>window.open(g,"_blank","noopener"); im.onerror=()=>im.remove(); $("iGal").appendChild(im); });
+    $("iGal").classList.remove("hidden");
+  }
+
+  const edad = parseInt(c.e,10);
+  if(edad>0 && tipo==="cumple"){ $("iEdad").textContent = "🎈 ¡Cumple "+edad+" años!"; $("iEdad").classList.remove("hidden"); }
+  const msg = (c.m||"").slice(0,200);
   if(msg){ $("iMsg").textContent = msg; $("iMsg").classList.remove("hidden"); }
 
   const fechaOk = !isNaN(fecha.getTime());
   if(fechaOk){
     const f = fecha.toLocaleDateString("es",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-    $("iFecha").textContent = f.charAt(0).toUpperCase() + f.slice(1);
+    $("iFecha").textContent = f.charAt(0).toUpperCase()+f.slice(1);
     $("iHora").textContent = fecha.toLocaleTimeString("es",{hour:"2-digit",minute:"2-digit"});
-
-    const fin = new Date(fecha.getTime() + 3*3600*1000);
-    $("btnCal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-      "&text=" + encodeURIComponent(TIPOS[tipo].e + " " + nombre) +
-      "&dates=" + fmtGcal(fecha) + "/" + fmtGcal(fin) +
-      "&location=" + encodeURIComponent(lugar) +
-      "&details=" + encodeURIComponent(msg || "Celebración en " + LOCAL.nombre);
-
-    cuentaRegresiva(fecha.getTime());
-    setInterval(() => cuentaRegresiva(fecha.getTime()), 1000);
+    const fin = new Date(fecha.getTime()+3*3600*1000);
+    $("btnCal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"+
+      "&text="+encodeURIComponent(TIPOS[tipo].e+" "+nombre)+
+      "&dates="+fmtGcal(fecha)+"/"+fmtGcal(fin)+
+      "&location="+encodeURIComponent(lugar)+
+      "&details="+encodeURIComponent(msg||"Celebración en "+LOCAL.nombre);
+    if(+D.cd!==0){ cuentaRegresiva(fecha.getTime()); setInterval(()=>cuentaRegresiva(fecha.getTime()),1000); }
   }else{
-    $("iFecha").textContent = "Por confirmar";
-    $("iHora").textContent = "—";
-    $("cuenta").classList.add("hidden");
-    $("btnCal").classList.add("hidden");
+    $("iFecha").textContent = "Por confirmar"; $("iHora").textContent = "—"; $("btnCal").classList.add("hidden");
   }
+  if(+D.cd===0 || !fechaOk) $("cuenta").classList.add("hidden");
 
-  if(LOCAL.mapa && lugar === LOCAL.nombre){
-    $("btnMapa").href = LOCAL.mapa;
-    $("btnMapa").classList.remove("hidden");
-  }
+  if(LOCAL.mapa && lugar===LOCAL.nombre){ $("btnMapa").href = LOCAL.mapa; $("btnMapa").classList.remove("hidden"); }
 
+  if(+D.cn===0) $("btnConfirmar").classList.add("hidden");
   $("btnConfirmar").onclick = () => {
     $("rsvp").classList.toggle("hidden");
     if(!$("rsvp").classList.contains("hidden")) $("rNombre").focus();
   };
   $("btnEnviarRsvp").onclick = () => {
     const quien = $("rNombre").value.trim();
-    const pers = Math.max(1, Math.min(30, parseInt($("rPers").value,10) || 1));
-    if(quien.length < 2){ $("rError").textContent = "Escribe tu nombre."; return; }
-    $("rError").textContent = "";
-    const txt = "Hola 👋 Soy " + quien + ".\n✅ Confirmo mi asistencia a " + (TIPOS[tipo].e) + " " + nombre +
-      "\n👥 Personas: " + pers + (fechaOk ? "\n📅 " + $("iFecha").textContent + " " + $("iHora").textContent : "");
-    window.open("https://wa.me/" + wa + "?text=" + encodeURIComponent(txt));
+    const pers = Math.max(1,Math.min(30,parseInt($("rPers").value,10)||1));
+    if(quien.length<2){ $("rError").textContent="Escribe tu nombre."; return; }
+    $("rError").textContent="";
+    const txt = "Hola 👋 Soy "+quien+".\n✅ Confirmo mi asistencia a "+TIPOS[tipo].e+" "+nombre+
+      "\n👥 Personas: "+pers+(fechaOk?"\n📅 "+$("iFecha").textContent+" "+$("iHora").textContent:"");
+    window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(txt));
   };
-  confeti();
+  confeti(D);
 }
 
 function cuentaRegresiva(t){
   const diff = t - Date.now();
-  if(diff <= 0){
-    $("cuenta").classList.add("hidden");
-    $("finTxt").classList.remove("hidden");
-    return;
-  }
+  if(diff<=0){ $("cuenta").classList.add("hidden"); $("finTxt").classList.remove("hidden"); return; }
   $("cd").textContent = Math.floor(diff/864e5);
   $("ch").textContent = Math.floor(diff%864e5/36e5);
   $("cm").textContent = Math.floor(diff%36e5/6e4);
@@ -266,32 +359,80 @@ function cuentaRegresiva(t){
 // ---------- CREADOR ----------
 let linkActual = "";
 
+function leerAdmin(){
+  const o = {};
+  ADM.forEach(k=>{
+    const el = $("x_"+k);
+    o[k] = el.type==="checkbox" ? (el.checked?1:0) : (el.type==="range" ? +el.value : el.value.trim());
+  });
+  return o;
+}
+function pintarAdmin(o){
+  o = Object.assign({}, DEF, o||{});
+  ADM.forEach(k=>{
+    const el = $("x_"+k);
+    if(el.type==="checkbox") el.checked = +o[k]!==0; else el.value = o[k];
+  });
+  etiquetas();
+}
+function etiquetas(){ ["co","a","ov"].forEach(k=>$("v_"+k).textContent=$("x_"+k).value); }
+function guardado(){ try{ return JSON.parse(localStorage.getItem("gpr_def")||"null"); }catch(e){ return null; } }
+
 function datosForm(){
   return {
     t:$("fTipo").value, n:$("fNombre").value.trim(), e:$("fEdad").value.trim(),
     f:$("fFecha").value, l:$("fLugar").value.trim(), m:$("fMsg").value.trim(),
-    th:$("fTema").value, w:$("fWa").value.replace(/\D/g,"")
+    w:$("fWa").value.replace(/\D/g,"")
   };
 }
 
 function iniciarCreador(){
-  document.body.dataset.tema = "fuego";
-  $("fTema").onchange = () => document.body.dataset.tema = $("fTema").value;
+  pintarAdmin(guardado());
+  const refrescar = () => { etiquetas(); const a = leerAdmin(); aplicar(a); };
+  refrescar();
+  $("admin").addEventListener("input", refrescar);
+  $("admin").addEventListener("change", ()=>confeti(leerAdmin()));
 
-  // fecha mínima: ahora
-  const ahora = new Date(Date.now() - new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
+  $("fTema").onchange = () => {
+    const t = TEMAS[$("fTema").value];
+    $("x_c1").value = t[0]; $("x_c2").value = t[1]; $("x_bg").value = "grad"; refrescar();
+  };
+
+  $("btnAdmin").onclick = () => {
+    if($("admin").classList.contains("hidden")){
+      if(sessionStorage.getItem("gpr_ok")!=="1"){
+        const p = prompt("PIN de administrador:");
+        if(p!==LOCAL.pin){ if(p!==null) alert("PIN incorrecto"); return; }
+        try{ sessionStorage.setItem("gpr_ok","1"); }catch(e){}
+      }
+      $("admin").classList.remove("hidden");
+    } else $("admin").classList.add("hidden");
+  };
+
+  $("btnGuardarDef").onclick = () => {
+    try{ localStorage.setItem("gpr_def", JSON.stringify(leerAdmin())); $("aMsg").textContent="✅ Guardado en este dispositivo."; }
+    catch(e){ $("aMsg").textContent="No se pudo guardar en este navegador."; }
+  };
+  $("btnResetDef").onclick = () => {
+    try{ localStorage.removeItem("gpr_def"); }catch(e){}
+    pintarAdmin(DEF); refrescar(); confeti(DEF); $("aMsg").textContent="↩️ Diseño original restaurado.";
+  };
+
+  const ahora = new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
   $("fFecha").min = ahora;
 
   $("btnGenerar").onclick = () => {
     const d = datosForm();
-    if(d.n.length < 2){ $("fError").textContent = "Escribe el nombre del festejado."; return; }
-    if(!d.f){ $("fError").textContent = "Elige la fecha y hora."; return; }
-    if(d.w && (d.w.length < 7 || d.w.length > 8)){ $("fError").textContent = "Tu WhatsApp debe tener 7 u 8 dígitos."; return; }
-    $("fError").textContent = "";
+    if(d.n.length<2){ $("fError").textContent="Escribe el nombre del festejado."; return; }
+    if(!d.f){ $("fError").textContent="Elige la fecha y hora."; return; }
+    if(d.w && (d.w.length<7||d.w.length>8)){ $("fError").textContent="Tu WhatsApp debe tener 7 u 8 dígitos."; return; }
+    $("fError").textContent="";
 
-    const q = new URLSearchParams();
-    Object.entries(d).forEach(([k,v]) => { if(v) q.set(k,v); });
-    linkActual = baseLink + "?" + q.toString();
+    const o = {}; // solo guardamos lo que se diferencia del diseño de fábrica
+    Object.entries(d).forEach(([k,v])=>{ if(v) o[k]=v; });
+    const a = leerAdmin();
+    ADM.forEach(k=>{ if(a[k]!==DEF[k] && a[k]!=="") o[k]=a[k]; });
+    linkActual = baseLink+"?c="+enc(o);
 
     $("linkTxt").textContent = linkActual;
     $("btnVer").href = linkActual;
@@ -300,30 +441,28 @@ function iniciarCreador(){
   };
 
   $("btnCopiar").onclick = () => {
-    if(navigator.clipboard) navigator.clipboard.writeText(linkActual).then(() => alert("Link copiado ✅"), () => prompt("Copia tu link:", linkActual));
-    else prompt("Copia tu link:", linkActual);
+    if(navigator.clipboard) navigator.clipboard.writeText(linkActual).then(()=>alert("Link copiado ✅"),()=>prompt("Copia tu link:",linkActual));
+    else prompt("Copia tu link:",linkActual);
   };
-
   $("btnCompartir").onclick = () => {
     const d = datosForm();
-    const txt = TIPOS[d.t].e + " ¡Estás invitado! " + d.n + " te invita a celebrar.\nMira los detalles y confirma aquí 👇\n" + linkActual;
-    window.open("https://wa.me/?text=" + encodeURIComponent(txt));
+    const txt = TIPOS[d.t].e+" ¡Estás invitado! "+d.n+" te invita a celebrar.\nMira los detalles y confirma aquí 👇\n"+linkActual;
+    window.open("https://wa.me/?text="+encodeURIComponent(txt));
   };
-
   $("btnReservar").onclick = () => {
-    const d = datosForm();
-    const fecha = new Date(d.f);
+    const d = datosForm(), fecha = new Date(d.f);
     const cuando = isNaN(fecha) ? "" : fecha.toLocaleString("es",{weekday:"long",day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"});
-    const txt = "Hola 👋 Quiero reservar mesa en " + LOCAL.nombre + " para una celebración.\n" +
-      TIPOS[d.t].e + " " + d.n + (d.e ? " (" + d.e + " años)" : "") + "\n📅 " + cuando +
-      "\n👥 Personas aprox.: ___\n🔗 Mi invitación: " + linkActual;
-    window.open("https://wa.me/" + LOCAL.wa + "?text=" + encodeURIComponent(txt));
+    const txt = "Hola 👋 Quiero reservar mesa en "+LOCAL.nombre+" para una celebración.\n"+
+      TIPOS[d.t].e+" "+d.n+(d.e?" ("+d.e+" años)":"")+"\n📅 "+cuando+
+      "\n👥 Personas aprox.: ___\n🔗 Mi invitación: "+linkActual;
+    window.open("https://wa.me/"+LOCAL.wa+"?text="+encodeURIComponent(txt));
   };
 }
 
 // ---------- ARRANQUE ----------
-if(P.get("n") && P.get("f")) mostrarInvitacion();
-else { iniciarCreador(); confeti(); }
+const DATA = leer();
+if(DATA.n && DATA.f) mostrarInvitacion(DATA);
+else { iniciarCreador(); confeti(leerAdmin()); }
 </script>
 </body>
 </html>
