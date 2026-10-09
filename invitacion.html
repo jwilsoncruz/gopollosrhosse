@@ -75,7 +75,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 <body>
 <div class="sobre hidden" id="sobre">
   <div class="sob-e">💌</div>
-  <p class="pre">Tienes una invitación</p>
+  <p class="pre" id="sPara">💌 Tienes una invitación</p>
+  <h2 id="sInvitado" class="hidden" style="font-family:var(--font);font-size:clamp(28px,8vw,40px);margin:6px 0 16px;word-break:break-word"></h2>
+  <p class="pre" id="sPre" style="margin:0"></p>
   <h1 id="sNombre" style="margin:8px 0 22px"></h1>
   <button id="btnAbrir">✨ Abrir invitación</button>
 </div>
@@ -92,6 +94,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 
   <div class="datos">
     <div class="dato full" style="text-align:center;font-size:18px;line-height:1.5"><b>📅 Te esperamos</b><span id="iCuando"></span></div>
+    <div class="dato full hidden" id="iVestBox"><b>👗 Temática / vestimenta</b><span id="iVest"></span></div>
   </div>
 
   <div class="video hidden" id="iVideo"></div>
@@ -170,6 +173,13 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
     <option value="baby">🍼 Baby shower</option>
   </select>
 
+  <label for="fVest">Temática o vestimenta (opcional)</label>
+  <input id="fVest" maxlength="60" placeholder="Ej: Ven de blanco / Tema: Spiderman">
+
+  <label for="fInv">Invitados (opcional): un nombre por línea</label>
+  <textarea id="fInv" rows="3" maxlength="800" placeholder="María Flores&#10;Familia Pérez&#10;Don Carlos"></textarea>
+  <p class="msg" style="font-size:12px;margin:4px 0 0;text-align:left">Si escribes nombres, se crea un link distinto para cada invitado y su sobre dirá "Invitación especial para: su nombre".</p>
+
   <div class="fila">
     <div><label for="fTema">Color rápido</label>
       <select id="fTema"><option value="fuego">🔥 Fuego</option><option value="noche">🌙 Noche</option><option value="rosa">🌸 Rosa</option><option value="verde">🌿 Verde</option></select></div>
@@ -238,6 +248,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 
   <div class="hidden" id="resultado">
     <div class="linkbox" id="linkTxt"></div>
+    <div id="listaInv"></div>
     <button id="btnCopiar" class="sec">📋 Copiar link</button>
     <button id="btnCompartir">📤 Compartir por WhatsApp</button>
     <a class="btn sec" id="btnVer" target="_blank" rel="noopener">👀 Ver mi invitación</a>
@@ -379,6 +390,9 @@ function mostrarInvitacion(c){
   document.querySelector("meta[name=theme-color]").content = D.c2;
   $("iPre").textContent = TIPOS[tipo].pre;
   $("iNombre").textContent = nombre;
+  const guest = (c.g||"").slice(0,40);
+  if(c.v){ $("iVest").textContent = String(c.v).slice(0,60); $("iVestBox").classList.remove("hidden"); }
+  if(guest) $("rNombre").value = guest;
   $("btnCrearOtra").href = baseLink;
 
   const foto = urlOk(D.fo);
@@ -437,7 +451,9 @@ function mostrarInvitacion(c){
   }
   if(+D.sb!==0){
     const sb = $("sobre");
+    $("sPre").textContent = TIPOS[tipo].pre;
     $("sNombre").textContent = nombre;
+    if(guest){ $("sPara").textContent = "💌 Invitación especial para:"; $("sInvitado").textContent = guest; $("sInvitado").classList.remove("hidden"); }
     sb.classList.remove("hidden");
     $("btnAbrir").onclick = () => {
       sb.classList.add("out"); setTimeout(()=>sb.classList.add("hidden"),650);
@@ -483,7 +499,7 @@ function datosForm(){
   return {
     t:$("fTipo").value, n:$("fNombre").value.trim(), e:$("fEdad").value.trim(),
     f:fechaForm(), l:$("fLugar").value.trim(), m:$("fMsg").value.trim(),
-    w:$("fWa").value.replace(/\D/g,"")
+    w:$("fWa").value.replace(/\D/g,""), v:$("fVest").value.trim()
   };
 }
 
@@ -540,6 +556,17 @@ function iniciarCreador(){
     ADM.forEach(k=>{ if(a[k]!==DEF[k] && a[k]!=="") o[k]=a[k]; });
     linkActual = baseLink+"?c="+enc(o);
 
+    const lista = $("listaInv"); lista.textContent = "";
+    $("fInv").value.split("\n").map(x=>x.trim().slice(0,40)).filter(Boolean).slice(0,30).forEach(g=>{
+      const link = baseLink+"?c="+enc(Object.assign({},o,{g}));
+      const row = document.createElement("div"); row.className = "linkbox"; row.style.maxHeight = "none";
+      const nm = document.createElement("b"); nm.textContent = "👤 "+g; row.appendChild(nm);
+      const bs = document.createElement("button"); bs.textContent = "📤 Enviar a "+g;
+      bs.onclick = () => window.open("https://wa.me/?text="+encodeURIComponent("Hola "+g+" 👋 "+TIPOS[d.t].e+" ¡Estás invitado! "+d.n+" te invita a celebrar.\nAbre tu invitación aquí 👇\n"+link));
+      const bc = document.createElement("button"); bc.className = "sec"; bc.textContent = "📋 Copiar link";
+      bc.onclick = () => { if(navigator.clipboard) navigator.clipboard.writeText(link).then(()=>alert("Link copiado ✅"),()=>prompt("Copia tu link:",link)); else prompt("Copia tu link:",link); };
+      row.append(bs,bc); lista.appendChild(row);
+    });
     $("linkTxt").textContent = linkActual;
     $("btnVer").href = linkActual;
     $("resultado").classList.remove("hidden");
