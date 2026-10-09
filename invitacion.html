@@ -72,9 +72,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
   <p class="msg hidden" id="iMsg"></p>
 
   <div class="datos">
-    <div class="dato"><b>📅 Fecha</b><span id="iFecha"></span></div>
-    <div class="dato"><b>🕒 Hora</b><span id="iHora"></span></div>
-    <div class="dato full"><b>📍 Lugar</b><span id="iLugar"></span></div>
+    <div class="dato full" style="text-align:center;font-size:18px;line-height:1.5"><b>📅 Te esperamos</b><span id="iCuando"></span></div>
   </div>
 
   <div class="galeria hidden" id="iGal"></div>
@@ -242,6 +240,8 @@ function pad(n){ return String(n).padStart(2,"0"); }
 function fmtGcal(d){ return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+pad(d.getHours())+pad(d.getMinutes())+"00"; }
 const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 function fmtFecha(d){ return DIAS[d.getDay()]+" "+pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+pad(d.getFullYear()%100); }
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function fmtLargo(d){ const h=d.getHours(); return DIAS[d.getDay()]+", "+d.getDate()+" de "+MESES[d.getMonth()]+" del "+d.getFullYear()+" a horas "+(h%12||12)+":"+pad(d.getMinutes())+" "+(h<12?"am":"pm"); }
 function fmtHora(d){ const h=d.getHours(); return pad(h%12||12)+":"+pad(d.getMinutes())+" "+(h<12?"AM":"PM"); }
 // Lee los campos de fecha/hora del formulario → "AAAA-MM-DDTHH:MM", "" si falta algo, "x" si no es válida
 function fechaForm(){
@@ -317,7 +317,6 @@ function mostrarInvitacion(c){
   $("iEmoji").textContent = D.ej || TIPOS[tipo].e;
   $("iPre").textContent = TIPOS[tipo].pre;
   $("iNombre").textContent = nombre;
-  $("iLugar").textContent = lugar;
   $("btnCrearOtra").href = baseLink;
 
   const foto = urlOk(D.fo);
@@ -336,8 +335,7 @@ function mostrarInvitacion(c){
 
   const fechaOk = !isNaN(fecha.getTime());
   if(fechaOk){
-    $("iFecha").textContent = fmtFecha(fecha);
-    $("iHora").textContent = fmtHora(fecha);
+    $("iCuando").textContent = fmtLargo(fecha)+" en "+lugar;
     const fin = new Date(fecha.getTime()+3*3600*1000);
     $("btnCal").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"+
       "&text="+encodeURIComponent(TIPOS[tipo].e+" "+nombre)+
@@ -346,7 +344,7 @@ function mostrarInvitacion(c){
       "&details="+encodeURIComponent(msg||"Celebración en "+LOCAL.nombre);
     if(+D.cd!==0){ cuentaRegresiva(fecha.getTime()); setInterval(()=>cuentaRegresiva(fecha.getTime()),1000); }
   }else{
-    $("iFecha").textContent = "Por confirmar"; $("iHora").textContent = "—"; $("btnCal").classList.add("hidden");
+    $("iCuando").textContent = "Fecha por confirmar · "+lugar; $("btnCal").classList.add("hidden");
   }
   if(+D.cd===0 || !fechaOk) $("cuenta").classList.add("hidden");
 
@@ -363,7 +361,7 @@ function mostrarInvitacion(c){
     if(quien.length<2){ $("rError").textContent="Escribe tu nombre."; return; }
     $("rError").textContent="";
     const txt = "Hola 👋 Soy "+quien+".\n✅ Confirmo mi asistencia a "+TIPOS[tipo].e+" "+nombre+
-      "\n👥 Personas: "+pers+(fechaOk?"\n📅 "+$("iFecha").textContent+" "+$("iHora").textContent:"");
+      "\n👥 Personas: "+pers+(fechaOk?"\n📅 "+fmtLargo(fecha):"");
     window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(txt));
   };
   confeti(D);
@@ -472,7 +470,7 @@ function iniciarCreador(){
   };
   $("btnReservar").onclick = () => {
     const d = datosForm(), fecha = new Date(d.f);
-    const cuando = isNaN(fecha) ? "" : fmtFecha(fecha)+" "+fmtHora(fecha);
+    const cuando = isNaN(fecha) ? "" : fmtLargo(fecha);
     const txt = "Hola 👋 Quiero reservar mesa en "+LOCAL.nombre+" para una celebración.\n"+
       TIPOS[d.t].e+" "+d.n+(d.e?" ("+d.e+" años)":"")+"\n📅 "+cuando+
       "\n👥 Personas aprox.: ___\n🔗 Mi invitación: "+linkActual;
