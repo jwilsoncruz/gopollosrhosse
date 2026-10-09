@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mensajes en Vivo</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f6f4fb;color:#1d1633}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #e4e0f0;border-radius:14px;padding:14px;margin-bottom:14px}
+h1{font-size:1.3rem;margin:0 0 6px}
+label{display:block;font-size:.8rem;color:#6b6585;margin:10px 0 4px}
+input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #e4e0f0;font:inherit;background:#fff;color:#1d1633}
+textarea{min-height:90px;resize:vertical}
+button,a.btn{display:inline-block;border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:600;cursor:pointer;background:#7c3aed;color:#fff;text-decoration:none;margin:4px 4px 0 0}
+button.pink{background:#ec4899}button.sec{background:#fff;color:#1d1633;border:1px solid #e4e0f0}
+.msg{padding:10px 0;border-top:1px solid #e4e0f0}.msg:first-child{border-top:0}
+.msg small{color:#6b6585}.hint{font-size:.85rem;color:#6b6585}
+.err{background:#fee2e2;color:#7f1d1d;padding:12px;border-radius:10px}
+.ok{background:#dcfce7;color:#14532d;padding:12px;border-radius:10px;margin-top:10px}
+/* pantalla */
+body.screen{background:radial-gradient(circle at 20% 20%,#6d28d9,transparent 55%),radial-gradient(circle at 80% 80%,#db2777,transparent 55%),#12091f;color:#fff;overflow:hidden;height:100vh;text-align:center}
+#scr{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4vw}
+#top{position:absolute;top:3vh;left:0;right:0;font-size:clamp(1rem,2.4vw,2rem);letter-spacing:.1em;text-transform:uppercase}
+#top b{display:block;font-size:clamp(1.8rem,5vw,4rem);letter-spacing:0;text-transform:none}
+#bub{max-width:88vw;transition:opacity .5s,transform .5s}#bub.out{opacity:0;transform:translateY(24px)}
+#bt{font-size:clamp(1.6rem,5vw,4.8rem);line-height:1.2;font-weight:700;word-break:break-word}
+#bf{margin-top:.7em;font-size:clamp(1.2rem,3vw,2.8rem);color:#fbcfe8}
+#qr{position:absolute;left:2vw;bottom:3vh;background:#fff;color:#1d1633;padding:10px;border-radius:14px;font-weight:700;font-size:clamp(.7rem,1.4vw,1.2rem)}
+#qr div{margin:0 auto 6px;display:flex;justify-content:center}
+#fs{position:absolute;right:2vw;bottom:2vh;opacity:.3;font-size:.8rem;padding:6px 10px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===== 1) PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE ===== */
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBd94u8f0grdciEAMy6OFwjQ_G9BFY5a7k",
+  authDomain: "mensajes-fiesta.firebaseapp.com",
+  databaseURL: "https://mensajes-fiesta-default-rtdb.firebaseio.com",
+  projectId: "mensajes-fiesta",
+  appId: "1:880537182959:web:11d03ff1c09178a92df11a"
+};
+/* ====================================================== */
+
+var $app=document.getElementById('app');
+var q=new URLSearchParams(location.search);
+var EV=(q.get('e')||'fiesta').replace(/[^a-z0-9_-]/gi,'').toLowerCase()||'fiesta';
+var mode=location.hash.replace('#','')||'menu';
+var BASE=location.href.split('#')[0].split('?')[0];
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function go(m){location.hash=m;location.reload()}
+
+if(!FIREBASE_CONFIG.databaseURL){
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>Falta conectar Firebase</h1><div class="err">Abre este archivo y pega tu configuración de Firebase donde dice <b>PEGA AQUÍ</b> (arriba en el código).</div></div></div>';
+}else{
+  firebase.initializeApp(FIREBASE_CONFIG);
+  var db=firebase.database();
+  var R=db.ref('eventos/'+EV), RM=R.child('mensajes'), RC=R.child('config');
+  ({menu:menu,enviar:enviar,panel:panel,pantalla:pantalla}[mode]||menu)();
+}
+
+/* ---------- MENÚ ---------- */
+function menu(){
+  var l=BASE+'?e='+EV;
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🎉 Mensajes en vivo</h1><p class="hint">Evento: <b>'+esc(EV)+'</b> (cambia con <code>?e=nombre</code> en el enlace)</p>'
+  +'<a class="btn" href="'+l+'#panel">🎛️ Panel DJ</a><a class="btn pink" href="'+l+'#pantalla">📺 Pantalla</a><a class="btn sec" href="'+l+'#enviar">✍️ Formulario invitados</a></div></div>';
+}
+
+/* ---------- INVITADOS ---------- */
+function enviar(){
+  RC.once('value').then(function(s){
+    var c=s.val()||{};
+    $app.innerHTML='<div class="wrap"><div class="card"><h1>💌 Felicita a '+esc(c.honoree||'nuestro invitado de honor')+'</h1>'
+    +'<p class="hint">Tu mensaje saldrá en la pantalla grande.</p>'
+    +'<label>Tu nombre</label><input id="n" maxlength="30" placeholder="Ej: Tía Rosa">'
+    +'<label>Tu mensaje</label><textarea id="t" maxlength="140" placeholder="¡Feliz cumpleaños!"></textarea>'
+    +'<button id="b" class="pink" style="width:100%;margin-top:12px">Enviar 🚀</button><div id="r"></div></div></div>';
+    document.getElementById('b').onclick=function(){
+      var n=document.getElementById('n').value.trim(),t=document.getElementById('t').value.trim();
+      var last=+localStorage.getItem('mev_last')||0;
+      if(!t){return}
+      if(Date.now()-last<15000){document.getElementById('r').innerHTML='<div class="err">Espera unos segundos antes de enviar otro 🙂</div>';return}
+      RC.child('auto').once('value').then(function(a){
+        return RM.push({name:n||'Un invitado',text:t,ts:Date.now(),status:a.val()?'aprobado':'pendiente'});
+      }).then(function(){
+        localStorage.setItem('mev_last',Date.now());
+        document.getElementById('t').value='';
+        document.getElementById('r').innerHTML='<div class="ok">¡Mensaje enviado! 🎉 Pronto saldrá en pantalla.</div>';
+      }).catch(function(){document.getElementById('r').innerHTML='<div class="err">No se pudo enviar. Intenta otra vez.</div>'});
+    };
+  });
+}
+
+/* ---------- PANEL DJ ---------- */
+function panel(){
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🎛️ Panel DJ <small class="hint">· '+esc(EV)+'</small></h1>'
+  +'<label>Agasajado/a</label><input id="h" placeholder="Ej: María – 15 años">'
+  +'<label>Segundos por mensaje</label><input id="s" type="number" min="4" max="60">'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="a" type="checkbox" style="width:auto"> Aprobar automáticamente (sin revisar)</label>'
+  +'<a class="btn pink" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
+  +'<button class="sec" id="x">Borrar todos</button></div>'
+  +'<div class="card"><b>✍️ Mensaje manual (del WhatsApp)</b><label>Nombre</label><input id="mn"><label>Mensaje</label><textarea id="mt"></textarea>'
+  +'<button id="mb">Mostrar ahora</button></div>'
+  +'<div class="card"><b>⏳ Por aprobar</b><div id="p"></div></div>'
+  +'<div class="card"><b>✅ Aprobados</b><div id="ok"></div></div></div>';
+  var $=function(i){return document.getElementById(i)};
+  RC.once('value').then(function(s){var c=s.val()||{};$('h').value=c.honoree||'';$('s').value=c.secs||12;$('a').checked=!!c.auto});
+  $('h').oninput=function(){RC.child('honoree').set(this.value)};
+  $('s').onchange=function(){RC.child('secs').set(Math.max(4,+this.value||12))};
+  $('a').onchange=function(){RC.child('auto').set(this.checked)};
+  $('x').onclick=function(){if(confirm('¿Borrar todos los mensajes?')){RM.remove();RC.child('now').remove()}};
+  $('mb').onclick=function(){
+    var t=$('mt').value.trim();if(!t)return;
+    var r=RM.push({name:$('mn').value.trim()||'Un invitado',text:t,ts:Date.now(),status:'aprobado'});
+    RC.update({now:r.key,nowTs:Date.now()});$('mt').value='';$('mn').value='';
+  };
+  RM.on('value',function(s){
+    var p='',o='';
+    var all=[];s.forEach(function(c){var v=c.val();v.id=c.key;all.push(v)});
+    all.reverse().forEach(function(m){
+      var h='<div class="msg"><b>'+esc(m.name)+'</b><br>'+esc(m.text)+'<br>';
+      if(m.status==='pendiente'){
+        p+=h+'<button data-a="ok" data-id="'+m.id+'">Aprobar</button><button class="pink" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Rechazar</button></div>';
+      }else if(m.status==='aprobado'){
+        o+=h+'<button class="pink" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Quitar</button></div>';
+      }
+    });
+    $('p').innerHTML=p||'<p class="hint">Nada pendiente.</p>';
+    $('ok').innerHTML=o||'<p class="hint">Aún no hay aprobados.</p>';
+  });
+  $app.onclick=function(e){
+    var a=e.target.getAttribute('data-a'),id=e.target.getAttribute('data-id');if(!a)return;
+    if(a==='ok')RM.child(id).update({status:'aprobado'});
+    if(a==='no')RM.child(id).update({status:'rechazado'});
+    if(a==='now'){RM.child(id).update({status:'aprobado'});RC.update({now:id,nowTs:Date.now()})}
+  };
+}
+
+/* ---------- PANTALLA ---------- */
+function pantalla(){
+  document.body.className='screen';
+  var link=BASE+'?e='+EV+'#enviar';
+  $app.innerHTML='<div id="scr"><div id="top">Mensajes para<b id="hn">🎉</b></div>'
+  +'<div id="bub"><div id="bt">Escanea el QR y envía tu mensaje 💬</div></div>'
+  +'<div id="qr"><div id="qc"></div>Escanea y felicita 🎉</div>'
+  +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
+  new QRCode(document.getElementById('qc'),{text:link,width:150,height:150});
+  document.getElementById('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
+  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=0,first=true;
+  function show(m){
+    var b=document.getElementById('bub');b.classList.add('out');
+    setTimeout(function(){
+      b.innerHTML='<div id="bt">“'+esc(m.text)+'”</div><div id="bf">— '+esc(m.name)+' 💜</div>';
+      b.classList.remove('out');
+    },450);
+    clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);
+  }
+  function next(){
+    if(!msgs.length){timer=setTimeout(next,4000);return}
+    idx=(idx+1)%msgs.length;show(msgs[idx]);
+  }
+  RC.on('value',function(s){
+    cfg=s.val()||{};
+    document.getElementById('hn').textContent=cfg.honoree||'🎉';
+    if(cfg.now&&cfg.nowTs&&cfg.nowTs!==lastNow){
+      lastNow=cfg.nowTs;
+      var i=msgs.findIndex(function(m){return m.id===cfg.now});
+      if(i>=0){idx=i;show(msgs[i])}
+    }
+  });
+  RM.on('value',function(s){
+    msgs=[];s.forEach(function(c){var v=c.val();v.id=c.key;if(v.status==='aprobado')msgs.push(v)});
+    msgs.sort(function(a,b){return a.ts-b.ts});
+    if(seen===null){seen={};msgs.forEach(function(m){seen[m.id]=1});if(msgs.length){idx=msgs.length-1;show(msgs[idx])}return}
+    var fresh=msgs.filter(function(m){return !seen[m.id]});
+    msgs.forEach(function(m){seen[m.id]=1});
+    if(fresh.length){var m=fresh[fresh.length-1];idx=msgs.findIndex(function(x){return x.id===m.id});show(m)}
+  });
+}
+</script>
+</body>
+</html>
