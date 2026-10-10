@@ -3,99 +3,96 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mensajes en Vivo</title>
+<title>Homenaje en Vida</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<link rel="icon" href="mensaje.png">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f6f4fb;color:#1d1633}
+body{font-family:Georgia,'Times New Roman',serif;background:#eeece8;color:#26231f;line-height:1.45}
 .wrap{max-width:760px;margin:0 auto;padding:16px}
-.card{background:#fff;border:1px solid #e4e0f0;border-radius:14px;padding:14px;margin-bottom:14px}
-h1{font-size:1.3rem;margin:0 0 6px}
-label{display:block;font-size:.8rem;color:#6b6585;margin:10px 0 4px}
-input,textarea,select{width:100%;padding:11px;border-radius:10px;border:1px solid #e4e0f0;font:inherit;background:#fff;color:#1d1633}
+.card{background:#fff;border:1px solid #dcd8d0;border-radius:6px;padding:16px;margin-bottom:14px}
+h1{font-size:1.4rem;margin:0 0 8px;font-weight:600}
+label{display:block;font-size:.85rem;color:#6a645a;margin:10px 0 4px}
+input,textarea,select{width:100%;padding:11px;border-radius:5px;border:1px solid #cfcac0;font:inherit;background:#fff;color:#26231f}
 input[type=checkbox]{width:auto;transform:scale(1.3)}
 input[type=color]{height:42px;padding:2px}
 input[type=range]{padding:0}
-textarea{min-height:80px;resize:vertical}
-button,a.btn{display:inline-block;border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:600;cursor:pointer;background:#7c3aed;color:#fff;text-decoration:none;margin:4px 4px 0 0}
-button.pink{background:#ec4899}button.sec{background:#fff;color:#1d1633;border:1px solid #e4e0f0}
-.msg{padding:10px 0;border-top:1px solid #e4e0f0}.msg:first-child{border-top:0}
-.hint{font-size:.85rem;color:#6b6585}
-.err{background:#fee2e2;color:#7f1d1d;padding:12px;border-radius:10px}
-.ok{background:#dcfce7;color:#14532d;padding:12px;border-radius:10px;margin-top:10px}
+textarea{min-height:90px;resize:vertical}
+button,a.btn{display:inline-block;border:0;border-radius:5px;padding:11px 15px;font:inherit;font-weight:600;cursor:pointer;background:#3b4a5c;color:#fff;text-decoration:none;margin:4px 4px 0 0}
+button.gold{background:#8a6a2f}button.sec{background:#fff;color:#26231f;border:1px solid #cfcac0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #8a6a2f;outline-offset:1px}
+.msg{padding:10px 0;border-top:1px solid #e6e2da}.msg:first-child{border-top:0}
+.hint{font-size:.88rem;color:#6a645a}
+.err{background:#f6dcd8;color:#6b1d12;padding:12px;border-radius:5px;margin-top:10px}
+.ok{background:#e1ecd9;color:#25431a;padding:12px;border-radius:5px;margin-top:10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 10px}
-.sec{grid-column:1/-1;font-weight:700;margin-top:12px;padding-top:8px;border-top:1px solid #e4e0f0}
+.sec{grid-column:1/-1;font-weight:700;margin-top:12px;padding-top:8px;border-top:1px solid #e6e2da}
 details>summary{cursor:pointer;font-weight:700;font-size:1.05rem}
 /* invitados */
-body.guest{background:linear-gradient(160deg,var(--c1),var(--c2));min-height:100vh}
+body.guest{background:linear-gradient(170deg,var(--c1),var(--c2));min-height:100vh}
 .gc{text-align:center}
 .gc textarea,.gc input{text-align:left}
-.glg{max-height:60px;max-width:60%;object-fit:contain;display:block;margin:0 auto 10px}
-.gph{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--c2);display:block;margin:0 auto 10px}
+.glg{max-height:56px;max-width:60%;object-fit:contain;display:block;margin:0 auto 12px}
+.gph{width:110px;height:136px;border-radius:55px 55px 6px 6px;object-fit:cover;border:2px solid var(--ac);display:block;margin:0 auto 12px}
+.gd{color:#6a645a;margin:-4px 0 10px}
+.glive{margin:6px 0 14px}.glive iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:6px;background:#000}
 /* pantalla */
 body.screen{overflow:hidden;height:100vh;background:#000}
 #scr{position:fixed;inset:0;display:flex;flex-direction:column;padding:3vh 3vw;text-align:center;color:var(--tx);font-family:var(--ff);
- background-image:linear-gradient(rgba(0,0,0,var(--ov)),rgba(0,0,0,var(--ov))),var(--bgimg),radial-gradient(circle at 20% 20%,var(--c1),transparent 55%),radial-gradient(circle at 80% 80%,var(--c2),transparent 55%);
+ background-image:linear-gradient(rgba(0,0,0,var(--ov)),rgba(0,0,0,var(--ov))),var(--bgimg),radial-gradient(circle at 50% 0%,var(--c2),transparent 65%),radial-gradient(circle at 50% 110%,var(--c1),transparent 60%);
  background-color:var(--bg);background-size:cover;background-position:center}
-#hdr{flex:none;display:flex;flex-direction:column;align-items:center;gap:.6vh}
-#hph{height:13vh;width:13vh;border-radius:50%;object-fit:cover;border:.5vh solid var(--ac);box-shadow:0 0 3vh rgba(0,0,0,.4)}
-#htt{font-size:clamp(.9rem,2vw,1.7rem);letter-spacing:.14em;text-transform:uppercase;opacity:.9}
-#hn{font-size:clamp(1.6rem,4.6vw,3.8rem);font-weight:700;color:var(--ac);line-height:1.1}
+#hdr{flex:none;display:flex;flex-direction:column;align-items:center;gap:.5vh}
+#hph{height:20vh;aspect-ratio:4/5;border-radius:10vh 10vh 1vh 1vh;object-fit:cover;border:.35vh solid var(--ac);box-shadow:0 0 4vh rgba(0,0,0,.45)}
+#htt{font-size:clamp(.9rem,1.8vw,1.5rem);letter-spacing:.12em;opacity:.85;font-style:italic}
+#hn{font-size:clamp(1.8rem,4.6vw,4rem);font-weight:600;color:var(--ac);line-height:1.1}
+#hd{font-size:clamp(1rem,2vw,1.7rem);opacity:.9}
+#hq{font-size:clamp(.9rem,1.7vw,1.4rem);font-style:italic;opacity:.8;max-width:70vw}
+#vel{font-size:clamp(.9rem,1.6vw,1.4rem);opacity:.9}
 #main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
-#bub{max-width:90vw;display:flex;gap:3vw;align-items:center;justify-content:center;padding:3.5vh 3.5vw;border-radius:3vh;background:color-mix(in srgb,var(--tx) 9%,transparent);border:1px solid color-mix(in srgb,var(--tx) 22%,transparent);backdrop-filter:blur(6px);transition:opacity .5s,transform .5s}
+#bub{max-width:88vw;display:flex;gap:3vw;align-items:center;justify-content:center;padding:3.5vh 4vw;border-radius:1vh;background:color-mix(in srgb,var(--tx) 8%,transparent);border-left:.5vh solid var(--ac);transition:opacity .9s,transform .9s}
 #bub.out{opacity:0}
-#bub.a-zoom.out{transform:scale(.85)}
-#bub.a-slide.out{transform:translateX(8vw)}
-#bimg{max-height:38vh;max-width:30vw;border-radius:2vh;object-fit:cover}
-#bt{font-size:calc(clamp(1.5rem,4.4vw,4.2rem)*var(--sc));line-height:1.2;font-weight:700;word-break:break-word}
-#bf{margin-top:.7em;font-size:calc(clamp(1.1rem,2.8vw,2.6rem)*var(--sc));color:var(--ac)}
+#bub.a-rise.out{transform:translateY(3vh)}
+#bimg{max-height:36vh;max-width:30vw;border-radius:1vh;object-fit:cover}
+#bt{font-size:calc(clamp(1.4rem,3.8vw,3.6rem)*var(--sc));line-height:1.3;font-style:italic;word-break:break-word}
+#bf{margin-top:.7em;font-size:calc(clamp(1.1rem,2.5vw,2.3rem)*var(--sc));color:var(--ac)}
 #lg{position:absolute;max-width:24vw;object-fit:contain}
 #lg.p-tl{top:2.5vh;left:2.5vw}#lg.p-tr{top:2.5vh;right:2.5vw}#lg.p-bc{bottom:2vh;left:50%;transform:translateX(-50%)}
-#qr{position:absolute;z-index:8;bottom:3vh;background:#fff;color:#1d1633;padding:10px;border-radius:14px;font-weight:700;font-size:clamp(.7rem,1.3vw,1.1rem)}
+#qr{position:absolute;z-index:8;bottom:3vh;background:#fff;color:#26231f;padding:10px;border-radius:8px;font-size:clamp(.7rem,1.2vw,1rem)}
 #qr.q-bl{left:2vw}#qr.q-br{right:2vw}
 #qr div{margin:0 auto 6px;display:flex;justify-content:center}
 #fs{position:absolute;right:1vw;bottom:1vh;opacity:.6;font-size:.8rem;padding:6px 10px;z-index:8;transition:opacity .4s}
-#ann{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;padding:6vw;background:rgba(0,0,0,.74);backdrop-filter:blur(10px);font-size:calc(clamp(2rem,7vw,7rem)*var(--sc));font-weight:800;line-height:1.1;color:var(--tx);text-shadow:0 0 4vh var(--c2)}
+#ann{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;padding:6vw;background:rgba(0,0,0,.8);font-size:calc(clamp(1.8rem,6vw,5.5rem)*var(--sc));line-height:1.2;color:var(--tx)}
 #wall{display:none;flex:1;align-self:stretch;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2vh 2vw;padding:1vh 0}
-.wc{background:color-mix(in srgb,var(--tx) 9%,transparent);border:1px solid color-mix(in srgb,var(--tx) 22%,transparent);border-radius:2.5vh;padding:2.5vh 2vw;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:pop .6s}
-.wc .wt{font-size:calc(clamp(1rem,2vw,2rem)*var(--sc));font-weight:700;line-height:1.2;word-break:break-word}
-.wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
-.wc img{max-height:14vh;border-radius:1.5vh;object-fit:cover;margin-bottom:1vh;align-self:center}
-@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
-#cdp{margin-top:.8vh;padding:.7vh 2vw;border-radius:99px;font-size:clamp(1rem,2.2vw,2rem);font-weight:700;font-variant-numeric:tabular-nums;color:var(--tx);background:color-mix(in srgb,var(--tx) 14%,transparent);border:1px solid var(--ac)}
-#cdp.soon{animation:pulse 1s infinite}
-@keyframes pulse{50%{transform:scale(1.06);box-shadow:0 0 3vh var(--c2)}}
-#cdo{position:absolute;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);color:var(--tx);text-align:center;font-family:var(--ff)}
-#cdn{font-size:clamp(6rem,32vw,34rem);font-weight:800;line-height:1;text-shadow:0 0 5vh var(--c2)}
-#cdl{font-size:clamp(1.8rem,6vw,6rem);font-weight:700;color:var(--ac)}
-.tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1;margin:0}
-.opt{display:block;width:100%;margin:8px 0;text-align:left;font-size:1.05rem}
-#kar{margin-top:.6vh;font-size:clamp(.9rem,1.8vw,1.6rem);opacity:.95}
-#gm{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;justify-content:center;gap:1.4vh;padding:5vh 8vw;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);color:var(--tx);font-family:var(--ff);text-align:center}
-#gq{font-size:calc(clamp(1.6rem,4.6vw,4.4rem)*var(--sc));font-weight:800;margin-bottom:1vh}
-.go{position:relative;overflow:hidden;display:flex;justify-content:space-between;gap:2vw;padding:1.6vh 2vw;border-radius:2vh;border:2px solid color-mix(in srgb,var(--tx) 25%,transparent);font-size:clamp(1.1rem,2.6vw,2.4rem);font-weight:700;text-align:left}
-.go .gb{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--c1),var(--c2));opacity:.55;transition:width .5s}
-.go span{position:relative}
-.go.ok{border-color:#22c55e;box-shadow:0 0 3vh #22c55e}
-.gs{font-size:clamp(1rem,2vw,1.8rem);opacity:.85;margin-top:1vh}
-#gtop{margin-top:2vh;font-size:clamp(1.1rem,2.4vw,2.2rem);line-height:1.5}
-#sr{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);color:var(--tx);font-family:var(--ff);text-align:center}
-#srt{font-size:clamp(1.4rem,4vw,3.6rem);letter-spacing:.1em;text-transform:uppercase}
-#srn{font-size:clamp(2.4rem,10vw,10rem);font-weight:800;color:var(--ac);line-height:1.1;padding:0 4vw;word-break:break-word}
-#srp{font-size:clamp(1.2rem,3vw,3rem)}
-#cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+.wc{background:color-mix(in srgb,var(--tx) 8%,transparent);border-left:.4vh solid var(--ac);border-radius:.8vh;padding:2.5vh 2vw;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:fin 1s}
+.wc .wt{font-size:calc(clamp(1rem,1.9vw,1.9rem)*var(--sc));font-style:italic;line-height:1.25;word-break:break-word}
+.wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.4vw,1.4rem)*var(--sc))}
+.wc img{max-height:14vh;border-radius:.8vh;object-fit:cover;margin-bottom:1vh;align-self:center}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+#cdp{margin-top:.6vh;padding:.7vh 2vw;border-radius:99px;font-size:clamp(1rem,2vw,1.8rem);font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--tx) 12%,transparent);border:1px solid var(--ac)}
+#cdo{position:absolute;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.85);color:var(--tx);font-family:var(--ff);padding:4vw}
+#cdn{font-size:clamp(2rem,7vw,7rem);font-style:italic}
+#cdl{font-size:clamp(2.2rem,9vw,9rem);font-weight:600;color:var(--ac);line-height:1.1}
+.tabs{display:flex;gap:6px;margin:12px 0}
+#main{position:relative}
+#lv{display:none;width:100%;height:100%;align-items:center;justify-content:center}
+#lv iframe{height:100%;max-width:100%;aspect-ratio:16/9;border:0;border-radius:1vh;background:#000}
+#scr.live #lv{display:flex}
+#scr.live #wall{display:none!important}
+#scr.live #hph{height:9vh}
+#scr.live #hq{display:none}
+#scr.live #bub{position:absolute;left:0;right:0;bottom:1.5vh;margin:0 auto;width:max-content;max-width:70vw;padding:1.5vh 2vw;background:rgba(0,0,0,.72)}
+#scr.live #bimg{display:none}
+#scr.live #bt{font-size:calc(clamp(1rem,2.2vw,2.2rem)*var(--sc))}
+#scr.live #bf{font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<canvas id="cf"></canvas>
 <script>
-/* ===== CONFIGURACIÓN DE FIREBASE ===== */
+/* ===== CONFIGURACIÓN DE FIREBASE (la misma de tu proyecto) ===== */
 var FIREBASE_CONFIG = {
   apiKey: "AIzaSyBd94u8f0grdciEAMy6OFwjQ_G9BFY5a7k",
   authDomain: "mensajes-fiesta.firebaseapp.com",
@@ -103,13 +100,14 @@ var FIREBASE_CONFIG = {
   projectId: "mensajes-fiesta",
   appId: "1:880537182959:web:11d03ff1c09178a92df11a"
 };
-/* ====================================== */
-/* true = el panel pide correo y contraseña (recomendado). false = sin contraseña. */
+/* true = el panel pide correo y contraseña (recomendado) */
 var REQUIRE_LOGIN = true;
+/* Los datos se guardan en /homenajes/<evento>, separados de las fiestas */
+var ROOT = 'homenajes';
 
 var $app=document.getElementById('app');
 var q=new URLSearchParams(location.search);
-var EV=(q.get('e')||'fiesta').replace(/[^a-z0-9_-]/gi,'').toLowerCase()||'fiesta';
+var EV=(q.get('e')||'servicio').replace(/[^a-z0-9_-]/gi,'').toLowerCase()||'servicio';
 var mode=location.hash.replace('#','')||'menu';
 var BASE=location.href.split('#')[0].split('?')[0];
 
@@ -123,22 +121,31 @@ function fixImg(u){
   return u.replace(/(dropbox\.com\/[^?]*)\?dl=0/,'$1?raw=1');
 }
 
-var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',confetti:true};
+function liveEmbed(u,screen){
+  u=(u||'').trim();if(!/^https:\/\//i.test(u))return '';
+  var m=u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|live\/|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+  if(m)return 'https://www.youtube.com/embed/'+m[1]+'?rel=0&playsinline=1'+(screen?'&autoplay=1&mute=1':'');
+  m=u.match(/vimeo\.com\/(\d+)/);
+  if(m)return 'https://player.vimeo.com/video/'+m[1]+(screen?'?autoplay=1&muted=1':'');
+  if(/facebook\.com|fb\.watch/i.test(u))return 'https://www.facebook.com/plugins/video.php?show_text=false&href='+encodeURIComponent(u)+(screen?'&autoplay=true&mute=true':'');
+  return '';
+}
+var DEF={c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a',bgImg:'',ov:45,logo:'',logoPos:'tr',logoH:10,photo:'',title:'En memoria de',font:'serif',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',candles:true};
 var PRESETS={
-  fiesta:{n:'🎉 Fiesta',c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8'},
-  dorado:{n:'✨ Elegante dorado',c1:'#b8860b',c2:'#f5d76e',bg:'#0b0b0b',tx:'#fff8e1',ac:'#f5d76e'},
-  boda:{n:'💍 Boda',c1:'#f9a8d4',c2:'#fde68a',bg:'#fffaf5',tx:'#4a3b3b',ac:'#be185d'},
-  quince:{n:'👑 Quinceañera',c1:'#c026d3',c2:'#f472b6',bg:'#1a0830',tx:'#ffffff',ac:'#f5d0fe'},
-  corp:{n:'🏢 Corporativo',c1:'#0ea5e9',c2:'#1d4ed8',bg:'#06122b',tx:'#ffffff',ac:'#7dd3fc'},
-  tropical:{n:'🌴 Tropical',c1:'#10b981',c2:'#f59e0b',bg:'#06231b',tx:'#ffffff',ac:'#fde68a'}
+  sobrio:{n:'🕊️ Sobrio',c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a'},
+  blanco:{n:'🤍 Blanco y paz',c1:'#e8eef4',c2:'#cbd5e1',bg:'#f8f6f1',tx:'#2b2f36',ac:'#6b5a2e'},
+  vino:{n:'🍷 Vino',c1:'#4a1626',c2:'#7a2a3c',bg:'#1c0a10',tx:'#f7ece6',ac:'#e8c4a0'},
+  bosque:{n:'🌿 Bosque',c1:'#1f3a2e',c2:'#3d5a47',bg:'#0c1a14',tx:'#eef3ea',ac:'#c9d9a8'},
+  noche:{n:'🌙 Azul noche',c1:'#0f2a4a',c2:'#26456e',bg:'#050d1a',tx:'#eaf1fa',ac:'#9fc3ee'},
+  sepia:{n:'📜 Sepia',c1:'#5a4630',c2:'#8a6f4d',bg:'#241a10',tx:'#f6ecd9',ac:'#e7c98f'}
 };
 var PLANTILLAS={
-  boda:{n:'💍 Boda',p:[['🎉 Inicio',0],['💃 Vals de los novios',45],['🥂 Brindis',75],['📸 Fotos',105],['🎂 Torta',150],['💐 Lanzamiento del ramo',180],['👋 Despedida',240],['🏁 Cierre',270]]},
-  quince:{n:'👑 Quinceañera',p:[['🎉 Inicio',0],['👑 Presentación',30],['💃 Vals',60],['🥂 Brindis',90],['📸 Fotos',120],['🎂 Torta',150],['🔥 Baile sorpresa',180],['👋 Despedida',230],['🏁 Cierre',250]]},
-  cumple:{n:'🎂 Cumpleaños',p:[['🎉 Inicio',0],['📸 Fotos',60],['🎂 Torta',90],['🥂 Brindis',100],['👋 Despedida',180],['🏁 Cierre',200]]},
-  bautizo:{n:'👶 Bautizo',p:[['🎉 Inicio',0],['📸 Fotos',40],['🎂 Torta',70],['👋 Despedida',120],['🏁 Cierre',140]]}
+  velorio:{n:'🕯️ Velatorio y sepelio',p:[['🕯️ Inicio del velatorio',0],['📿 Oración / Rosario',120],['⛪ Misa de cuerpo presente',240],['🚗 Salida del cortejo',300],['🌹 Sepelio',360]]},
+  cremacion:{n:'🕊️ Cremación',p:[['🕯️ Inicio de la despedida',0],['🎙️ Palabras de la familia',60],['📿 Responso',90],['🕊️ Cremación',120]]},
+  misa:{n:'⛪ Misa / Responso',p:[['🕯️ Recepción',0],['⛪ Misa',30],['🎙️ Palabras de despedida',90],['🤝 Condolencias',110]]},
+  aniversario:{n:'🌹 Misa de recuerdo',p:[['🕯️ Recepción',0],['⛪ Misa en su memoria',30],['🎙️ Palabras de la familia',90],['🍽️ Compartir',110]]}
 };
-var FONTS={sans:"system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",serif:"Georgia,'Times New Roman',serif",script:"'Brush Script MT','Segoe Script','Lucida Handwriting',cursive",bold:"Impact,'Arial Black',sans-serif"};
+var FONTS={serif:"Georgia,'Times New Roman',serif",sans:"system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",script:"'Brush Script MT','Segoe Script','Lucida Handwriting',cursive",classic:"'Palatino Linotype',Palatino,'Book Antiqua',serif"};
 function theme(c){return Object.assign({},DEF,(c&&c.theme)||{})}
 function applyTheme(el,t){
   var s=el.style,u=fixImg(t.bgImg);
@@ -146,7 +153,7 @@ function applyTheme(el,t){
   s.setProperty('--tx',t.tx);s.setProperty('--ac',t.ac);
   s.setProperty('--ov',(u?t.ov:0)/100);
   s.setProperty('--sc',(t.size||100)/100);
-  s.setProperty('--ff',FONTS[t.font]||FONTS.sans);
+  s.setProperty('--ff',FONTS[t.font]||FONTS.serif);
   s.setProperty('--bgimg',u?'url("'+u.replace(/"/g,'%22')+'")':'none');
 }
 
@@ -156,18 +163,18 @@ if(!FIREBASE_CONFIG.databaseURL){
   if(mode!=='enviar'){
     firebase.initializeApp(FIREBASE_CONFIG);
     var db=firebase.database();
-    var R=db.ref('eventos/'+EV), RM=R.child('mensajes'), RC=R.child('config');
+    var R=db.ref(ROOT+'/'+EV), RM=R.child('mensajes'), RC=R.child('config'), RV=R.child('velas');
   }
   ({menu:menu,enviar:enviar,panel:gate,pantalla:pantalla}[mode]||menu)();
 }
 
-/* ---------- ACCESO DJ ---------- */
+/* ---------- ACCESO ---------- */
 function gate(){
   if(!REQUIRE_LOGIN){panel();return}
   firebase.auth().onAuthStateChanged(function(u){if(u)panel();else loginView()});
 }
 function loginView(){
-  $app.innerHTML='<div class="wrap"><div class="card"><h1>🔐 Acceso DJ</h1><p class="hint">Solo el DJ puede entrar al panel.</p>'
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🔐 Acceso al panel</h1><p class="hint">Solo la funeraria o la familia pueden entrar.</p>'
   +'<label>Correo</label><input id="em" type="email" autocomplete="username">'
   +'<label>Contraseña</label><input id="pw" type="password" autocomplete="current-password">'
   +'<button id="li" style="width:100%;margin-top:12px">Entrar</button><div id="lr"></div></div></div>';
@@ -175,7 +182,7 @@ function loginView(){
     document.getElementById('lr').innerHTML='';
     firebase.auth().signInWithEmailAndPassword(document.getElementById('em').value.trim(),document.getElementById('pw').value).catch(function(e){
       var m=(e&&e.code==='auth/operation-not-allowed')?'Falta activar “Correo/contraseña” en Firebase → Authentication.':'Correo o contraseña incorrectos.';
-      document.getElementById('lr').innerHTML='<div class="err" style="margin-top:10px">'+m+'</div>';
+      document.getElementById('lr').innerHTML='<div class="err">'+m+'</div>';
     });
   };
   document.getElementById('li').onclick=go;
@@ -185,17 +192,15 @@ function loginView(){
 /* ---------- MENÚ ---------- */
 function menu(){
   var l=BASE+'?e='+EV;
-  $app.innerHTML='<div class="wrap"><div class="card"><h1>🎉 Mensajes en vivo</h1><p class="hint">Evento: <b>'+esc(EV)+'</b> (cambia con <code>?e=nombre</code> en el enlace)</p>'
-  +'<a class="btn" href="'+l+'#panel">🎛️ Panel DJ</a><a class="btn pink" href="'+l+'#pantalla">📺 Pantalla</a><a class="btn sec" href="'+l+'#enviar">✍️ Formulario invitados</a></div></div>';
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🕊️ Homenaje en vida</h1><p class="hint">Servicio: <b>'+esc(EV)+'</b> (cambia con <code>?e=nombre</code> en el enlace)</p>'
+  +'<a class="btn" href="'+l+'#panel">🎛️ Panel</a><a class="btn gold" href="'+l+'#pantalla">📺 Pantalla</a><a class="btn sec" href="'+l+'#enviar">✍️ Formulario para asistentes</a></div></div>';
 }
 
-/* ---------- INVITADOS (sin conexión permanente: usa pedidos cortos) ---------- */
+/* ---------- ASISTENTES (pedidos cortos, sin conexión permanente) ---------- */
 function enviar(){
-  var DBU=FIREBASE_CONFIG.databaseURL.replace(/\/$/,'')+'/eventos/'+EV;
+  var DBU=FIREBASE_CONFIG.databaseURL.replace(/\/$/,'')+'/'+ROOT+'/'+EV;
   function rget(p){return fetch(DBU+'/'+p+'.json').then(function(r){return r.json()})}
   function rsend(m,p,d){return fetch(DBU+'/'+p+'.json',{method:m,body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error('x');return r.json()})}
-  var gid=localStorage.getItem('mev_gid');
-  if(!gid){gid='g'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);localStorage.setItem('mev_gid',gid)}
   var $=function(i){return document.getElementById(i)};
   rget('config').then(function(c){
     c=c||{};var t=theme(c);
@@ -203,106 +208,72 @@ function enviar(){
     var lg=fixImg(t.logo),ph=fixImg(t.photo),saved=localStorage.getItem('mev_name')||'';
     var head=(lg?'<img class="glg" alt="" src="'+ea(lg)+'" onerror="this.remove()">':'')
       +(ph?'<img class="gph" alt="" src="'+ea(ph)+'" onerror="this.remove()">':'')
-      +'<h1>💌 Felicita a '+esc(c.honoree||'nuestro invitado de honor')+'</h1>';
-    var tabs=(c.kOn||c.gOn)?'<div class="tabs"><button data-tab="1">💌 Mensaje</button>'+(c.kOn?'<button class="sec" data-tab="2">🎤 Karaoke</button>':'')+(c.gOn?'<button class="sec" data-tab="3">🎮 Juego</button>':'')+'</div>':'';
-    var p1=c.closed?'<p class="hint">🔒 Los mensajes ya cerraron. ¡Gracias por participar! 🎉</p>'
-      :'<p class="hint">Tu mensaje saldrá en la pantalla grande.</p>'
-      +'<label>Tu nombre</label><input id="n" maxlength="30" placeholder="Ej: Tía Rosa" value="'+ea(saved)+'">'
-      +'<label>Tu mensaje</label><textarea id="t" maxlength="140" placeholder="¡Feliz cumpleaños!"></textarea>'
-      +'<button id="b" class="pink" style="width:100%;margin-top:12px">Enviar 🚀</button><div id="r"></div>';
-    var p2=c.kOn?'<div id="p2" style="display:none"><p class="hint">Anótate para cantar 🎤</p><label>Tu nombre</label><input id="kn2" maxlength="30" value="'+ea(saved)+'"><label>Canción (y artista)</label><input id="ks2" maxlength="60" placeholder="Ej: Hotel California – Eagles"><button id="kb" class="pink" style="width:100%;margin-top:12px">Anotarme 🎤</button><div id="kr"></div></div>':'';
-    var p3=c.gOn?'<div id="p3" style="display:none"><label>Tu nombre (para el ranking)</label><input id="gn" maxlength="30" value="'+ea(saved)+'"><div id="jq"><p class="hint">Cargando…</p></div></div>':'';
-    $app.innerHTML='<div class="wrap"><div class="card gc">'+head+tabs+'<div id="p1">'+p1+'</div>'+p2+p3+'</div></div>';
+      +'<h1>Palabras para '+esc(c.honoree||'nuestro ser querido')+'</h1>'
+      +(c.dates?'<p class="gd">'+esc(c.dates)+'</p>':'');
+    var body=c.closed?'<p class="hint">Los mensajes ya cerraron. Gracias por acompañarnos.</p>'
+      :'<p class="hint">Tu mensaje de condolencia o recuerdo se mostrará en la pantalla.</p>'
+      +'<label>Tu nombre</label><input id="n" maxlength="30" placeholder="Ej: Familia Pérez" value="'+ea(saved)+'">'
+      +'<label>Tu mensaje</label><textarea id="t" maxlength="200" placeholder="Siempre te recordaremos…"></textarea>'
+      +'<button id="b" class="gold" style="width:100%;margin-top:12px">Enviar mensaje</button><div id="r"></div>'
+      +(t.candles?'<hr style="border:0;border-top:1px solid #e6e2da;margin:18px 0"><p class="hint">Enciende una vela en su memoria</p><button id="v" class="sec" style="width:100%">🕯️ Encender una vela</button><div id="vr"></div>':'');
+    $app.innerHTML='<div class="wrap"><div class="card gc">'+head+'<div id="glv" class="glive"></div>'+body+'</div></div>';
+    var lastLive='';
+    function drawLive(cc){
+      var b=$('glv');if(!b)return;
+      var src=(cc.liveOn&&cc.liveG!==false)?liveEmbed(cc.live,false):'';
+      if(src===lastLive)return;lastLive=src;
+      b.innerHTML=src?'<p class="hint">Transmisión en vivo</p><iframe src="'+ea(src)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>':'';
+    }
+    drawLive(c);
+    setInterval(function(){if(document.hidden)return;rget('config').then(function(cc){if(cc)drawLive(cc)}).catch(function(){})},20000);
 
     if($('b'))$('b').onclick=function(){
       var n=$('n').value.trim(),tx=$('t').value.trim();
       var last=+localStorage.getItem('mev_last')||0;
       if(!tx)return;
-      if(Date.now()-last<15000){$('r').innerHTML='<div class="err">Espera unos segundos antes de enviar otro 🙂</div>';return}
+      if(Date.now()-last<15000){$('r').innerHTML='<div class="err">Espera unos segundos antes de enviar otro.</div>';return}
       localStorage.setItem('mev_name',n);
       rget('config/closed').then(function(cl){
         if(cl)throw new Error('closed');
-        return rsend('POST','mensajes',{name:(n||'Un invitado').slice(0,30),text:tx.slice(0,140),ts:Date.now(),status:'pendiente'});
+        return rsend('POST','mensajes',{name:(n||'Un familiar o amigo').slice(0,30),text:tx.slice(0,200),ts:Date.now(),status:'pendiente'});
       }).then(function(){
         localStorage.setItem('mev_last',Date.now());$('t').value='';
-        $('r').innerHTML='<div class="ok">¡Mensaje enviado! 🎉 Pronto saldrá en pantalla.</div>';
+        $('r').innerHTML='<div class="ok">Mensaje enviado. Gracias por acompañarnos.</div>';
       }).catch(function(){$('r').innerHTML='<div class="err">No se pudo enviar. Intenta otra vez.</div>'});
     };
-
-    if($('kb'))$('kb').onclick=function(){
-      var n=$('kn2').value.trim(),sg=$('ks2').value.trim();
-      if(!n||!sg){$('kr').innerHTML='<div class="err">Escribe tu nombre y la canción</div>';return}
-      var last=+localStorage.getItem('mev_klast')||0;
-      if(Date.now()-last<30000){$('kr').innerHTML='<div class="err">Espera un momento antes de pedir otra 🙂</div>';return}
-      localStorage.setItem('mev_name',n);
-      rsend('POST','karaoke',{n:n.slice(0,30),song:sg.slice(0,60),estado:'espera',ts:Date.now()}).then(function(){
-        localStorage.setItem('mev_klast',Date.now());$('ks2').value='';
-        $('kr').innerHTML='<div class="ok">¡Anotado en la fila! 🎤</div>';
-      }).catch(function(){$('kr').innerHTML='<div class="err">No se pudo anotar. Intenta otra vez.</div>'});
+    if($('v'))$('v').onclick=function(){
+      if(localStorage.getItem('mev_vela_'+EV)){$('vr').innerHTML='<div class="ok">Ya encendiste tu vela. 🕯️</div>';return}
+      var n=($('n')&&$('n').value.trim())||'';
+      rsend('POST','velas',{n:n.slice(0,30),ts:Date.now()}).then(function(){
+        localStorage.setItem('mev_vela_'+EV,'1');
+        $('vr').innerHTML='<div class="ok">Tu vela está encendida. 🕯️</div>';
+      }).catch(function(){$('vr').innerHTML='<div class="err">No se pudo encender. Intenta otra vez.</div>'});
     };
-
-    var pollT=null;
-    function renderJ(j){
-      var box=$('jq');if(!box)return;
-      if(!j||!j.q){box.innerHTML='<p class="hint">Esperando la siguiente pregunta… 👀</p>';return}
-      var opts=Array.isArray(j.opts)?j.opts:Object.keys(j.opts||{}).map(function(k){return j.opts[k]});
-      var mine=localStorage.getItem('mev_ans_'+j.id);
-      var h='<h2 style="margin:10px 0">'+esc(j.q)+'</h2>';
-      if(j.estado==='abierta'&&mine===null){
-        h+=opts.map(function(o,i){return '<button class="opt" data-o="'+i+'">'+esc(o)+'</button>'}).join('');
-      }else{
-        h+='<p class="hint">';
-        if(mine!==null)h+='Tu respuesta: <b>'+esc(opts[+mine]||'')+'</b><br>';
-        if(j.estado==='abierta')h+='¡Enviada! Mira la pantalla 📺';
-        else if(j.estado==='cerrada')h+='Respuestas cerradas ⏱';
-        else if(j.estado==='revelada'&&j.correct>=0)h+=(mine!==null&&+mine===j.correct)?'🎉 ¡Correcto! +1 punto':'La correcta era: <b>'+esc(opts[j.correct]||'')+'</b>';
-        else h+='Mira los resultados en la pantalla 📺';
-        h+='</p>';
-      }
-      box.innerHTML=h;
-    }
-    function pollJ(){if(document.hidden)return;rget('juego').then(renderJ).catch(function(){})}
-    if($('jq'))$('jq').onclick=function(e){
-      var o=e.target.getAttribute('data-o');if(o===null)return;
-      var n=$('gn').value.trim();
-      if(!n){alert('Escribe tu nombre arriba para participar');$('gn').focus();return}
-      localStorage.setItem('mev_name',n);
-      rget('juego').then(function(j){
-        if(!j||j.estado!=='abierta')throw new Error('x');
-        return rsend('PUT','respuestas/'+j.id+'/'+gid,{n:n.slice(0,30),o:+o,ts:Date.now()}).then(function(){localStorage.setItem('mev_ans_'+j.id,o);renderJ(j)});
-      }).catch(function(){alert('No se pudo enviar tu respuesta (¿ya se cerró?)')});
-    };
-    document.querySelectorAll('[data-tab]').forEach(function(bt){bt.onclick=function(){
-      var k=bt.getAttribute('data-tab');
-      ['1','2','3'].forEach(function(x){var pp=$('p'+x);if(pp)pp.style.display=(x===k)?'':'none'});
-      document.querySelectorAll('[data-tab]').forEach(function(z){z.className=(z===bt)?'':'sec'});
-      clearInterval(pollT);if(k==='3'){pollJ();pollT=setInterval(pollJ,4000)}
-    }});
   }).catch(function(){$app.innerHTML='<div class="wrap"><div class="card"><div class="err">No se pudo cargar. Revisa tu conexión e intenta otra vez.</div></div></div>'});
 }
 
-/* ---------- PANEL DJ ---------- */
+/* ---------- PANEL ---------- */
 var FLD=[
  ['sec','🖼️ Imágenes (pega el link de la foto)'],
- ['photo','url','Foto del agasajado'],
- ['logo','url','Logo de tu empresa'],
+ ['photo','url','Foto del homenajeado'],
+ ['logo','url','Logo de la funeraria'],
  ['logoPos','sel','Posición del logo',[['tr','Arriba derecha'],['tl','Arriba izquierda'],['bc','Abajo centro']]],
  ['logoH','range','Tamaño del logo',5,25],
  ['bgImg','url','Imagen de fondo'],
  ['ov','range','Oscurecer el fondo',0,85],
  ['sec','🎨 Colores y letra'],
- ['c1','color','Color 1'],['c2','color','Color 2'],['bg','color','Color base'],['tx','color','Color del texto'],['ac','color','Color de los nombres'],
- ['font','sel','Tipo de letra',[['sans','Moderna'],['serif','Elegante'],['script','Cursiva'],['bold','Fuerte']]],
+ ['c1','color','Color 1'],['c2','color','Color 2'],['bg','color','Color base'],['tx','color','Color del texto'],['ac','color','Color de nombres y detalles'],
+ ['font','sel','Tipo de letra',[['serif','Clásica'],['classic','Elegante'],['sans','Moderna'],['script','Cursiva']]],
  ['size','range','Tamaño del texto',70,140],
- ['sec','✨ Extras'],
- ['title','text','Título de la pantalla'],
- ['anim','sel','Animación',[['fade','Desvanecer'],['zoom','Zoom'],['slide','Deslizar']]],
- ['layout','sel','Diseño de la pantalla',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
+ ['sec','✨ Pantalla'],
+ ['title','text','Texto sobre el nombre'],
+ ['anim','sel','Transición',[['fade','Desvanecer'],['rise','Subir suave']]],
+ ['layout','sel','Diseño',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
  ['qrPos','sel','Posición del QR',[['bl','Abajo izquierda'],['br','Abajo derecha']]],
  ['countdown','check','Mostrar cuenta regresiva del programa'],
- ['cdBig','check','Cuenta final de 10 s a pantalla completa'],
+ ['cdBig','check','Aviso a pantalla completa al llegar la hora'],
  ['qr','check','Mostrar código QR'],
- ['confetti','check','Confeti con cada mensaje nuevo']
+ ['candles','check','Velas virtuales (contador y botón para asistentes)']
 ];
 function fieldHtml(f){
   if(f[0]==='sec')return '<div class="sec">'+f[1]+'</div>';
@@ -314,44 +285,41 @@ function fieldHtml(f){
   return h+'</div>';
 }
 var AC=null;
-function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=880;g.gain.value=.08;o.start();setTimeout(function(){o.stop()},180)}catch(e){}}
+function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=660;g.gain.value=.05;o.start();setTimeout(function(){o.stop()},160)}catch(e){}}
 
 function panel(){
   var link=BASE+'?e='+EV+'#enviar';
   $app.innerHTML='<div class="wrap">'
-  +'<div class="card"><h1>🎛️ Panel DJ <small class="hint">· '+esc(EV)+'</small></h1>'
-  +'<label>Agasajado/a</label><input id="h" placeholder="Ej: María – 15 años">'
+  +'<div class="card"><h1>🎛️ Panel del servicio <small class="hint">· '+esc(EV)+'</small></h1>'
+  +'<label>Nombre del homenajeado/a</label><input id="h" placeholder="Ej: Don Carlos Alberto Rojas">'
+  +'<label>Fechas</label><input id="dt" placeholder="Ej: 12 de mayo de 1948 – 6 de octubre de 2026">'
+  +'<label>Frase o epitafio (opcional)</label><input id="qt" maxlength="120" placeholder="Ej: Gracias por tanto amor.">'
   +'<label>Segundos por mensaje</label><input id="s" type="number" min="4" max="60">'
   +'<label style="display:flex;gap:8px;align-items:center"><input id="a" type="checkbox"> Aprobar automáticamente (sin revisar)</label>'
   +'<label style="display:flex;gap:8px;align-items:center"><input id="pa" type="checkbox"> ⏸ Pausar rotación (se queda el mensaje actual)</label>'
-  +'<label style="display:flex;gap:8px;align-items:center"><input id="cl" type="checkbox"> 🔒 Cerrar recepción de mensajes (el formulario deja de aceptar)</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="cl" type="checkbox"> 🔒 Cerrar recepción de mensajes</label>'
   +'<label>Palabras prohibidas (separadas por coma). Esos mensajes siempre piden revisión</label><input id="bw" placeholder="palabra1, palabra2">'
-  +'<a class="btn pink" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
-  +'<button class="sec" id="x">Borrar todos</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
-  +'<div class="card"><b>🔗 Enlace para invitados</b><input id="lk" readonly value="'+ea(link)+'" style="margin-top:8px">'
-  +'<button id="cp">Copiar enlace</button><a class="btn pink" target="_blank" href="https://wa.me/?text='+encodeURIComponent('¡Deja tu mensaje de felicitación y saldrá en la pantalla grande! 🎉 '+link)+'">Compartir por WhatsApp</a></div>'
-  +'<div class="card"><b>⏱ Programa y cuentas regresivas</b><p class="hint">Agrega los momentos del evento. La pantalla muestra cuánto falta para el siguiente y cuenta los últimos 10 segundos a pantalla completa.</p>'
-  +'<label>Plantillas: hora de inicio del evento</label><input id="ts" type="time" style="max-width:200px">'
-  +'<div>'+Object.keys(PLANTILLAS).map(function(k){return '<button class="pink" data-t="'+k+'" style="padding:6px 10px">'+PLANTILLAS[k].n+'</button>'}).join('')+'</div>'
-  +'<p class="hint">Pon la hora de inicio y toca una plantilla: carga todo el programa de una vez. Luego puedes quitar o agregar momentos.</p>'
-  +'<div>'+['🎉 Inicio','💃 Vals','📸 Fotos','🎂 Torta','🥂 Brindis','👋 Despedida','🏁 Cierre'].map(function(n){return '<button class="sec" data-n="'+n+'" style="padding:6px 10px">'+n+'</button>'}).join('')+'</div>'
-  +'<div class="grid"><div><label>Nombre</label><input id="pn" maxlength="30" placeholder="🎂 Torta"></div><div><label>A la hora</label><input id="pt" type="time"></div><div><label>o en cuántos minutos</label><input id="pm" type="number" min="1" max="600" placeholder="10"></div></div>'
+  +'<a class="btn gold" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
+  +'<button class="sec" id="x">Borrar mensajes</button><button class="sec" id="xv">Reiniciar velas</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
+  +'<div class="card"><b>🔗 Enlace / QR para asistentes</b><input id="lk" readonly value="'+ea(link)+'" style="margin-top:8px">'
+  +'<button id="cp">Copiar enlace</button><a class="btn gold" target="_blank" href="https://wa.me/?text='+encodeURIComponent('Puedes dejar unas palabras en memoria y encender una vela, y se mostrarán en la pantalla del servicio: '+link)+'">Compartir por WhatsApp</a></div>'
+  +'<div class="card"><b>⏱ Programa y cuentas regresivas</b><p class="hint">Agrega los momentos del servicio. La pantalla muestra cuánto falta para el siguiente y, si está activado, un aviso a pantalla completa al llegar la hora.</p>'
+  +'<label>Plantillas: hora de inicio</label><input id="ts" type="time" style="max-width:200px">'
+  +'<div>'+Object.keys(PLANTILLAS).map(function(k){return '<button class="gold" data-t="'+k+'" style="padding:6px 10px">'+PLANTILLAS[k].n+'</button>'}).join('')+'</div>'
+  +'<p class="hint">Pon la hora de inicio y toca una plantilla. Luego puedes quitar o agregar momentos.</p>'
+  +'<div class="grid"><div><label>Nombre</label><input id="pn" maxlength="40" placeholder="⛪ Misa"></div><div><label>A la hora</label><input id="pt" type="time"></div><div><label>o en cuántos minutos</label><input id="pm" type="number" min="1" max="1440" placeholder="30"></div></div>'
   +'<button id="pa2">Agregar al programa</button><button class="sec" id="pc2">Borrar programa</button><button class="sec" data-s="10">⏩ Retrasar 10 min</button><button class="sec" data-s="-10">⏪ Adelantar 10 min</button><div id="pl"></div></div>'
-  +'<div class="card"><b>🎰 Sorteo</b><p class="hint">Sortea entre quienes enviaron un mensaje aprobado con su nombre. Nadie gana dos veces.</p>'
-  +'<input id="sp" maxlength="40" placeholder="Premio (opcional): Una botella 🍾"><button class="pink" id="sort">🎰 Sortear ahora</button><button class="sec" id="sq">Quitar de pantalla</button><div id="sres" class="hint"></div></div>'
-  +'<div class="card"><b>🎤 Fila de karaoke</b><label style="display:flex;gap:8px;align-items:center"><input id="kon" type="checkbox"> Mostrar “Karaoke” a los invitados (antes de compartir el QR)</label>'
-  +'<div class="grid"><div><label>Nombre</label><input id="kn" maxlength="30"></div><div><label>Canción</label><input id="ks" maxlength="60"></div></div><button id="kadd">Agregar a la fila</button><div id="kl"></div></div>'
-  +'<div class="card"><b>🎮 Trivia / Votación</b><label style="display:flex;gap:8px;align-items:center"><input id="gon" type="checkbox"> Mostrar “Juego” a los invitados (antes de compartir el QR)</label>'
-  +'<label>Pregunta</label><input id="gqq" maxlength="120" placeholder="¿En qué año nació el cumpleañero?">'
-  +'<div class="grid"><div><label>Opción 1</label><input id="go1" maxlength="50"></div><div><label>Opción 2</label><input id="go2" maxlength="50"></div><div><label>Opción 3 (opcional)</label><input id="go3" maxlength="50"></div><div><label>Opción 4 (opcional)</label><input id="go4" maxlength="50"></div></div>'
-  +'<label>Respuesta correcta</label><select id="gcor"><option value="-1">Ninguna (es una votación)</option><option value="0">Opción 1</option><option value="1">Opción 2</option><option value="2">Opción 3</option><option value="3">Opción 4</option></select>'
-  +'<button class="pink" id="glanz">Lanzar pregunta</button><button class="sec" id="gcerr">Cerrar respuestas</button><button id="grev">Revelar respuesta</button><button class="sec" id="grank">🏅 Mostrar ranking</button><button class="sec" id="gquit">Quitar de pantalla</button><button class="sec" id="gpts">Borrar puntajes</button><div id="gst" class="hint"></div></div>'
-  +'<div class="card"><b>📣 Anuncio del DJ</b><p class="hint">Sale a pantalla completa (ej: “¡Todos a la pista!”).</p><input id="at" maxlength="80" placeholder="¡Hora del vals! 💃">'
-  +'<button class="pink" id="an">Mostrar anuncio</button><button class="sec" id="ar">Quitar anuncio</button></div>'
-  +'<div class="card"><b>📦 Entrega al cliente</b><p class="hint">Descarga los mensajes del evento como recuerdo.</p>'
-  +'<button id="book">📖 Libro de recuerdos (PDF)</button><button class="sec" id="csv">📥 Excel (CSV)</button></div>'
+  +'<div class="card"><b>📡 Transmisión en vivo</b><p class="hint">Pega el enlace de tu transmisión: YouTube en modo "No listado", Vimeo o Facebook Live. Comprueba que permita insertarse en otras páginas. En la pantalla de la sala se ve sin sonido.</p>'
+  +'<label>Enlace de la transmisión</label><input id="lvu" placeholder="https://www.youtube.com/watch?v=...">'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="lvg" type="checkbox"> Mostrar a los asistentes (en el formulario)</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="lvs" type="checkbox"> Mostrar en la pantalla de la sala</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="lvo" type="checkbox"> Transmisión activa (encender / apagar)</label><div id="lvr" class="hint"></div></div>'
+  +'<div class="card"><b>📣 Aviso en pantalla</b><p class="hint">Sale a pantalla completa (ej: “Por favor, tomar asiento”).</p><input id="at" maxlength="100" placeholder="Iniciamos la ceremonia en unos minutos">'
+  +'<button class="gold" id="an">Mostrar aviso</button><button class="sec" id="ar">Quitar aviso</button></div>'
+  +'<div class="card"><b>📦 Entrega a la familia</b><p class="hint">Descarga los mensajes como recuerdo.</p>'
+  +'<button id="book">📖 Libro de condolencias (PDF)</button><button class="sec" id="csv">📥 Excel (CSV)</button></div>'
   +'<div class="card"><details><summary>🎨 Diseño de la pantalla</summary>'
-  +'<p class="hint">Los cambios se ven en vivo en la pantalla. Fotos: usa un link directo (Google Drive compartido como “cualquiera con el enlace”, GitHub, imgbb o postimages). Los links de Facebook o Instagram no funcionan.</p>'
+  +'<p class="hint">Los cambios se ven en vivo. Fotos: usa un link directo (Google Drive compartido como “cualquiera con el enlace”, GitHub, imgbb o postimages).</p>'
   +'<div class="sec" style="border:0;margin-top:0">Temas listos</div><div>'
   +Object.keys(PRESETS).map(function(k){return '<button class="sec" data-p="'+k+'">'+PRESETS[k].n+'</button>'}).join('')+'</div>'
   +'<div class="grid">'+FLD.map(fieldHtml).join('')+'</div></details></div>'
@@ -364,10 +332,13 @@ function panel(){
 
   RC.once('value').then(function(s){
     var c=s.val()||{};
-    $('h').value=c.honoree||'';$('s').value=c.secs||12;$('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('kon').checked=!!c.kOn;$('gon').checked=!!c.gOn;$('bw').value=c.bad||'';
+    $('h').value=c.honoree||'';$('dt').value=c.dates||'';$('qt').value=c.quote||'';$('s').value=c.secs||12;
+    $('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('bw').value=c.bad||'';$('lvu').value=c.live||'';$('lvg').checked=c.liveG!==false;$('lvs').checked=c.liveS!==false;$('lvo').checked=!!c.liveOn;
     fill(theme(c));
   });
   $('h').oninput=function(){RC.child('honoree').set(this.value)};
+  $('dt').oninput=function(){RC.child('dates').set(this.value)};
+  $('qt').oninput=function(){RC.child('quote').set(this.value)};
   $('s').onchange=function(){RC.child('secs').set(Math.max(4,+this.value||12))};
   var autoDone={};
   $('a').onchange=function(){
@@ -375,7 +346,7 @@ function panel(){
     if(on)RM.once('value').then(function(s){s.forEach(function(c){autoDone[c.key]=1})});
   };
   if(REQUIRE_LOGIN){$('so').style.display='';$('so').onclick=function(){firebase.auth().signOut().then(function(){location.reload()})}}
-  $('an').onclick=function(){var v=$('at').value.trim();if(!v)return;RC.child('ann').set({text:v.slice(0,80),ts:Date.now()})};
+  $('an').onclick=function(){var v=$('at').value.trim();if(!v)return;RC.child('ann').set({text:v.slice(0,100),ts:Date.now()})};
   $('ar').onclick=function(){RC.child('ann').remove();$('at').value=''};
   $('pa2').onclick=function(){
     var n=$('pn').value.trim();if(!n){$('pn').focus();return}
@@ -383,7 +354,7 @@ function panel(){
     if(m>0)at=Date.now()+m*60000;
     else if(tm){var pp=tm.split(':'),d=new Date();d.setHours(+pp[0],+pp[1],0,0);at=d.getTime();if(at<Date.now()-6*36e5)at+=864e5}
     if(at===null){alert('Pon una hora o los minutos');return}
-    RC.child('prog').push({name:n.slice(0,30),at:at});
+    RC.child('prog').push({name:n.slice(0,40),at:at});
     $('pn').value='';$('pt').value='';$('pm').value='';
   };
   $('pc2').onclick=function(){if(confirm('¿Borrar todo el programa?'))RC.child('prog').remove()};
@@ -396,13 +367,13 @@ function panel(){
     var a=[];s.forEach(function(c){var v=c.val();a.push({id:c.key,name:v.name,at:v.at})});
     a.sort(function(x,y){return x.at-y.at});
     $('pl').innerHTML=a.length?a.map(function(it){
-      return '<div class="msg"><b>'+esc(it.name)+'</b> · '+hhmm(it.at)+' · <span data-at="'+it.at+'"></span><br><button class="pink" data-g="'+it.id+'" style="padding:6px 10px">Lanzar ya</button><button class="sec" data-d="'+it.id+'" style="padding:6px 10px">Quitar</button></div>';
+      return '<div class="msg"><b>'+esc(it.name)+'</b> · '+hhmm(it.at)+' · <span data-at="'+it.at+'"></span><br><button class="gold" data-g="'+it.id+'" style="padding:6px 10px">Anunciar ya</button><button class="sec" data-d="'+it.id+'" style="padding:6px 10px">Quitar</button></div>';
     }).join(''):'<p class="hint">Aún no hay momentos en el programa.</p>';
     tickProg();
   });
   setInterval(tickProg,1000);
   function loadTpl(k){
-    var tm=$('ts').value;if(!tm){alert('Primero pon la hora de inicio del evento');$('ts').focus();return}
+    var tm=$('ts').value;if(!tm){alert('Primero pon la hora de inicio');$('ts').focus();return}
     var pp=tm.split(':'),d=new Date();d.setHours(+pp[0],+pp[1],0,0);var base=d.getTime();if(base<Date.now()-6*36e5)base+=864e5;
     RC.child('prog').once('value').then(function(s){
       if(s.exists()&&!confirm('Ya hay un programa. ¿Reemplazarlo por la plantilla?'))return;
@@ -410,74 +381,6 @@ function panel(){
       return RC.child('prog').set(o);
     });
   }
-  var ganados={};
-  $('sort').onclick=function(){
-    RM.once('value').then(function(s){
-      var names={};
-      s.forEach(function(c){var v=c.val();if(v.status==='aprobado'){var k=(v.name||'').trim().toLowerCase();if(k&&k!=='un invitado'&&!ganados[k])names[k]=v.name}});
-      var pool=Object.keys(names);
-      if(!pool.length){alert('No hay participantes disponibles: deben haber enviado un mensaje aprobado con su nombre.');return}
-      var win=pool[Math.floor(Math.random()*pool.length)];ganados[win]=1;
-      var sample=pool.map(function(k){return names[k]}).sort(function(){return Math.random()-.5}).slice(0,30);
-      R.child('sorteo').set({ts:Date.now(),ganador:names[win],nombres:sample,premio:$('sp').value.trim().slice(0,40)});
-      $('sres').innerHTML='🏆 Ganador: <b>'+esc(names[win])+'</b> · quedan '+(pool.length-1)+' participantes';
-    });
-  };
-  $('sq').onclick=function(){R.child('sorteo').remove()};
-  $('kon').onchange=function(){RC.child('kOn').set(this.checked)};
-  $('gon').onchange=function(){RC.child('gOn').set(this.checked)};
-  $('kadd').onclick=function(){
-    var n=$('kn').value.trim(),sg=$('ks').value.trim();if(!n||!sg)return;
-    R.child('karaoke').push({n:n.slice(0,30),song:sg.slice(0,60),estado:'espera',ts:Date.now()});$('kn').value='';$('ks').value='';
-  };
-  function karCantar(id){
-    R.child('karaoke').once('value').then(function(s){
-      var up={};s.forEach(function(c){if(c.val().estado==='cantando')up[c.key+'/estado']='hecho'});
-      up[id+'/estado']='cantando';R.child('karaoke').update(up);
-    });
-  }
-  R.child('karaoke').on('value',function(s){
-    var a=[];s.forEach(function(c){var v=c.val();v.id=c.key;a.push(v)});
-    a.sort(function(x,y){return x.ts-y.ts});
-    $('kl').innerHTML=a.filter(function(k){return k.estado!=='hecho'}).map(function(k){
-      return '<div class="msg"><b>'+(k.estado==='cantando'?'🎤 ':'')+esc(k.n)+'</b> · '+esc(k.song)+'<br>'
-        +(k.estado==='cantando'?'<button class="sec" data-kd="'+k.id+'" style="padding:6px 10px">✓ Terminó</button>':'<button class="pink" data-kc="'+k.id+'" style="padding:6px 10px">Cantar ahora</button>')
-        +'<button class="sec" data-kx="'+k.id+'" style="padding:6px 10px">Quitar</button></div>';
-    }).join('')||'<p class="hint">La fila está vacía.</p>';
-  });
-  $('glanz').onclick=function(){
-    var q=$('gqq').value.trim(),ops=[1,2,3,4].map(function(i){return $('go'+i).value.trim()}).filter(Boolean);
-    if(!q||ops.length<2){alert('Escribe la pregunta y al menos 2 opciones (usa las opciones en orden)');return}
-    var cor=+$('gcor').value;if(cor>=ops.length)cor=-1;
-    R.child('juego').set({id:Date.now().toString(36),q:q.slice(0,120),opts:ops.map(function(o){return o.slice(0,50)}),correct:cor,estado:'abierta',ts:Date.now()});
-  };
-  $('gcerr').onclick=function(){R.child('juego/estado').set('cerrada')};
-  $('grank').onclick=function(){R.child('juego/estado').set('ranking')};
-  $('gquit').onclick=function(){R.child('juego').remove()};
-  $('gpts').onclick=function(){if(confirm('¿Borrar todos los puntajes?'))R.child('puntos').remove()};
-  $('grev').onclick=function(){
-    R.child('juego').once('value').then(function(js){
-      var j=js.val();if(!j||!j.id)return;
-      if(j.estado==='revelada'){alert('Esta pregunta ya se reveló');return}
-      return R.child('respuestas/'+j.id).once('value').then(function(rs){
-        if(j.correct<0)return R.child('juego/estado').set('revelada');
-        return R.child('puntos').once('value').then(function(ps){
-          var pts=ps.val()||{},up={};
-          rs.forEach(function(c){var v=c.val();if(v.o===j.correct){var cur=pts[c.key]||{};up[c.key]={n:v.n,p:(cur.p||0)+1}}});
-          return Object.keys(up).length?R.child('puntos').update(up):Promise.resolve();
-        }).then(function(){return R.child('juego/estado').set('revelada')});
-      });
-    });
-  };
-  var gOff=null;
-  R.child('juego').on('value',function(s){
-    var j=s.val();if(gOff){gOff();gOff=null}
-    if(!j||!j.id){$('gst').textContent='Sin pregunta en pantalla.';return}
-    var base='En pantalla: «'+(j.q||'')+'» · '+j.estado;
-    $('gst').textContent=base;
-    var ref=R.child('respuestas/'+j.id),cb=ref.on('value',function(rs){$('gst').textContent=base+' · '+rs.numChildren()+' respuestas'});
-    gOff=function(){ref.off('value',cb)};
-  });
   function shiftProg(min){
     RC.child('prog').once('value').then(function(s){
       var up={},now=Date.now();
@@ -490,7 +393,7 @@ function panel(){
     var rows=[['Nombre','Mensaje','Fecha','Estado']].concat(a.map(function(m){return [m.name,m.text,new Date(m.ts).toLocaleString('es-BO'),m.status]}));
     var csv='\ufeff'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
     var u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),l=document.createElement('a');
-    l.href=u;l.download='mensajes-'+EV+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+    l.href=u;l.download='condolencias-'+EV+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
   })};
   $('book').onclick=function(){
     var w=window.open('','_blank');if(!w){alert('Permite las ventanas emergentes para ver el libro');return}
@@ -499,18 +402,18 @@ function panel(){
       getAll(function(a){
         a=a.filter(function(m){return m.status==='aprobado'});
         var lg=fixImg(t.logo),ph=fixImg(t.photo);
-        var h='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Libro de recuerdos</title><style>'
+        var h='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Libro de condolencias</title><style>'
         +'@page{margin:14mm}*{box-sizing:border-box}body{margin:0;font-family:'+FONTS[t.font]+';color:#222;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
-        +'.cover{text-align:center;padding:40px 20px;color:#fff;background:linear-gradient(135deg,'+t.c1+','+t.c2+');border-radius:18px;margin:16px}'
-        +'.cover img.l{max-height:70px;max-width:50%;object-fit:contain;display:block;margin:0 auto 14px}'
-        +'.cover img.p{width:140px;height:140px;border-radius:50%;object-fit:cover;border:4px solid #fff;margin-bottom:12px}'
-        +'.cover h1{margin:6px 0;font-size:2.2rem}.cover p{margin:4px 0;opacity:.9}'
-        +'.m{break-inside:avoid;border:1px solid #ddd;border-left:6px solid '+t.c2+';border-radius:12px;padding:14px 16px;margin:12px 16px}'
-        +'.m .t{font-size:1.15rem;line-height:1.35}.m .f{margin-top:8px;font-weight:700;color:'+t.c1+'}.m img{max-height:180px;border-radius:10px;display:block;margin-bottom:8px}'
+        +'.cover{text-align:center;padding:40px 20px;color:'+t.tx+';background:linear-gradient(160deg,'+t.c1+','+t.c2+');border-radius:8px;margin:16px}'
+        +'.cover img.l{max-height:60px;max-width:50%;object-fit:contain;display:block;margin:0 auto 14px}'
+        +'.cover img.p{width:130px;height:160px;border-radius:65px 65px 6px 6px;object-fit:cover;border:3px solid '+t.ac+';margin-bottom:12px}'
+        +'.cover h1{margin:6px 0;font-size:2.1rem;color:'+t.ac+'}.cover p{margin:4px 0;opacity:.9}'
+        +'.m{break-inside:avoid;border:1px solid #ddd;border-left:5px solid '+t.c2+';border-radius:6px;padding:14px 16px;margin:12px 16px}'
+        +'.m .t{font-size:1.1rem;line-height:1.4;font-style:italic}.m .f{margin-top:8px;font-weight:700;color:'+t.c1+'}.m img{max-height:180px;border-radius:6px;display:block;margin-bottom:8px}'
         +'.np{text-align:center;margin:16px}@media print{.np{display:none}}</style></head><body>'
         +'<div class="np"><button onclick="window.print()" style="padding:12px 18px;font-size:1rem;cursor:pointer">🖨️ Imprimir / Guardar como PDF</button></div>'
         +'<div class="cover">'+(lg?'<img class="l" alt="" src="'+ea(lg)+'">':'')+(ph?'<img class="p" alt="" src="'+ea(ph)+'">':'')
-        +'<p>Libro de recuerdos</p><h1>'+esc(c.honoree||'Nuestro evento')+'</h1><p>'+a.length+' mensajes de cariño</p></div>'
+        +'<p>Libro de condolencias · en memoria de</p><h1>'+esc(c.honoree||'Nuestro ser querido')+'</h1>'+(c.dates?'<p>'+esc(c.dates)+'</p>':'')+(c.quote?'<p><i>'+esc(c.quote)+'</i></p>':'')+'<p>'+a.length+' mensajes de cariño</p></div>'
         +a.map(function(m){var im=fixImg(m.img);return '<div class="m">'+(im?'<img alt="" src="'+ea(im)+'">':'')+'<div class="t">“'+esc(m.text)+'”</div><div class="f">— '+esc(m.name)+'</div></div>'}).join('')
         +'</body></html>';
         w.document.open();w.document.write(h);w.document.close();
@@ -518,9 +421,17 @@ function panel(){
     });
   };
   $('pa').onchange=function(){RC.child('pause').set(this.checked)};
+  $('lvu').onchange=function(){
+    var v=this.value.trim();RC.child('live').set(v);
+    $('lvr').textContent=v?(liveEmbed(v)?'Enlace reconocido.':'No reconozco este enlace. Usa YouTube, Vimeo o Facebook (debe empezar con https://).'):'';
+  };
+  $('lvg').onchange=function(){RC.child('liveG').set(this.checked)};
+  $('lvs').onchange=function(){RC.child('liveS').set(this.checked)};
+  $('lvo').onchange=function(){RC.child('liveOn').set(this.checked)};
   $('cl').onchange=function(){RC.child('closed').set(this.checked)};
   $('bw').onchange=function(){RC.child('bad').set(this.value)};
   $('x').onclick=function(){if(confirm('¿Borrar todos los mensajes?')){RM.remove();RC.child('now').remove()}};
+  $('xv').onclick=function(){if(confirm('¿Reiniciar el contador de velas?'))RV.remove()};
   $('cp').onclick=function(){
     var i=$('lk');
     if(navigator.clipboard)navigator.clipboard.writeText(i.value);else{i.select();document.execCommand('copy')}
@@ -544,7 +455,7 @@ function panel(){
 
   $('mb').onclick=function(){
     var t=$('mt').value.trim();if(!t)return;
-    var o={name:$('mn').value.trim()||'Un invitado',text:t,ts:Date.now(),status:'aprobado'};
+    var o={name:$('mn').value.trim()||'Un familiar o amigo',text:t,ts:Date.now(),status:'aprobado'};
     var im=fixImg($('mp').value);if(im)o.img=im;
     var r=RM.push(o);
     RC.update({now:r.key,nowTs:Date.now()});
@@ -558,15 +469,15 @@ function panel(){
     all.reverse().forEach(function(m){
       var h='<div class="msg"><b>'+(m.img?'📷 ':'')+esc(m.name)+'</b><br>'+esc(m.text)+'<br>';
       if(m.status==='pendiente'){pc++;
-        p+=h+'<button data-a="ok" data-id="'+m.id+'">Aprobar</button><button class="pink" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Rechazar</button></div>';
+        p+=h+'<button data-a="ok" data-id="'+m.id+'">Aprobar</button><button class="gold" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Rechazar</button></div>';
       }else if(m.status==='aprobado'){oc++;
-        o+=h+'<button class="pink" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Quitar</button></div>';
+        o+=h+'<button class="gold" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Quitar</button></div>';
       }
     });
     $('p').innerHTML=p||'<p class="hint">Nada pendiente.</p>';
     $('ok').innerHTML=o||'<p class="hint">Aún no hay aprobados.</p>';
     $('pc').textContent=pc;$('oc').textContent=oc;
-    document.title=(pc?'('+pc+') ':'')+'Panel DJ';
+    document.title=(pc?'('+pc+') ':'')+'Panel';
     if($('a').checked)all.forEach(function(m){
       if(m.status==='pendiente'&&!autoDone[m.id]){
         autoDone[m.id]=1;
@@ -580,12 +491,8 @@ function panel(){
   });
 
   $app.onclick=function(e){
-    var kc=e.target.getAttribute('data-kc');if(kc){karCantar(kc);return}
-    var kd=e.target.getAttribute('data-kd');if(kd){R.child('karaoke/'+kd+'/estado').set('hecho');return}
-    var kx=e.target.getAttribute('data-kx');if(kx){R.child('karaoke/'+kx).remove();return}
     var tp=e.target.getAttribute('data-t');if(tp){loadTpl(tp);return}
     var sh=e.target.getAttribute('data-s');if(sh){shiftProg(+sh);return}
-    var nm=e.target.getAttribute('data-n');if(nm){$('pn').value=nm;$('pn').focus();return}
     var pg=e.target.getAttribute('data-g');if(pg){RC.child('prog/'+pg+'/at').set(Date.now());return}
     var pd=e.target.getAttribute('data-d');if(pd){RC.child('prog/'+pd).remove();return}
     var pr=e.target.getAttribute('data-p');
@@ -599,35 +506,24 @@ function panel(){
 }
 
 /* ---------- PANTALLA ---------- */
-function confetti(t){
-  var c=document.getElementById('cf'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
-  var cols=[t.c1,t.c2,t.ac,'#ffffff','#fde047'],P=[],i;
-  for(i=0;i<140;i++)P.push({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,r:4+Math.random()*6,vx:-1.5+Math.random()*3,vy:2+Math.random()*4,rot:Math.random()*6,vr:-.2+Math.random()*.4,col:cols[i%cols.length]});
-  var st=Date.now();
-  (function f(){
-    x.clearRect(0,0,c.width,c.height);
-    P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.rot);x.fillStyle=p.col;x.fillRect(-p.r,-p.r/2,p.r*2,p.r);x.restore()});
-    if(Date.now()-st<3500)requestAnimationFrame(f);else x.clearRect(0,0,c.width,c.height);
-  })();
-}
-
 function pantalla(){
   document.body.className='screen';
   var $=function(i){return document.getElementById(i)};
   var link=BASE+'?e='+EV+'#enviar';
   $app.innerHTML='<div id="scr"><img id="lg" alt="" style="display:none">'
-  +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div><div id="cdp" style="display:none"></div><div id="kar" style="display:none"></div></div>'
-  +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el QR y envía tu mensaje 💬</div></div></div><div id="wall"></div></div>'
-  +'<div id="ann"></div><div id="gm" style="display:none"></div><div id="sr"><div id="srt"></div><div id="srn"></div><div id="srp"></div></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Escanea y felicita 🎉</div>'
+  +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div><div id="hd"></div><div id="hq"></div><div id="vel" style="display:none"></div><div id="cdp" style="display:none"></div></div>'
+  +'<div id="main"><div id="lv"></div><div id="bub" class="a-fade"><div><div id="bt">Escanea el código QR para dejar unas palabras en su memoria</div></div></div><div id="wall"></div></div>'
+  +'<div id="ann"></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Deja unas palabras</div>'
   +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
-  new QRCode($('qc'),{text:link,width:160,height:160});
+  new QRCode($('qc'),{text:link,width:150,height:150});
   $('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
   try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(function(){})}catch(e){}
   var hideT;
   function wake(){document.body.style.cursor='';$('fs').style.opacity=.6;clearTimeout(hideT);hideT=setTimeout(function(){document.body.style.cursor='none';$('fs').style.opacity=0},3000)}
   document.onmousemove=wake;wake();
 
-  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastAnn=null,lastLy=null,wallPage=0;
+  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastLy=null,wallPage=0,nVel=0,lastLv='';
+  function isLive(){return !!(cfg.liveOn&&cfg.liveS!==false&&liveEmbed(cfg.live,true))}
   function renderWall(first){
     var list=msgs.slice().reverse();
     if(first){list=list.filter(function(m){return m.id!==first.id});list.unshift(first)}
@@ -636,14 +532,18 @@ function pantalla(){
     $('wall').innerHTML=sl.length?sl.map(function(m){
       var im=fixImg(m.img);
       return '<div class="wc">'+(im?'<img alt="" src="'+ea(im)+'" onerror="this.remove()">':'')+'<div class="wt">“'+esc(m.text)+'”</div><div class="wf">— '+esc(m.name)+'</div></div>';
-    }).join(''):'<div class="wc" style="grid-column:1/-1;grid-row:1/-1"><div class="wt">Escanea el QR y envía tu mensaje 💬</div></div>';
+    }).join(''):'<div class="wc" style="grid-column:1/-1;grid-row:1/-1"><div class="wt">Escanea el código QR para dejar unas palabras en su memoria</div></div>';
   }
-
+  function drawVel(){
+    var t=theme(cfg),v=$('vel');
+    if(t.candles&&nVel>0){v.style.display='';v.textContent='🕯️ '+nVel+(nVel===1?' vela encendida':' velas encendidas')}else v.style.display='none';
+  }
   function paint(){
     var t=theme(cfg);
     applyTheme($('scr'),t);
     $('htt').textContent=t.title;
-    $('hn').textContent=cfg.honoree||'🎉';
+    $('hn').textContent=cfg.honoree||'🕊️';
+    $('hd').textContent=cfg.dates||'';$('hq').textContent=cfg.quote?'“'+cfg.quote+'”':'';
     var ph=fixImg(t.photo),hp=$('hph');
     if(ph){if(hp.getAttribute('src')!==ph)hp.src=ph;hp.style.display=''}else hp.style.display='none';
     hp.onerror=function(){this.style.display='none'};
@@ -651,123 +551,63 @@ function pantalla(){
     if(lg){if(l.getAttribute('src')!==lg)l.src=lg;l.style.display='';l.style.height=t.logoH+'vh';l.className='p-'+t.logoPos}else l.style.display='none';
     l.onerror=function(){this.style.display='none'};
     var qr=$('qr');qr.style.display=t.qr?'':'none';qr.className='q-'+t.qrPos;
-    var ly=(t.layout==='wall');
+    var ly=(t.layout==='wall')&&!isLive();
     $('bub').style.display=ly?'none':'';$('wall').style.display=ly?'grid':'none';
-    if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx],false)}
+    if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx])}
+    var lvs=isLive()?liveEmbed(cfg.live,true):'';
+    $('scr').classList.toggle('live',!!lvs);
+    if(lvs!==lastLv){lastLv=lvs;$('lv').innerHTML=lvs?'<iframe src="'+ea(lvs)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>':''}
+    drawVel();
   }
-  function show(m,isNew){
+  function show(m){
     var t=theme(cfg),b=$('bub');
-    if(t.layout==='wall'){wallPage=0;renderWall(m);if(isNew&&t.confetti)confetti(t);clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);return}
+    if(t.layout==='wall'&&!isLive()){wallPage=0;renderWall(m);clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);return}
     b.className='a-'+t.anim+' out';
     setTimeout(function(){
       var im=fixImg(m.img);
       b.innerHTML=(im?'<img id="bimg" alt="" src="'+ea(im)+'" onerror="this.remove()">':'')
-        +'<div><div id="bt">“'+esc(m.text)+'”</div><div id="bf">— '+esc(m.name)+' 💜</div></div>';
+        +'<div><div id="bt">“'+esc(m.text)+'”</div><div id="bf">— '+esc(m.name)+'</div></div>';
       b.className='a-'+t.anim;
-    },450);
-    if(isNew&&t.confetti)confetti(t);
+    },900);
     clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);
   }
   function next(){
     if(cfg.pause||!msgs.length){timer=setTimeout(next,2500);return}
-    if(theme(cfg).layout==='wall'){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
-    idx=(idx+1)%msgs.length;show(msgs[idx],false);
+    if(theme(cfg).layout==='wall'&&!isLive()){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
+    idx=(idx+1)%msgs.length;show(msgs[idx]);
   }
-  var lastSort=null,sorTimer=null;
-  R.child('sorteo').on('value',function(s){
-    var d=s.val(),o=$('sr');
-    if(lastSort===null){lastSort=d?d.ts:0;return}
-    if(!d){o.style.display='none';clearTimeout(sorTimer);return}
-    if(d.ts===lastSort)return;
-    lastSort=d.ts;clearTimeout(sorTimer);
-    o.style.display='flex';$('srt').textContent='🎰 Sorteo';$('srp').textContent=d.premio||'';
-    var names=(d.nombres&&d.nombres.length)?d.nombres:[d.ganador],i=0;
-    (function spin(){
-      if(i<28){$('srn').textContent=names[i%names.length];i++;sorTimer=setTimeout(spin,60+i*i*0.5)}
-      else{
-        $('srn').textContent='🏆 '+d.ganador;$('srt').textContent='¡Tenemos ganador!';
-        if(theme(cfg).confetti)confetti(theme(cfg));
-        sorTimer=setTimeout(function(){o.style.display='none'},20000);
-      }
-    })();
-  });
-  R.child('karaoke').on('value',function(s){
-    var a=[];s.forEach(function(c){var v=c.val();v.id=c.key;a.push(v)});
-    a.sort(function(x,y){return x.ts-y.ts});
-    var now=a.filter(function(k){return k.estado==='cantando'})[0],nx=a.filter(function(k){return k.estado==='espera'})[0],k=$('kar');
-    if(!now&&!nx){k.style.display='none';return}
-    k.style.display='';
-    k.innerHTML=(now?'🎤 Ahora: <b>'+esc(now.n)+'</b> · '+esc(now.song):'')+(now&&nx?' &nbsp;|&nbsp; ':'')+(nx?'⏭ Sigue: <b>'+esc(nx.n)+'</b> · '+esc(nx.song):'');
-  });
-  var curJ=null,rOff=null,rData={},pData={};
-  function drawJ(){
-    var j=curJ,g=$('gm');
-    if(!j||(!j.q&&j.estado!=='ranking')){g.style.display='none';return}
-    var cnt=[0,0,0,0],tot=0;
-    Object.keys(rData).forEach(function(k){var o=rData[k].o;if(o>=0&&o<4){cnt[o]++;tot++}});
-    var top=Object.keys(pData).map(function(k){return pData[k]}).sort(function(a,b){return b.p-a.p}).slice(0,5);
-    var topH=top.length?'<div id="gtop"><b>🏅 Ranking</b>'+top.map(function(t,i){return '<div>'+(i+1)+'. '+esc(t.n)+' — '+t.p+'</div>'}).join('')+'</div>':'';
-    var h='';
-    if(j.estado==='ranking')h='<div id="gq">🏅 Ranking de la trivia</div>'+(topH||'<div class="gs">Aún no hay puntajes</div>');
-    else{
-      var opts=Array.isArray(j.opts)?j.opts:Object.keys(j.opts||{}).map(function(k){return j.opts[k]});
-      h='<div id="gq">'+esc(j.q)+'</div>'+opts.map(function(op,i){
-        var pc=tot?Math.round(cnt[i]*100/tot):0,ok=(j.estado==='revelada'&&j.correct===i);
-        return '<div class="go'+(ok?' ok':'')+'"><div class="gb" style="width:'+pc+'%"></div><span>'+esc(op)+'</span><span>'+cnt[i]+' · '+pc+'%</span></div>';
-      }).join('')
-      +(j.estado==='abierta'?'<div class="gs">📱 Responde desde tu celular con el QR · '+tot+' respuestas</div>':(j.estado==='cerrada'?'<div class="gs">⏱ Respuestas cerradas</div>':''))
-      +((j.estado==='revelada'&&j.correct>=0)?topH:'');
-    }
-    g.innerHTML=h;g.style.display='flex';
-  }
-  R.child('juego').on('value',function(s){
-    var j=s.val();
-    if(rOff){rOff();rOff=null}
-    rData={};curJ=j;
-    if(j&&j.id){var ref=R.child('respuestas/'+j.id);var cb=ref.on('value',function(rs){rData=rs.val()||{};drawJ()});rOff=function(){ref.off('value',cb)}}
-    drawJ();
-  });
-  R.child('puntos').on('value',function(s){pData=s.val()||{};drawJ()});
-  var celebrated={},firstTick=true;
+  RV.on('value',function(s){nVel=s.numChildren();drawVel()});
   function fmt(ms){var s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,p=function(n){return n<10?'0'+n:''+n};return (h?h+':':'')+p(m)+':'+p(x)}
   function tick(){
     var t=theme(cfg),now=Date.now(),P=cfg.prog||{};
     var items=Object.keys(P).map(function(k){return {id:k,name:P[k].name,at:P[k].at}}).sort(function(a,b){return a.at-b.at});
     var cel=null,nxt=null;
-    items.forEach(function(it){if(it.at<=now&&now-it.at<20000)cel=it;if(!nxt&&it.at>now)nxt=it});
-    var pill=$('cdp'),o=$('cdo'),n=$('cdn');
-    if(t.countdown&&nxt){pill.style.display='';pill.textContent=nxt.name+' en '+fmt(nxt.at-now);pill.className=(nxt.at-now<=60000)?'soon':''}else pill.style.display='none';
-    if(cel){
-      n.style.fontSize='clamp(3rem,13vw,13rem)';n.textContent='¡AHORA!';$('cdl').textContent=cel.name;o.style.display='flex';
-      if(!celebrated[cel.id]){celebrated[cel.id]=1;if(!firstTick&&t.confetti)confetti(t)}
-    }else if(t.cdBig&&nxt&&nxt.at-now<=10000){
-      n.style.fontSize='';n.textContent=Math.ceil((nxt.at-now)/1000);$('cdl').textContent=nxt.name;o.style.display='flex';
-    }else o.style.display='none';
-    firstTick=false;
+    items.forEach(function(it){if(it.at<=now&&now-it.at<30000)cel=it;if(!nxt&&it.at>now)nxt=it});
+    var pill=$('cdp'),o=$('cdo');
+    if(t.countdown&&nxt){pill.style.display='';pill.textContent=nxt.name+' en '+fmt(nxt.at-now)}else pill.style.display='none';
+    if(cel&&t.cdBig){$('cdn').textContent='Es la hora';$('cdl').textContent=cel.name;o.style.display='flex'}
+    else o.style.display='none';
   }
-  setInterval(tick,250);
+  setInterval(tick,500);
   RC.on('value',function(s){
     var first=(lastNow===null);
     cfg=s.val()||{};paint();
     var an=cfg.ann,ae=$('ann');
-    if(an&&an.text){
-      ae.textContent=an.text;ae.style.display='flex';
-      if(an.ts!==lastAnn){lastAnn=an.ts;if(!first&&theme(cfg).confetti)confetti(theme(cfg))}
-    }else{ae.style.display='none';lastAnn=null}
+    if(an&&an.text){ae.textContent=an.text;ae.style.display='flex'}else ae.style.display='none';
     if(first){lastNow=cfg.nowTs||0;return}
     if(cfg.now&&cfg.nowTs&&cfg.nowTs!==lastNow){
       lastNow=cfg.nowTs;
       var i=msgs.findIndex(function(m){return m.id===cfg.now});
-      if(i>=0){idx=i;show(msgs[i],true)}
+      if(i>=0){idx=i;show(msgs[i])}
     }
   });
   RM.on('value',function(s){
     msgs=[];s.forEach(function(c){var v=c.val();v.id=c.key;if(v.status==='aprobado')msgs.push(v)});
     msgs.sort(function(a,b){return a.ts-b.ts});
-    if(seen===null){seen={};msgs.forEach(function(m){seen[m.id]=1});if(msgs.length){idx=msgs.length-1;show(msgs[idx],false)}return}
+    if(seen===null){seen={};msgs.forEach(function(m){seen[m.id]=1});if(msgs.length){idx=msgs.length-1;show(msgs[idx])}return}
     var fresh=msgs.filter(function(m){return !seen[m.id]});
     msgs.forEach(function(m){seen[m.id]=1});
-    if(fresh.length){var m=fresh[fresh.length-1];idx=msgs.findIndex(function(x){return x.id===m.id});show(m,true)}
+    if(fresh.length){var m=fresh[fresh.length-1];idx=msgs.findIndex(function(x){return x.id===m.id});show(m)}
   });
 }
 </script>
