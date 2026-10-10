@@ -38,6 +38,7 @@ body.guest{background:linear-gradient(170deg,var(--c1),var(--c2));min-height:100
 .glg{max-height:56px;max-width:60%;object-fit:contain;display:block;margin:0 auto 12px}
 .gph{width:110px;height:136px;border-radius:55px 55px 6px 6px;object-fit:cover;border:2px solid var(--ac);display:block;margin:0 auto 12px}
 .gd{color:#6a645a;margin:-4px 0 10px}
+.glive{margin:6px 0 14px}.glive iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:6px;background:#000}
 /* pantalla */
 body.screen{overflow:hidden;height:100vh;background:#000}
 #scr{position:fixed;inset:0;display:flex;flex-direction:column;padding:3vh 3vw;text-align:center;color:var(--tx);font-family:var(--ff);
@@ -75,6 +76,17 @@ body.screen{overflow:hidden;height:100vh;background:#000}
 #cdn{font-size:clamp(2rem,7vw,7rem);font-style:italic}
 #cdl{font-size:clamp(2.2rem,9vw,9rem);font-weight:600;color:var(--ac);line-height:1.1}
 .tabs{display:flex;gap:6px;margin:12px 0}
+#main{position:relative}
+#lv{display:none;width:100%;height:100%;align-items:center;justify-content:center}
+#lv iframe{height:100%;max-width:100%;aspect-ratio:16/9;border:0;border-radius:1vh;background:#000}
+#scr.live #lv{display:flex}
+#scr.live #wall{display:none!important}
+#scr.live #hph{height:9vh}
+#scr.live #hq{display:none}
+#scr.live #bub{position:absolute;left:0;right:0;bottom:1.5vh;margin:0 auto;width:max-content;max-width:70vw;padding:1.5vh 2vw;background:rgba(0,0,0,.72)}
+#scr.live #bimg{display:none}
+#scr.live #bt{font-size:calc(clamp(1rem,2.2vw,2.2rem)*var(--sc))}
+#scr.live #bf{font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
 </style>
 </head>
 <body>
@@ -109,6 +121,20 @@ function fixImg(u){
   return u.replace(/(dropbox\.com\/[^?]*)\?dl=0/,'$1?raw=1');
 }
 
+function liveEmbed(u,screen){
+  u=(u||'').trim();
+  var fr=u.match(/<iframe[^>]*\ssrc=["']([^"']+)["']/i);if(fr)u=fr[1];
+  if(/^\/\//.test(u))u='https:'+u;
+  u=u.replace(/^http:\/\//i,'https://');
+  if(!/^https:\/\//i.test(u)&&/^[\w.-]+\.[a-z]{2,}\//i.test(u))u='https://'+u;
+  if(!/^https:\/\//i.test(u))return '';
+  var m=u.match(/(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|live\/|embed\/|shorts\/|video\/)|youtu\.be\/)([\w-]{6,})/);
+  if(m)return 'https://www.youtube.com/embed/'+m[1]+'?rel=0&playsinline=1'+(screen?'&autoplay=1&mute=1':'');
+  m=u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if(m)return 'https://player.vimeo.com/video/'+m[1]+(screen?'?autoplay=1&muted=1':'');
+  if(/facebook\.com|fb\.watch/i.test(u))return 'https://www.facebook.com/plugins/video.php?show_text=false&href='+encodeURIComponent(u)+(screen?'&autoplay=true&mute=true':'');
+  return '';
+}
 var DEF={c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a',bgImg:'',ov:45,logo:'',logoPos:'tr',logoH:10,photo:'',title:'En memoria de',font:'serif',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',candles:true};
 var PRESETS={
   sobrio:{n:'🕊️ Sobrio',c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a'},
@@ -195,7 +221,16 @@ function enviar(){
       +'<label>Tu mensaje</label><textarea id="t" maxlength="200" placeholder="Siempre te recordaremos…"></textarea>'
       +'<button id="b" class="gold" style="width:100%;margin-top:12px">Enviar mensaje</button><div id="r"></div>'
       +(t.candles?'<hr style="border:0;border-top:1px solid #e6e2da;margin:18px 0"><p class="hint">Enciende una vela en su memoria</p><button id="v" class="sec" style="width:100%">🕯️ Encender una vela</button><div id="vr"></div>':'');
-    $app.innerHTML='<div class="wrap"><div class="card gc">'+head+body+'</div></div>';
+    $app.innerHTML='<div class="wrap"><div class="card gc">'+head+'<div id="glv" class="glive"></div>'+body+'</div></div>';
+    var lastLive='';
+    function drawLive(cc){
+      var b=$('glv');if(!b)return;
+      var src=(cc.liveOn&&cc.liveG!==false)?liveEmbed(cc.live,false):'';
+      if(src===lastLive)return;lastLive=src;
+      b.innerHTML=src?'<p class="hint">Transmisión en vivo</p><iframe src="'+ea(src)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>':'';
+    }
+    drawLive(c);
+    setInterval(function(){if(document.hidden)return;rget('config').then(function(cc){if(cc)drawLive(cc)}).catch(function(){})},20000);
 
     if($('b'))$('b').onclick=function(){
       var n=$('n').value.trim(),tx=$('t').value.trim();
@@ -260,7 +295,7 @@ function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)(
 function panel(){
   var link=BASE+'?e='+EV+'#enviar';
   $app.innerHTML='<div class="wrap">'
-  +'<div class="card"><h1>🎛️ Panel del servicio <small class="hint">· '+esc(EV)+'</small></h1>'
+  +'<div class="card"><h1>🎛️ Panel del servicio <small class="hint">· '+esc(EV)+' · versión con transmisión</small></h1>'
   +'<label>Nombre del homenajeado/a</label><input id="h" placeholder="Ej: Don Carlos Alberto Rojas">'
   +'<label>Fechas</label><input id="dt" placeholder="Ej: 12 de mayo de 1948 – 6 de octubre de 2026">'
   +'<label>Frase o epitafio (opcional)</label><input id="qt" maxlength="120" placeholder="Ej: Gracias por tanto amor.">'
@@ -271,6 +306,11 @@ function panel(){
   +'<label>Palabras prohibidas (separadas por coma). Esos mensajes siempre piden revisión</label><input id="bw" placeholder="palabra1, palabra2">'
   +'<a class="btn gold" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
   +'<button class="sec" id="x">Borrar mensajes</button><button class="sec" id="xv">Reiniciar velas</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
+  +'<div class="card"><b>📡 Transmisión en vivo</b><p class="hint">Pega el enlace de tu transmisión: YouTube en modo "No listado", Vimeo o Facebook Live. Comprueba que permita insertarse en otras páginas. En la pantalla de la sala se ve sin sonido.</p>'
+  +'<label>Enlace de la transmisión</label><input id="lvu" placeholder="https://www.youtube.com/watch?v=...">'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="lvg" type="checkbox"> Mostrar a los asistentes (en el formulario)</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="lvs" type="checkbox"> Mostrar en la pantalla de la sala</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="lvo" type="checkbox"> Transmisión activa (encender / apagar)</label><div id="lvr"></div><div id="lvp"></div></div>'
   +'<div class="card"><b>🔗 Enlace / QR para asistentes</b><input id="lk" readonly value="'+ea(link)+'" style="margin-top:8px">'
   +'<button id="cp">Copiar enlace</button><a class="btn gold" target="_blank" href="https://wa.me/?text='+encodeURIComponent('Puedes dejar unas palabras en memoria y encender una vela, y se mostrarán en la pantalla del servicio: '+link)+'">Compartir por WhatsApp</a></div>'
   +'<div class="card"><b>⏱ Programa y cuentas regresivas</b><p class="hint">Agrega los momentos del servicio. La pantalla muestra cuánto falta para el siguiente y, si está activado, un aviso a pantalla completa al llegar la hora.</p>'
@@ -298,7 +338,7 @@ function panel(){
   RC.once('value').then(function(s){
     var c=s.val()||{};
     $('h').value=c.honoree||'';$('dt').value=c.dates||'';$('qt').value=c.quote||'';$('s').value=c.secs||12;
-    $('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('bw').value=c.bad||'';
+    $('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('bw').value=c.bad||'';$('lvu').value=c.live||'';$('lvg').checked=c.liveG!==false;$('lvs').checked=c.liveS!==false;$('lvo').checked=!!c.liveOn;liveStatus();
     fill(theme(c));
   });
   $('h').oninput=function(){RC.child('honoree').set(this.value)};
@@ -386,6 +426,19 @@ function panel(){
     });
   };
   $('pa').onchange=function(){RC.child('pause').set(this.checked)};
+  var lvT=null;
+  function liveStatus(){
+    var v=$('lvu').value.trim(),e=liveEmbed(v),r=$('lvr'),p=$('lvp');
+    if(!v){r.innerHTML='';p.innerHTML='';p.removeAttribute('data-src');return}
+    if(!e){r.innerHTML='<div class="err">No reconozco este enlace. Usa un enlace de YouTube, Vimeo o Facebook.</div>';p.innerHTML='';p.removeAttribute('data-src');return}
+    r.innerHTML='<div class="ok">Enlace reconocido. '+($('lvo').checked?'La transmisión está activa.':'Falta marcar “Transmisión activa” para publicarla.')+'</div>';
+    if(p.getAttribute('data-src')!==e){p.setAttribute('data-src',e);p.innerHTML='<p class="hint">Vista previa. Si aquí no carga, el video no permite insertarse en otras páginas.</p><iframe src="'+ea(e)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="width:100%;aspect-ratio:16/9;border:0;background:#000"></iframe>'}
+  }
+  $('lvu').addEventListener('input',function(){clearTimeout(lvT);lvT=setTimeout(function(){RC.child('live').set($('lvu').value.trim());liveStatus()},500)});
+  $('lvu').addEventListener('change',function(){RC.child('live').set(this.value.trim());liveStatus()});
+  $('lvg').onchange=function(){RC.child('liveG').set(this.checked)};
+  $('lvs').onchange=function(){RC.child('liveS').set(this.checked)};
+  $('lvo').onchange=function(){RC.child('liveOn').set(this.checked);liveStatus()};
   $('cl').onchange=function(){RC.child('closed').set(this.checked)};
   $('bw').onchange=function(){RC.child('bad').set(this.value)};
   $('x').onclick=function(){if(confirm('¿Borrar todos los mensajes?')){RM.remove();RC.child('now').remove()}};
@@ -470,7 +523,7 @@ function pantalla(){
   var link=BASE+'?e='+EV+'#enviar';
   $app.innerHTML='<div id="scr"><img id="lg" alt="" style="display:none">'
   +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div><div id="hd"></div><div id="hq"></div><div id="vel" style="display:none"></div><div id="cdp" style="display:none"></div></div>'
-  +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el código QR para dejar unas palabras en su memoria</div></div></div><div id="wall"></div></div>'
+  +'<div id="main"><div id="lv"></div><div id="bub" class="a-fade"><div><div id="bt">Escanea el código QR para dejar unas palabras en su memoria</div></div></div><div id="wall"></div></div>'
   +'<div id="ann"></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Deja unas palabras</div>'
   +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
   new QRCode($('qc'),{text:link,width:150,height:150});
@@ -480,7 +533,10 @@ function pantalla(){
   function wake(){document.body.style.cursor='';$('fs').style.opacity=.6;clearTimeout(hideT);hideT=setTimeout(function(){document.body.style.cursor='none';$('fs').style.opacity=0},3000)}
   document.onmousemove=wake;wake();
 
-  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastLy=null,wallPage=0,nVel=0;
+  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastLy=null,wallPage=0,nVel=0,lastLv='';
+  function isLive(){return !!(cfg.liveOn&&cfg.liveS!==false&&liveEmbed(cfg.live,true))}
+  function fitLive(){var m=$('main'),f=$('lv').firstChild;if(!f||!f.style)return;var W=Math.min(m.clientWidth,m.clientHeight*16/9);f.style.width=W+'px';f.style.height=(W*9/16)+'px'}
+  window.addEventListener('resize',fitLive);
   function renderWall(first){
     var list=msgs.slice().reverse();
     if(first){list=list.filter(function(m){return m.id!==first.id});list.unshift(first)}
@@ -508,14 +564,17 @@ function pantalla(){
     if(lg){if(l.getAttribute('src')!==lg)l.src=lg;l.style.display='';l.style.height=t.logoH+'vh';l.className='p-'+t.logoPos}else l.style.display='none';
     l.onerror=function(){this.style.display='none'};
     var qr=$('qr');qr.style.display=t.qr?'':'none';qr.className='q-'+t.qrPos;
-    var ly=(t.layout==='wall');
+    var ly=(t.layout==='wall')&&!isLive();
     $('bub').style.display=ly?'none':'';$('wall').style.display=ly?'grid':'none';
     if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx])}
+    var lvs=isLive()?liveEmbed(cfg.live,true):'';
+    $('scr').classList.toggle('live',!!lvs);
+    if(lvs!==lastLv){lastLv=lvs;$('lv').innerHTML=lvs?'<iframe src="'+ea(lvs)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>':'';fitLive();setTimeout(fitLive,400)}
     drawVel();
   }
   function show(m){
     var t=theme(cfg),b=$('bub');
-    if(t.layout==='wall'){wallPage=0;renderWall(m);clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);return}
+    if(t.layout==='wall'&&!isLive()){wallPage=0;renderWall(m);clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);return}
     b.className='a-'+t.anim+' out';
     setTimeout(function(){
       var im=fixImg(m.img);
@@ -527,7 +586,7 @@ function pantalla(){
   }
   function next(){
     if(cfg.pause||!msgs.length){timer=setTimeout(next,2500);return}
-    if(theme(cfg).layout==='wall'){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
+    if(theme(cfg).layout==='wall'&&!isLive()){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
     idx=(idx+1)%msgs.length;show(msgs[idx]);
   }
   RV.on('value',function(s){nVel=s.numChildren();drawVel()});
