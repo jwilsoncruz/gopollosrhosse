@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Homenaje en Vida</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Georgia,'Times New Roman',serif;background:#eeece8;color:#26231f;line-height:1.45}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #dcd8d0;border-radius:6px;padding:16px;margin-bottom:14px}
+h1{font-size:1.4rem;margin:0 0 8px;font-weight:600}
+label{display:block;font-size:.85rem;color:#6a645a;margin:10px 0 4px}
+input,textarea,select{width:100%;padding:11px;border-radius:5px;border:1px solid #cfcac0;font:inherit;background:#fff;color:#26231f}
+input[type=checkbox]{width:auto;transform:scale(1.3)}
+input[type=color]{height:42px;padding:2px}
+input[type=range]{padding:0}
+textarea{min-height:90px;resize:vertical}
+button,a.btn{display:inline-block;border:0;border-radius:5px;padding:11px 15px;font:inherit;font-weight:600;cursor:pointer;background:#3b4a5c;color:#fff;text-decoration:none;margin:4px 4px 0 0}
+button.gold{background:#8a6a2f}button.sec{background:#fff;color:#26231f;border:1px solid #cfcac0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #8a6a2f;outline-offset:1px}
+.msg{padding:10px 0;border-top:1px solid #e6e2da}.msg:first-child{border-top:0}
+.hint{font-size:.88rem;color:#6a645a}
+.err{background:#f6dcd8;color:#6b1d12;padding:12px;border-radius:5px;margin-top:10px}
+.ok{background:#e1ecd9;color:#25431a;padding:12px;border-radius:5px;margin-top:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:4px 10px}
+.sec{grid-column:1/-1;font-weight:700;margin-top:12px;padding-top:8px;border-top:1px solid #e6e2da}
+details>summary{cursor:pointer;font-weight:700;font-size:1.05rem}
+/* invitados */
+body.guest{background:linear-gradient(170deg,var(--c1),var(--c2));min-height:100vh}
+.gc{text-align:center}
+.gc textarea,.gc input{text-align:left}
+.glg{max-height:56px;max-width:60%;object-fit:contain;display:block;margin:0 auto 12px}
+.gph{width:110px;height:136px;border-radius:55px 55px 6px 6px;object-fit:cover;border:2px solid var(--ac);display:block;margin:0 auto 12px}
+.gd{color:#6a645a;margin:-4px 0 10px}
+/* pantalla */
+body.screen{overflow:hidden;height:100vh;background:#000}
+#scr{position:fixed;inset:0;display:flex;flex-direction:column;padding:3vh 3vw;text-align:center;color:var(--tx);font-family:var(--ff);
+ background-image:linear-gradient(rgba(0,0,0,var(--ov)),rgba(0,0,0,var(--ov))),var(--bgimg),radial-gradient(circle at 50% 0%,var(--c2),transparent 65%),radial-gradient(circle at 50% 110%,var(--c1),transparent 60%);
+ background-color:var(--bg);background-size:cover;background-position:center}
+#hdr{flex:none;display:flex;flex-direction:column;align-items:center;gap:.5vh}
+#hph{height:20vh;aspect-ratio:4/5;border-radius:10vh 10vh 1vh 1vh;object-fit:cover;border:.35vh solid var(--ac);box-shadow:0 0 4vh rgba(0,0,0,.45)}
+#htt{font-size:clamp(.9rem,1.8vw,1.5rem);letter-spacing:.12em;opacity:.85;font-style:italic}
+#hn{font-size:clamp(1.8rem,4.6vw,4rem);font-weight:600;color:var(--ac);line-height:1.1}
+#hd{font-size:clamp(1rem,2vw,1.7rem);opacity:.9}
+#hq{font-size:clamp(.9rem,1.7vw,1.4rem);font-style:italic;opacity:.8;max-width:70vw}
+#vel{font-size:clamp(.9rem,1.6vw,1.4rem);opacity:.9}
+#main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+#bub{max-width:88vw;display:flex;gap:3vw;align-items:center;justify-content:center;padding:3.5vh 4vw;border-radius:1vh;background:color-mix(in srgb,var(--tx) 8%,transparent);border-left:.5vh solid var(--ac);transition:opacity .9s,transform .9s}
+#bub.out{opacity:0}
+#bub.a-rise.out{transform:translateY(3vh)}
+#bimg{max-height:36vh;max-width:30vw;border-radius:1vh;object-fit:cover}
+#bt{font-size:calc(clamp(1.4rem,3.8vw,3.6rem)*var(--sc));line-height:1.3;font-style:italic;word-break:break-word}
+#bf{margin-top:.7em;font-size:calc(clamp(1.1rem,2.5vw,2.3rem)*var(--sc));color:var(--ac)}
+#lg{position:absolute;max-width:24vw;object-fit:contain}
+#lg.p-tl{top:2.5vh;left:2.5vw}#lg.p-tr{top:2.5vh;right:2.5vw}#lg.p-bc{bottom:2vh;left:50%;transform:translateX(-50%)}
+#qr{position:absolute;z-index:8;bottom:3vh;background:#fff;color:#26231f;padding:10px;border-radius:8px;font-size:clamp(.7rem,1.2vw,1rem)}
+#qr.q-bl{left:2vw}#qr.q-br{right:2vw}
+#qr div{margin:0 auto 6px;display:flex;justify-content:center}
+#fs{position:absolute;right:1vw;bottom:1vh;opacity:.6;font-size:.8rem;padding:6px 10px;z-index:8;transition:opacity .4s}
+#ann{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;padding:6vw;background:rgba(0,0,0,.8);font-size:calc(clamp(1.8rem,6vw,5.5rem)*var(--sc));line-height:1.2;color:var(--tx)}
+#wall{display:none;flex:1;align-self:stretch;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2vh 2vw;padding:1vh 0}
+.wc{background:color-mix(in srgb,var(--tx) 8%,transparent);border-left:.4vh solid var(--ac);border-radius:.8vh;padding:2.5vh 2vw;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:fin 1s}
+.wc .wt{font-size:calc(clamp(1rem,1.9vw,1.9rem)*var(--sc));font-style:italic;line-height:1.25;word-break:break-word}
+.wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.4vw,1.4rem)*var(--sc))}
+.wc img{max-height:14vh;border-radius:.8vh;object-fit:cover;margin-bottom:1vh;align-self:center}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+#cdp{margin-top:.6vh;padding:.7vh 2vw;border-radius:99px;font-size:clamp(1rem,2vw,1.8rem);font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--tx) 12%,transparent);border:1px solid var(--ac)}
+#cdo{position:absolute;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.85);color:var(--tx);font-family:var(--ff);padding:4vw}
+#cdn{font-size:clamp(2rem,7vw,7rem);font-style:italic}
+#cdl{font-size:clamp(2.2rem,9vw,9rem);font-weight:600;color:var(--ac);line-height:1.1}
+.tabs{display:flex;gap:6px;margin:12px 0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ===== CONFIGURACIÓN DE FIREBASE (la misma de tu proyecto) ===== */
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBd94u8f0grdciEAMy6OFwjQ_G9BFY5a7k",
+  authDomain: "mensajes-fiesta.firebaseapp.com",
+  databaseURL: "https://mensajes-fiesta-default-rtdb.firebaseio.com",
+  projectId: "mensajes-fiesta",
+  appId: "1:880537182959:web:11d03ff1c09178a92df11a"
+};
+/* true = el panel pide correo y contraseña (recomendado) */
+var REQUIRE_LOGIN = true;
+/* Los datos se guardan en /homenajes/<evento>, separados de las fiestas */
+var ROOT = 'homenajes';
+
+var $app=document.getElementById('app');
+var q=new URLSearchParams(location.search);
+var EV=(q.get('e')||'servicio').replace(/[^a-z0-9_-]/gi,'').toLowerCase()||'servicio';
+var mode=location.hash.replace('#','')||'menu';
+var BASE=location.href.split('#')[0].split('?')[0];
+
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function ea(s){return esc(s).replace(/"/g,'&quot;')}
+function fixImg(u){
+  u=(u||'').trim();
+  if(!/^https?:\/\//i.test(u))return '';
+  var m=u.match(/drive\.google\.com\/file\/d\/([^\/?#]+)/)||u.match(/drive\.google\.com\/(?:open|uc)\?[^#]*id=([^&#]+)/);
+  if(m)return 'https://drive.google.com/uc?export=view&id='+m[1];
+  return u.replace(/(dropbox\.com\/[^?]*)\?dl=0/,'$1?raw=1');
+}
+
+var DEF={c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a',bgImg:'',ov:45,logo:'',logoPos:'tr',logoH:10,photo:'',title:'En memoria de',font:'serif',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',candles:true};
+var PRESETS={
+  sobrio:{n:'🕊️ Sobrio',c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a'},
+  blanco:{n:'🤍 Blanco y paz',c1:'#e8eef4',c2:'#cbd5e1',bg:'#f8f6f1',tx:'#2b2f36',ac:'#6b5a2e'},
+  vino:{n:'🍷 Vino',c1:'#4a1626',c2:'#7a2a3c',bg:'#1c0a10',tx:'#f7ece6',ac:'#e8c4a0'},
+  bosque:{n:'🌿 Bosque',c1:'#1f3a2e',c2:'#3d5a47',bg:'#0c1a14',tx:'#eef3ea',ac:'#c9d9a8'},
+  noche:{n:'🌙 Azul noche',c1:'#0f2a4a',c2:'#26456e',bg:'#050d1a',tx:'#eaf1fa',ac:'#9fc3ee'},
+  sepia:{n:'📜 Sepia',c1:'#5a4630',c2:'#8a6f4d',bg:'#241a10',tx:'#f6ecd9',ac:'#e7c98f'}
+};
+var PLANTILLAS={
+  velorio:{n:'🕯️ Velatorio y sepelio',p:[['🕯️ Inicio del velatorio',0],['📿 Oración / Rosario',120],['⛪ Misa de cuerpo presente',240],['🚗 Salida del cortejo',300],['🌹 Sepelio',360]]},
+  cremacion:{n:'🕊️ Cremación',p:[['🕯️ Inicio de la despedida',0],['🎙️ Palabras de la familia',60],['📿 Responso',90],['🕊️ Cremación',120]]},
+  misa:{n:'⛪ Misa / Responso',p:[['🕯️ Recepción',0],['⛪ Misa',30],['🎙️ Palabras de despedida',90],['🤝 Condolencias',110]]},
+  aniversario:{n:'🌹 Misa de recuerdo',p:[['🕯️ Recepción',0],['⛪ Misa en su memoria',30],['🎙️ Palabras de la familia',90],['🍽️ Compartir',110]]}
+};
+var FONTS={serif:"Georgia,'Times New Roman',serif",sans:"system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",script:"'Brush Script MT','Segoe Script','Lucida Handwriting',cursive",classic:"'Palatino Linotype',Palatino,'Book Antiqua',serif"};
+function theme(c){return Object.assign({},DEF,(c&&c.theme)||{})}
+function applyTheme(el,t){
+  var s=el.style,u=fixImg(t.bgImg);
+  s.setProperty('--c1',t.c1);s.setProperty('--c2',t.c2);s.setProperty('--bg',t.bg);
+  s.setProperty('--tx',t.tx);s.setProperty('--ac',t.ac);
+  s.setProperty('--ov',(u?t.ov:0)/100);
+  s.setProperty('--sc',(t.size||100)/100);
+  s.setProperty('--ff',FONTS[t.font]||FONTS.serif);
+  s.setProperty('--bgimg',u?'url("'+u.replace(/"/g,'%22')+'")':'none');
+}
+
+if(!FIREBASE_CONFIG.databaseURL){
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>Falta conectar Firebase</h1><div class="err">Pega tu configuración de Firebase en el archivo.</div></div></div>';
+}else{
+  if(mode!=='enviar'){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    var db=firebase.database();
+    var R=db.ref(ROOT+'/'+EV), RM=R.child('mensajes'), RC=R.child('config'), RV=R.child('velas');
+  }
+  ({menu:menu,enviar:enviar,panel:gate,pantalla:pantalla}[mode]||menu)();
+}
+
+/* ---------- ACCESO ---------- */
+function gate(){
+  if(!REQUIRE_LOGIN){panel();return}
+  firebase.auth().onAuthStateChanged(function(u){if(u)panel();else loginView()});
+}
+function loginView(){
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🔐 Acceso al panel</h1><p class="hint">Solo la funeraria o la familia pueden entrar.</p>'
+  +'<label>Correo</label><input id="em" type="email" autocomplete="username">'
+  +'<label>Contraseña</label><input id="pw" type="password" autocomplete="current-password">'
+  +'<button id="li" style="width:100%;margin-top:12px">Entrar</button><div id="lr"></div></div></div>';
+  var go=function(){
+    document.getElementById('lr').innerHTML='';
+    firebase.auth().signInWithEmailAndPassword(document.getElementById('em').value.trim(),document.getElementById('pw').value).catch(function(e){
+      var m=(e&&e.code==='auth/operation-not-allowed')?'Falta activar “Correo/contraseña” en Firebase → Authentication.':'Correo o contraseña incorrectos.';
+      document.getElementById('lr').innerHTML='<div class="err">'+m+'</div>';
+    });
+  };
+  document.getElementById('li').onclick=go;
+  document.getElementById('pw').onkeydown=function(e){if(e.key==='Enter')go()};
+}
+
+/* ---------- MENÚ ---------- */
+function menu(){
+  var l=BASE+'?e='+EV;
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🕊️ Homenaje en vida</h1><p class="hint">Servicio: <b>'+esc(EV)+'</b> (cambia con <code>?e=nombre</code> en el enlace)</p>'
+  +'<a class="btn" href="'+l+'#panel">🎛️ Panel</a><a class="btn gold" href="'+l+'#pantalla">📺 Pantalla</a><a class="btn sec" href="'+l+'#enviar">✍️ Formulario para asistentes</a></div></div>';
+}
+
+/* ---------- ASISTENTES (pedidos cortos, sin conexión permanente) ---------- */
+function enviar(){
+  var DBU=FIREBASE_CONFIG.databaseURL.replace(/\/$/,'')+'/'+ROOT+'/'+EV;
+  function rget(p){return fetch(DBU+'/'+p+'.json').then(function(r){return r.json()})}
+  function rsend(m,p,d){return fetch(DBU+'/'+p+'.json',{method:m,body:JSON.stringify(d)}).then(function(r){if(!r.ok)throw new Error('x');return r.json()})}
+  var $=function(i){return document.getElementById(i)};
+  rget('config').then(function(c){
+    c=c||{};var t=theme(c);
+    applyTheme(document.documentElement,t);document.body.className='guest';
+    var lg=fixImg(t.logo),ph=fixImg(t.photo),saved=localStorage.getItem('mev_name')||'';
+    var head=(lg?'<img class="glg" alt="" src="'+ea(lg)+'" onerror="this.remove()">':'')
+      +(ph?'<img class="gph" alt="" src="'+ea(ph)+'" onerror="this.remove()">':'')
+      +'<h1>Palabras para '+esc(c.honoree||'nuestro ser querido')+'</h1>'
+      +(c.dates?'<p class="gd">'+esc(c.dates)+'</p>':'');
+    var body=c.closed?'<p class="hint">Los mensajes ya cerraron. Gracias por acompañarnos.</p>'
+      :'<p class="hint">Tu mensaje de condolencia o recuerdo se mostrará en la pantalla.</p>'
+      +'<label>Tu nombre</label><input id="n" maxlength="30" placeholder="Ej: Familia Pérez" value="'+ea(saved)+'">'
+      +'<label>Tu mensaje</label><textarea id="t" maxlength="200" placeholder="Siempre te recordaremos…"></textarea>'
+      +'<button id="b" class="gold" style="width:100%;margin-top:12px">Enviar mensaje</button><div id="r"></div>'
+      +(t.candles?'<hr style="border:0;border-top:1px solid #e6e2da;margin:18px 0"><p class="hint">Enciende una vela en su memoria</p><button id="v" class="sec" style="width:100%">🕯️ Encender una vela</button><div id="vr"></div>':'');
+    $app.innerHTML='<div class="wrap"><div class="card gc">'+head+body+'</div></div>';
+
+    if($('b'))$('b').onclick=function(){
+      var n=$('n').value.trim(),tx=$('t').value.trim();
+      var last=+localStorage.getItem('mev_last')||0;
+      if(!tx)return;
+      if(Date.now()-last<15000){$('r').innerHTML='<div class="err">Espera unos segundos antes de enviar otro.</div>';return}
+      localStorage.setItem('mev_name',n);
+      rget('config/closed').then(function(cl){
+        if(cl)throw new Error('closed');
+        return rsend('POST','mensajes',{name:(n||'Un familiar o amigo').slice(0,30),text:tx.slice(0,200),ts:Date.now(),status:'pendiente'});
+      }).then(function(){
+        localStorage.setItem('mev_last',Date.now());$('t').value='';
+        $('r').innerHTML='<div class="ok">Mensaje enviado. Gracias por acompañarnos.</div>';
+      }).catch(function(){$('r').innerHTML='<div class="err">No se pudo enviar. Intenta otra vez.</div>'});
+    };
+    if($('v'))$('v').onclick=function(){
+      if(localStorage.getItem('mev_vela_'+EV)){$('vr').innerHTML='<div class="ok">Ya encendiste tu vela. 🕯️</div>';return}
+      var n=($('n')&&$('n').value.trim())||'';
+      rsend('POST','velas',{n:n.slice(0,30),ts:Date.now()}).then(function(){
+        localStorage.setItem('mev_vela_'+EV,'1');
+        $('vr').innerHTML='<div class="ok">Tu vela está encendida. 🕯️</div>';
+      }).catch(function(){$('vr').innerHTML='<div class="err">No se pudo encender. Intenta otra vez.</div>'});
+    };
+  }).catch(function(){$app.innerHTML='<div class="wrap"><div class="card"><div class="err">No se pudo cargar. Revisa tu conexión e intenta otra vez.</div></div></div>'});
+}
+
+/* ---------- PANEL ---------- */
+var FLD=[
+ ['sec','🖼️ Imágenes (pega el link de la foto)'],
+ ['photo','url','Foto del homenajeado'],
+ ['logo','url','Logo de la funeraria'],
+ ['logoPos','sel','Posición del logo',[['tr','Arriba derecha'],['tl','Arriba izquierda'],['bc','Abajo centro']]],
+ ['logoH','range','Tamaño del logo',5,25],
+ ['bgImg','url','Imagen de fondo'],
+ ['ov','range','Oscurecer el fondo',0,85],
+ ['sec','🎨 Colores y letra'],
+ ['c1','color','Color 1'],['c2','color','Color 2'],['bg','color','Color base'],['tx','color','Color del texto'],['ac','color','Color de nombres y detalles'],
+ ['font','sel','Tipo de letra',[['serif','Clásica'],['classic','Elegante'],['sans','Moderna'],['script','Cursiva']]],
+ ['size','range','Tamaño del texto',70,140],
+ ['sec','✨ Pantalla'],
+ ['title','text','Texto sobre el nombre'],
+ ['anim','sel','Transición',[['fade','Desvanecer'],['rise','Subir suave']]],
+ ['layout','sel','Diseño',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
+ ['qrPos','sel','Posición del QR',[['bl','Abajo izquierda'],['br','Abajo derecha']]],
+ ['countdown','check','Mostrar cuenta regresiva del programa'],
+ ['cdBig','check','Aviso a pantalla completa al llegar la hora'],
+ ['qr','check','Mostrar código QR'],
+ ['candles','check','Velas virtuales (contador y botón para asistentes)']
+];
+function fieldHtml(f){
+  if(f[0]==='sec')return '<div class="sec">'+f[1]+'</div>';
+  var k=f[0],ty=f[1],h='<div><label>'+f[2]+'</label>';
+  if(ty==='sel')h+='<select id="f_'+k+'">'+f[3].map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>'}).join('')+'</select>';
+  else if(ty==='range')h+='<input id="f_'+k+'" type="range" min="'+f[3]+'" max="'+f[4]+'">';
+  else if(ty==='check')h+='<input id="f_'+k+'" type="checkbox">';
+  else h+='<input id="f_'+k+'" type="'+(ty==='url'?'text':ty)+'"'+(ty==='url'?' placeholder="https://..."':'')+'>';
+  return h+'</div>';
+}
+var AC=null;
+function beep(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume();var o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.frequency.value=660;g.gain.value=.05;o.start();setTimeout(function(){o.stop()},160)}catch(e){}}
+
+function panel(){
+  var link=BASE+'?e='+EV+'#enviar';
+  $app.innerHTML='<div class="wrap">'
+  +'<div class="card"><h1>🎛️ Panel del servicio <small class="hint">· '+esc(EV)+'</small></h1>'
+  +'<label>Nombre del homenajeado/a</label><input id="h" placeholder="Ej: Don Carlos Alberto Rojas">'
+  +'<label>Fechas</label><input id="dt" placeholder="Ej: 12 de mayo de 1948 – 6 de octubre de 2026">'
+  +'<label>Frase o epitafio (opcional)</label><input id="qt" maxlength="120" placeholder="Ej: Gracias por tanto amor.">'
+  +'<label>Segundos por mensaje</label><input id="s" type="number" min="4" max="60">'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="a" type="checkbox"> Aprobar automáticamente (sin revisar)</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="pa" type="checkbox"> ⏸ Pausar rotación (se queda el mensaje actual)</label>'
+  +'<label style="display:flex;gap:8px;align-items:center"><input id="cl" type="checkbox"> 🔒 Cerrar recepción de mensajes</label>'
+  +'<label>Palabras prohibidas (separadas por coma). Esos mensajes siempre piden revisión</label><input id="bw" placeholder="palabra1, palabra2">'
+  +'<a class="btn gold" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
+  +'<button class="sec" id="x">Borrar mensajes</button><button class="sec" id="xv">Reiniciar velas</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
+  +'<div class="card"><b>🔗 Enlace / QR para asistentes</b><input id="lk" readonly value="'+ea(link)+'" style="margin-top:8px">'
+  +'<button id="cp">Copiar enlace</button><a class="btn gold" target="_blank" href="https://wa.me/?text='+encodeURIComponent('Puedes dejar unas palabras en memoria y encender una vela, y se mostrarán en la pantalla del servicio: '+link)+'">Compartir por WhatsApp</a></div>'
+  +'<div class="card"><b>⏱ Programa y cuentas regresivas</b><p class="hint">Agrega los momentos del servicio. La pantalla muestra cuánto falta para el siguiente y, si está activado, un aviso a pantalla completa al llegar la hora.</p>'
+  +'<label>Plantillas: hora de inicio</label><input id="ts" type="time" style="max-width:200px">'
+  +'<div>'+Object.keys(PLANTILLAS).map(function(k){return '<button class="gold" data-t="'+k+'" style="padding:6px 10px">'+PLANTILLAS[k].n+'</button>'}).join('')+'</div>'
+  +'<p class="hint">Pon la hora de inicio y toca una plantilla. Luego puedes quitar o agregar momentos.</p>'
+  +'<div class="grid"><div><label>Nombre</label><input id="pn" maxlength="40" placeholder="⛪ Misa"></div><div><label>A la hora</label><input id="pt" type="time"></div><div><label>o en cuántos minutos</label><input id="pm" type="number" min="1" max="1440" placeholder="30"></div></div>'
+  +'<button id="pa2">Agregar al programa</button><button class="sec" id="pc2">Borrar programa</button><button class="sec" data-s="10">⏩ Retrasar 10 min</button><button class="sec" data-s="-10">⏪ Adelantar 10 min</button><div id="pl"></div></div>'
+  +'<div class="card"><b>📣 Aviso en pantalla</b><p class="hint">Sale a pantalla completa (ej: “Por favor, tomar asiento”).</p><input id="at" maxlength="100" placeholder="Iniciamos la ceremonia en unos minutos">'
+  +'<button class="gold" id="an">Mostrar aviso</button><button class="sec" id="ar">Quitar aviso</button></div>'
+  +'<div class="card"><b>📦 Entrega a la familia</b><p class="hint">Descarga los mensajes como recuerdo.</p>'
+  +'<button id="book">📖 Libro de condolencias (PDF)</button><button class="sec" id="csv">📥 Excel (CSV)</button></div>'
+  +'<div class="card"><details><summary>🎨 Diseño de la pantalla</summary>'
+  +'<p class="hint">Los cambios se ven en vivo. Fotos: usa un link directo (Google Drive compartido como “cualquiera con el enlace”, GitHub, imgbb o postimages).</p>'
+  +'<div class="sec" style="border:0;margin-top:0">Temas listos</div><div>'
+  +Object.keys(PRESETS).map(function(k){return '<button class="sec" data-p="'+k+'">'+PRESETS[k].n+'</button>'}).join('')+'</div>'
+  +'<div class="grid">'+FLD.map(fieldHtml).join('')+'</div></details></div>'
+  +'<div class="card"><b>✍️ Mensaje manual (del WhatsApp)</b><label>Nombre</label><input id="mn"><label>Mensaje</label><textarea id="mt"></textarea>'
+  +'<label>Foto para este mensaje (link, opcional)</label><input id="mp" placeholder="https://...">'
+  +'<button id="mb">Mostrar ahora</button></div>'
+  +'<div class="card"><b>⏳ Por aprobar (<span id="pc">0</span>)</b> <button class="sec" data-a="all" style="padding:6px 10px">Aprobar todos</button><div id="p"></div></div>'
+  +'<div class="card"><b>✅ Aprobados (<span id="oc">0</span>)</b><div id="ok"></div></div></div>';
+  var $=function(i){return document.getElementById(i)};
+
+  RC.once('value').then(function(s){
+    var c=s.val()||{};
+    $('h').value=c.honoree||'';$('dt').value=c.dates||'';$('qt').value=c.quote||'';$('s').value=c.secs||12;
+    $('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('bw').value=c.bad||'';
+    fill(theme(c));
+  });
+  $('h').oninput=function(){RC.child('honoree').set(this.value)};
+  $('dt').oninput=function(){RC.child('dates').set(this.value)};
+  $('qt').oninput=function(){RC.child('quote').set(this.value)};
+  $('s').onchange=function(){RC.child('secs').set(Math.max(4,+this.value||12))};
+  var autoDone={};
+  $('a').onchange=function(){
+    var on=this.checked;RC.child('auto').set(on);
+    if(on)RM.once('value').then(function(s){s.forEach(function(c){autoDone[c.key]=1})});
+  };
+  if(REQUIRE_LOGIN){$('so').style.display='';$('so').onclick=function(){firebase.auth().signOut().then(function(){location.reload()})}}
+  $('an').onclick=function(){var v=$('at').value.trim();if(!v)return;RC.child('ann').set({text:v.slice(0,100),ts:Date.now()})};
+  $('ar').onclick=function(){RC.child('ann').remove();$('at').value=''};
+  $('pa2').onclick=function(){
+    var n=$('pn').value.trim();if(!n){$('pn').focus();return}
+    var m=+$('pm').value,tm=$('pt').value,at=null;
+    if(m>0)at=Date.now()+m*60000;
+    else if(tm){var pp=tm.split(':'),d=new Date();d.setHours(+pp[0],+pp[1],0,0);at=d.getTime();if(at<Date.now()-6*36e5)at+=864e5}
+    if(at===null){alert('Pon una hora o los minutos');return}
+    RC.child('prog').push({name:n.slice(0,40),at:at});
+    $('pn').value='';$('pt').value='';$('pm').value='';
+  };
+  $('pc2').onclick=function(){if(confirm('¿Borrar todo el programa?'))RC.child('prog').remove()};
+  function hhmm(at){return new Date(at).toLocaleTimeString('es-BO',{hour:'2-digit',minute:'2-digit'})}
+  function tickProg(){document.querySelectorAll('[data-at]').forEach(function(el){
+    var d=+el.getAttribute('data-at')-Date.now();
+    el.textContent=d>0?'faltan '+Math.floor(d/3600000)+'h '+('0'+Math.floor(d%3600000/60000)).slice(-2)+'m '+('0'+Math.floor(d%60000/1000)).slice(-2)+'s':'ya pasó ✓';
+  })}
+  RC.child('prog').on('value',function(s){
+    var a=[];s.forEach(function(c){var v=c.val();a.push({id:c.key,name:v.name,at:v.at})});
+    a.sort(function(x,y){return x.at-y.at});
+    $('pl').innerHTML=a.length?a.map(function(it){
+      return '<div class="msg"><b>'+esc(it.name)+'</b> · '+hhmm(it.at)+' · <span data-at="'+it.at+'"></span><br><button class="gold" data-g="'+it.id+'" style="padding:6px 10px">Anunciar ya</button><button class="sec" data-d="'+it.id+'" style="padding:6px 10px">Quitar</button></div>';
+    }).join(''):'<p class="hint">Aún no hay momentos en el programa.</p>';
+    tickProg();
+  });
+  setInterval(tickProg,1000);
+  function loadTpl(k){
+    var tm=$('ts').value;if(!tm){alert('Primero pon la hora de inicio');$('ts').focus();return}
+    var pp=tm.split(':'),d=new Date();d.setHours(+pp[0],+pp[1],0,0);var base=d.getTime();if(base<Date.now()-6*36e5)base+=864e5;
+    RC.child('prog').once('value').then(function(s){
+      if(s.exists()&&!confirm('Ya hay un programa. ¿Reemplazarlo por la plantilla?'))return;
+      var o={};PLANTILLAS[k].p.forEach(function(it,i){o['t'+i+'_'+Date.now().toString(36)]={name:it[0],at:base+it[1]*60000}});
+      return RC.child('prog').set(o);
+    });
+  }
+  function shiftProg(min){
+    RC.child('prog').once('value').then(function(s){
+      var up={},now=Date.now();
+      s.forEach(function(c){var v=c.val();if(v.at>now)up[c.key+'/at']=v.at+min*60000});
+      if(Object.keys(up).length)RC.child('prog').update(up);
+    });
+  }
+  function getAll(cb){RM.once('value').then(function(s){var a=[];s.forEach(function(c){var v=c.val();v.id=c.key;a.push(v)});a.sort(function(x,y){return x.ts-y.ts});cb(a)})}
+  $('csv').onclick=function(){getAll(function(a){
+    var rows=[['Nombre','Mensaje','Fecha','Estado']].concat(a.map(function(m){return [m.name,m.text,new Date(m.ts).toLocaleString('es-BO'),m.status]}));
+    var csv='\ufeff'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(',')}).join('\r\n');
+    var u=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),l=document.createElement('a');
+    l.href=u;l.download='condolencias-'+EV+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){URL.revokeObjectURL(u)},1000);
+  })};
+  $('book').onclick=function(){
+    var w=window.open('','_blank');if(!w){alert('Permite las ventanas emergentes para ver el libro');return}
+    RC.once('value').then(function(s){
+      var c=s.val()||{},t=theme(c);
+      getAll(function(a){
+        a=a.filter(function(m){return m.status==='aprobado'});
+        var lg=fixImg(t.logo),ph=fixImg(t.photo);
+        var h='<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Libro de condolencias</title><style>'
+        +'@page{margin:14mm}*{box-sizing:border-box}body{margin:0;font-family:'+FONTS[t.font]+';color:#222;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+        +'.cover{text-align:center;padding:40px 20px;color:'+t.tx+';background:linear-gradient(160deg,'+t.c1+','+t.c2+');border-radius:8px;margin:16px}'
+        +'.cover img.l{max-height:60px;max-width:50%;object-fit:contain;display:block;margin:0 auto 14px}'
+        +'.cover img.p{width:130px;height:160px;border-radius:65px 65px 6px 6px;object-fit:cover;border:3px solid '+t.ac+';margin-bottom:12px}'
+        +'.cover h1{margin:6px 0;font-size:2.1rem;color:'+t.ac+'}.cover p{margin:4px 0;opacity:.9}'
+        +'.m{break-inside:avoid;border:1px solid #ddd;border-left:5px solid '+t.c2+';border-radius:6px;padding:14px 16px;margin:12px 16px}'
+        +'.m .t{font-size:1.1rem;line-height:1.4;font-style:italic}.m .f{margin-top:8px;font-weight:700;color:'+t.c1+'}.m img{max-height:180px;border-radius:6px;display:block;margin-bottom:8px}'
+        +'.np{text-align:center;margin:16px}@media print{.np{display:none}}</style></head><body>'
+        +'<div class="np"><button onclick="window.print()" style="padding:12px 18px;font-size:1rem;cursor:pointer">🖨️ Imprimir / Guardar como PDF</button></div>'
+        +'<div class="cover">'+(lg?'<img class="l" alt="" src="'+ea(lg)+'">':'')+(ph?'<img class="p" alt="" src="'+ea(ph)+'">':'')
+        +'<p>Libro de condolencias · en memoria de</p><h1>'+esc(c.honoree||'Nuestro ser querido')+'</h1>'+(c.dates?'<p>'+esc(c.dates)+'</p>':'')+(c.quote?'<p><i>'+esc(c.quote)+'</i></p>':'')+'<p>'+a.length+' mensajes de cariño</p></div>'
+        +a.map(function(m){var im=fixImg(m.img);return '<div class="m">'+(im?'<img alt="" src="'+ea(im)+'">':'')+'<div class="t">“'+esc(m.text)+'”</div><div class="f">— '+esc(m.name)+'</div></div>'}).join('')
+        +'</body></html>';
+        w.document.open();w.document.write(h);w.document.close();
+      });
+    });
+  };
+  $('pa').onchange=function(){RC.child('pause').set(this.checked)};
+  $('cl').onchange=function(){RC.child('closed').set(this.checked)};
+  $('bw').onchange=function(){RC.child('bad').set(this.value)};
+  $('x').onclick=function(){if(confirm('¿Borrar todos los mensajes?')){RM.remove();RC.child('now').remove()}};
+  $('xv').onclick=function(){if(confirm('¿Reiniciar el contador de velas?'))RV.remove()};
+  $('cp').onclick=function(){
+    var i=$('lk');
+    if(navigator.clipboard)navigator.clipboard.writeText(i.value);else{i.select();document.execCommand('copy')}
+    this.textContent='¡Copiado! ✓';var b=this;setTimeout(function(){b.textContent='Copiar enlace'},1500);
+  };
+
+  var RT=RC.child('theme'),tmr={};
+  function fill(t){FLD.forEach(function(f){
+    if(f[0]==='sec')return;var el=$('f_'+f[0]);
+    if(f[1]==='check')el.checked=!!t[f[0]];else el.value=t[f[0]];
+  })}
+  FLD.forEach(function(f){
+    if(f[0]==='sec')return;
+    var k=f[0],ty=f[1],el=$('f_'+k);
+    el.addEventListener(ty==='range'?'input':'change',function(){
+      var v=ty==='check'?el.checked:(ty==='range'?+el.value:el.value.trim());
+      clearTimeout(tmr[k]);
+      tmr[k]=setTimeout(function(){var o={};o[k]=v;RT.update(o)},ty==='range'?250:0);
+    });
+  });
+
+  $('mb').onclick=function(){
+    var t=$('mt').value.trim();if(!t)return;
+    var o={name:$('mn').value.trim()||'Un familiar o amigo',text:t,ts:Date.now(),status:'aprobado'};
+    var im=fixImg($('mp').value);if(im)o.img=im;
+    var r=RM.push(o);
+    RC.update({now:r.key,nowTs:Date.now()});
+    $('mt').value='';$('mn').value='';$('mp').value='';
+  };
+
+  var prevP=null;
+  RM.on('value',function(s){
+    var p='',o='',pc=0,oc=0,all=[];
+    s.forEach(function(c){var v=c.val();v.id=c.key;all.push(v)});
+    all.reverse().forEach(function(m){
+      var h='<div class="msg"><b>'+(m.img?'📷 ':'')+esc(m.name)+'</b><br>'+esc(m.text)+'<br>';
+      if(m.status==='pendiente'){pc++;
+        p+=h+'<button data-a="ok" data-id="'+m.id+'">Aprobar</button><button class="gold" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Rechazar</button></div>';
+      }else if(m.status==='aprobado'){oc++;
+        o+=h+'<button class="gold" data-a="now" data-id="'+m.id+'">Mostrar ahora</button><button class="sec" data-a="no" data-id="'+m.id+'">Quitar</button></div>';
+      }
+    });
+    $('p').innerHTML=p||'<p class="hint">Nada pendiente.</p>';
+    $('ok').innerHTML=o||'<p class="hint">Aún no hay aprobados.</p>';
+    $('pc').textContent=pc;$('oc').textContent=oc;
+    document.title=(pc?'('+pc+') ':'')+'Panel';
+    if($('a').checked)all.forEach(function(m){
+      if(m.status==='pendiente'&&!autoDone[m.id]){
+        autoDone[m.id]=1;
+        var low=(m.name+' '+m.text).toLowerCase();
+        var bad=$('bw').value.toLowerCase().split(',').map(function(w){return w.trim()}).filter(Boolean).some(function(w){return low.indexOf(w)>=0});
+        if(!bad)RM.child(m.id).update({status:'aprobado'});
+      }
+    });
+    if(prevP!==null&&pc>prevP&&!$('a').checked)beep();
+    prevP=pc;
+  });
+
+  $app.onclick=function(e){
+    var tp=e.target.getAttribute('data-t');if(tp){loadTpl(tp);return}
+    var sh=e.target.getAttribute('data-s');if(sh){shiftProg(+sh);return}
+    var pg=e.target.getAttribute('data-g');if(pg){RC.child('prog/'+pg+'/at').set(Date.now());return}
+    var pd=e.target.getAttribute('data-d');if(pd){RC.child('prog/'+pd).remove();return}
+    var pr=e.target.getAttribute('data-p');
+    if(pr){RT.update({c1:PRESETS[pr].c1,c2:PRESETS[pr].c2,bg:PRESETS[pr].bg,tx:PRESETS[pr].tx,ac:PRESETS[pr].ac}).then(function(){return RC.once('value')}).then(function(s){fill(theme(s.val()))});return}
+    var a=e.target.getAttribute('data-a'),id=e.target.getAttribute('data-id');if(!a)return;
+    if(a==='all'){RM.once('value').then(function(s){s.forEach(function(c){if(c.val().status==='pendiente')RM.child(c.key).update({status:'aprobado'})})});return}
+    if(a==='ok')RM.child(id).update({status:'aprobado'});
+    if(a==='no')RM.child(id).update({status:'rechazado'});
+    if(a==='now'){RM.child(id).update({status:'aprobado'});RC.update({now:id,nowTs:Date.now()})}
+  };
+}
+
+/* ---------- PANTALLA ---------- */
+function pantalla(){
+  document.body.className='screen';
+  var $=function(i){return document.getElementById(i)};
+  var link=BASE+'?e='+EV+'#enviar';
+  $app.innerHTML='<div id="scr"><img id="lg" alt="" style="display:none">'
+  +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div><div id="hd"></div><div id="hq"></div><div id="vel" style="display:none"></div><div id="cdp" style="display:none"></div></div>'
+  +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el código QR para dejar unas palabras en su memoria</div></div></div><div id="wall"></div></div>'
+  +'<div id="ann"></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Deja unas palabras</div>'
+  +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
+  new QRCode($('qc'),{text:link,width:150,height:150});
+  $('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(function(){})}catch(e){}
+  var hideT;
+  function wake(){document.body.style.cursor='';$('fs').style.opacity=.6;clearTimeout(hideT);hideT=setTimeout(function(){document.body.style.cursor='none';$('fs').style.opacity=0},3000)}
+  document.onmousemove=wake;wake();
+
+  var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastLy=null,wallPage=0,nVel=0;
+  function renderWall(first){
+    var list=msgs.slice().reverse();
+    if(first){list=list.filter(function(m){return m.id!==first.id});list.unshift(first)}
+    var pages=Math.max(1,Math.ceil(list.length/6));wallPage=wallPage%pages;
+    var sl=list.slice(wallPage*6,wallPage*6+6);
+    $('wall').innerHTML=sl.length?sl.map(function(m){
+      var im=fixImg(m.img);
+      return '<div class="wc">'+(im?'<img alt="" src="'+ea(im)+'" onerror="this.remove()">':'')+'<div class="wt">“'+esc(m.text)+'”</div><div class="wf">— '+esc(m.name)+'</div></div>';
+    }).join(''):'<div class="wc" style="grid-column:1/-1;grid-row:1/-1"><div class="wt">Escanea el código QR para dejar unas palabras en su memoria</div></div>';
+  }
+  function drawVel(){
+    var t=theme(cfg),v=$('vel');
+    if(t.candles&&nVel>0){v.style.display='';v.textContent='🕯️ '+nVel+(nVel===1?' vela encendida':' velas encendidas')}else v.style.display='none';
+  }
+  function paint(){
+    var t=theme(cfg);
+    applyTheme($('scr'),t);
+    $('htt').textContent=t.title;
+    $('hn').textContent=cfg.honoree||'🕊️';
+    $('hd').textContent=cfg.dates||'';$('hq').textContent=cfg.quote?'“'+cfg.quote+'”':'';
+    var ph=fixImg(t.photo),hp=$('hph');
+    if(ph){if(hp.getAttribute('src')!==ph)hp.src=ph;hp.style.display=''}else hp.style.display='none';
+    hp.onerror=function(){this.style.display='none'};
+    var lg=fixImg(t.logo),l=$('lg');
+    if(lg){if(l.getAttribute('src')!==lg)l.src=lg;l.style.display='';l.style.height=t.logoH+'vh';l.className='p-'+t.logoPos}else l.style.display='none';
+    l.onerror=function(){this.style.display='none'};
+    var qr=$('qr');qr.style.display=t.qr?'':'none';qr.className='q-'+t.qrPos;
+    var ly=(t.layout==='wall');
+    $('bub').style.display=ly?'none':'';$('wall').style.display=ly?'grid':'none';
+    if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx])}
+    drawVel();
+  }
+  function show(m){
+    var t=theme(cfg),b=$('bub');
+    if(t.layout==='wall'){wallPage=0;renderWall(m);clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);return}
+    b.className='a-'+t.anim+' out';
+    setTimeout(function(){
+      var im=fixImg(m.img);
+      b.innerHTML=(im?'<img id="bimg" alt="" src="'+ea(im)+'" onerror="this.remove()">':'')
+        +'<div><div id="bt">“'+esc(m.text)+'”</div><div id="bf">— '+esc(m.name)+'</div></div>';
+      b.className='a-'+t.anim;
+    },900);
+    clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);
+  }
+  function next(){
+    if(cfg.pause||!msgs.length){timer=setTimeout(next,2500);return}
+    if(theme(cfg).layout==='wall'){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
+    idx=(idx+1)%msgs.length;show(msgs[idx]);
+  }
+  RV.on('value',function(s){nVel=s.numChildren();drawVel()});
+  function fmt(ms){var s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,p=function(n){return n<10?'0'+n:''+n};return (h?h+':':'')+p(m)+':'+p(x)}
+  function tick(){
+    var t=theme(cfg),now=Date.now(),P=cfg.prog||{};
+    var items=Object.keys(P).map(function(k){return {id:k,name:P[k].name,at:P[k].at}}).sort(function(a,b){return a.at-b.at});
+    var cel=null,nxt=null;
+    items.forEach(function(it){if(it.at<=now&&now-it.at<30000)cel=it;if(!nxt&&it.at>now)nxt=it});
+    var pill=$('cdp'),o=$('cdo');
+    if(t.countdown&&nxt){pill.style.display='';pill.textContent=nxt.name+' en '+fmt(nxt.at-now)}else pill.style.display='none';
+    if(cel&&t.cdBig){$('cdn').textContent='Es la hora';$('cdl').textContent=cel.name;o.style.display='flex'}
+    else o.style.display='none';
+  }
+  setInterval(tick,500);
+  RC.on('value',function(s){
+    var first=(lastNow===null);
+    cfg=s.val()||{};paint();
+    var an=cfg.ann,ae=$('ann');
+    if(an&&an.text){ae.textContent=an.text;ae.style.display='flex'}else ae.style.display='none';
+    if(first){lastNow=cfg.nowTs||0;return}
+    if(cfg.now&&cfg.nowTs&&cfg.nowTs!==lastNow){
+      lastNow=cfg.nowTs;
+      var i=msgs.findIndex(function(m){return m.id===cfg.now});
+      if(i>=0){idx=i;show(msgs[i])}
+    }
+  });
+  RM.on('value',function(s){
+    msgs=[];s.forEach(function(c){var v=c.val();v.id=c.key;if(v.status==='aprobado')msgs.push(v)});
+    msgs.sort(function(a,b){return a.ts-b.ts});
+    if(seen===null){seen={};msgs.forEach(function(m){seen[m.id]=1});if(msgs.length){idx=msgs.length-1;show(msgs[idx])}return}
+    var fresh=msgs.filter(function(m){return !seen[m.id]});
+    msgs.forEach(function(m){seen[m.id]=1});
+    if(fresh.length){var m=fresh[fresh.length-1];idx=msgs.findIndex(function(x){return x.id===m.id});show(m)}
+  });
+}
+</script>
+</body>
+</html>
