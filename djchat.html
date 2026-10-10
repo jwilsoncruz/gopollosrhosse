@@ -66,6 +66,12 @@ body.screen{overflow:hidden;height:100vh;background:#000}
 .wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
 .wc img{max-height:14vh;border-radius:1.5vh;object-fit:cover;margin-bottom:1vh;align-self:center}
 @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+#cdp{margin-top:.8vh;padding:.7vh 2vw;border-radius:99px;font-size:clamp(1rem,2.2vw,2rem);font-weight:700;font-variant-numeric:tabular-nums;color:var(--tx);background:color-mix(in srgb,var(--tx) 14%,transparent);border:1px solid var(--ac)}
+#cdp.soon{animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.06);box-shadow:0 0 3vh var(--c2)}}
+#cdo{position:absolute;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);color:var(--tx);text-align:center;font-family:var(--ff)}
+#cdn{font-size:clamp(6rem,32vw,34rem);font-weight:800;line-height:1;text-shadow:0 0 5vh var(--c2)}
+#cdl{font-size:clamp(1.8rem,6vw,6rem);font-weight:700;color:var(--ac)}
 #cf{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
 </style>
 </head>
@@ -101,7 +107,7 @@ function fixImg(u){
   return u.replace(/(dropbox\.com\/[^?]*)\?dl=0/,'$1?raw=1');
 }
 
-var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',layout:'single',qr:true,qrPos:'bl',confetti:true};
+var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',confetti:true};
 var PRESETS={
   fiesta:{n:'🎉 Fiesta',c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8'},
   dorado:{n:'✨ Elegante dorado',c1:'#b8860b',c2:'#f5d76e',bg:'#0b0b0b',tx:'#fff8e1',ac:'#f5d76e'},
@@ -109,6 +115,12 @@ var PRESETS={
   quince:{n:'👑 Quinceañera',c1:'#c026d3',c2:'#f472b6',bg:'#1a0830',tx:'#ffffff',ac:'#f5d0fe'},
   corp:{n:'🏢 Corporativo',c1:'#0ea5e9',c2:'#1d4ed8',bg:'#06122b',tx:'#ffffff',ac:'#7dd3fc'},
   tropical:{n:'🌴 Tropical',c1:'#10b981',c2:'#f59e0b',bg:'#06231b',tx:'#ffffff',ac:'#fde68a'}
+};
+var PLANTILLAS={
+  boda:{n:'💍 Boda',p:[['🎉 Inicio',0],['💃 Vals de los novios',45],['🥂 Brindis',75],['📸 Fotos',105],['🎂 Torta',150],['💐 Lanzamiento del ramo',180],['👋 Despedida',240],['🏁 Cierre',270]]},
+  quince:{n:'👑 Quinceañera',p:[['🎉 Inicio',0],['👑 Presentación',30],['💃 Vals',60],['🥂 Brindis',90],['📸 Fotos',120],['🎂 Torta',150],['🔥 Baile sorpresa',180],['👋 Despedida',230],['🏁 Cierre',250]]},
+  cumple:{n:'🎂 Cumpleaños',p:[['🎉 Inicio',0],['📸 Fotos',60],['🎂 Torta',90],['🥂 Brindis',100],['👋 Despedida',180],['🏁 Cierre',200]]},
+  bautizo:{n:'👶 Bautizo',p:[['🎉 Inicio',0],['📸 Fotos',40],['🎂 Torta',70],['👋 Despedida',120],['🏁 Cierre',140]]}
 };
 var FONTS={sans:"system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",serif:"Georgia,'Times New Roman',serif",script:"'Brush Script MT','Segoe Script','Lucida Handwriting',cursive",bold:"Impact,'Arial Black',sans-serif"};
 function theme(c){return Object.assign({},DEF,(c&&c.theme)||{})}
@@ -210,6 +222,8 @@ var FLD=[
  ['anim','sel','Animación',[['fade','Desvanecer'],['zoom','Zoom'],['slide','Deslizar']]],
  ['layout','sel','Diseño de la pantalla',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
  ['qrPos','sel','Posición del QR',[['bl','Abajo izquierda'],['br','Abajo derecha']]],
+ ['countdown','check','Mostrar cuenta regresiva del programa'],
+ ['cdBig','check','Cuenta final de 10 s a pantalla completa'],
  ['qr','check','Mostrar código QR'],
  ['confetti','check','Confeti con cada mensaje nuevo']
 ];
@@ -238,6 +252,13 @@ function panel(){
   +'<button class="sec" id="x">Borrar todos</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
   +'<div class="card"><b>🔗 Enlace para invitados</b><input id="lk" readonly value="'+ea(link)+'" style="margin-top:8px">'
   +'<button id="cp">Copiar enlace</button><a class="btn pink" target="_blank" href="https://wa.me/?text='+encodeURIComponent('¡Deja tu mensaje de felicitación y saldrá en la pantalla grande! 🎉 '+link)+'">Compartir por WhatsApp</a></div>'
+  +'<div class="card"><b>⏱ Programa y cuentas regresivas</b><p class="hint">Agrega los momentos del evento. La pantalla muestra cuánto falta para el siguiente y cuenta los últimos 10 segundos a pantalla completa.</p>'
+  +'<label>Plantillas: hora de inicio del evento</label><input id="ts" type="time" style="max-width:200px">'
+  +'<div>'+Object.keys(PLANTILLAS).map(function(k){return '<button class="pink" data-t="'+k+'" style="padding:6px 10px">'+PLANTILLAS[k].n+'</button>'}).join('')+'</div>'
+  +'<p class="hint">Pon la hora de inicio y toca una plantilla: carga todo el programa de una vez. Luego puedes quitar o agregar momentos.</p>'
+  +'<div>'+['🎉 Inicio','💃 Vals','📸 Fotos','🎂 Torta','🥂 Brindis','👋 Despedida','🏁 Cierre'].map(function(n){return '<button class="sec" data-n="'+n+'" style="padding:6px 10px">'+n+'</button>'}).join('')+'</div>'
+  +'<div class="grid"><div><label>Nombre</label><input id="pn" maxlength="30" placeholder="🎂 Torta"></div><div><label>A la hora</label><input id="pt" type="time"></div><div><label>o en cuántos minutos</label><input id="pm" type="number" min="1" max="600" placeholder="10"></div></div>'
+  +'<button id="pa2">Agregar al programa</button><button class="sec" id="pc2">Borrar programa</button><button class="sec" data-s="10">⏩ Retrasar 10 min</button><button class="sec" data-s="-10">⏪ Adelantar 10 min</button><div id="pl"></div></div>'
   +'<div class="card"><b>📣 Anuncio del DJ</b><p class="hint">Sale a pantalla completa (ej: “¡Todos a la pista!”).</p><input id="at" maxlength="80" placeholder="¡Hora del vals! 💃">'
   +'<button class="pink" id="an">Mostrar anuncio</button><button class="sec" id="ar">Quitar anuncio</button></div>'
   +'<div class="card"><b>📦 Entrega al cliente</b><p class="hint">Descarga los mensajes del evento como recuerdo.</p>'
@@ -269,6 +290,46 @@ function panel(){
   if(REQUIRE_LOGIN){$('so').style.display='';$('so').onclick=function(){firebase.auth().signOut().then(function(){location.reload()})}}
   $('an').onclick=function(){var v=$('at').value.trim();if(!v)return;RC.child('ann').set({text:v.slice(0,80),ts:Date.now()})};
   $('ar').onclick=function(){RC.child('ann').remove();$('at').value=''};
+  $('pa2').onclick=function(){
+    var n=$('pn').value.trim();if(!n){$('pn').focus();return}
+    var m=+$('pm').value,tm=$('pt').value,at=null;
+    if(m>0)at=Date.now()+m*60000;
+    else if(tm){var pp=tm.split(':'),d=new Date();d.setHours(+pp[0],+pp[1],0,0);at=d.getTime();if(at<Date.now()-6*36e5)at+=864e5}
+    if(at===null){alert('Pon una hora o los minutos');return}
+    RC.child('prog').push({name:n.slice(0,30),at:at});
+    $('pn').value='';$('pt').value='';$('pm').value='';
+  };
+  $('pc2').onclick=function(){if(confirm('¿Borrar todo el programa?'))RC.child('prog').remove()};
+  function hhmm(at){return new Date(at).toLocaleTimeString('es-BO',{hour:'2-digit',minute:'2-digit'})}
+  function tickProg(){document.querySelectorAll('[data-at]').forEach(function(el){
+    var d=+el.getAttribute('data-at')-Date.now();
+    el.textContent=d>0?'faltan '+Math.floor(d/3600000)+'h '+('0'+Math.floor(d%3600000/60000)).slice(-2)+'m '+('0'+Math.floor(d%60000/1000)).slice(-2)+'s':'ya pasó ✓';
+  })}
+  RC.child('prog').on('value',function(s){
+    var a=[];s.forEach(function(c){var v=c.val();a.push({id:c.key,name:v.name,at:v.at})});
+    a.sort(function(x,y){return x.at-y.at});
+    $('pl').innerHTML=a.length?a.map(function(it){
+      return '<div class="msg"><b>'+esc(it.name)+'</b> · '+hhmm(it.at)+' · <span data-at="'+it.at+'"></span><br><button class="pink" data-g="'+it.id+'" style="padding:6px 10px">Lanzar ya</button><button class="sec" data-d="'+it.id+'" style="padding:6px 10px">Quitar</button></div>';
+    }).join(''):'<p class="hint">Aún no hay momentos en el programa.</p>';
+    tickProg();
+  });
+  setInterval(tickProg,1000);
+  function loadTpl(k){
+    var tm=$('ts').value;if(!tm){alert('Primero pon la hora de inicio del evento');$('ts').focus();return}
+    var pp=tm.split(':'),d=new Date();d.setHours(+pp[0],+pp[1],0,0);var base=d.getTime();if(base<Date.now()-6*36e5)base+=864e5;
+    RC.child('prog').once('value').then(function(s){
+      if(s.exists()&&!confirm('Ya hay un programa. ¿Reemplazarlo por la plantilla?'))return;
+      var o={};PLANTILLAS[k].p.forEach(function(it,i){o['t'+i+'_'+Date.now().toString(36)]={name:it[0],at:base+it[1]*60000}});
+      return RC.child('prog').set(o);
+    });
+  }
+  function shiftProg(min){
+    RC.child('prog').once('value').then(function(s){
+      var up={},now=Date.now();
+      s.forEach(function(c){var v=c.val();if(v.at>now)up[c.key+'/at']=v.at+min*60000});
+      if(Object.keys(up).length)RC.child('prog').update(up);
+    });
+  }
   function getAll(cb){RM.once('value').then(function(s){var a=[];s.forEach(function(c){var v=c.val();v.id=c.key;a.push(v)});a.sort(function(x,y){return x.ts-y.ts});cb(a)})}
   $('csv').onclick=function(){getAll(function(a){
     var rows=[['Nombre','Mensaje','Fecha','Estado']].concat(a.map(function(m){return [m.name,m.text,new Date(m.ts).toLocaleString('es-BO'),m.status]}));
@@ -363,6 +424,11 @@ function panel(){
   });
 
   $app.onclick=function(e){
+    var tp=e.target.getAttribute('data-t');if(tp){loadTpl(tp);return}
+    var sh=e.target.getAttribute('data-s');if(sh){shiftProg(+sh);return}
+    var nm=e.target.getAttribute('data-n');if(nm){$('pn').value=nm;$('pn').focus();return}
+    var pg=e.target.getAttribute('data-g');if(pg){RC.child('prog/'+pg+'/at').set(Date.now());return}
+    var pd=e.target.getAttribute('data-d');if(pd){RC.child('prog/'+pd).remove();return}
     var pr=e.target.getAttribute('data-p');
     if(pr){RT.update({c1:PRESETS[pr].c1,c2:PRESETS[pr].c2,bg:PRESETS[pr].bg,tx:PRESETS[pr].tx,ac:PRESETS[pr].ac}).then(function(){return RC.once('value')}).then(function(s){fill(theme(s.val()))});return}
     var a=e.target.getAttribute('data-a'),id=e.target.getAttribute('data-id');if(!a)return;
@@ -391,9 +457,9 @@ function pantalla(){
   var $=function(i){return document.getElementById(i)};
   var link=BASE+'?e='+EV+'#enviar';
   $app.innerHTML='<div id="scr"><img id="lg" alt="" style="display:none">'
-  +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div></div>'
+  +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div><div id="cdp" style="display:none"></div></div>'
   +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el QR y envía tu mensaje 💬</div></div></div><div id="wall"></div></div>'
-  +'<div id="ann"></div><div id="qr" class="q-bl"><div id="qc"></div>Escanea y felicita 🎉</div>'
+  +'<div id="ann"></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Escanea y felicita 🎉</div>'
   +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
   new QRCode($('qc'),{text:link,width:160,height:160});
   $('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
@@ -448,6 +514,24 @@ function pantalla(){
     if(theme(cfg).layout==='wall'){wallPage++;renderWall();timer=setTimeout(next,(cfg.secs||12)*1000);return}
     idx=(idx+1)%msgs.length;show(msgs[idx],false);
   }
+  var celebrated={},firstTick=true;
+  function fmt(ms){var s=Math.max(0,Math.ceil(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60,p=function(n){return n<10?'0'+n:''+n};return (h?h+':':'')+p(m)+':'+p(x)}
+  function tick(){
+    var t=theme(cfg),now=Date.now(),P=cfg.prog||{};
+    var items=Object.keys(P).map(function(k){return {id:k,name:P[k].name,at:P[k].at}}).sort(function(a,b){return a.at-b.at});
+    var cel=null,nxt=null;
+    items.forEach(function(it){if(it.at<=now&&now-it.at<20000)cel=it;if(!nxt&&it.at>now)nxt=it});
+    var pill=$('cdp'),o=$('cdo'),n=$('cdn');
+    if(t.countdown&&nxt){pill.style.display='';pill.textContent=nxt.name+' en '+fmt(nxt.at-now);pill.className=(nxt.at-now<=60000)?'soon':''}else pill.style.display='none';
+    if(cel){
+      n.style.fontSize='clamp(3rem,13vw,13rem)';n.textContent='¡AHORA!';$('cdl').textContent=cel.name;o.style.display='flex';
+      if(!celebrated[cel.id]){celebrated[cel.id]=1;if(!firstTick&&t.confetti)confetti(t)}
+    }else if(t.cdBig&&nxt&&nxt.at-now<=10000){
+      n.style.fontSize='';n.textContent=Math.ceil((nxt.at-now)/1000);$('cdl').textContent=nxt.name;o.style.display='flex';
+    }else o.style.display='none';
+    firstTick=false;
+  }
+  setInterval(tick,250);
   RC.on('value',function(s){
     var first=(lastNow===null);
     cfg=s.val()||{};paint();
