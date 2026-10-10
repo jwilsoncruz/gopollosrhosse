@@ -222,7 +222,7 @@ function enviar(){
       var b=$('glv');if(!b)return;
       var src=(cc.liveOn&&cc.liveG!==false)?liveEmbed(cc.live,false):'';
       if(src===lastLive)return;lastLive=src;
-      b.innerHTML=src?'<p class="hint">Transmisión en vivo</p><iframe src="'+ea(src)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>':'';
+      b.innerHTML=src?'<p class="hint">Transmisión en vivo</p><iframe src="'+ea(src)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>':'';
     }
     drawLive(c);
     setInterval(function(){if(document.hidden)return;rget('config').then(function(cc){if(cc)drawLive(cc)}).catch(function(){})},20000);
@@ -556,7 +556,7 @@ function pantalla(){
     if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx])}
     var lvs=isLive()?liveEmbed(cfg.live,true):'';
     $('scr').classList.toggle('live',!!lvs);
-    if(lvs!==lastLv){lastLv=lvs;$('lv').innerHTML=lvs?'<iframe src="'+ea(lvs)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>':''}
+    if(lvs!==lastLv){lastLv=lvs;$('lv').innerHTML=lvs?'<iframe src="'+ea(lvs)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>':''}
     drawVel();
   }
   function show(m){
