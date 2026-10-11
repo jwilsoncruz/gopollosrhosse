@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Homenaje en Vida</title>
+<title>En memoria · Libro de condolencias</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -197,7 +197,8 @@ function loginView(){
 /* ---------- MENÚ ---------- */
 function menu(){
   var l=BASE+'?e='+EV;
-  $app.innerHTML='<div class="wrap"><div class="card"><h1>🕊️ Homenaje en vida</h1><p class="hint">Servicio: <b>'+esc(EV)+'</b> (cambia con <code>?e=nombre</code> en el enlace)</p>'
+  document.title='En memoria · Libro de condolencias';
+  $app.innerHTML='<div class="wrap"><div class="card"><h1>🕊️ En memoria</h1><p class="hint">Servicio: <b>'+esc(EV)+'</b> (cambia con <code>?e=nombre</code> en el enlace)</p>'
   +'<a class="btn" href="'+l+'#panel">🎛️ Panel</a><a class="btn gold" href="'+l+'#pantalla">📺 Pantalla</a><a class="btn sec" href="'+l+'#enviar">✍️ Formulario para asistentes</a></div></div>';
 }
 
@@ -209,6 +210,7 @@ function enviar(){
   var $=function(i){return document.getElementById(i)};
   rget('config').then(function(c){
     c=c||{};var t=theme(c);
+    document.title='Palabras para '+(c.honoree||'nuestro ser querido')+' · En memoria';
     applyTheme(document.documentElement,t);document.body.className='guest';
     var lg=fixImg(t.logo),ph=fixImg(t.photo),saved=localStorage.getItem('mev_name')||'';
     var head=(lg?'<img class="glg" alt="" src="'+ea(lg)+'" onerror="this.remove()">':'')
@@ -260,7 +262,7 @@ function enviar(){
 /* ---------- PANEL ---------- */
 var FLD=[
  ['sec','🖼️ Imágenes (pega el link de la foto)'],
- ['photo','url','Foto del homenajeado'],
+ ['photo','url','Foto de la persona homenajeada'],
  ['logo','url','Logo de la funeraria'],
  ['logoPos','sel','Posición del logo',[['tr','Arriba derecha'],['tl','Arriba izquierda'],['bc','Abajo centro']]],
  ['logoH','range','Tamaño del logo',5,25],
@@ -488,7 +490,7 @@ function panel(){
     $('p').innerHTML=p||'<p class="hint">Nada pendiente.</p>';
     $('ok').innerHTML=o||'<p class="hint">Aún no hay aprobados.</p>';
     $('pc').textContent=pc;$('oc').textContent=oc;
-    document.title=(pc?'('+pc+') ':'')+'Panel';
+    document.title=(pc?'('+pc+') ':'')+'Panel · En memoria';
     if($('a').checked)all.forEach(function(m){
       if(m.status==='pendiente'&&!autoDone[m.id]){
         autoDone[m.id]=1;
@@ -556,6 +558,7 @@ function pantalla(){
     applyTheme($('scr'),t);
     $('htt').textContent=t.title;
     $('hn').textContent=cfg.honoree||'🕊️';
+    document.title=(cfg.honoree?'En memoria de '+cfg.honoree:'En memoria')+' · Pantalla';
     $('hd').textContent=cfg.dates||'';$('hq').textContent=cfg.quote?'“'+cfg.quote+'”':'';
     var ph=fixImg(t.photo),hp=$('hph');
     if(ph){if(hp.getAttribute('src')!==ph)hp.src=ph;hp.style.display=''}else hp.style.display='none';
