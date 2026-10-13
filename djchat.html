@@ -8,7 +8,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<link rel="icon" href="mensaje.png">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
@@ -112,6 +111,8 @@ var q=new URLSearchParams(location.search);
 var EV=(q.get('e')||'fiesta').replace(/[^a-z0-9_-]/gi,'').toLowerCase()||'fiesta';
 var mode=location.hash.replace('#','')||'menu';
 var BASE=location.href.split('#')[0].split('?')[0];
+/* al cambiar #panel / #pantalla / #enviar sin recargar, la página se recarga sola */
+window.addEventListener('hashchange',function(){location.reload()});
 
 function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
 function ea(s){return esc(s).replace(/"/g,'&quot;')}
