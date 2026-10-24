@@ -56,19 +56,21 @@ body.screen{overflow:hidden;height:100vh;background:#000}
 #bub.out{opacity:0}
 #bub.a-rise.out{transform:translateY(3vh)}
 #bimg{max-height:36vh;max-width:30vw;border-radius:1vh;object-fit:cover}
-#bt{font-size:calc(clamp(1.4rem,3.8vw,3.6rem)*var(--sc));line-height:1.3;font-style:italic;word-break:break-word}
-#bf{margin-top:.7em;font-size:calc(clamp(1.1rem,2.5vw,2.3rem)*var(--sc));color:var(--ac)}
+#bt{font-size:calc(clamp(1.4rem,3.8vw,3.6rem)*var(--sc)*var(--fit,1));line-height:1.3;font-style:italic;word-break:break-word}
+#bf{margin-top:.7em;font-size:calc(clamp(1.1rem,2.5vw,2.3rem)*var(--sc)*var(--fit,1));color:var(--ac)}
 #lg{position:absolute;max-width:24vw;object-fit:contain}
 #lg.p-tl{top:2.5vh;left:2.5vw}#lg.p-tr{top:2.5vh;right:2.5vw}#lg.p-bc{bottom:2vh;left:50%;transform:translateX(-50%)}
-#qr{position:absolute;z-index:8;bottom:3vh;background:#fff;color:#26231f;padding:10px;border-radius:8px;font-size:clamp(.7rem,1.2vw,1rem)}
+#qr{position:absolute;z-index:8;bottom:3vh;background:#fff;color:#26231f;padding:.8vh;border-radius:8px;font-size:clamp(.65rem,1.1vw,.95rem);text-align:center;line-height:1.2}
 #qr.q-bl{left:2vw}#qr.q-br{right:2vw}
-#qr div{margin:0 auto 6px;display:flex;justify-content:center}
+#qr.q-tl{top:2.5vh;bottom:auto;left:2vw}#qr.q-tr{top:2.5vh;bottom:auto;right:2vw}
+#qr div{margin:0 auto .5vh;display:flex;justify-content:center}
+#qc canvas,#qc img{width:var(--qs,14vh)!important;height:var(--qs,14vh)!important;min-width:90px;min-height:90px}
 #fs{position:absolute;right:1vw;bottom:1vh;opacity:.6;font-size:.8rem;padding:6px 10px;z-index:8;transition:opacity .4s}
 #ann{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;padding:6vw;background:rgba(0,0,0,.8);font-size:calc(clamp(1.8rem,6vw,5.5rem)*var(--sc));line-height:1.2;color:var(--tx)}
 #wall{display:none;flex:1;align-self:stretch;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2vh 2vw;padding:1vh 0}
 .wc{background:color-mix(in srgb,var(--tx) 8%,transparent);border-left:.4vh solid var(--ac);border-radius:.8vh;padding:2.5vh 2vw;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:fin 1s}
-.wc .wt{font-size:calc(clamp(1rem,1.9vw,1.9rem)*var(--sc));font-style:italic;line-height:1.25;word-break:break-word}
-.wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.4vw,1.4rem)*var(--sc))}
+.wc .wt{font-size:calc(clamp(1rem,1.9vw,1.9rem)*var(--sc)*var(--wf,1));font-style:italic;line-height:1.25;word-break:break-word}
+.wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.4vw,1.4rem)*var(--sc)*var(--wf,1))}
 .wc img{max-height:14vh;border-radius:.8vh;object-fit:cover;margin-bottom:1vh;align-self:center}
 @keyframes fin{from{opacity:0}to{opacity:1}}
 #cdp{margin-top:.6vh;padding:.7vh 2vw;border-radius:99px;font-size:clamp(1rem,2vw,1.8rem);font-variant-numeric:tabular-nums;background:color-mix(in srgb,var(--tx) 12%,transparent);border:1px solid var(--ac)}
@@ -85,8 +87,8 @@ body.screen{overflow:hidden;height:100vh;background:#000}
 #scr.live #hq{display:none}
 #scr.live #bub{position:absolute;left:0;right:0;bottom:1.5vh;margin:0 auto;width:max-content;max-width:70vw;padding:1.5vh 2vw;background:rgba(0,0,0,.72)}
 #scr.live #bimg{display:none}
-#scr.live #bt{font-size:calc(clamp(1rem,2.2vw,2.2rem)*var(--sc))}
-#scr.live #bf{font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
+#scr.live #bt{font-size:calc(clamp(1rem,2.2vw,2.2rem)*var(--sc)*var(--fit,1))}
+#scr.live #bf{font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc)*var(--fit,1))}
 </style>
 </head>
 <body>
@@ -135,7 +137,7 @@ function liveEmbed(u,screen){
   if(/facebook\.com|fb\.watch/i.test(u))return 'https://www.facebook.com/plugins/video.php?show_text=false&href='+encodeURIComponent(u)+(screen?'&autoplay=true&mute=true':'');
   return '';
 }
-var DEF={c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a',bgImg:'',ov:45,logo:'',logoPos:'tr',logoH:10,photo:'',title:'En memoria de',font:'serif',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',candles:true};
+var DEF={c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a',bgImg:'',ov:45,logo:'',logoPos:'tr',logoH:10,photo:'',title:'En memoria de',font:'serif',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'tl',qrSize:14,candles:true};
 var PRESETS={
   sobrio:{n:'🕊️ Sobrio',c1:'#243447',c2:'#4a5568',bg:'#0f1722',tx:'#f5f1e8',ac:'#e3c78a'},
   blanco:{n:'🤍 Blanco y paz',c1:'#e8eef4',c2:'#cbd5e1',bg:'#f8f6f1',tx:'#2b2f36',ac:'#6b5a2e'},
@@ -220,7 +222,7 @@ function enviar(){
     var body=c.closed?'<p class="hint">Los mensajes ya cerraron. Gracias por acompañarnos.</p>'
       :'<p class="hint">Tu mensaje de condolencia o recuerdo se mostrará en la pantalla.</p>'
       +'<label>Tu nombre</label><input id="n" maxlength="30" placeholder="Ej: Familia Pérez" value="'+ea(saved)+'">'
-      +'<label>Tu mensaje</label><textarea id="t" maxlength="200" placeholder="Siempre te recordaremos…"></textarea>'
+      +'<label>Tu mensaje</label><textarea id="t" maxlength="200" placeholder="Siempre te recordaremos…"></textarea><div class="hint" id="cnt" style="text-align:right">0 / 200</div>'
       +'<button id="b" class="gold" style="width:100%;margin-top:12px">Enviar mensaje</button><div id="r"></div>'
       +(t.candles?'<hr style="border:0;border-top:1px solid #e6e2da;margin:18px 0"><p class="hint">Enciende una vela en su memoria</p><button id="v" class="sec" style="width:100%">🕯️ Encender una vela</button><div id="vr"></div>':'');
     $app.innerHTML='<div class="wrap"><div class="card gc">'+head+'<div id="glv" class="glive"></div>'+body+'</div></div>';
@@ -232,6 +234,7 @@ function enviar(){
       b.innerHTML=src?'<p class="hint">Transmisión en vivo</p><iframe src="'+ea(src)+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>':'';
     }
     drawLive(c);
+    if($('t'))$('t').oninput=function(){$('cnt').textContent=this.value.length+' / 200'};
     setInterval(function(){if(document.hidden)return;rget('config').then(function(cc){if(cc)drawLive(cc)}).catch(function(){})},20000);
 
     if($('b'))$('b').onclick=function(){
@@ -276,7 +279,8 @@ var FLD=[
  ['title','text','Texto sobre el nombre'],
  ['anim','sel','Transición',[['fade','Desvanecer'],['rise','Subir suave']]],
  ['layout','sel','Diseño',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
- ['qrPos','sel','Posición del QR',[['bl','Abajo izquierda'],['br','Abajo derecha']]],
+ ['qrPos','sel','Posición del QR',[['tl','Arriba izquierda'],['tr','Arriba derecha'],['bl','Abajo izquierda'],['br','Abajo derecha']]],
+ ['qrSize','range','Tamaño del QR',8,24],
  ['countdown','check','Mostrar cuenta regresiva del programa'],
  ['cdBig','check','Aviso a pantalla completa al llegar la hora'],
  ['qr','check','Mostrar código QR'],
@@ -330,7 +334,7 @@ function panel(){
   +'<div class="sec" style="border:0;margin-top:0">Temas listos</div><div>'
   +Object.keys(PRESETS).map(function(k){return '<button class="sec" data-p="'+k+'">'+PRESETS[k].n+'</button>'}).join('')+'</div>'
   +'<div class="grid">'+FLD.map(fieldHtml).join('')+'</div></details></div>'
-  +'<div class="card"><b>✍️ Mensaje manual (del WhatsApp)</b><label>Nombre</label><input id="mn"><label>Mensaje</label><textarea id="mt"></textarea>'
+  +'<div class="card"><b>✍️ Mensaje manual (del WhatsApp)</b><label>Nombre</label><input id="mn"><label>Mensaje (máximo 500 letras; los textos largos se muestran con letra más pequeña)</label><textarea id="mt" maxlength="500"></textarea>'
   +'<label>Foto para este mensaje (link, opcional)</label><input id="mp" placeholder="https://...">'
   +'<button id="mb">Mostrar ahora</button></div>'
   +'<div class="card"><b>⏳ Por aprobar (<span id="pc">0</span>)</b> <button class="sec" data-a="all" style="padding:6px 10px">Aprobar todos</button><div id="p"></div></div>'
@@ -528,7 +532,7 @@ function pantalla(){
   +'<div id="main"><div id="lv"></div><div id="bub" class="a-fade"><div><div id="bt">Escanea el código QR para dejar unas palabras en su memoria</div></div></div><div id="wall"></div></div>'
   +'<div id="ann"></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Deja unas palabras</div>'
   +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
-  new QRCode($('qc'),{text:link,width:150,height:150});
+  new QRCode($('qc'),{text:link,width:240,height:240});
   $('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
   try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(function(){})}catch(e){}
   var hideT;
@@ -538,7 +542,20 @@ function pantalla(){
   var msgs=[],cfg={},idx=-1,timer=null,seen=null,lastNow=null,lastLy=null,wallPage=0,nVel=0,lastLv='';
   function isLive(){return !!(cfg.liveOn&&cfg.liveS!==false&&liveEmbed(cfg.live,true))}
   function fitLive(){var m=$('main'),f=$('lv').firstChild;if(!f||!f.style)return;var W=Math.min(m.clientWidth,m.clientHeight*16/9);f.style.width=W+'px';f.style.height=(W*9/16)+'px'}
-  window.addEventListener('resize',fitLive);
+  function fitMsg(){
+    var b=$('bub'),m=$('main');if(!b||!m||b.style.display==='none')return;
+    b.style.setProperty('--fit',1);
+    var lim=m.clientHeight*(isLive()?0.3:0.97),k=1;
+    for(var i=0;i<16&&b.offsetHeight>lim&&k>0.3;i++){k=Math.max(0.3,k*0.9);b.style.setProperty('--fit',k)}
+  }
+  function fitWall(){
+    var cs=document.querySelectorAll('#wall .wc');
+    for(var j=0;j<cs.length;j++){
+      var c=cs[j],k=1;c.style.setProperty('--wf',1);
+      for(var i=0;i<14&&c.scrollHeight>c.clientHeight+1&&k>0.4;i++){k=Math.max(0.4,k*0.9);c.style.setProperty('--wf',k)}
+    }
+  }
+  window.addEventListener('resize',function(){fitLive();fitMsg();fitWall()});
   function renderWall(first){
     var list=msgs.slice().reverse();
     if(first){list=list.filter(function(m){return m.id!==first.id});list.unshift(first)}
@@ -548,6 +565,7 @@ function pantalla(){
       var im=fixImg(m.img);
       return '<div class="wc">'+(im?'<img alt="" src="'+ea(im)+'" onerror="this.remove()">':'')+'<div class="wt">“'+esc(m.text)+'”</div><div class="wf">— '+esc(m.name)+'</div></div>';
     }).join(''):'<div class="wc" style="grid-column:1/-1;grid-row:1/-1"><div class="wt">Escanea el código QR para dejar unas palabras en su memoria</div></div>';
+    fitWall();
   }
   function drawVel(){
     var t=theme(cfg),v=$('vel');
@@ -566,7 +584,9 @@ function pantalla(){
     var lg=fixImg(t.logo),l=$('lg');
     if(lg){if(l.getAttribute('src')!==lg)l.src=lg;l.style.display='';l.style.height=t.logoH+'vh';l.className='p-'+t.logoPos}else l.style.display='none';
     l.onerror=function(){this.style.display='none'};
-    var qr=$('qr');qr.style.display=t.qr?'':'none';qr.className='q-'+t.qrPos;
+    var qr=$('qr'),qp=t.qrPos||'tl';
+    if((qp==='tl'||qp==='tr')&&lg&&t.logoPos===qp)qp=(qp==='tl'?'tr':'tl');
+    qr.style.display=t.qr?'':'none';qr.className='q-'+qp;qr.style.setProperty('--qs',(t.qrSize||14)+'vh');
     var ly=(t.layout==='wall')&&!isLive();
     $('bub').style.display=ly?'none':'';$('wall').style.display=ly?'grid':'none';
     if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx])}
@@ -584,6 +604,7 @@ function pantalla(){
       b.innerHTML=(im?'<img id="bimg" alt="" src="'+ea(im)+'" onerror="this.remove()">':'')
         +'<div><div id="bt">“'+esc(m.text)+'”</div><div id="bf">— '+esc(m.name)+'</div></div>';
       b.className='a-'+t.anim;
+      fitMsg();
     },900);
     clearTimeout(timer);timer=setTimeout(next,(cfg.secs||12)*1000);
   }
