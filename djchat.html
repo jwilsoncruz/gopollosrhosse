@@ -51,18 +51,19 @@ body.screen{overflow:hidden;height:100vh;background:#000}
 #bub.a-zoom.out{transform:scale(.85)}
 #bub.a-slide.out{transform:translateX(8vw)}
 #bimg{max-height:38vh;max-width:30vw;border-radius:2vh;object-fit:cover}
-#bt{font-size:calc(clamp(1.5rem,4.4vw,4.2rem)*var(--sc));line-height:1.2;font-weight:700;word-break:break-word}
+#bt{font-size:calc(clamp(1.5rem,4.4vw,4.2rem)*var(--sc)*var(--k,1));line-height:1.2;font-weight:700;word-break:break-word}
 #bf{margin-top:.7em;font-size:calc(clamp(1.1rem,2.8vw,2.6rem)*var(--sc));color:var(--ac)}
 #lg{position:absolute;max-width:24vw;object-fit:contain}
 #lg.p-tl{top:2.5vh;left:2.5vw}#lg.p-tr{top:2.5vh;right:2.5vw}#lg.p-bc{bottom:2vh;left:50%;transform:translateX(-50%)}
-#qr{position:absolute;z-index:8;bottom:3vh;background:#fff;color:#1d1633;padding:10px;border-radius:14px;font-weight:700;font-size:clamp(.7rem,1.3vw,1.1rem)}
+#qr{position:absolute;z-index:8;left:calc(var(--qx,2)*1%);top:calc(var(--qy,97)*1%);transform:translate(calc(var(--qx,2)*-1%),calc(var(--qy,97)*-1%));background:#fff;color:#1d1633;padding:calc(var(--qs,15)*.07vh);border-radius:14px;font-weight:700;font-size:calc(var(--qs,15)*.11vh);text-align:center}
 #qr.q-bl{left:2vw}#qr.q-br{right:2vw}
-#qr div{margin:0 auto 6px;display:flex;justify-content:center}
+#qc{width:calc(var(--qs,15)*1vh);height:calc(var(--qs,15)*1vh);margin:0 auto .6vh}
+#qc canvas,#qc img{width:100%!important;height:100%!important}
 #fs{position:absolute;right:1vw;bottom:1vh;opacity:.6;font-size:.8rem;padding:6px 10px;z-index:8;transition:opacity .4s}
 #ann{position:absolute;inset:0;z-index:7;display:none;align-items:center;justify-content:center;padding:6vw;background:rgba(0,0,0,.74);backdrop-filter:blur(10px);font-size:calc(clamp(2rem,7vw,7rem)*var(--sc));font-weight:800;line-height:1.1;color:var(--tx);text-shadow:0 0 4vh var(--c2)}
 #wall{display:none;flex:1;align-self:stretch;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2vh 2vw;padding:1vh 0}
 .wc{background:color-mix(in srgb,var(--tx) 9%,transparent);border:1px solid color-mix(in srgb,var(--tx) 22%,transparent);border-radius:2.5vh;padding:2.5vh 2vw;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:pop .6s}
-.wc .wt{font-size:calc(clamp(1rem,2vw,2rem)*var(--sc));font-weight:700;line-height:1.2;word-break:break-word}
+.wc .wt{font-size:calc(clamp(1rem,2vw,2rem)*var(--sc)*var(--k,1));font-weight:700;line-height:1.2;word-break:break-word}
 .wc .wf{margin-top:.6em;color:var(--ac);font-size:calc(clamp(.9rem,1.5vw,1.5rem)*var(--sc))}
 .wc img{max-height:14vh;border-radius:1.5vh;object-fit:cover;margin-bottom:1vh;align-self:center}
 @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
@@ -124,7 +125,7 @@ function fixImg(u){
   return u.replace(/(dropbox\.com\/[^?]*)\?dl=0/,'$1?raw=1');
 }
 
-var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',confetti:true};
+var DEF={c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8',bgImg:'',ov:40,logo:'',logoPos:'tr',logoH:11,photo:'',title:'Mensajes para',font:'sans',size:100,anim:'fade',qrX:2,qrY:97,qrS:15,layout:'single',countdown:true,cdBig:true,qr:true,qrPos:'bl',confetti:true};
 var PRESETS={
   fiesta:{n:'🎉 Fiesta',c1:'#6d28d9',c2:'#db2777',bg:'#12091f',tx:'#ffffff',ac:'#fbcfe8'},
   dorado:{n:'✨ Elegante dorado',c1:'#b8860b',c2:'#f5d76e',bg:'#0b0b0b',tx:'#fff8e1',ac:'#f5d76e'},
@@ -140,7 +141,8 @@ var PLANTILLAS={
   bautizo:{n:'👶 Bautizo',p:[['🎉 Inicio',0],['📸 Fotos',40],['🎂 Torta',70],['👋 Despedida',120],['🏁 Cierre',140]]}
 };
 var FONTS={sans:"system-ui,-apple-system,'Segoe UI',Roboto,sans-serif",serif:"Georgia,'Times New Roman',serif",script:"'Brush Script MT','Segoe Script','Lucida Handwriting',cursive",bold:"Impact,'Arial Black',sans-serif"};
-function theme(c){return Object.assign({},DEF,(c&&c.theme)||{})}
+var QPOS={bl:[2,97],br:[98,97],bc:[50,97],tl:[2,3],tr:[98,3],cc:[50,50]};
+function theme(c){var o=(c&&c.theme)||{},t=Object.assign({},DEF,o),pr=QPOS[o.qrPos||'bl']||QPOS.bl;if(o.qrX===undefined)t.qrX=pr[0];if(o.qrY===undefined)t.qrY=pr[1];return t}
 function applyTheme(el,t){
   var s=el.style,u=fixImg(t.bgImg);
   s.setProperty('--c1',t.c1);s.setProperty('--c2',t.c2);s.setProperty('--bg',t.bg);
@@ -199,7 +201,7 @@ function enviar(){
   if(!gid){gid='g'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);localStorage.setItem('mev_gid',gid)}
   var $=function(i){return document.getElementById(i)};
   rget('config').then(function(c){
-    c=c||{};var t=theme(c);
+    c=c||{};var t=theme(c);var MX=Math.min(300,Math.max(40,+c.maxChars||140));
     applyTheme(document.documentElement,t);document.body.className='guest';
     var lg=fixImg(t.logo),ph=fixImg(t.photo),saved=localStorage.getItem('mev_name')||'';
     var head=(lg?'<img class="glg" alt="" src="'+ea(lg)+'" onerror="this.remove()">':'')
@@ -209,12 +211,13 @@ function enviar(){
     var p1=c.closed?'<p class="hint">🔒 Los mensajes ya cerraron. ¡Gracias por participar! 🎉</p>'
       :'<p class="hint">Tu mensaje saldrá en la pantalla grande.</p>'
       +'<label>Tu nombre</label><input id="n" maxlength="30" placeholder="Ej: Tía Rosa" value="'+ea(saved)+'">'
-      +'<label>Tu mensaje</label><textarea id="t" maxlength="140" placeholder="¡Feliz cumpleaños!"></textarea>'
+      +'<label>Tu mensaje</label><textarea id="t" maxlength="'+MX+'" placeholder="¡Feliz cumpleaños!"></textarea><div class="hint" id="cnt" style="text-align:right">0 / '+MX+'</div>'
       +'<button id="b" class="pink" style="width:100%;margin-top:12px">Enviar 🚀</button><div id="r"></div>';
     var p2=c.kOn?'<div id="p2" style="display:none"><p class="hint">Anótate para cantar 🎤</p><label>Tu nombre</label><input id="kn2" maxlength="30" value="'+ea(saved)+'"><label>Canción (y artista)</label><input id="ks2" maxlength="60" placeholder="Ej: Hotel California – Eagles"><button id="kb" class="pink" style="width:100%;margin-top:12px">Anotarme 🎤</button><div id="kr"></div></div>':'';
     var p3=c.gOn?'<div id="p3" style="display:none"><label>Tu nombre (para el ranking)</label><input id="gn" maxlength="30" value="'+ea(saved)+'"><div id="jq"><p class="hint">Cargando…</p></div></div>':'';
     $app.innerHTML='<div class="wrap"><div class="card gc">'+head+tabs+'<div id="p1">'+p1+'</div>'+p2+p3+'</div></div>';
 
+    if($('t'))$('t').oninput=function(){$('cnt').textContent=this.value.length+' / '+MX};
     if($('b'))$('b').onclick=function(){
       var n=$('n').value.trim(),tx=$('t').value.trim();
       var last=+localStorage.getItem('mev_last')||0;
@@ -223,7 +226,7 @@ function enviar(){
       localStorage.setItem('mev_name',n);
       rget('config/closed').then(function(cl){
         if(cl)throw new Error('closed');
-        return rsend('POST','mensajes',{name:(n||'Un invitado').slice(0,30),text:tx.slice(0,140),ts:Date.now(),status:'pendiente'});
+        return rsend('POST','mensajes',{name:(n||'Un invitado').slice(0,30),text:tx.slice(0,MX),ts:Date.now(),status:'pendiente'});
       }).then(function(){
         localStorage.setItem('mev_last',Date.now());$('t').value='';
         $('r').innerHTML='<div class="ok">¡Mensaje enviado! 🎉 Pronto saldrá en pantalla.</div>';
@@ -299,7 +302,10 @@ var FLD=[
  ['title','text','Título de la pantalla'],
  ['anim','sel','Animación',[['fade','Desvanecer'],['zoom','Zoom'],['slide','Deslizar']]],
  ['layout','sel','Diseño de la pantalla',[['single','Un mensaje grande'],['wall','Muro de mensajes']]],
- ['qrPos','sel','Posición del QR',[['bl','Abajo izquierda'],['br','Abajo derecha']]],
+ ['qrPos','sel','Posición rápida del QR',[['bl','Abajo izquierda'],['br','Abajo derecha'],['bc','Abajo centro'],['tl','Arriba izquierda'],['tr','Arriba derecha'],['cc','Centro']]],
+ ['qrX','range','Mover el QR: izquierda ⇄ derecha',0,100],
+ ['qrY','range','Mover el QR: arriba ⇅ abajo',0,100],
+ ['qrS','range','Tamaño del QR',8,45],
  ['countdown','check','Mostrar cuenta regresiva del programa'],
  ['cdBig','check','Cuenta final de 10 s a pantalla completa'],
  ['qr','check','Mostrar código QR'],
@@ -326,6 +332,7 @@ function panel(){
   +'<label style="display:flex;gap:8px;align-items:center"><input id="a" type="checkbox"> Aprobar automáticamente (sin revisar)</label>'
   +'<label style="display:flex;gap:8px;align-items:center"><input id="pa" type="checkbox"> ⏸ Pausar rotación (se queda el mensaje actual)</label>'
   +'<label style="display:flex;gap:8px;align-items:center"><input id="cl" type="checkbox"> 🔒 Cerrar recepción de mensajes (el formulario deja de aceptar)</label>'
+  +'<label>Límite de caracteres por mensaje (40 a 300)</label><input id="mc" type="number" min="40" max="300" style="max-width:160px">'
   +'<label>Palabras prohibidas (separadas por coma). Esos mensajes siempre piden revisión</label><input id="bw" placeholder="palabra1, palabra2">'
   +'<a class="btn pink" target="_blank" href="'+BASE+'?e='+EV+'#pantalla">📺 Abrir pantalla</a>'
   +'<button class="sec" id="x">Borrar todos</button><button class="sec" id="so" style="display:none">Cerrar sesión</button></div>'
@@ -365,7 +372,7 @@ function panel(){
 
   RC.once('value').then(function(s){
     var c=s.val()||{};
-    $('h').value=c.honoree||'';$('s').value=c.secs||12;$('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('kon').checked=!!c.kOn;$('gon').checked=!!c.gOn;$('bw').value=c.bad||'';
+    $('h').value=c.honoree||'';$('s').value=c.secs||12;$('a').checked=!!c.auto;$('pa').checked=!!c.pause;$('cl').checked=!!c.closed;$('kon').checked=!!c.kOn;$('gon').checked=!!c.gOn;$('bw').value=c.bad||'';$('mc').value=c.maxChars||140;
     fill(theme(c));
   });
   $('h').oninput=function(){RC.child('honoree').set(this.value)};
@@ -521,6 +528,7 @@ function panel(){
   $('pa').onchange=function(){RC.child('pause').set(this.checked)};
   $('cl').onchange=function(){RC.child('closed').set(this.checked)};
   $('bw').onchange=function(){RC.child('bad').set(this.value)};
+  $('mc').onchange=function(){var v=Math.min(300,Math.max(40,+this.value||140));this.value=v;RC.child('maxChars').set(v)};
   $('x').onclick=function(){if(confirm('¿Borrar todos los mensajes?')){RM.remove();RC.child('now').remove()}};
   $('cp').onclick=function(){
     var i=$('lk');
@@ -539,7 +547,7 @@ function panel(){
     el.addEventListener(ty==='range'?'input':'change',function(){
       var v=ty==='check'?el.checked:(ty==='range'?+el.value:el.value.trim());
       clearTimeout(tmr[k]);
-      tmr[k]=setTimeout(function(){var o={};o[k]=v;RT.update(o)},ty==='range'?250:0);
+      tmr[k]=setTimeout(function(){var o={};o[k]=v;if(k==='qrPos'&&QPOS[v]){o.qrX=QPOS[v][0];o.qrY=QPOS[v][1];$('f_qrX').value=o.qrX;$('f_qrY').value=o.qrY}RT.update(o)},ty==='range'?250:0);
     });
   });
 
@@ -619,9 +627,9 @@ function pantalla(){
   $app.innerHTML='<div id="scr"><img id="lg" alt="" style="display:none">'
   +'<div id="hdr"><img id="hph" alt="" style="display:none"><div id="htt"></div><div id="hn"></div><div id="cdp" style="display:none"></div><div id="kar" style="display:none"></div></div>'
   +'<div id="main"><div id="bub" class="a-fade"><div><div id="bt">Escanea el QR y envía tu mensaje 💬</div></div></div><div id="wall"></div></div>'
-  +'<div id="ann"></div><div id="gm" style="display:none"></div><div id="sr"><div id="srt"></div><div id="srn"></div><div id="srp"></div></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr" class="q-bl"><div id="qc"></div>Escanea y felicita 🎉</div>'
+  +'<div id="ann"></div><div id="gm" style="display:none"></div><div id="sr"><div id="srt"></div><div id="srn"></div><div id="srp"></div></div><div id="cdo"><div id="cdn"></div><div id="cdl"></div></div><div id="qr"><div id="qc"></div>Escanea y felicita 🎉</div>'
   +'<button id="fs" class="sec">⛶ Pantalla completa</button></div>';
-  new QRCode($('qc'),{text:link,width:160,height:160});
+  new QRCode($('qc'),{text:link,width:512,height:512});
   $('fs').onclick=function(){var d=document.documentElement;(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d)};
   try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(function(){})}catch(e){}
   var hideT;
@@ -636,7 +644,7 @@ function pantalla(){
     var sl=list.slice(wallPage*6,wallPage*6+6);
     $('wall').innerHTML=sl.length?sl.map(function(m){
       var im=fixImg(m.img);
-      return '<div class="wc">'+(im?'<img alt="" src="'+ea(im)+'" onerror="this.remove()">':'')+'<div class="wt">“'+esc(m.text)+'”</div><div class="wf">— '+esc(m.name)+'</div></div>';
+      return '<div class="wc">'+(im?'<img alt="" src="'+ea(im)+'" onerror="this.remove()">':'')+'<div class="wt" style="--k:'+(m.text.length>160?.7:(m.text.length>110?.85:1))+'">“'+esc(m.text)+'”</div><div class="wf">— '+esc(m.name)+'</div></div>';
     }).join(''):'<div class="wc" style="grid-column:1/-1;grid-row:1/-1"><div class="wt">Escanea el QR y envía tu mensaje 💬</div></div>';
   }
 
@@ -651,7 +659,8 @@ function pantalla(){
     var lg=fixImg(t.logo),l=$('lg');
     if(lg){if(l.getAttribute('src')!==lg)l.src=lg;l.style.display='';l.style.height=t.logoH+'vh';l.className='p-'+t.logoPos}else l.style.display='none';
     l.onerror=function(){this.style.display='none'};
-    var qr=$('qr');qr.style.display=t.qr?'':'none';qr.className='q-'+t.qrPos;
+    var qr=$('qr');qr.style.display=t.qr?'':'none';
+    qr.style.setProperty('--qx',t.qrX);qr.style.setProperty('--qy',t.qrY);qr.style.setProperty('--qs',t.qrS);
     var ly=(t.layout==='wall');
     $('bub').style.display=ly?'none':'';$('wall').style.display=ly?'grid':'none';
     if(ly!==lastLy){lastLy=ly;if(ly)renderWall();else if(msgs[idx])show(msgs[idx],false)}
@@ -664,6 +673,7 @@ function pantalla(){
       var im=fixImg(m.img);
       b.innerHTML=(im?'<img id="bimg" alt="" src="'+ea(im)+'" onerror="this.remove()">':'')
         +'<div><div id="bt">“'+esc(m.text)+'”</div><div id="bf">— '+esc(m.name)+' 💜</div></div>';
+      b.style.setProperty('--k',m.text.length>220?.55:(m.text.length>160?.7:(m.text.length>110?.85:1)));
       b.className='a-'+t.anim;
     },450);
     if(isNew&&t.confetti)confetti(t);
